@@ -6,12 +6,12 @@
   "dependencies": {
     "async": "^2.4.1",
     "ejs": "^2.5.6",
-    "eslint": "^3.19.0",
     "express": "^4.15.3",
     "googleapis": "^19.0.0",
     "inflight": "^1.0.6"
   },
   "devDependencies": {
+    "eslint": "^3.19.0",
     "eslint-config-standard": "^10.2.1",
     "eslint-plugin-import": "^2.3.0",
     "eslint-plugin-node": "^5.0.0",
@@ -21,7 +21,7 @@
     "webpack-dev-server": "^2.4.5"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",

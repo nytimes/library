@@ -7,12 +7,18 @@ const async = require('async')
 const {getAuth} = require('./auth')
 const teamDriveId = '***REMOVED***'
 let currentTree = null
+let docsInfo = {}
 exports.getTree = (cb) => {
   if (currentTree) {
     return cb(null, currentTree)
   }
 
   updateTree(cb)
+}
+
+// exposes docs metadata
+exports.getMeta = (id) => {
+  return docsInfo[id]
 }
 
 const treeUpdateDelay = 60 * 1000 // 1 min
@@ -80,11 +86,12 @@ function produceTree(files, firstParent) {
     return [byParent, byId]
   }, [{}, {}])
 
-  return buildTreeFromData(firstParent, byParent, byId)
+  docsInfo = byId // update our outer cache
+  return buildTreeFromData(firstParent, byParent)
 }
 
 // do we care about parent ids? maybe not?
-function buildTreeFromData(rootParent, byParent, byId) {
+function buildTreeFromData(rootParent, byParent) {
   const children = byParent[rootParent]
 
   if (!children) {
@@ -92,10 +99,10 @@ function buildTreeFromData(rootParent, byParent, byId) {
   }
 
   return children.reduce((memo, id) => {
-    const {name} = byId[id]
+    const {name} = docsInfo[id]
     const slug = slugify(name)
     // check if we have any children,
-    memo[slug] = buildTreeFromData(id, byParent, byId)
+    memo[slug] = buildTreeFromData(id, byParent)
     return memo
   }, {})
 }
