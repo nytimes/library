@@ -108,7 +108,10 @@ function buildTreeFromData(rootParent, byParent) {
 }
 
 function slugify(text = '') {
-  return text.toLowerCase().replace(/\s+/g, '-')
+  return text
+    .replace(/^\d+[-_\s]*/, '') // remove leading numbers and delimiters
+    .toLowerCase()
+    .replace(/\s+/g, '-')
 }
 
 function startTreeRefresh(interval) {

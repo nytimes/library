@@ -56,8 +56,7 @@ app.get('*', (req, res) => {
         lastUpdated: '', // determine some sort of date here
         author: meta.lastModifyingUser.displayName,
         editLink: `https://docs.google.com/document/d/${id}/edit}`,
-        parentLink: '', // Populate this with an edit link to the parent folder?
-        title: 'We should get this from the tree somehow'
+        parentLink: '' // Populate this with an edit link to the parent folder?
       })
     })
   })
