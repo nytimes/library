@@ -1,0 +1,24 @@
+{
+    "extends": "standard",
+    "installedESLint": true,
+    "plugins": [
+        "standard"
+    ],
+    "globals": {
+      "describe": true,
+      "it": true,
+      "before": true,
+      "beforeEach": true
+    },
+    "rules": {
+      "arrow-parens": 0,
+      "react/prop-types": 0,
+      "no-var": ["error"],
+      "arrow-parens": ["error", "always"],
+      "prefer-arrow-callback": ["error", {"allowNamedFunctions": true }],
+      "space-before-function-paren": ["error", {
+        "anonymous": "always",
+        "named": "never"
+      }]
+    }
+}
