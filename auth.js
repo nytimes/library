@@ -3,8 +3,13 @@
 const inflight = require('inflight')
 const google = require('googleapis')
 const fs = require('fs')
-const auth = JSON.parse(fs.readFileSync(process.env.AUTH_PATH || './.auth.json'))
 let authClient = null
+
+// In local development, look for an auth.json file.
+if(!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+  console.log("GOOGLE_APPLICATION_CREDENTIALS was undefined, using default ./auth.json credentials file...")
+  process.env.GOOGLE_APPLICATION_CREDENTIALS = './.auth.json'
+}
 
 // only public method, returns the authClient that can be used for making other requests
 exports.getAuth = (cb) => {
@@ -21,7 +26,7 @@ function setAuthClient(cb) {
   // guard against calling while already in progress
   if (!cb) return
 
-  google.auth.fromJSON(auth, (err, client) => {
+  google.auth.getApplicationDefault((err, client) => {
     if (err) {
       return cb(err)
     }
