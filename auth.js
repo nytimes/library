@@ -2,7 +2,8 @@
 
 const inflight = require('inflight')
 const google = require('googleapis')
-const auth = require(process.env.AUTH_PATH || './.auth.json')
+const fs = require('fs')
+const auth = JSON.parse(fs.readFileSync(process.env.AUTH_PATH || './.auth.json'))
 let authClient = null
 
 // only public method, returns the authClient that can be used for making other requests
