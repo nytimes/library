@@ -2,7 +2,6 @@
 
 const inflight = require('inflight')
 const google = require('googleapis')
-const async = require('async')
 
 const {getAuth} = require('./auth')
 const teamDriveId = '***REMOVED***'
@@ -39,33 +38,15 @@ function updateTree(cb) {
       teamDriveId,
       corpora: 'teamDrive',
       supportsTeamDrives: true,
-      includeTeamDriveItems: true
+      includeTeamDriveItems: true,
+      fields: '*'
     }, (err, {files} = {}) => {
       if (err) {
         return cb(err)
       }
 
-      async.parallelLimit(files.map(({id}) => {
-        return (cb) => {
-          drive.files.get({
-            fileId: id,
-            fields: 'parents,properties,id,name,lastModifyingUser',
-            teamDriveId,
-            supportsTeamDrives: true
-          }, cb)
-        }
-      }), 3, (err, res) => {
-        if (err) {
-          return cb(err)
-        }
-
-        const extended = res.map(([data], i) => {
-          return Object.assign({}, data, files[i])
-        })
-
-        currentTree = produceTree(extended, teamDriveId)
-        cb(null, currentTree)
-      })
+      currentTree = produceTree(files, teamDriveId)
+      cb(null, currentTree)
     })
   })
 }
