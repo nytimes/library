@@ -19,6 +19,10 @@ const app = express()
 app.set('view engine', 'ejs')
 app.set('views', './layouts')
 
+app.get('/healthcheck', (req, res) => {
+  res.send('OK')
+})
+
 app.get('*', (req, res) => {
   console.log(`GET ${req.path}`)
   // get an up to date doc tree
