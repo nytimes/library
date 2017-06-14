@@ -14,12 +14,16 @@ Copy the preview service account credentials to the app directory:
 `cp ~***REMOVED*** nyt-docs/.auth.json`
 
 Install dependencies:
-`cd nyt-docs && npm install`
+`cd nyt-docs && yarn install`
 
 Start the app:
 `npm start`
 
-The app should now be running on port 3000.
+The app should now be running on port 3000:
+
+http://localhost.nytimes.com:3000/
+http://localhost.nytimes.com:3000/graphics/how-to-make-promos
+
 
 ## About the file structure
 The entry point to the app is index.js. This file contains the basic express server which will respond to requests for docs in the NYT Docs folder https://drive.google.com/drive/u/0/folders/***REMOVED***. It contains logic about issuing 404s and selecting the template to use based on the path.
