@@ -1,0 +1,12 @@
+<ul class="breadcrumb">
+  <li>
+    <a href="/">/</a>
+  </li>
+<% parentLinks.forEach((link) => { %>
+  <li>
+    <a href="<%- link.url %>" ><%= link.name %></a> <a href="<%- link.editLink %>">(edit)</a>
+  </li>
+<% }) %>
+  <li>
+    <a href="<%- url %>"><%= title %></a> <a href="<%- editLink %>">(edit)</a>
+  </li>

@@ -4,9 +4,11 @@ const inflight = require('inflight')
 const google = require('googleapis')
 
 const {getAuth} = require('./auth')
+const {cleanName} = require('./docs')
 const teamDriveId = '***REMOVED***'
 let currentTree = null
 let docsInfo = {}
+let driveBranches = {}
 exports.getTree = (cb) => {
   if (currentTree) {
     return cb(null, currentTree)
@@ -18,6 +20,10 @@ exports.getTree = (cb) => {
 // exposes docs metadata
 exports.getMeta = (id) => {
   return docsInfo[id]
+}
+
+exports.getChildren = (id) => {
+  return driveBranches[id]
 }
 
 const treeUpdateDelay = 60 * 1000 // 1 min
@@ -67,30 +73,38 @@ function produceTree(files, firstParent) {
     return [byParent, byId]
   }, [{}, {}])
 
+  // byId[teamDriveId] = { name: 'Home' }
+
   docsInfo = byId // update our outer cache
-  return buildTreeFromData(firstParent, byParent)
+  driveBranches = byParent
+  return buildTreeFromData(firstParent)
 }
 
 // do we care about parent ids? maybe not?
-function buildTreeFromData(rootParent, byParent) {
-  const children = byParent[rootParent]
+function buildTreeFromData(rootParent, breadcrumb) {
+  const children = driveBranches[rootParent]
 
   if (!children) {
-    return rootParent
+    return {
+      nodeType: 'leaf',
+      id: rootParent,
+      breadcrumb
+    }
   }
 
   return children.reduce((memo, id) => {
     const {name} = docsInfo[id]
     const slug = slugify(name)
-    // check if we have any children,
-    memo[slug] = buildTreeFromData(id, byParent)
+    const nextCrumb = breadcrumb ? breadcrumb.concat(rootParent) : []
+    // recurse building up breadcrumb
+    memo[slug] = buildTreeFromData(id, nextCrumb)
     return memo
-  }, {})
+  }, {nodeType: 'branch', id: rootParent, breadcrumb})
 }
 
 function slugify(text = '') {
-  return text
-    .replace(/^\d+[-–—_\s]*/, '') // remove leading numbers and delimiters
+  return cleanName(text)
+     // remove leading numbers and delimiters
     .toLowerCase()
     .replace(/\s+/g, '-')
 }

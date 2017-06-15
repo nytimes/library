@@ -8,6 +8,11 @@ const escape = require('escape-html')
 
 const {getAuth} = require('./auth')
 
+exports.cleanName = (name = '') => {
+  return name
+    .replace(/^\d+[-–—_\s]*/, '') // remove leading numbers and delimiters
+}
+
 exports.fetchDoc = (docId, cb) => {
   getAuth((err, auth) => {
     if (err) {
