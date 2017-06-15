@@ -1,5 +1,6 @@
 'use strict'
 
+const async = require('async')
 const google = require('googleapis')
 const cheerio = require('cheerio')
 const pretty = require('pretty')
@@ -19,21 +20,40 @@ exports.fetchDoc = (docId, cb) => {
       return cb(err)
     }
 
-    fetch(docId, auth, (err, html) => {
+    fetch(docId, auth, (err, html, originalRevision) => {
+      if (err) return cb(err)
+
       html = normalizeHtml(html)
       html = formatCode(html)
       html = pretty(html)
-      cb(err, html)
+      cb(err, {html, originalRevision})
     })
   })
 }
 
 function fetch(id, authClient, cb) {
   const drive = google.drive({version: 'v3', auth: authClient})
-  drive.files.export({
-    fileId: id,
-    mimeType: 'text/html'
-  }, cb)
+  async.parallel([
+    (cb) => {
+      drive.files.export({
+        fileId: id,
+        mimeType: 'text/html'
+      }, cb)
+    },
+    (cb) => {
+      drive.revisions.get({
+        fileId: id,
+        revisionId: '1',
+        fields: '*'
+      }, cb)
+    }
+  ], (err, [fileExport, revisionGet]) => {
+    if (err) return cb(err)
+
+    const [html] = fileExport
+    const [originalRevision] = revisionGet
+    cb(err, html, originalRevision)
+  })
 }
 
 function normalizeHtml(html) {

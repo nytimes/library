@@ -1,12 +1,24 @@
 <ul class="breadcrumb">
-  <li>
-    <a href="/">/</a>
+  <li class="breadcrumb-item">
+    <a class="content-link" href="/">/</a>
   </li>
 <% parentLinks.forEach((link) => { %>
-  <li>
-    <a href="<%- link.url %>" ><%= link.name %></a> <a href="<%- link.editLink %>">(edit)</a>
+  <li class="breadcrumb-item">
+    <a class="content-link" href="<%- link.url %>" ><%= link.name %></a>
+    <a class="edit-link" href="<%- link.editLink %>">(edit)</a> /
   </li>
 <% }) %>
-  <li>
-    <a href="<%- url %>"><%= title %></a> <a href="<%- editLink %>">(edit)</a>
+  <li class="breadcrumb-item">
+    <%= title %>
+    <a class="edit-link" href="<%- editLink %>">(edit)</a>
   </li>
+</ul>
+<style>
+.breadcrumb {
+  padding-left: 0;
+}
+
+.breadcrumb-item {
+  display: inline-block;
+}
+</style>

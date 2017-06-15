@@ -2,12 +2,11 @@
 
 const inflight = require('inflight')
 const google = require('googleapis')
-const fs = require('fs')
 let authClient = null
 
 // In local development, look for an auth.json file.
-if(!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-  console.log("GOOGLE_APPLICATION_CREDENTIALS was undefined, using default ./auth.json credentials file...")
+if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+  console.log('GOOGLE_APPLICATION_CREDENTIALS was undefined, using default ./auth.json credentials file...')
   process.env.GOOGLE_APPLICATION_CREDENTIALS = './.auth.json'
 }
 

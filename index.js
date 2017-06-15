@@ -42,18 +42,17 @@ app.get('*', (req, res) => {
     const layout = availableLayouts.has(root) ? root : 'default'
 
     // don't try to fetch a folder
-    const renderData = prepareRenderData(meta, req.path, breadcrumb)
     if (nodeType === 'branch') {
       res.status(404).send('Can\'t render contents of a folder yet.')
-      // return res.render(layout, Object.assign({}, renderData, { content: `Items in ${meta.title}:`, url: req.path }))
     }
 
-    fetchDoc(data.id, (err, html) => {
+    fetchDoc(data.id, (err, {html, originalRevision}) => {
       if (err) {
         return res.status(500).send(err)
       }
 
-      res.render(layout, Object.assign({}, renderData, { content: html, url: req.path }))
+      const renderData = prepareRenderData(meta, html, originalRevision, req.path, breadcrumb)
+      res.render(layout, renderData)
     })
   })
 })
@@ -76,7 +75,7 @@ function retrieveDataForPath(path, tree) {
   return pointer || {}
 }
 
-function prepareRenderData(meta, url, breadcrumb = []) {
+function prepareRenderData(meta, content, originalRevision, url, breadcrumb) {
   const breadcrumbInfo = breadcrumb.map((id) => getMeta(id))
   const [immediateParent] = breadcrumb.slice(-1)
 
@@ -96,13 +95,15 @@ function prepareRenderData(meta, url, breadcrumb = []) {
     })
 
   return {
+    url,
+    content,
     siblings, // Populate this with the names of other items in the same folder
     title: cleanName(meta.name),
+    lastUpdatedBy: meta.lastModifyingUser.displayName,
     lastUpdated: meta.modifiedTime, // determine some sort of date here
-    updatedBy: meta.lastModifyingUser.displayName,
     createdAt: meta.createdTime, // we won't be able to tell this
+    createdBy: originalRevision.lastModifyingUser.displayName,
     editLink: meta.webViewLink,
-    url,
     parentLinks
   }
 }
