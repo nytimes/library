@@ -52,13 +52,23 @@ app.get('*', (req, res) => {
       return res.status(404).send('It looks like this folder is empty...')
     }
 
-    fetchDoc(data.id, (err, {html, originalRevision} = {}) => {
+    fetchDoc(data.id, (err, {html, originalRevision, sections} = {}) => {
       if (err) {
         return res.status(500).send(err)
       }
 
-      const renderData = prepareRenderData(meta, html, originalRevision, req.path, breadcrumb, parent)
-      res.render(layout, renderData)
+      const contextData = prepareContextualData(req.path, breadcrumb, parent)
+      res.render(layout, Object.assign({}, contextData, {
+        url: req.path,
+        content: html,
+        title: meta.prettyName,
+        lastUpdatedBy: meta.lastModifyingUser.displayName,
+        lastUpdated: moment(meta.modifiedTime).fromNow(), // determine some sort of date here
+        createdAt: moment(meta.createdTime).fromNow(), // we won't be able to tell this
+        createdBy: originalRevision.lastModifyingUser.displayName,
+        editLink: meta.webViewLink,
+        sections
+      }))
     })
   })
 })
@@ -86,10 +96,12 @@ function retrieveDataForPath(path, tree) {
   return [pointer || {}, parent]
 }
 
-function prepareRenderData(meta, content, originalRevision, url, breadcrumb, parent) {
+function prepareContextualData(url, breadcrumb, parent) {
   const breadcrumbInfo = breadcrumb.map(({id}) => getMeta(id))
 
   const self = url.split('/').slice(-1)[0] || 'index'
+  // most of what we are doing here is preparing parents and siblings
+  // we need the url and parent object, as well as the breadcrumb to do that
   const siblings = Object.keys(parent.children)
     .filter((slug) => slug !== self)
     .map((slug) => {
@@ -105,7 +117,6 @@ function prepareRenderData(meta, content, originalRevision, url, breadcrumb, par
     })
     .sort((a, b) => a.sort > b.sort)
 
-    // we need to do something else here
   const parentLinks = url
     .split('/')
     .slice(1, -1) // ignore the base empty string and self
@@ -118,15 +129,7 @@ function prepareRenderData(meta, content, originalRevision, url, breadcrumb, par
     })
 
   return {
-    url,
-    content,
-    siblings,
-    title: meta.prettyName,
-    lastUpdatedBy: meta.lastModifyingUser.displayName,
-    lastUpdated: moment(meta.modifiedTime).fromNow(), // determine some sort of date here
-    createdAt: moment(meta.createdTime).fromNow(), // we won't be able to tell this
-    createdBy: originalRevision.lastModifyingUser.displayName,
-    editLink: meta.webViewLink,
-    parentLinks
+    parentLinks,
+    siblings
   }
 }

@@ -4,7 +4,7 @@ const inflight = require('inflight')
 const google = require('googleapis')
 
 const {getAuth} = require('./auth')
-const {cleanName} = require('./docs')
+const {cleanName, slugify} = require('./docs')
 const teamDriveId = '***REMOVED***'
 let currentTree = null
 let docsInfo = {}
@@ -112,12 +112,6 @@ function buildTreeFromData(rootParent, breadcrumb) {
     memo.children[slug] = buildTreeFromData(id, nextCrumb)
     return memo
   }, Object.assign({}, parentNode, { children: {} }))
-}
-
-function slugify(text = '') {
-  return text
-    .toLowerCase()
-    .replace(/\s+/g, '-')
 }
 
 function determineSort(name = '') {

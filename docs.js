@@ -14,6 +14,12 @@ exports.cleanName = (name = '') => {
     .replace(/^\d+[-–—_\s]*/, '') // remove leading numbers and delimiters
 }
 
+exports.slugify = (text = '') => {
+  return text
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+}
+
 exports.fetchDoc = (docId, cb) => {
   getAuth((err, auth) => {
     if (err) {
@@ -26,7 +32,9 @@ exports.fetchDoc = (docId, cb) => {
       html = normalizeHtml(html)
       html = formatCode(html)
       html = pretty(html)
-      cb(err, {html, originalRevision})
+      const sections = getSections(html)
+      // maybe we should pull out headers here
+      cb(err, {html, originalRevision, sections})
     })
   })
 }
@@ -112,4 +120,21 @@ function formatCodeContent(content) {
   content = content.replace(/\n\n/g, '\n')
   content = content.replace(/[‘’]/g, "'").replace(/[””]/g, '"')
   return content
+}
+
+function getSections(html) {
+  const $ = cheerio.load(html)
+  const allHeaders = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
+    .map((h) => `body ${h}`)
+    .join(', ')
+
+  return $(allHeaders).map((i, el) => {
+    const $el = $(el)
+    const name = $el.text()
+    const url = `#${$el.attr('id')}`
+    return {
+      name,
+      url
+    }
+  }).toArray()
 }
