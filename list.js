@@ -26,7 +26,8 @@ exports.getChildren = (id) => {
   return driveBranches[id]
 }
 
-const treeUpdateDelay = 60 * 1000 // 1 min
+// delay in ms, 60s default with env var
+const treeUpdateDelay = parseInt(process.env.UPDATE_INTERVAL || 60, 10) * 1000
 startTreeRefresh(treeUpdateDelay)
 
 function updateTree(cb) {
@@ -69,11 +70,18 @@ function produceTree(files, firstParent) {
       byParent[parent].push(id)
     })
 
-    byId[id] = resource
+    const {name} = resource
+    // should we add some extra data here at time of init?
+    // maybe sort or slug or clean name?
+    const prettyName = cleanName(name)
+    byId[id] = Object.assign({}, resource, {
+      prettyName,
+      sort: determineSort(name),
+      slug: slugify(prettyName)
+    })
+
     return [byParent, byId]
   }, [{}, {}])
-
-  // byId[teamDriveId] = { name: 'Home' }
 
   docsInfo = byId // update our outer cache
   driveBranches = byParent
@@ -83,30 +91,40 @@ function produceTree(files, firstParent) {
 // do we care about parent ids? maybe not?
 function buildTreeFromData(rootParent, breadcrumb) {
   const children = driveBranches[rootParent]
+  const parentInfo = docsInfo[rootParent] || {}
+
+  const parentNode = {
+    nodeType: children ? 'branch' : 'leaf',
+    id: rootParent,
+    breadcrumb,
+    sort: parentInfo ? determineSort(parentInfo.name) : Infinity // some number here that could be used to sort later
+  }
 
   if (!children) {
-    return {
-      nodeType: 'leaf',
-      id: rootParent,
-      breadcrumb
-    }
+    return parentNode
   }
 
   return children.reduce((memo, id) => {
-    const {name} = docsInfo[id]
-    const slug = slugify(name)
-    const nextCrumb = breadcrumb ? breadcrumb.concat(rootParent) : []
+    const {prettyName} = docsInfo[id]
+    const slug = slugify(prettyName)
+    const nextCrumb = breadcrumb ? breadcrumb.concat({ id: rootParent, slug: parentInfo.slug }) : []
     // recurse building up breadcrumb
-    memo[slug] = buildTreeFromData(id, nextCrumb)
+    memo.children[slug] = buildTreeFromData(id, nextCrumb)
     return memo
-  }, {nodeType: 'branch', id: rootParent, breadcrumb})
+  }, Object.assign({}, parentNode, { children: {} }))
 }
 
 function slugify(text = '') {
-  return cleanName(text)
-     // remove leading numbers and delimiters
+  return text
     .toLowerCase()
     .replace(/\s+/g, '-')
+}
+
+function determineSort(name = '') {
+  const sort = name.match(/(\d+)[^\d]/)
+  // to be consistent with drive API, we will do string sort
+  // also means we can sort off a single field when number is absent
+  return sort ? sort[1] : name // items without sort go alphabetically
 }
 
 function startTreeRefresh(interval) {

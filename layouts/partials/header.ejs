@@ -1,5 +1,6 @@
 <%- include breadcrumb %>
 <h1><%= title %></h1>
-<p>Created by: <%= createdBy %></p>
-<p>Last updated by <%= lastUpdatedBy %> at <%= lastUpdated %></p>
+<p>Created by: <%= createdBy %> <%= createdAt %></p>
+<p>Last updated by <%= lastUpdatedBy %> <%= lastUpdated %></p>
 <p><a href="<%- editLink %>">Edit this page</a>
+<%- include siblingList %>

@@ -4,8 +4,9 @@ const fs = require('fs')
 const path = require('path')
 
 const express = require('express')
+const moment = require('moment')
 
-const {getTree, getMeta, getChildren} = require('./list')
+const {getTree, getMeta} = require('./list')
 const {fetchDoc, cleanName} = require('./docs')
 
 const availableLayouts = (fs.readdirSync(path.join(__dirname, 'layouts')) || [])
@@ -31,7 +32,7 @@ app.get('*', (req, res) => {
       return res.status(500).send(err)
     }
 
-    const data = retrieveDataForPath(req.path, tree)
+    const [data, parent] = retrieveDataForPath(req.path, tree)
     const {id, breadcrumb, nodeType} = data
     if (!id) {
       return res.status(404).end('Not found.')
@@ -41,17 +42,22 @@ app.get('*', (req, res) => {
     const root = req.path.split('/')[1]
     const layout = availableLayouts.has(root) ? root : 'default'
 
-    // don't try to fetch a folder
+    // don't try to fetch branch node
     if (nodeType === 'branch') {
-      res.status(404).send('Can\'t render contents of a folder yet.')
+      return res.status(404).send('Can\'t render contents of a folder yet.')
     }
 
-    fetchDoc(data.id, (err, {html, originalRevision}) => {
+    // also catch empty folders
+    if (meta.mimeType.split('.').pop() === 'folder') {
+      return res.status(404).send('It looks like this folder is empty...')
+    }
+
+    fetchDoc(data.id, (err, {html, originalRevision} = {}) => {
       if (err) {
         return res.status(500).send(err)
       }
 
-      const renderData = prepareRenderData(meta, html, originalRevision, req.path, breadcrumb)
+      const renderData = prepareRenderData(meta, html, originalRevision, req.path, breadcrumb, parent)
       res.render(layout, renderData)
     })
   })
@@ -61,28 +67,45 @@ app.listen(3000)
 
 function retrieveDataForPath(path, tree) {
   const segments = path.split('/').slice(1).filter((s) => s.length)
-  // check if we have anything that matches the path
-  let pointer = path === '/' ? tree : tree[segments.shift()]
-  while (pointer && segments.length) {
-    pointer = pointer[segments.shift()]
+
+  let pointer = tree
+  let parent = null
+  // continue traversing down the tree while there are still segements to go
+  while ((pointer || {}).nodeType === 'branch' && segments.length) {
+    parent = pointer
+    pointer = pointer.children[segments.shift()]
   }
 
-  if (pointer.nodeType === 'branch' && pointer.index) {
-    console.log(pointer.index)
-    pointer = pointer.index
+  // if we used up segments and are looking at a folder, try index
+  if ((pointer || {}).nodeType === 'branch' && pointer.children.index) {
+    parent = pointer
+    pointer = pointer.children.index
   }
 
-  return pointer || {}
+  // return the leaf and its immediate branch
+  return [pointer || {}, parent]
 }
 
-function prepareRenderData(meta, content, originalRevision, url, breadcrumb) {
-  const breadcrumbInfo = breadcrumb.map((id) => getMeta(id))
-  const [immediateParent] = breadcrumb.slice(-1)
+function prepareRenderData(meta, content, originalRevision, url, breadcrumb, parent) {
+  const breadcrumbInfo = breadcrumb.map(({id}) => getMeta(id))
 
-  const siblings = getChildren(immediateParent) || []
-    .filter((id) => id !== meta.id)
-    .map((id) => getMeta(id))
+  const self = url.split('/').slice(-1)[0] || 'index'
+  const siblings = Object.keys(parent.children)
+    .filter((slug) => slug !== self)
+    .map((slug) => {
+      const {id} = parent.children[slug] // we should do something here
+      const {sort, prettyName, webViewLink} = getMeta(id)
 
+      return {
+        sort,
+        name: prettyName,
+        editLink: webViewLink,
+        url: `${url.split('/').slice(0, -1).join('/')}/${slug}`
+      }
+    })
+    .sort((a, b) => a.sort > b.sort)
+
+    // we need to do something else here
   const parentLinks = url
     .split('/')
     .slice(1, -1) // ignore the base empty string and self
@@ -97,11 +120,11 @@ function prepareRenderData(meta, content, originalRevision, url, breadcrumb) {
   return {
     url,
     content,
-    siblings, // Populate this with the names of other items in the same folder
-    title: cleanName(meta.name),
+    siblings,
+    title: meta.prettyName,
     lastUpdatedBy: meta.lastModifyingUser.displayName,
-    lastUpdated: meta.modifiedTime, // determine some sort of date here
-    createdAt: meta.createdTime, // we won't be able to tell this
+    lastUpdated: moment(meta.modifiedTime).fromNow(), // determine some sort of date here
+    createdAt: moment(meta.createdTime).fromNow(), // we won't be able to tell this
     createdBy: originalRevision.lastModifyingUser.displayName,
     editLink: meta.webViewLink,
     parentLinks

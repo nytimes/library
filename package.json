@@ -12,6 +12,7 @@
     "googleapis": "^19.0.0",
     "html-to-text": "^3.3.0",
     "inflight": "^1.0.6",
+    "moment": "^2.18.1",
     "pretty": "^2.0.0"
   },
   "devDependencies": {
