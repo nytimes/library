@@ -1,4 +1,4 @@
-nyt-docs
+NYT Library
 ========
 
 Internal Wiki for NYT Newsroom
@@ -8,18 +8,18 @@ Internal Wiki for NYT Newsroom
 Clone the repo:
 
 ```
-git clone git@github.com:newsdev/nyt-docs.git
+git clone git@github.com:newsdev/nyt-library.git
 ```
 
 Copy the preview service account credentials to the app directory:
 
 ```
-cp ~***REMOVED*** nyt-docs/.auth.json
+cp ~***REMOVED*** nyt-library/.auth.json
 ```
 
 Install dependencies:
 ```
-cd nyt-docs && yarn install
+cd nyt-library && yarn install
 ```
 
 Start the app:
