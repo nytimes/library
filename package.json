@@ -13,6 +13,7 @@
     "html-to-text": "^3.3.0",
     "inflight": "^1.0.6",
     "moment": "^2.18.1",
+    "nodemon": "^1.11.0",
     "pretty": "^2.0.0"
   },
   "devDependencies": {
@@ -27,7 +28,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "repository": {
     "type": "git",

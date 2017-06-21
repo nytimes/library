@@ -26,6 +26,13 @@ app.get('/healthcheck', (req, res) => {
 
 app.get('*', (req, res) => {
   console.log(`GET ${req.path}`)
+  const segments = req.path.split('/')
+
+  // don't allow viewing index directly
+  if (segments.slice(-1)[0] === 'index') {
+    return res.redirect(301, segments.slice(0, -1).join('/'))
+  }
+
   // get an up to date doc tree
   getTree((err, tree) => {
     if (err) {
@@ -38,8 +45,8 @@ app.get('*', (req, res) => {
       return res.status(404).end('Not found.')
     }
 
+    const root = segments[1]
     const meta = getMeta(id)
-    const root = req.path.split('/')[1]
     const layout = availableLayouts.has(root) ? root : 'default'
 
     // don't try to fetch branch node
@@ -57,7 +64,7 @@ app.get('*', (req, res) => {
         return res.status(500).send(err)
       }
 
-      const contextData = prepareContextualData(req.path, breadcrumb, parent)
+      const contextData = prepareContextualData(req.path, breadcrumb, parent, meta.slug)
       res.render(layout, Object.assign({}, contextData, {
         url: req.path,
         content: html,
@@ -96,23 +103,26 @@ function retrieveDataForPath(path, tree) {
   return [pointer || {}, parent]
 }
 
-function prepareContextualData(url, breadcrumb, parent) {
+function prepareContextualData(url, breadcrumb, parent, slug) {
   const breadcrumbInfo = breadcrumb.map(({id}) => getMeta(id))
 
-  const self = url.split('/').slice(-1)[0] || 'index'
+  const self = slug === 'index' ? 'index' : url.split('/').slice(-1)[0]
   // most of what we are doing here is preparing parents and siblings
   // we need the url and parent object, as well as the breadcrumb to do that
   const siblings = Object.keys(parent.children)
-    .filter((slug) => slug !== self)
+    .filter((slug) => slug !== self && slug !== 'index')
     .map((slug) => {
       const {id} = parent.children[slug] // we should do something here
       const {sort, prettyName, webViewLink} = getMeta(id)
 
+      // on an index page, the base url is the current url
+      // for other pages, remove the slug from that url
+      const baseUrl = self === 'index' ? url : `${url.split('/').slice(0, -1).join('/')}`
       return {
         sort,
         name: prettyName,
         editLink: webViewLink,
-        url: `${url.split('/').slice(0, -1).join('/')}/${slug}`
+        url: path.join(baseUrl, slug)
       }
     })
     .sort((a, b) => a.sort > b.sort)
