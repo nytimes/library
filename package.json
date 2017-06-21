@@ -13,10 +13,12 @@
     "html-to-text": "^3.3.0",
     "inflight": "^1.0.6",
     "moment": "^2.18.1",
+    "node-sass": "^4.5.3",
     "nodemon": "^1.11.0",
     "pretty": "^2.0.0"
   },
   "devDependencies": {
+    "concurrently": "^3.4.0",
     "eslint": "^3.19.0",
     "eslint-config-standard": "^10.2.1",
     "eslint-plugin-import": "^2.3.0",
@@ -28,8 +30,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "start": "node server/index.js",
+    "build": "node-sass styles/style.scss public/css/style.css",
+    "watch": "concurrently \"nodemon server/index.js\" \"node-sass -w styles/style.scss public/css/style.css\""
   },
   "repository": {
     "type": "git",

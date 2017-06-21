@@ -9,7 +9,8 @@ const moment = require('moment')
 const {getTree, getMeta} = require('./list')
 const {fetchDoc, cleanName} = require('./docs')
 
-const availableLayouts = (fs.readdirSync(path.join(__dirname, 'layouts')) || [])
+const layoutsDir = path.join(__dirname, '../layouts')
+const availableLayouts = (fs.readdirSync(layoutsDir) || [])
   .reduce((memo, filename) => {
     const [name] = filename.split('.')
     memo.add(name)
@@ -18,11 +19,14 @@ const availableLayouts = (fs.readdirSync(path.join(__dirname, 'layouts')) || [])
 
 const app = express()
 app.set('view engine', 'ejs')
-app.set('views', './layouts')
+app.set('views', layoutsDir)
 
 app.get('/healthcheck', (req, res) => {
   res.send('OK')
 })
+
+// serve all files in the public folder
+app.use('/assets', express.static(path.join(__dirname, '../public')))
 
 app.get('*', (req, res) => {
   console.log(`GET ${req.path}`)
