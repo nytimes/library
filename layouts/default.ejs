@@ -14,19 +14,20 @@
   <body>
     <h1 class="visually-hidden">Default template</h1>
     <%- include partials/header %>
-
     <div class="g-body">
       <div class="g-toc">
         <%- include partials/siblingList %>
-        <% if (sections.length) { %>
+        <% if (locals.sections && locals.sections.length) { %>
           <div class="toc-kicker">Jump to section:</div>
           <%- include partials/sectionList %>
         <% } %>
       </div>
 
+      <% if (locals.content) { %>
       <div class="g-main-content">
         <%- content %>
       </div>
+      <% } %>
     </div>
   </body>
 </html>

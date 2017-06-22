@@ -54,30 +54,30 @@ app.get('*', (req, res) => {
     const layout = availableLayouts.has(root) ? root : 'default'
 
     // don't try to fetch branch node
-    if (nodeType === 'branch') {
-      return res.status(404).send('Can\'t render contents of a folder yet.')
-    }
+    const contextData = prepareContextualData(req.path, breadcrumb, parent, meta.slug)
+    const baseRenderData = Object.assign({}, contextData, {
+      url: req.path,
+      title: meta.prettyName,
+      lastUpdatedBy: meta.lastModifyingUser.displayName,
+      lastUpdated: moment(meta.modifiedTime).fromNow(),
+      createdAt: moment(meta.createdTime).fromNow(),
+      editLink: meta.webViewLink
+    })
 
-    // also catch empty folders
+    // if this is a folder, just render from the generic data
     if (meta.mimeType.split('.').pop() === 'folder') {
-      return res.status(404).send('It looks like this folder is empty...')
+      return res.render(layout, baseRenderData)
     }
 
+    // for docs, fetch the html and then combine with the base data
     fetchDoc(data.id, (err, {html, originalRevision, sections} = {}) => {
       if (err) {
         return res.status(500).send(err)
       }
 
-      const contextData = prepareContextualData(req.path, breadcrumb, parent, meta.slug)
-      res.render(layout, Object.assign({}, contextData, {
-        url: req.path,
+      res.render(layout, Object.assign({}, baseRenderData, {
         content: html,
-        title: meta.prettyName,
-        lastUpdatedBy: meta.lastModifyingUser.displayName,
-        lastUpdated: moment(meta.modifiedTime).fromNow(), // determine some sort of date here
-        createdAt: moment(meta.createdTime).fromNow(), // we won't be able to tell this
         createdBy: originalRevision.lastModifyingUser.displayName,
-        editLink: meta.webViewLink,
         sections
       }))
     })
@@ -98,9 +98,12 @@ function retrieveDataForPath(path, tree) {
   }
 
   // if we used up segments and are looking at a folder, try index
-  if ((pointer || {}).nodeType === 'branch' && pointer.children.index) {
+  if ((pointer || {}).nodeType === 'branch') {
     parent = pointer
-    pointer = pointer.children.index
+
+    if (pointer.children.index) {
+      pointer = pointer.children.index
+    }
   }
 
   // return the leaf and its immediate branch
