@@ -1,7 +1,7 @@
 NYT Library
 ========
 
-Internal Wiki for NYT Newsroom
+A collaborative newsroom documentation site, powered by Google Docs.
 
 # Running the app
 
