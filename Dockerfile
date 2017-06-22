@@ -7,6 +7,6 @@ COPY package.json yarn.lock /usr/src/app/
 RUN yarn install
 
 COPY . /usr/src/app
-RUN npm build
+RUN npm run build
 
 CMD [ "npm", "start" ]
