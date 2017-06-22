@@ -1,8 +1,8 @@
-<ul>
+<ul class="sibling">
   <% siblings.forEach((link) => { %>
-    <li class="sibling">
+    <li>
       <a class="content-link" href="<%- link.url %>" ><%= link.name %></a>
-      <a class="edit-link" href="<%- link.editLink %>">(edit)</a> /
+      <a class="edit-link" href="<%- link.editLink %>">(edit)</a>
     </li>
   <% }) %>
 </ul>

@@ -1,3 +1,8 @@
-<% sections.forEach((section) => { %>
-  <a class="toc-item" href="<%- section.url %>" ><%= section.name %></a>
-<% }) %>
+<div class="section-kicker">Table of Content:</div>
+<ul class="section">
+  <% sections.forEach((section) => { %>
+    <li>
+      <a href="<%- section.url %>" ><%= section.name %></a>
+    </li>
+  <% }) %>
+</ul>

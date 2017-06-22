@@ -20,13 +20,14 @@ $karnak: "nyt-karnak-display-130124",arial,sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: helvetica, arial, sans-serif;
+  font-family: $franklin;
+  margin-top: 45px;
+  margin-bottom: -10px;
 }
 
 body {
   font-family: $franklin;
   font-weight: 100;
-
 }
 
 a:hover {
@@ -43,7 +44,25 @@ a:link {
     color: #326891;
 }
 
+.button {
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 400;
+  font-style: normal;
+  font-family: $franklin;
+  background-color: transparent;
+  border-radius: 3px;
+  transition: background-color 0.3s;
+  display: inline-block;
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  color: #ccc;
+  cursor: pointer;
+  -webkit-font-smoothing: antialiased;
+}
+
 // Top Banner
+//------------------------------------------------------------------------------
 .masthead {
   position: fixed;
   background: #444;
@@ -75,7 +94,6 @@ a:link {
       }
 
       .branding-label {
-        padding: 0 0 0 15px;
         margin: 5px auto auto 50px;
         display: inline-block;
         height: 30px;
@@ -83,128 +101,116 @@ a:link {
         vertical-align: top;
         border-left: 1px solid rgba(255, 255, 255, 0.35);
         color: #ccc;
-        font-family: 'Karnak','AICKarnak',Helvetica,sans-serif;
+        font-family: $karnak;
         font-size: 18px;
         text-transform: none;
+        -webkit-font-smoothing: antialiased;
+        font-weight: 100;
+        line-height: 26px;
       }
     }
 
     .user-tools {
-      padding-right: 15px;
-      right: 80px;
-      margin-right: 10px;
+      right: 20px;
       float: none;
-      z-index: 2;
       position: fixed;
-    }
+      top: 10px;
 
-    .button {
-      font-size: 14px;
-      font-size: 0.875rem;
-      line-height: 20px;
-      line-height: 1.25rem;
-      font-weight: 400;
-      font-style: normal;
-      font-family: $franklin;
-      margin-top: 5px;
-      padding: 2px 9px 4px 7px;
-      background-color: transparent;
-      color: rgba(0,0,0,0.5);
-      text-transform: none;
-      border-radius: 3px;
-      transition: background-color 0.3s;
-      display: inline-block;
-      margin: 0;
-      padding: 7px 9px;
-      border: 1px solid #e2e2e2;
-      background-color: #fff;
-      color: #333;
-      cursor: pointer;
-    }
-
-    // About modal
-    .modalbox {
-      display: none;
-      position: absolute;
-      top: 55px;
-      right: -35px;
-      width: 270px;
-      height: 120px;
-      border: 1px solid #cdcdcd;
-      z-index: 10000000145;
-      background: #ddd;
-
-      .viewport-medium-10 & {
-        right: 20px;
-      }
-
-      &.active {
-        display: block;
-      }
-
-      &::after {
-        content: "\25B2";
-        color: #ddd;
-        cursor: pointer;
-        font-size: 22px;
-        line-height: 1em;
+      // About modal
+      .modalbox {
+        display: none;
         position: absolute;
-        right: 45px;
-        margin-right: 10px;
-        top: -16px;
-        z-index: 0;
-        display: inline-block;
-        -webkit-transform: scale(1.5, 1);
-        transform: scale(1.5, 0.8);
-        text-shadow: 0px -1px 0px #cdcdcd;
+        top: 55px;
+        right: -35px;
+        width: 270px;
+        height: 120px;
+        border: 1px solid #cdcdcd;
+        z-index: 10000000145;
+        background: #ddd;
 
-        .viewport-medium-10 & {
-          right: 5px;
+        // .viewport-medium-10 & {
+        //   right: 20px;
+        // }
+
+        &.active {
+          display: block;
+        }
+
+        &:after {
+          content: "\25B2";
+          color: #ddd;
+          cursor: pointer;
+          font-size: 22px;
+          line-height: 1em;
+          position: absolute;
+          right: 45px;
+          margin-right: 10px;
+          top: -16px;
+          z-index: 0;
+          display: inline-block;
+          -webkit-transform: scale(1.5, 1);
+          transform: scale(1.5, 0.8);
+          text-shadow: 0px -1px 0px #cdcdcd;
+
+          // .viewport-medium-10 & {
+          //   right: 5px;
+          // }
         }
       }
-    }
 
-    .modalbox-wrapper {
-      display: block;
-      width: auto;
-      height: 100%;
-      vertical-align: middle;
-      padding: 0 10px;
-    }
-
-    figcaption.modalbox-content {
-      padding: 20px 10px;
-      font-family: $franklin;
-      font-size: 14px;
-      line-height: 18px;
-      -webkit-font-smoothing: antialiased;
-      color: #333;
-      z-index: 1000;
-      position: relative;
-    }
-
-    .modalbox-close {
-      display: block;
-      margin: auto;
-      height: 0;
-      overflow: visible;
-      text-align: right;
-      z-index: 10;
-      cursor: default;
-
-      &::before {
-        content: "";
+      .modalbox-wrapper {
         display: block;
-        position: fixed;
-        left: 0;
-        top: 0;
-        width: 100%;
+        width: auto;
         height: 100%;
-        background-color: transparent;
+        vertical-align: middle;
+        padding: 0 10px;
       }
+
+      figcaption.modalbox-content {
+        padding: 20px 10px;
+        font-family: $franklin;
+        font-size: 14px;
+        line-height: 18px;
+        -webkit-font-smoothing: antialiased;
+        color: #333;
+        z-index: 1000;
+        position: relative;
+      }
+
+      .modalbox-close {
+        display: block;
+        margin: auto;
+        height: 0;
+        overflow: visible;
+        text-align: right;
+        z-index: 10;
+        cursor: default;
+
+        &:before {
+          content: "";
+          display: block;
+          position: fixed;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          background-color: transparent;
+        }
+      }
+
+      // .modalbox-close,
+      // .modalbox-content {
+      //   max-width: 500px;
+      //   margin: 0 auto;
+      // }
+
     }
+
+
+
   }
 }
+
 
 // Breadcrumb
 //------------------------------------------------------------------------------
@@ -216,39 +222,105 @@ a:link {
 .breadcrumb-item {
   display: inline-block;
 
+
+  a:hover {
+      text-decoration: underline;
+      outline: 0;
+  }
+
+  a:visited {
+      color: #F09898;
+  }
+
+  a:link {
+      text-decoration: none;
+      color: #F09898;
+  }
 }
 
 // Upper Body
 //------------------------------------------------------------------------------
 .g-upper-body {
   max-width: 600px;
-  margin: 80px auto 0 auto;
+  margin: 80px auto 30px auto;
+
+  h1.headline {
+    font-family: $chelt;
+    font-size: 48px;
+    line-height: 48px;
+    font-weight: 100;
+    color: #000;
+    margin: 120px 0 10px;
+  }
+
+  .kicker {
+    display: flex;
+    flex-direction: row;
+    align-content: space-between;
+    justify-content: space-between;
+  }
+
+  .attribution {
+    p {
+      font-family: $franklin;
+      font-size: 14px;
+      color: #999;
+      margin: 0;
+      line-height: 18px;
+
+      .author {
+        text-transform: uppercase;
+      }
+    }
+  }
 }
 
 
 // Body
 //------------------------------------------------------------------------------
 .g-body {
-  .g-toc {
+  .g-left-panel {
     float: left;
     position: relative;
-    top: 166px;
-    width: auto;
-    margin-top: 0px;
-    border-top: none;
-    border-bottom: none;
+    top: 0px;
+    width: 220px;
+    margin-top: -10px;
+    font-weight: 300;
+    padding: 20px;
 
-    .toc-kicker {
-      text-align: right;
-      display: block;
+    .section-kicker, .sibling-kicker {
+      font-family: $franklin;
+      font-weight: 600;
+      text-transform: capitalize;
+      color: #000;
+      font-size: 16px;
+      line-height: 24px;
+      margin-top: 30px;
     }
 
-    .toc-item {
-      display: block;
-      // width: 120px;
-      text-align: right;
-      border-bottom: 0.5px solid #ddd;
-      // -webkit-font-smoothing: antialiased;
+    ul.section, ul.sibling {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+
+      li {
+        display: block;
+        // border-bottom: 0.5px solid #ddd;
+        font-size: 16px;
+        line-height: 24px;
+        text-indent: -4px;
+        padding: 4px 0px;
+        border-bottom: 1px solid #ddd;
+
+        a {
+          padding: 3px 5px;
+        }
+
+        &:hover {
+          background: #f0f0f0;
+          // text-decoration: underline;
+        }
+      }
     }
 
     &.d-fixed {
@@ -260,5 +332,12 @@ a:link {
   .g-main-content {
     max-width: 600px;
     margin: 20px auto 0 auto;
+
+    p, ul, li, dt, dd {
+      font-family: $franklin;
+      font-weight: 300;
+      font-size: 1.125rem;
+      line-height: 1.5;
+    }
   }
 }

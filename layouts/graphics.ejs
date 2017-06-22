@@ -9,24 +9,26 @@
     <![endif]-->
 
     <!-- styles -->
+    <script src="https://***REMOVED***" async></script>
     <link href="/assets/css/style.css" rel="stylesheet">
   </head>
   <body>
-    <h1 class="visually-hidden">GRAPHICS TEMPLATE</h1>
+    <h1 class="visually-hidden">Default template</h1>
     <%- include partials/header %>
-
     <div class="g-body">
-      <div class="g-toc">
+      <div class="g-left-panel">
         <%- include partials/siblingList %>
         <% if (locals.sections && locals.sections.length) { %>
-          <div class="toc-kicker">Jump to section:</div>
           <%- include partials/sectionList %>
         <% } %>
       </div>
 
+      <% if (locals.content) { %>
       <div class="g-main-content">
         <%- content %>
       </div>
+      <% } %>
     </div>
+
   </body>
 </html>

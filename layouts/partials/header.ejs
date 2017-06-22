@@ -1,9 +1,14 @@
 <%- include breadcrumb %>
 <div class="g-upper-body">
-  <div class="headline">
-    <h1><%= title %></h1>
-    <p>Created by: <%= createdBy %> <%= createdAt %></p>
-    <p>Last updated by <%= lastUpdatedBy %> <%= lastUpdated %></p>
-    <p><a href="<%- editLink %>">Edit this page</a>
+  <h1 class="headline"><%= title %></h1>
+  <div class="kicker">
+    <div class="attribution">
+      <p>By <span class="author"><%= createdBy %></span> <%= createdAt %></p>
+      <p>Last updated by <%= lastUpdatedBy %> <%= lastUpdated %></p>
+    </div>
+    <div class="tool">
+      <button type="button" class="button"><a href="<%- editLink %>">Edit this</a></button>
+    </div>
   </div>
+
 </div>
