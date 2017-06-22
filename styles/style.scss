@@ -218,8 +218,47 @@ a:link {
 
 }
 
+// Upper Body
+//------------------------------------------------------------------------------
+.g-upper-body {
+  max-width: 600px;
+  margin: 80px auto 0 auto;
+}
+
+
 // Body
 //------------------------------------------------------------------------------
 .g-body {
-  margin-top: 80px
+  .g-toc {
+    float: left;
+    position: relative;
+    top: 166px;
+    width: auto;
+    margin-top: 0px;
+    border-top: none;
+    border-bottom: none;
+
+    .toc-kicker {
+      text-align: right;
+      display: block;
+    }
+
+    .toc-item {
+      display: block;
+      // width: 120px;
+      text-align: right;
+      border-bottom: 0.5px solid #ddd;
+      // -webkit-font-smoothing: antialiased;
+    }
+
+    &.d-fixed {
+      position: fixed;
+      top: 150px;
+    }
+  }
+
+  .g-main-content {
+    max-width: 600px;
+    margin: 20px auto 0 auto;
+  }
 }
