@@ -1,5 +1,225 @@
-// write some sass in here
+// Fonts
+//------------------------------------------------------------------------------
+$franklin: "nyt-franklin", arial, helvetica, sans-serif;
+$chelt: "nyt-cheltenham", georgia, "times new roman", times, serif;
+$chelt-sh: "nyt-cheltenham-sh", georgia, "times new roman", times, serif;
+$georgia: georgia, "times new roman", times, serif;
+$mag-slab: "nyt-mag-slab", georgia, "times new roman", times, serif;
+$mag-sans: "nyt-mag-sans", arial, helvetica, sans-serif;
+$mag-serif-headline: "nyt-mag-serif-headline", georgia, helvetica, sans-serif;
+$stymie: "nyt-stymie",georgia,"times new roman",times,serif;
+$karnak: "nyt-karnak-display-130124",arial,sans-serif;
+
+.legibility {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern";
+}
+.visually-hidden {
+  display: none;
+}
 
 h1, h2, h3, h4, h5, h6 {
   font-family: helvetica, arial, sans-serif;
+}
+
+body {
+  font-family: $franklin;
+  font-weight: 100;
+
+}
+
+a:hover {
+    text-decoration: underline;
+    outline: 0;
+}
+
+a:visited {
+    color: #326891;
+}
+
+a:link {
+    text-decoration: none;
+    color: #326891;
+}
+
+// Top Banner
+.masthead {
+  position: fixed;
+  background: #444;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000000090;
+  color: #ccc;
+
+  .container {
+    position: relative;
+    min-height: 47px;
+
+    .branding {
+      padding-top: 5px;
+      margin-bottom: 10px;
+      background: transparent;
+      float: left;
+
+      .branding-heading {
+        margin-top: 8px;
+        left: 20px;
+        position: absolute;
+
+        .nyt-logo {
+          height: 25px;
+          filter: invert(100%) brightness(80%);
+        }
+      }
+
+      .branding-label {
+        padding: 0 0 0 15px;
+        margin: 5px auto auto 50px;
+        display: inline-block;
+        height: 30px;
+        padding: 4px 0 0 15px;
+        vertical-align: top;
+        border-left: 1px solid rgba(255, 255, 255, 0.35);
+        color: #ccc;
+        font-family: 'Karnak','AICKarnak',Helvetica,sans-serif;
+        font-size: 18px;
+        text-transform: none;
+      }
+    }
+
+    .user-tools {
+      padding-right: 15px;
+      right: 80px;
+      margin-right: 10px;
+      float: none;
+      z-index: 2;
+      position: fixed;
+    }
+
+    .button {
+      font-size: 14px;
+      font-size: 0.875rem;
+      line-height: 20px;
+      line-height: 1.25rem;
+      font-weight: 400;
+      font-style: normal;
+      font-family: $franklin;
+      margin-top: 5px;
+      padding: 2px 9px 4px 7px;
+      background-color: transparent;
+      color: rgba(0,0,0,0.5);
+      text-transform: none;
+      border-radius: 3px;
+      transition: background-color 0.3s;
+      display: inline-block;
+      margin: 0;
+      padding: 7px 9px;
+      border: 1px solid #e2e2e2;
+      background-color: #fff;
+      color: #333;
+      cursor: pointer;
+    }
+
+    // About modal
+    .modalbox {
+      display: none;
+      position: absolute;
+      top: 55px;
+      right: -35px;
+      width: 270px;
+      height: 120px;
+      border: 1px solid #cdcdcd;
+      z-index: 10000000145;
+      background: #ddd;
+
+      .viewport-medium-10 & {
+        right: 20px;
+      }
+
+      &.active {
+        display: block;
+      }
+
+      &::after {
+        content: "\25B2";
+        color: #ddd;
+        cursor: pointer;
+        font-size: 22px;
+        line-height: 1em;
+        position: absolute;
+        right: 45px;
+        margin-right: 10px;
+        top: -16px;
+        z-index: 0;
+        display: inline-block;
+        -webkit-transform: scale(1.5, 1);
+        transform: scale(1.5, 0.8);
+        text-shadow: 0px -1px 0px #cdcdcd;
+
+        .viewport-medium-10 & {
+          right: 5px;
+        }
+      }
+    }
+
+    .modalbox-wrapper {
+      display: block;
+      width: auto;
+      height: 100%;
+      vertical-align: middle;
+      padding: 0 10px;
+    }
+
+    figcaption.modalbox-content {
+      padding: 20px 10px;
+      font-family: $franklin;
+      font-size: 14px;
+      line-height: 18px;
+      -webkit-font-smoothing: antialiased;
+      color: #333;
+      z-index: 1000;
+      position: relative;
+    }
+
+    .modalbox-close {
+      display: block;
+      margin: auto;
+      height: 0;
+      overflow: visible;
+      text-align: right;
+      z-index: 10;
+      cursor: default;
+
+      &::before {
+        content: "";
+        display: block;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: transparent;
+      }
+    }
+  }
+}
+
+// Breadcrumb
+//------------------------------------------------------------------------------
+.breadcrumb {
+  padding-left: 20px;
+  float: left;
+}
+
+.breadcrumb-item {
+  display: inline-block;
+
+}
+
+// Body
+//------------------------------------------------------------------------------
+.g-body {
+  margin-top: 80px
 }

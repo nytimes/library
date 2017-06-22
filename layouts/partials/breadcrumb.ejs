@@ -1,24 +1,51 @@
-<ul class="breadcrumb">
-  <li class="breadcrumb-item">
-    <a class="content-link" href="/">/</a>
-  </li>
-<% parentLinks.forEach((link) => { %>
-  <li class="breadcrumb-item">
-    <a class="content-link" href="<%- link.url %>" ><%= link.name %></a>
-    <a class="edit-link" href="<%- link.editLink %>">(edit)</a> /
-  </li>
-<% }) %>
-  <li class="breadcrumb-item">
-    <%= title %>
-    <a class="edit-link" href="<%- editLink %>">(edit)</a>
-  </li>
-</ul>
-<style>
-.breadcrumb {
-  padding-left: 0;
-}
+<header id="masthead" class="masthead" role="banner">
+  <div class="container">
+    <div class="branding">
+      <h2 class="branding-heading">
+        <a id="branding-heading-link" href="http://www.nytimes.com/">
+          <span class="visually-hidden">The New York Times</span>
+          <img src="/assets/images/nyt-T-logo.png" class="nyt-logo" alt="The New York Times">
+        </a>
+      </h2>
+      <h3 class="branding-label">
+        Library
+      </h3>
+    </div>
 
-.breadcrumb-item {
-  display: inline-block;
-}
-</style>
+    <ul class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a class="content-link" href="/">Home /</a>
+      </li>
+    <% parentLinks.forEach((link) => { %>
+      <li class="breadcrumb-item">
+        <a class="content-link" href="<%- link.url %>" ><%= link.name %></a>
+        <a class="edit-link" href="<%- link.editLink %>">(edit)</a> /
+      </li>
+    <% }) %>
+      <li class="breadcrumb-item">
+        <%= title %>
+        <a class="edit-link" href="<%- editLink %>">(edit)</a>
+      </li>
+    </ul>
+
+    <div class="user-tools">
+      <div id="about-button">
+        <button class="button">
+          <span class="button-text">About</span>
+        </button>
+      </div>
+      <div id="about-modalbox" class="modalbox">
+        <div id="about-close-area" class="modalbox-close"></div>
+        <figure class="modalbox-wrapper">
+        <figcaption class="modalbox-content">This is the landing page for docs.nyt.net. The code is here https://github.com/newsdev/nyt-library.</figcaption>
+        <a href="https://github.com/newsdev/nyt-library" target="_blank">
+          <button class="button" data-href="https://github.com/newsdev/nyt-library">
+            <!-- <img src="_big_assets/logos/ig-logo.svg" class="ig-logo" alt="Follow @nytarchives"> -->
+            <span class="button-text">Github</span>
+          </button>
+        </a>
+        </figure>
+      </div>
+    </div>
+  </div>
+</header>

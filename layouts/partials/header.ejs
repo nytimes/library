@@ -1,10 +1,13 @@
 <%- include breadcrumb %>
-<h1><%= title %></h1>
-<p>Created by: <%= createdBy %> <%= createdAt %></p>
-<p>Last updated by <%= lastUpdatedBy %> <%= lastUpdated %></p>
-<p><a href="<%- editLink %>">Edit this page</a>
-<%- include siblingList %>
-<% if (sections.length) { %>
-<h3>Jump to section:</h3>
-<%- include sectionList %>
-<% } %>
+
+<div class="g-body">
+  <h1><%= title %></h1>
+  <p>Created by: <%= createdBy %> <%= createdAt %></p>
+  <p>Last updated by <%= lastUpdatedBy %> <%= lastUpdated %></p>
+  <p><a href="<%- editLink %>">Edit this page</a>
+  <%- include siblingList %>
+  <% if (sections.length) { %>
+  <h3>Jump to section:</h3>
+  <%- include sectionList %>
+  <% } %>
+</div>
