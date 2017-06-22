@@ -4,9 +4,9 @@ RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 COPY package.json yarn.lock /usr/src/app/
-
 RUN yarn install
-RUN npm build
+
 COPY . /usr/src/app
+RUN npm build
 
 CMD [ "npm", "start" ]
