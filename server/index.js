@@ -9,6 +9,7 @@ const moment = require('moment')
 const {getTree, getMeta} = require('./list')
 const {fetchDoc, cleanName} = require('./docs')
 
+const indexName = 'home'
 const layoutsDir = path.join(__dirname, '../layouts')
 const availableLayouts = (fs.readdirSync(layoutsDir) || [])
   .reduce((memo, filename) => {
@@ -33,7 +34,7 @@ app.get('*', (req, res) => {
   const segments = req.path.split('/')
 
   // don't allow viewing index directly
-  if (segments.slice(-1)[0] === 'index') {
+  if (segments.slice(-1)[0] === indexName) {
     return res.redirect(301, segments.slice(0, -1).join('/'))
   }
 
@@ -44,7 +45,7 @@ app.get('*', (req, res) => {
     }
 
     const [data, parent] = retrieveDataForPath(req.path, tree)
-    const {id, breadcrumb, nodeType} = data
+    const {id, breadcrumb} = data
     if (!id) {
       return res.status(404).end('Not found.')
     }
@@ -101,8 +102,8 @@ function retrieveDataForPath(path, tree) {
   if ((pointer || {}).nodeType === 'branch') {
     parent = pointer
 
-    if (pointer.children.index) {
-      pointer = pointer.children.index
+    if (pointer.children[indexName]) {
+      pointer = pointer.children[indexName]
     }
   }
 
@@ -113,18 +114,18 @@ function retrieveDataForPath(path, tree) {
 function prepareContextualData(url, breadcrumb, parent, slug) {
   const breadcrumbInfo = breadcrumb.map(({id}) => getMeta(id))
 
-  const self = slug === 'index' ? 'index' : url.split('/').slice(-1)[0]
+  const self = slug === indexName ? indexName : url.split('/').slice(-1)[0]
   // most of what we are doing here is preparing parents and siblings
   // we need the url and parent object, as well as the breadcrumb to do that
   const siblings = Object.keys(parent.children)
-    .filter((slug) => slug !== self && slug !== 'index')
+    .filter((slug) => slug !== self && slug !== indexName)
     .map((slug) => {
       const {id} = parent.children[slug] // we should do something here
       const {sort, prettyName, webViewLink} = getMeta(id)
 
       // on an index page, the base url is the current url
       // for other pages, remove the slug from that url
-      const baseUrl = self === 'index' ? url : `${url.split('/').slice(0, -1).join('/')}`
+      const baseUrl = self === indexName ? url : `${url.split('/').slice(0, -1).join('/')}`
       return {
         sort,
         name: prettyName,
