@@ -14,7 +14,7 @@ git clone git@github.com:newsdev/nyt-library.git
 Copy the preview service account credentials to the app directory:
 
 ```
-cp ~***REMOVED*** nyt-library/.auth.json
+cp ~***REMOVED*** nyt-library/server/.auth.json
 ```
 
 Install dependencies:
