@@ -17,10 +17,10 @@
     <%- include partials/header %>
     <div class="g-body">
       <div class="g-left-panel">
-        <%- include partials/siblingList %>
         <% if (locals.sections && locals.sections.length) { %>
           <%- include partials/sectionList %>
         <% } %>
+        <%- include partials/siblingList %>
       </div>
 
       <% if (locals.content) { %>
@@ -28,6 +28,10 @@
         <%- content %>
       </div>
       <% } %>
+
+      <div class="g-footer">
+        <button type="button" class="button"><a href="<%- editLink %>">Edit this</a></button>
+      </div>
     </div>
     <script>
       // Google Analytics tracking

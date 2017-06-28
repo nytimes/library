@@ -246,9 +246,9 @@ a:link {
 
   h1.headline {
     font-family: $chelt;
-    font-size: 48px;
-    line-height: 48px;
-    font-weight: 100;
+    font-size: 44px;
+    line-height: 44px;
+    font-weight: 200;
     color: #000;
     margin: 120px 0 10px;
   }
@@ -271,6 +271,11 @@ a:link {
       .author {
         text-transform: uppercase;
       }
+
+      &:last-child {
+        font-size: 12px;
+        font-style: italic;
+      }
     }
   }
 }
@@ -279,12 +284,14 @@ a:link {
 // Body
 //------------------------------------------------------------------------------
 .g-body {
+  max-width: 1280px;
+  margin: 0 auto;
+
   .g-left-panel {
     float: left;
     position: relative;
-    top: 0px;
+    top: 40px;
     width: 220px;
-    margin-top: -10px;
     font-weight: 300;
     padding: 20px;
 
@@ -293,9 +300,9 @@ a:link {
       font-weight: 600;
       text-transform: capitalize;
       color: #000;
-      font-size: 16px;
+      font-size: 14px;
       line-height: 24px;
-      margin-top: 30px;
+      margin-bottom: 10px;
     }
 
     ul.section, ul.sibling {
@@ -305,22 +312,35 @@ a:link {
 
       li {
         display: block;
-        // border-bottom: 0.5px solid #ddd;
-        font-size: 16px;
-        line-height: 24px;
+        font-size: 15px;
+        line-height: 20px;
         text-indent: -4px;
-        padding: 4px 0px;
-        border-bottom: 1px solid #ddd;
+        padding: 5px 0px;
+        border-bottom: 0.5px solid #ddd;
+
+        &:last-child {
+          border-bottom: none;
+        }
 
         a {
           padding: 3px 5px;
-        }
-
-        &:hover {
-          background: #f0f0f0;
-          // text-decoration: underline;
+          color: #333;
+          
+          &:hover {
+            color: #E16D6D;
+          }
         }
       }
+    }
+
+    ul.sibling {
+      list-style-type: none;
+      margin: 20px 0 0 0;
+      padding: 20px;
+      border: 1px solid #ddd;
+      -webkit-box-shadow: -8px -8px 0px 0px rgba(236,236,236,1);
+      -moz-box-shadow: -8px -8px 0px 0px rgba(236,236,236,1);
+      box-shadow: -8px -8px 0px 0px rgba(236,236,236,1);
     }
 
     &.d-fixed {
@@ -332,6 +352,8 @@ a:link {
   .g-main-content {
     max-width: 600px;
     margin: 20px auto 0 auto;
+    border-top: 5px solid #ddd;
+    padding: 0 40px;
 
     p, ul, li, dt, dd {
       font-family: $franklin;
@@ -339,5 +361,20 @@ a:link {
       font-size: 1.125rem;
       line-height: 1.5;
     }
+
+    h1 {
+      font-size: 30px;
+      margin-bottom: 0px;
+    }
+
+    h2 {
+      font-weight: 400;
+      font-size: 26px;
+    }
+  }
+
+  .g-footer {
+    max-width: 600px;
+    margin: 80px auto 100px auto;
   }
 }
