@@ -8,6 +8,7 @@ const moment = require('moment')
 
 const {getTree, getMeta} = require('./list')
 const {fetchDoc, cleanName} = require('./docs')
+const search = require('./search')
 
 const indexName = 'home'
 const layoutsDir = path.join(__dirname, '../layouts')
@@ -28,6 +29,16 @@ app.get('/healthcheck', (req, res) => {
 
 // serve all files in the public folder
 app.use('/assets', express.static(path.join(__dirname, '../public')))
+
+app.get('/search', (req, res) => {
+  if(req.query.q) {
+    search.run(req.query.q, (err, data) => {
+      res.render('../layouts/search', { q: req.query.q, results: data })
+    })
+  } else {
+    res.render('../layouts/search')
+  }
+})
 
 app.get('*', (req, res) => {
   console.log(`GET ${req.path}`)
