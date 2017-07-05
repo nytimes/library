@@ -79,20 +79,28 @@ function normalizeHtml(html) {
 
       if (newStyle.length > 0) {
         $(el).attr('style', newStyle)
-      } else if (el.tagName === 'span') { // if a span has no styles remaining, just kill it
-        $(el).replaceWith($(el).text())
       } else {
         $(el).removeAttr('style') // if a <p>, <h1>, or other tag has no styles kill the style attr
       }
     }
 
-    // remove empty <span> tags
-    if (!elStyle && el.tagName === 'span') {
-      $(el).replaceWith($(el).text())
+    // remove unnecessary <span> tags (whose styles were completely scrubbed)
+    if (!$(el).attr('style') && el.tagName === 'span') {
+      $(el).replaceWith(el.children)
     }
 
     // kill the class attr
     $(el).removeAttr('class')
+
+    // Google HTML wraps links in a google.com redirector, extract the original link at set this as an href
+    if(el.tagName == 'a' && $(el).attr('href')) {
+      var hrefMatch = $(el).attr('href').match('https://www.google.com/url\\?q=(.+)&sa=')
+      if(hrefMatch) {
+        $(el).attr('href', hrefMatch[1])
+      }
+
+      // TODO if href is a drive or folder link, expand to docs.nyt.net link
+    }
 
     return el
   })
