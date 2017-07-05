@@ -1,3 +1,18 @@
+$tablet-width: 960px;
+$desktop-width: 1024px;
+
+@mixin tablet {
+  @media (min-width: #{$tablet-width}) and (max-width: #{$desktop-width - 1px}) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: #{$desktop-width}) {
+    @content;
+  }
+}
+
 // Fonts
 //------------------------------------------------------------------------------
 $franklin: "nyt-franklin", arial, helvetica, sans-serif;
@@ -9,6 +24,10 @@ $mag-sans: "nyt-mag-sans", arial, helvetica, sans-serif;
 $mag-serif-headline: "nyt-mag-serif-headline", georgia, helvetica, sans-serif;
 $stymie: "nyt-stymie",georgia,"times new roman",times,serif;
 $karnak: "nyt-karnak-display-130124",arial,sans-serif;
+
+// Color
+$pink: #E16D6D;
+$blue: #326891;
 
 .legibility {
   -webkit-font-smoothing: antialiased;
@@ -30,18 +49,18 @@ body {
   font-weight: 100;
 }
 
-a:hover {
-    text-decoration: underline;
-    outline: 0;
-}
-
 a:visited {
-    color: #326891;
+    color: $pink;
 }
 
 a:link {
     text-decoration: none;
-    color: #326891;
+    color: $pink;
+}
+
+a:hover {
+    text-decoration: underline;
+    outline: 0;
 }
 
 .button {
@@ -107,6 +126,13 @@ a:link {
         -webkit-font-smoothing: antialiased;
         font-weight: 100;
         line-height: 26px;
+
+        a:link, a:visited {
+          color: #ccc;
+        }
+        a:hover {
+          // color: $pink;
+        }
       }
     }
 
@@ -115,99 +141,7 @@ a:link {
       float: none;
       position: fixed;
       top: 10px;
-
-      // About modal
-      .modalbox {
-        display: none;
-        position: absolute;
-        top: 55px;
-        right: -35px;
-        width: 270px;
-        height: 120px;
-        border: 1px solid #cdcdcd;
-        z-index: 10000000145;
-        background: #ddd;
-
-        // .viewport-medium-10 & {
-        //   right: 20px;
-        // }
-
-        &.active {
-          display: block;
-        }
-
-        &:after {
-          content: "\25B2";
-          color: #ddd;
-          cursor: pointer;
-          font-size: 22px;
-          line-height: 1em;
-          position: absolute;
-          right: 45px;
-          margin-right: 10px;
-          top: -16px;
-          z-index: 0;
-          display: inline-block;
-          -webkit-transform: scale(1.5, 1);
-          transform: scale(1.5, 0.8);
-          text-shadow: 0px -1px 0px #cdcdcd;
-
-          // .viewport-medium-10 & {
-          //   right: 5px;
-          // }
-        }
-      }
-
-      .modalbox-wrapper {
-        display: block;
-        width: auto;
-        height: 100%;
-        vertical-align: middle;
-        padding: 0 10px;
-      }
-
-      figcaption.modalbox-content {
-        padding: 20px 10px;
-        font-family: $franklin;
-        font-size: 14px;
-        line-height: 18px;
-        -webkit-font-smoothing: antialiased;
-        color: #333;
-        z-index: 1000;
-        position: relative;
-      }
-
-      .modalbox-close {
-        display: block;
-        margin: auto;
-        height: 0;
-        overflow: visible;
-        text-align: right;
-        z-index: 10;
-        cursor: default;
-
-        &:before {
-          content: "";
-          display: block;
-          position: fixed;
-          left: 0;
-          top: 0;
-          width: 100%;
-          height: 100%;
-          background-color: transparent;
-        }
-      }
-
-      // .modalbox-close,
-      // .modalbox-content {
-      //   max-width: 500px;
-      //   margin: 0 auto;
-      // }
-
     }
-
-
-
   }
 }
 
@@ -215,7 +149,7 @@ a:link {
 // Breadcrumb
 //------------------------------------------------------------------------------
 .breadcrumb {
-  padding-left: 20px;
+  padding-left: 8px;
   float: left;
 }
 
@@ -294,6 +228,14 @@ a:link {
     width: 220px;
     font-weight: 300;
     padding: 20px;
+    display: none;
+
+    @include tablet{
+  		display: none;
+  	}
+  	@include desktop{
+  		display: block;
+  	}
 
     .section-kicker, .sibling-kicker {
       font-family: $franklin;
@@ -327,7 +269,7 @@ a:link {
           color: #333;
 
           &:hover {
-            color: #E16D6D;
+            color: $pink;
           }
         }
       }
@@ -371,10 +313,72 @@ a:link {
       font-weight: 400;
       font-size: 26px;
     }
+
+    img {
+      max-width: 580px;
+      // box-shadow: -8px -8px 0px 0px #ececec;
+      border: 1px solid #ddd;
+      padding: 10px;
+      display: block;
+      margin: 20px 0;
+    }
+
+    pre{
+      counter-reset:line-numbering;
+      background:#2c3e50;
+      padding:12px 0px 14px 0;
+      width:600px;
+      color:#ecf0f1;
+      line-height:140%;
+        .line::before {
+          content: counter(line-numbering);
+          counter-increment: line-numbering;
+          padding-right: 1em;
+          /* space after numbers */
+          padding-left:8px;
+          width: 1.5em;
+          text-align: right;
+          opacity: 0.5;
+          color:white;
+      }
+    }
   }
 
   .g-footer {
     max-width: 600px;
-    margin: 80px auto 100px auto;
+    margin: 120px auto 100px auto;
+    border-top: 1px solid #ccc;
+    padding-top: 30px;
+
+    button {
+      font-size: 15px;
+      line-height: 20px;
+      font-weight: 400;
+      font-style: normal;
+      font-family: $franklin;
+      background-color: transparent;
+      transition: background-color 0.3s;
+      display: inline-block;
+      padding: 7px 10px;
+      border: 1px solid #999;
+      cursor: pointer;
+      -webkit-font-smoothing: antialiased;
+      -webkit-box-shadow: -8px -8px 0px 0px #ececec;
+      -moz-box-shadow: -8px -8px 0px 0px #ececec;
+      box-shadow: 5px 5px 0px 0px #ececec;
+      margin-right: 10px;
+
+      a:link, a:visited {
+        color: #333;
+      }
+
+      &:hover {
+        background: #333;
+        a {
+          color: #fff;
+          text-decoration: none;
+        }
+      }
+    }
   }
 }
