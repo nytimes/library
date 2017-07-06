@@ -1,10 +1,22 @@
 <%- include breadcrumb %>
 <div class="g-upper-body">
+  <div class="search-topper">
+    <form method="GET" action="/search" class="search-container">
+      <input id="search-box" type="text" name="q" value="<%= locals.q %>" placeholder="Search for documents.." onfocus="this.placeholder = ''" onblur="this.placeholder = 'Search for documents..'"/>
+      <button class="icon"><i class="fa fa-search"></i></button>
+    </form>
+
+    <div class="additional-menus">
+      <button type="button" class="btn-plaintext"><a href="#">Find by Category</a></button>
+      <button type="button" class="btn-plaintext"><a href="#">Onboarding Guide</a></button>
+    </div>
+  </div>
+
   <h1 class="headline"><%= title %></h1>
   <div class="kicker">
     <div class="attribution">
-      <p>Created by <span class="author"><%= createdBy %></span> <%= createdAt %></p>
-      <p>Last edited by <%= lastUpdatedBy %> <%= lastUpdated %></p>
+      <p>Created by <span class="author"><%= createdBy %></span> <%= createdAt %>.
+        Last edited by <span class="author"><%= lastUpdatedBy %></span> <%= lastUpdated %></p>
     </div>
     <div class="tool">
       <!-- <button type="button" class="button"><a href="<%- editLink %>">Edit this</a></button> -->

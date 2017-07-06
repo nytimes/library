@@ -16,13 +16,11 @@
       </li> -->
     <% parentLinks.forEach((link) => { %>
       <li class="breadcrumb-item">
-        ⇾ <a class="content-link" href="<%- link.url %>" ><%= link.name %> </a> ⇾
-        <!-- <a class="edit-link" href="<%- link.editLink %>">(edit)</a>  -->
+        ⇾ <a class="content-link" href="<%- link.url %>" ><%= link.name %> </a>
       </li>
     <% }) %>
       <li class="breadcrumb-item">
-        <%= title %>
-        <!-- <a class="edit-link" href="<%- editLink %>">(edit)</a> -->
+        ⇾ <%= title %>
       </li>
     </ul>
 

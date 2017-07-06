@@ -131,7 +131,8 @@ a:hover {
           color: #ccc;
         }
         a:hover {
-          // color: $pink;
+          color: $pink;
+          text-decoration: none;
         }
       }
     }
@@ -151,11 +152,13 @@ a:hover {
 .breadcrumb {
   padding-left: 8px;
   float: left;
+  padding-top: 1px;
 }
 
 .breadcrumb-item {
   display: inline-block;
-
+  font-size: 15px;
+  letter-spacing: 0.01em;
 
   a:hover {
       text-decoration: underline;
@@ -172,19 +175,113 @@ a:hover {
   }
 }
 
+// Search
+//------------------------------------------------------------------------------
+.search-container {
+  vertical-align: middle;
+  white-space: nowrap;
+  width: calc(100% - 20px);
+
+  #search-box {
+    font-size: 16px;
+    line-height: 30px;
+    font-weight: 400;
+    font-style: normal;
+    font-family: $franklin;
+    background-color: transparent;
+    transition: background-color 0.3s;
+    display: inline-block;
+    padding: 7px 10px;
+    border: 1px solid #999;
+    -webkit-font-smoothing: antialiased;
+    -webkit-box-shadow: 5px 5px 0px 0px #4d4d4d;
+    -moz-box-shadow: 5px 5px 0px 0px #4d4d4d;
+    box-shadow: 5px 5px 0px 0px #4d4d4d;
+    color: #000;
+    float: left;
+    padding-left: 15px;
+    width: calc(100% - 20px);
+    -webkit-transition: background .55s ease;
+    -moz-transition: background .55s ease;
+    -ms-transition: background .55s ease;
+    -o-transition: background .55s ease;
+    transition: background .55s ease;
+    &:hover,
+    &:focus,
+    &:active {
+      outline: none;
+    }
+  }
+
+  &:hover,
+  &:focus,
+  &:active {
+    outline: none;
+    background: #FCF6F6;
+    .icon {
+      outline: none;
+      opacity: 1;
+      margin-left: -50px;
+    }
+  }
+
+  .icon{
+    border: none;
+    // background: #4d4d4d;
+    background: $pink;
+    height: 46px;
+    width: 50px;
+    color: #fff;
+    opacity: 0;
+    font-size: 12pt;
+    cursor: pointer;
+    margin-left: -40px;
+    -webkit-transition: all .35s ease;
+    -moz-transition: all .35s ease;
+    -ms-transition: all .35s ease;
+    -o-transition: all .35s ease;
+    transition: all .35s ease;
+  }
+
+  &:hover {
+    .icon:hover {
+      background: $pink;
+    }
+  }
+
+  input::-webkit-input-placeholder,
+  input:-moz-placeholder,
+  input:-ms-input-placeholder  {
+    color: #aaa;
+  }
+  input:focus::-webkit-input-placeholder,
+  input:focus:-moz-placeholder,
+  input:focus:-ms-input-placeholder  {
+    opacity: 0
+  }
+}
+
+.additional-menus {
+  clear: both;
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+
 // Upper Body
 //------------------------------------------------------------------------------
 .g-upper-body {
   max-width: 600px;
-  margin: 80px auto 30px auto;
+  margin: 100px auto 30px auto;
 
   h1.headline {
     font-family: $chelt;
     font-size: 44px;
-    line-height: 44px;
+    line-height: 48px;
     font-weight: 200;
     color: #000;
-    margin: 120px 0 10px;
+    margin: 60px 0 5px;
   }
 
   .kicker {
@@ -197,18 +294,13 @@ a:hover {
   .attribution {
     p {
       font-family: $franklin;
-      font-size: 14px;
+      font-size: 13px;
       color: #999;
       margin: 0;
       line-height: 18px;
 
       .author {
-        text-transform: uppercase;
-      }
-
-      &:last-child {
-        font-size: 12px;
-        font-style: italic;
+        font-weight: 500;
       }
     }
   }
@@ -227,7 +319,7 @@ a:hover {
     top: 40px;
     width: 220px;
     font-weight: 300;
-    padding: 20px;
+    padding: 10px 20px;
     display: none;
 
     @include tablet{
@@ -245,11 +337,12 @@ a:hover {
       font-size: 14px;
       line-height: 24px;
       margin-bottom: 10px;
+      margin-top: 20px;
     }
 
     ul.section, ul.sibling {
       list-style-type: none;
-      margin: 0;
+      margin: 0 0 60px 0;
       padding: 0;
 
       li {
@@ -277,7 +370,7 @@ a:hover {
 
     ul.sibling {
       list-style-type: none;
-      margin: 60px 0 0 0;
+      margin: 0;
       padding: 20px;
       border: 1px solid #ddd;
       -webkit-box-shadow: -8px -8px 0px 0px rgba(236,236,236,1);
@@ -295,7 +388,7 @@ a:hover {
     max-width: 600px;
     margin: 20px auto 0 auto;
     border-top: 5px solid #ddd;
-    padding: 0 40px;
+    padding: 10px 40px;
 
     p, ul, li, dt, dd {
       font-family: $franklin;
@@ -325,21 +418,34 @@ a:hover {
 
     pre{
       counter-reset:line-numbering;
-      background:#2c3e50;
-      padding:12px 0px 14px 0;
+      background:#FCF6F6;
+      padding:0px 0px 14px 0;
+      // padding: 0;
       width:600px;
-      color:#ecf0f1;
+      color:#000;
       line-height:140%;
-        .line::before {
-          content: counter(line-numbering);
-          counter-increment: line-numbering;
-          padding-right: 1em;
-          /* space after numbers */
-          padding-left:8px;
-          width: 1.5em;
-          text-align: right;
-          opacity: 0.5;
-          color:white;
+
+      .line::before {
+        content: counter(line-numbering);
+        counter-increment: line-numbering;
+        padding-right: 1em;
+        /* space after numbers */
+        padding-left:8px;
+        width: 1.5em;
+        text-align: right;
+        opacity: 0.5;
+        color:#aaa;
+      }
+
+      &:before {
+        display: block;
+        width: calc(100% - 10px);
+        height: 20px;
+        content: 'Code';
+        background: #EEE9E9;
+        color:#aaa;
+        padding-left: 10px;
+        margin-bottom: 10px;
       }
     }
   }
@@ -348,9 +454,9 @@ a:hover {
     max-width: 600px;
     margin: 120px auto 100px auto;
     border-top: 1px solid #ccc;
-    padding-top: 30px;
+    padding: 30px 40px;
 
-    button {
+    button.btn-footer {
       font-size: 15px;
       line-height: 20px;
       font-weight: 400;
@@ -363,8 +469,8 @@ a:hover {
       border: 1px solid #999;
       cursor: pointer;
       -webkit-font-smoothing: antialiased;
-      -webkit-box-shadow: -8px -8px 0px 0px #ececec;
-      -moz-box-shadow: -8px -8px 0px 0px #ececec;
+      -webkit-box-shadow: 5px 5px 0px 0px #ececec;
+      -moz-box-shadow: 5px 5px 0px 0px #ececec;
       box-shadow: 5px 5px 0px 0px #ececec;
       margin-right: 10px;
 
@@ -379,6 +485,30 @@ a:hover {
           text-decoration: none;
         }
       }
+    }
+
+    button.btn-plaintext {
+      float: right;
+    }
+
+
+  }
+}
+
+button.btn-plaintext {
+  border: none;
+  text-decoration: underline;
+  background: transparent;
+
+  a:link, a:visited {
+    font-size: 13px;
+    color: #999;
+    line-height: 29px;
+  }
+  &:hover {
+    cursor: pointer;
+    a {
+      color: $pink;
     }
   }
 }
