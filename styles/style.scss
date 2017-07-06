@@ -528,6 +528,30 @@ button.btn-plaintext {
     }
   }
 
+  #g-search-page {
+    padding: 0;
+    margin: 0 auto;
+    border-top: none;
+
+    h3.search-kicker {
+      margin: 20px 0;
+      font-weight: 600;
+    }
+
+    .search-result {
+      p {
+        font-size: 15px;
+        margin: 0;
+        line-height: 32px;
+      }
+      h3 {
+        font-weight: 400;
+        margin: 0;
+        margin-top: 15px;
+      }
+    }
+  }
+
   .g-footer {
     max-width: 600px;
     margin: 120px auto 60px auto;
@@ -537,5 +561,8 @@ button.btn-plaintext {
     button.btn-plaintext {
       float: right;
     }
+  }
+  .g-footer-shorter {
+    margin: 60px auto;
   }
 }
