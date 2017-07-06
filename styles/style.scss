@@ -26,7 +26,10 @@ $stymie: "nyt-stymie",georgia,"times new roman",times,serif;
 $karnak: "nyt-karnak-display-130124",arial,sans-serif;
 
 // Color
+//------------------------------------------------------------------------------
 $pink: #E16D6D;
+$lightpink: #FCF6F6;
+$darkpink: #ab2d2d;
 $blue: #326891;
 
 .legibility {
@@ -38,6 +41,8 @@ $blue: #326891;
   display: none;
 }
 
+// Basic Styling
+//------------------------------------------------------------------------------
 h1, h2, h3, h4, h5, h6 {
   font-family: $franklin;
   margin-top: 45px;
@@ -63,7 +68,22 @@ a:hover {
     outline: 0;
 }
 
-.button {
+// Tables
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+th, td {
+  padding: 0.25rem 0.5rem;
+  text-align: left;
+  border: 1px solid #ccc;
+  p {
+    margin: 0;
+  }
+}
+
+// Buttons
+button.button {
   font-size: 15px;
   line-height: 20px;
   font-weight: 400;
@@ -79,6 +99,56 @@ a:hover {
   cursor: pointer;
   -webkit-font-smoothing: antialiased;
 }
+
+button.btn-footer {
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 400;
+  font-style: normal;
+  font-family: $franklin;
+  background-color: transparent;
+  transition: background-color 0.3s;
+  display: inline-block;
+  padding: 7px 10px;
+  border: 1px solid #999;
+  cursor: pointer;
+  -webkit-font-smoothing: antialiased;
+  -webkit-box-shadow: 5px 5px 0px 0px #ececec;
+  -moz-box-shadow: 5px 5px 0px 0px #ececec;
+  box-shadow: 5px 5px 0px 0px #ececec;
+  margin-right: 10px;
+
+  a:link, a:visited {
+    color: #333;
+  }
+
+  &:hover {
+    background: #333;
+    a {
+      color: #fff;
+      text-decoration: none;
+    }
+  }
+}
+
+button.btn-plaintext {
+  border: none;
+  text-decoration: underline;
+  background: transparent;
+
+  a:link, a:visited {
+    font-size: 13px;
+    color: #999;
+    line-height: 29px;
+  }
+  &:hover {
+    cursor: pointer;
+    a {
+      color: $pink;
+    }
+  }
+}
+
 
 // Top Banner
 //------------------------------------------------------------------------------
@@ -217,7 +287,7 @@ a:hover {
   &:focus,
   &:active {
     outline: none;
-    background: #FCF6F6;
+    background:  $lightpink;
     .icon {
       outline: none;
       opacity: 1;
@@ -227,7 +297,6 @@ a:hover {
 
   .icon{
     border: none;
-    // background: #4d4d4d;
     background: $pink;
     height: 46px;
     width: 50px;
@@ -405,6 +474,8 @@ a:hover {
     h2 {
       font-weight: 400;
       font-size: 26px;
+      line-height: 34px;
+      margin-bottom: 0px;
     }
 
     img {
@@ -418,9 +489,8 @@ a:hover {
 
     pre{
       counter-reset:line-numbering;
-      background:#FCF6F6;
+      background: $lightpink;
       padding:0px 0px 14px 0;
-      // padding: 0;
       width:600px;
       color:#000;
       line-height:140%;
@@ -446,69 +516,26 @@ a:hover {
         color:#aaa;
         padding-left: 10px;
         margin-bottom: 10px;
+        margin-top: 20px;
+        line-height: 20px;
       }
+    }
+
+    tt {
+      background: $lightpink;
+      color: $darkpink;
+      padding: 2px 5px;
     }
   }
 
   .g-footer {
     max-width: 600px;
-    margin: 120px auto 100px auto;
+    margin: 120px auto 60px auto;
     border-top: 1px solid #ccc;
     padding: 30px 40px;
 
-    button.btn-footer {
-      font-size: 15px;
-      line-height: 20px;
-      font-weight: 400;
-      font-style: normal;
-      font-family: $franklin;
-      background-color: transparent;
-      transition: background-color 0.3s;
-      display: inline-block;
-      padding: 7px 10px;
-      border: 1px solid #999;
-      cursor: pointer;
-      -webkit-font-smoothing: antialiased;
-      -webkit-box-shadow: 5px 5px 0px 0px #ececec;
-      -moz-box-shadow: 5px 5px 0px 0px #ececec;
-      box-shadow: 5px 5px 0px 0px #ececec;
-      margin-right: 10px;
-
-      a:link, a:visited {
-        color: #333;
-      }
-
-      &:hover {
-        background: #333;
-        a {
-          color: #fff;
-          text-decoration: none;
-        }
-      }
-    }
-
     button.btn-plaintext {
       float: right;
-    }
-
-
-  }
-}
-
-button.btn-plaintext {
-  border: none;
-  text-decoration: underline;
-  background: transparent;
-
-  a:link, a:visited {
-    font-size: 13px;
-    color: #999;
-    line-height: 29px;
-  }
-  &:hover {
-    cursor: pointer;
-    a {
-      color: $pink;
     }
   }
 }
