@@ -33,7 +33,12 @@ http://localhost.nytimes.com:3000/
 
 http://localhost.nytimes.com:3000/graphics/how-to-make-promos
 
+
+### Tests
+
 You can run the unit tests (which exercise HTML parsing and eventually routing logic) with `npm test`.
+
+The HTML parsing tests are based on the [Supported Formats doc](https://docs.google.com/document/d/***REMOVED***/edit).  To download a fresh copy of the HTML after making edits, run `node test/data/update.js`.
 
 
 ## Deploying the app
