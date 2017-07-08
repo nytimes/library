@@ -1,7 +1,7 @@
 const fs = require('fs')
 const docs = require('../server/docs')
 const cheerio = require('cheerio')
-const assert = require('assert')
+const assert = require('chai').assert
 
 describe("HTML processing", function() {
 
@@ -14,6 +14,11 @@ describe("HTML processing", function() {
   it("strips unnecessary styles", function() {
     let header = this.output('h2')
     assert.equal(null, header.attr('style'))
+  })
+
+  it("strips unnecessary &nbsp;s", function() {
+    let introHTML = this.output("p:contains('Basic text format')").html()
+    assert.match(introHTML, /Text color and highlighting/)
   })
 
   describe("inline formats", function() {
@@ -55,6 +60,13 @@ describe("HTML processing", function() {
 
       let nestedList   = this.output("ul:contains('Item 1.1')").first()
       assert.ok(nestedList.attr('class').match(/ level-1/))
+    })
+  })
+
+  describe("code block handling", function() {
+    it("allows &nbsp; as part of a code block", function() {
+      let codeBlock = this.output('pre')
+      assert.match(codeBlock.html(), /&amp;nbsp/)
     })
   })
 

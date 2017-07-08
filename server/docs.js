@@ -70,6 +70,9 @@ function fetch(id, authClient, cb) {
 }
 
 function normalizeHtml(html) {
+  // scrub all &nbsp;s (if there is a &nbsp; in a code block it will be escaped)
+  html = html.replace(/&nbsp;/g,' ')
+
   const $ = cheerio.load(html)
 
   $('body *').map((idx, el) => {
