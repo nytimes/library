@@ -46,20 +46,20 @@ describe("HTML processing", function() {
   describe("list handling", function() {
     it("preserves classing on lists", function() {
       let ol = this.output('ol').first()
-      assert.ok(/lst-/.test(ol.attr('class')))
+      assert.match(ol.attr('class'), /lst-/)
     })
 
     it("presrves the associated style block for lists", function() {
       let olClass = this.output('ol').first().attr('class').split(' ')[0]
-      assert.ok(this.processedHTML.match(`ol.${olClass} \{`))
+      assert.match(this.processedHTML, new RegExp(`ol.${olClass} \{`))
     })
 
     it("applies a level- class on lists to support indentation", function() {
       let topLevelList = this.output("ul:contains('Item 1')").first()
-      assert.ok(topLevelList.attr('class').match(/ level-0/))
+      assert.match(topLevelList.attr('class'), / level-0/)
 
       let nestedList   = this.output("ul:contains('Item 1.1')").first()
-      assert.ok(nestedList.attr('class').match(/ level-1/))
+      assert.match(nestedList.attr('class'), / level-1/)
     })
   })
 
