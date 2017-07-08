@@ -4,8 +4,6 @@ const async = require('async')
 const google = require('googleapis')
 const cheerio = require('cheerio')
 const pretty = require('pretty')
-const htmlToText = require('html-to-text')
-const escape = require('escape-html')
 
 const {getAuth} = require('./auth')
 
@@ -130,7 +128,9 @@ function normalizeHtml(html) {
 function formatCode(html) {
   // Expand code blocks
   html = html.replace(/<p>```(.*?)<\/p>(.+?)<p>```<\/p>/ig, (match, codeType, content) => {
-    content = htmlToText.fromString(content)
+    // strip interior <p> tags added by google
+    content = content.replace(/<\/p><p>/g, "\n").replace(/<\/?p>/g,'')
+
     return `<pre type="${codeType}">${formatCodeContent(content)}</pre>`
   })
 
@@ -143,9 +143,7 @@ function formatCode(html) {
 }
 
 function formatCodeContent(content) {
-  content = escape(content)
-  content = content.replace(/\n\n/g, '\n')
-  content = content.replace(/[‘’]/g, "'").replace(/[””]/g, '"')
+  content = content.replace(/[‘’]|&#x201[89];/g, "'").replace(/[“”]|&#x201[CD];/g, '"') // remove smart quotes
   return content
 }
 

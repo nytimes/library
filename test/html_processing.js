@@ -68,6 +68,17 @@ describe("HTML processing", function() {
       let codeBlock = this.output('pre')
       assert.match(codeBlock.html(), /&amp;nbsp/)
     })
+
+    it("preserves whitespace at the start of a line", function() {
+      let codeBlock = this.output('pre')
+      assert.match(codeBlock.html(), /   if \( \$\(this\)\.find/)
+    })
+
+    it("scrubs smart quotes", function() {
+      let codeBlock = this.output('pre')
+      assert.match(codeBlock.html(), /singleQuotedStr = &apos;str&apos;/)
+      assert.match(codeBlock.html(), /doubleQuotedStr = &quot;str&quot;/)
+    })
   })
 
 })
