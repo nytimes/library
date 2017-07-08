@@ -33,6 +33,8 @@ http://localhost.nytimes.com:3000/
 
 http://localhost.nytimes.com:3000/graphics/how-to-make-promos
 
+You can run the unit tests (which exercise HTML parsing and eventually routing logic) with `npm test`.
+
 
 ## Deploying the app
 
