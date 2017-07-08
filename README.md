@@ -1,4 +1,4 @@
-NYT Library
+<!-- NYT Library -->
 ========
 
 A collaborative newsroom documentation site, powered by Google Docs.
@@ -24,7 +24,7 @@ cd nyt-library && yarn install
 
 Start the app:
 ```
-npm start
+npm build && npm run watch
 ```
 
 The app should now be running on port 3000:
