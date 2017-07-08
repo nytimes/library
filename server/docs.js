@@ -20,6 +20,13 @@ exports.slugify = (text = '') => {
     .replace(/\s+/g, '-')
 }
 
+exports.processHtml = (html) => {
+  html = normalizeHtml(html)
+  html = formatCode(html)
+  html = pretty(html)
+  return html
+}
+
 exports.fetchDoc = (docId, cb) => {
   getAuth((err, auth) => {
     if (err) {
@@ -28,16 +35,14 @@ exports.fetchDoc = (docId, cb) => {
 
     fetch(docId, auth, (err, html, originalRevision) => {
       if (err) return cb(err)
-
-      html = normalizeHtml(html)
-      html = formatCode(html)
-      html = pretty(html)
+      html = exports.processHtml(html)
       const sections = getSections(html)
       // maybe we should pull out headers here
       cb(err, {html, originalRevision, sections})
     })
   })
 }
+
 
 function fetch(id, authClient, cb) {
   const drive = google.drive({version: 'v3', auth: authClient})
@@ -74,7 +79,7 @@ function normalizeHtml(html) {
       // keep italic and bold style definitons
       // TODO: should we replace with <strong> and <em> eventually?
       const newStyle = elStyle.split(';').filter((styleRule) => {
-        return /font-style:italic|font-weight:700/.test(styleRule)
+        return /font-style:italic|font-weight:700|text-decoration:underline/.test(styleRule)
       }).join(';')
 
       if (newStyle.length > 0) {
@@ -89,8 +94,15 @@ function normalizeHtml(html) {
       $(el).replaceWith(el.children)
     }
 
-    // kill the class attr
-    $(el).removeAttr('class')
+    // class attribute handling
+    if(['ol','ul'].includes(el.tagName) && $(el).attr('class')) {
+      let lstClassMatch = $(el).attr('class').match(/lst-[^ ]+-(\d+)/)
+      if(lstClassMatch) {
+        $(el).attr('class', $(el).attr('class') + ` level-${lstClassMatch[1]}`)
+      }
+    } else {
+      $(el).removeAttr('class')
+    }
 
     // Google HTML wraps links in a google.com redirector, extract the original link at set this as an href
     if(el.tagName == 'a' && $(el).attr('href')) {
@@ -104,6 +116,10 @@ function normalizeHtml(html) {
 
     return el
   })
+
+  // preserve style block from <head>, this contains the lst- class style
+  // definitions that control list appearance
+  $('body').prepend($.html('head style'));
 
   return $('body').html()
 }

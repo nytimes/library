@@ -487,6 +487,26 @@ button.btn-plaintext {
       margin: 20px 0;
     }
 
+    /* google output sometimes breaks <li>s across separate
+       parent <ul>s, they apply margin:0 in default output
+       so that they are visually contiguous */    
+    ul, ol {
+      margin: 0;
+    }
+
+    /* nested lists */
+    ul.level-1 li, ol.level-1 li {
+      margin-left: 20px;
+    }
+
+    ul.level-2 li, ol.level-2 li {
+      margin-left: 40px;
+    }
+
+    ul.level-3 li, ol.level-3 li {
+      margin-left: 60px;
+    }
+
     pre{
       counter-reset:line-numbering;
       background: $lightpink;
