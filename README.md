@@ -1,9 +1,9 @@
-NYT Library
+<!-- NYT Library -->
 ========
 
 A collaborative newsroom documentation site, powered by Google Docs.
 
-# Running the app
+## Running the app locally
 
 Clone the repo:
 
@@ -24,7 +24,7 @@ cd nyt-library && yarn install
 
 Start the app:
 ```
-npm start
+npm build && npm run watch
 ```
 
 The app should now be running on port 3000:
@@ -32,6 +32,28 @@ The app should now be running on port 3000:
 http://localhost.nytimes.com:3000/
 
 http://localhost.nytimes.com:3000/graphics/how-to-make-promos
+
+
+### Tests
+
+You can run the unit tests (which exercise HTML parsing and eventually routing logic) with `npm test`.
+
+The HTML parsing tests are based on the [Supported Formats doc](https://docs.google.com/document/d/***REMOVED***/edit).  To download a fresh copy of the HTML after making edits, run `node test/data/update.js`.
+
+
+## Deploying the app
+
+This app is hosted on the [Interactive News infrastructure](***REMOVED***/wiki).  To deploy a code change:
+
+  * Use the [stg deploy page](https://***REMOVED***/***REMOVED***/default/deploy) to cut a release.  Once the build is complete, you'll see a link that says "Make this version active."  Click this to push the version live.  It may take a minute or two for the new version to start.
+  * You can see additional information about the deployment on the [app detail page](https://***REMOVED***/***REMOVED***/default), access logs, edit environmental variables, and retrieve commands to open a bash prompt on the staging servers.
+  * When you're ready to move the app to prodution, select the release tag you just created on the [prd deploy page](https://***REMOVED***/***REMOVED***/default/deploy), then click "Make this version active."
+
+## Monitoring
+
+Logs: [stg](***REMOVED***&minLogLevel=0&expandAll=false&advancedFilter=resource.type%20%3D%20container%20AND%20resource.labels.cluster_name%20%3D%20%22stg-adm%22%20AND%20resource.labels.namespace_id%20%3D%20%22default%22%20AND%20resource.labels.container_name%20%3D%20%22nyt-library%22) | [prd](https://console.cloud.google.com/logs/viewer?project=***REMOVED***-prd&minLogLevel=0&expandAll=false&advancedFilter=resource.type%20%3D%20container%20AND%20resource.labels.cluster_name%20%3D%20%22prd-adm%22%20AND%20resource.labels.namespace_id%20%3D%20%22default%22%20AND%20resource.labels.container_name%20%3D%20%22nyt-library%22)
+
+Aibrake TK.
 
 
 ## App structure

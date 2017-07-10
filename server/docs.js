@@ -4,8 +4,6 @@ const async = require('async')
 const google = require('googleapis')
 const cheerio = require('cheerio')
 const pretty = require('pretty')
-const htmlToText = require('html-to-text')
-const escape = require('escape-html')
 
 const {getAuth} = require('./auth')
 
@@ -20,6 +18,13 @@ exports.slugify = (text = '') => {
     .replace(/\s+/g, '-')
 }
 
+exports.processHtml = (html) => {
+  html = normalizeHtml(html)
+  html = formatCode(html)
+  html = pretty(html)
+  return html
+}
+
 exports.fetchDoc = (docId, cb) => {
   getAuth((err, auth) => {
     if (err) {
@@ -28,16 +33,14 @@ exports.fetchDoc = (docId, cb) => {
 
     fetch(docId, auth, (err, html, originalRevision) => {
       if (err) return cb(err)
-
-      html = normalizeHtml(html)
-      html = formatCode(html)
-      html = pretty(html)
+      html = exports.processHtml(html)
       const sections = getSections(html)
       // maybe we should pull out headers here
       cb(err, {html, originalRevision, sections})
     })
   })
 }
+
 
 function fetch(id, authClient, cb) {
   const drive = google.drive({version: 'v3', auth: authClient})
@@ -65,6 +68,9 @@ function fetch(id, authClient, cb) {
 }
 
 function normalizeHtml(html) {
+  // scrub all &nbsp;s (if there is a &nbsp; in a code block it will be escaped)
+  html = html.replace(/&nbsp;/g,' ')
+
   const $ = cheerio.load(html)
 
   $('body *').map((idx, el) => {
@@ -74,7 +80,7 @@ function normalizeHtml(html) {
       // keep italic and bold style definitons
       // TODO: should we replace with <strong> and <em> eventually?
       const newStyle = elStyle.split(';').filter((styleRule) => {
-        return /font-style:italic|font-weight:700/.test(styleRule)
+        return /font-style:italic|font-weight:700|text-decoration:underline/.test(styleRule)
       }).join(';')
 
       if (newStyle.length > 0) {
@@ -89,8 +95,15 @@ function normalizeHtml(html) {
       $(el).replaceWith(el.children)
     }
 
-    // kill the class attr
-    $(el).removeAttr('class')
+    // class attribute handling
+    if(['ol','ul'].includes(el.tagName) && $(el).attr('class')) {
+      let lstClassMatch = $(el).attr('class').match(/lst-[^ ]+-(\d+)/)
+      if(lstClassMatch) {
+        $(el).attr('class', $(el).attr('class') + ` level-${lstClassMatch[1]}`)
+      }
+    } else {
+      $(el).removeAttr('class')
+    }
 
     // Google HTML wraps links in a google.com redirector, extract the original link at set this as an href
     if(el.tagName == 'a' && $(el).attr('href')) {
@@ -105,13 +118,19 @@ function normalizeHtml(html) {
     return el
   })
 
+  // preserve style block from <head>, this contains the lst- class style
+  // definitions that control list appearance
+  $('body').prepend($.html('head style'));
+
   return $('body').html()
 }
 
 function formatCode(html) {
   // Expand code blocks
   html = html.replace(/<p>```(.*?)<\/p>(.+?)<p>```<\/p>/ig, (match, codeType, content) => {
-    content = htmlToText.fromString(content)
+    // strip interior <p> tags added by google
+    content = content.replace(/<\/p><p>/g, "\n").replace(/<\/?p>/g,'')
+
     return `<pre type="${codeType}">${formatCodeContent(content)}</pre>`
   })
 
@@ -124,9 +143,7 @@ function formatCode(html) {
 }
 
 function formatCodeContent(content) {
-  content = escape(content)
-  content = content.replace(/\n\n/g, '\n')
-  content = content.replace(/[‘’]/g, "'").replace(/[””]/g, '"')
+  content = content.replace(/[‘’]|&#x201[89];/g, "'").replace(/[“”]|&#x201[CD];/g, '"') // remove smart quotes
   return content
 }
 

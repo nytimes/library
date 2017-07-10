@@ -5,13 +5,13 @@
   "main": "index.js",
   "dependencies": {
     "async": "^2.4.1",
+    "chai": "^4.0.2",
     "cheerio": "^1.0.0-rc.1",
     "ejs": "^2.5.6",
-    "escape-html": "^1.0.3",
     "express": "^4.15.3",
     "googleapis": "^19.0.0",
-    "html-to-text": "^3.3.0",
     "inflight": "^1.0.6",
+    "mocha": "^3.4.2",
     "moment": "^2.18.1",
     "node-sass": "^4.5.3",
     "nodemon": "^1.11.0",
@@ -29,7 +29,7 @@
     "webpack-dev-server": "^2.4.5"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node_modules/mocha/bin/mocha",
     "start": "node server/index.js",
     "build": "node-sass styles/style.scss public/css/style.css",
     "watch": "concurrently \"nodemon server/index.js\" \"node-sass -w styles/style.scss public/css/style.css\""
