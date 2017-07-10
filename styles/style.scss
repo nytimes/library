@@ -28,7 +28,8 @@ $karnak: "nyt-karnak-display-130124",arial,sans-serif;
 // Color
 //------------------------------------------------------------------------------
 $pink: #E16D6D;
-$lightpink: #FCF6F6;
+$lighterpink: #F09898;
+$lightestpink: #FCF6F6;
 $darkpink: #ab2d2d;
 $blue: #326891;
 
@@ -43,15 +44,17 @@ $blue: #326891;
 
 // Basic Styling
 //------------------------------------------------------------------------------
+body {
+  font-family: $franklin;
+  font-weight: 100;
+  margin: 0;
+  padding: 0;
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: $franklin;
   margin-top: 45px;
   margin-bottom: -10px;
-}
-
-body {
-  font-family: $franklin;
-  font-weight: 100;
 }
 
 a:visited {
@@ -98,6 +101,30 @@ button.button {
   color: #ccc;
   cursor: pointer;
   -webkit-font-smoothing: antialiased;
+}
+
+button.btn-homepage {
+  font-size: 16px;
+  line-height: 30px;
+  background-color: #4D4D4D;
+  padding: 10px 25px;
+  border: none;
+  border-radius: 0;
+  -webkit-box-shadow: 3px 3px 0px 0px $lighterpink;
+  -moz-box-shadow: 3px 3px 0px 0px $lighterpink;
+  box-shadow: 3px 3px 0px 0px $lighterpink;
+
+  a:link, a:visited {
+    color: #fff;
+  }
+
+  &:hover {
+    background: #333;
+    a {
+      color: #fff;
+      text-decoration: none;
+    }
+  }
 }
 
 button.btn-footer {
@@ -287,7 +314,7 @@ button.btn-plaintext {
   &:focus,
   &:active {
     outline: none;
-    background:  $lightpink;
+    background:  $lightestpink;
     .icon {
       outline: none;
       opacity: 1;
@@ -489,7 +516,7 @@ button.btn-plaintext {
 
     pre{
       counter-reset:line-numbering;
-      background: $lightpink;
+      background: $lightestpink;
       padding:0px 0px 14px 0;
       width:600px;
       color:#000;
@@ -522,7 +549,7 @@ button.btn-plaintext {
     }
 
     tt {
-      background: $lightpink;
+      background: $lightestpink;
       color: $darkpink;
       padding: 2px 5px;
     }
@@ -564,5 +591,135 @@ button.btn-plaintext {
   }
   .g-footer-shorter {
     margin: 60px auto;
+  }
+}
+
+
+
+
+// Main Homepage
+//------------------------------------------------------------------------------
+#main-search-page {
+  background: #222;
+  position: relative;
+  top: 45px;
+  width: 100%;
+  height: calc(100vh - 45px);
+  overflow: hidden;
+
+  .mid-center {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .main-item {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -40%);
+
+    .branding {
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      margin-bottom: 20px;
+      // padding-left: 10px;
+
+      .branding-heading {
+        margin: 0;
+
+        .nyt-logo {
+          height: 50px;
+          filter: invert(100%) brightness(80%);
+        }
+      }
+
+      .branding-label {
+        margin: 0 0 0 15px;
+        height: 30px;
+        padding: 15px 0 9px 18px;
+        vertical-align: top;
+        border-left: 1px solid rgba(255, 255, 255, 0.35);
+        color: #ccc;
+        font-family: $karnak;
+        font-size: 38px;
+        text-transform: none;
+        -webkit-font-smoothing: antialiased;
+        font-weight: 100;
+        line-height: 26px;
+
+        a:link, a:visited {
+          color: #ccc;
+        }
+        a:hover {
+          color: $pink;
+          text-decoration: none;
+        }
+      }
+    }
+
+    .tagline {
+      text-align: center;
+      color: #8E8E8E;
+      margin-bottom: 110px;
+      font-size: 15px;
+    }
+
+    .search-container {
+      clear: both;
+      width: 560px;
+      background: #e6e2e2;
+      padding: 0px 6px 0 0;
+
+      #search-box {
+        font-size: 18px;
+        line-height: 36px;
+        box-shadow: 6px 6px 0px 0px #4d4d4d;
+        float: none;
+      }
+
+      &:hover,
+      &:focus,
+      &:active {
+        background: #fff;
+        .icon {
+          opacity: 1;
+          // margin-left: -60px;
+        }
+      }
+
+      .icon{
+        height: 51px;
+        width: 55px;
+        font-size: 15pt;
+        margin-left: -60px;
+        opacity: 0;
+        -webkit-transition: opacity .35s ease;
+        -moz-transition: opacity .35s ease;
+        -ms-transition: opacity .35s ease;
+        -o-transition: opacity .35s ease;
+        transition: opacity .35s ease;
+      }
+
+      &:hover {
+        .icon:hover {
+          background: $pink;
+        }
+      }
+    }
+
+    .additional-menus {
+      justify-content: center;
+      margin-top: 40px;
+
+      button:first-child {
+        margin-right: 30px;
+      }
+    }
+  }
+
+  .main-item--bottom {
+    top: auto;
+    bottom: 0;
   }
 }

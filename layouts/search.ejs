@@ -61,9 +61,8 @@
 
         <% if(locals.results) { %>
           <h3 class="search-kicker">Showing results for '<%= locals.q %>':</h3>
-        <% } else { %>
-          <h3 class="search-kicker">No result found for '<%= locals.q %>'. Try other keywords.</h3>
         <% } %>
+          
 
         <% if(locals.results) { %>
           <% locals.results.forEach((res) => { %>

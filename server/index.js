@@ -29,6 +29,9 @@ app.get('/healthcheck', (req, res) => {
 
 // serve all files in the public folder
 app.use('/assets', express.static(path.join(__dirname, '../public')))
+app.get('/', (req, res) => {
+    res.render('../layouts/index')
+})
 
 app.get('/search', (req, res) => {
   if(req.query.q) {
