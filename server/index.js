@@ -43,6 +43,16 @@ app.get('/search', (req, res) => {
   }
 })
 
+app.get('/view-on-site/:doc_id', (req, res) => {
+  let doc = getMeta(req.params.doc_id)
+
+  if(doc) {
+    res.redirect(doc.path)
+  } else {
+    res.status(404).send('Not found.')
+  }
+})
+
 app.get('*', (req, res) => {
   console.log(`GET ${req.path}`)
   const segments = req.path.split('/')
