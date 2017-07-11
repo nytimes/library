@@ -447,6 +447,8 @@ button.btn-plaintext {
     font-weight: 300;
     padding: 10px 20px;
     display: none;
+    height: 90.9%;
+    overflow: auto;
 
     @include tablet{
   		display: none;
@@ -454,6 +456,11 @@ button.btn-plaintext {
   	@include desktop{
   		display: block;
   	}
+
+    &.d-fixed {
+      position: fixed;
+      top: 50px;
+    }
 
     .section-kicker, .sibling-kicker {
       font-family: $franklin;
@@ -464,6 +471,10 @@ button.btn-plaintext {
       line-height: 24px;
       margin-bottom: 10px;
       margin-top: 20px;
+    }
+
+    .sibling-kicker {
+      margin-top: 0;
     }
 
     ul.section, ul.sibling {
@@ -502,11 +513,6 @@ button.btn-plaintext {
       -webkit-box-shadow: -8px -8px 0px 0px rgba(236,236,236,1);
       -moz-box-shadow: -8px -8px 0px 0px rgba(236,236,236,1);
       box-shadow: -8px -8px 0px 0px rgba(236,236,236,1);
-    }
-
-    &.d-fixed {
-      position: fixed;
-      top: 150px;
     }
   }
 
