@@ -1,4 +1,4 @@
-$tablet-width: 960px;
+$tablet-width: 768px;
 $desktop-width: 1024px;
 
 @mixin tablet {
@@ -48,7 +48,11 @@ body {
   font-family: $franklin;
   font-weight: 100;
   margin: 0;
-  padding: 0;
+  padding: 0 20px;
+
+  @include desktop {
+    padding: 0;
+  }
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -184,7 +188,7 @@ button.btn-plaintext {
   background: #444;
   top: 0;
   left: 0;
-  width: 100%;
+  width: 100vw;
   z-index: 1000000090;
   color: #ccc;
 
@@ -251,12 +255,21 @@ button.btn-plaintext {
   padding-left: 8px;
   float: left;
   padding-top: 1px;
+  display: inline-grid;
+
+  @include tablet{
+    display: block;
+  }
+  @include desktop{
+    display: block;
+  }
 }
 
 .breadcrumb-item {
   display: inline-block;
   font-size: 15px;
   letter-spacing: 0.01em;
+  line-height: 20px;
 
   a:hover {
       text-decoration: underline;
@@ -319,7 +332,7 @@ button.btn-plaintext {
     .icon {
       outline: none;
       opacity: 1;
-      margin-left: -50px;
+      // margin-left: -50px;
     }
   }
 
@@ -332,12 +345,12 @@ button.btn-plaintext {
     opacity: 0;
     font-size: 12pt;
     cursor: pointer;
-    margin-left: -40px;
-    -webkit-transition: all .35s ease;
-    -moz-transition: all .35s ease;
-    -ms-transition: all .35s ease;
-    -o-transition: all .35s ease;
-    transition: all .35s ease;
+    margin-left: -50px;
+    -webkit-transition: opacity .35s ease;
+    -moz-transition: opacity .35s ease;
+    -ms-transition: opacity .35s ease;
+    -o-transition: opacity .35s ease;
+    transition: opacity .35s ease;
   }
 
   &:hover {
@@ -370,15 +383,30 @@ button.btn-plaintext {
 //------------------------------------------------------------------------------
 .g-upper-body {
   max-width: 600px;
-  margin: 100px auto 30px auto;
+  margin: 80px auto 30px auto;
+
+  @include desktop{
+    margin: 100px auto 30px auto;
+  }
 
   h1.headline {
     font-family: $chelt;
-    font-size: 44px;
-    line-height: 48px;
+    font-size: 36px;
+    line-height: 40px;
     font-weight: 200;
     color: #000;
-    margin: 60px 0 5px;
+    margin: 20px 0 5px;
+
+    @include tablet {
+      font-size: 42px;
+      line-height: 48px;
+      margin: 40px 0 5px;
+    }
+    @include desktop {
+      font-size: 44px;
+      line-height: 48px;
+      margin: 60px 0 5px;
+    }
   }
 
   .kicker {
@@ -398,6 +426,7 @@ button.btn-plaintext {
 
       .author {
         font-weight: 500;
+        color: #666;
       }
     }
   }
@@ -517,7 +546,7 @@ button.btn-plaintext {
 
     /* google output sometimes breaks <li>s across separate
        parent <ul>s, they apply margin:0 in default output
-       so that they are visually contiguous */    
+       so that they are visually contiguous */
     ul, ol {
       margin: 0;
     }
@@ -590,12 +619,24 @@ button.btn-plaintext {
       p {
         font-size: 15px;
         margin: 0;
-        line-height: 32px;
+        line-height: 24px;
+        @include tablet{
+
+        }
+        @include desktop{
+          line-height: 32px;
+        }
       }
       h3 {
         font-weight: 400;
-        margin: 0;
-        margin-top: 15px;
+        margin: 20px 0 3px 0;
+
+        @include tablet{
+
+        }
+        @include desktop{
+          margin: 15px 0 3px 0;
+        }
       }
     }
   }
@@ -624,7 +665,8 @@ button.btn-plaintext {
   background: #222;
   position: relative;
   top: 45px;
-  width: 100%;
+  left: -20px;
+  width: 100vw;
   height: calc(100vh - 45px);
   overflow: hidden;
 
@@ -635,9 +677,14 @@ button.btn-plaintext {
 
   .main-item {
     position: absolute;
-    top: 40%;
+    top: 30%;
     left: 50%;
-    transform: translate(-50%, -40%);
+    transform: translate(-50%, -30%);
+
+    @include desktop{
+      top: 40%;
+      transform: translate(-50%, -40%);
+    }
 
     .branding {
       display: flex;
@@ -650,8 +697,9 @@ button.btn-plaintext {
         margin: 0;
 
         .nyt-logo {
-          height: 50px;
+          height: 36px;
           filter: invert(100%) brightness(80%);
+          padding-top: 7px;
         }
       }
 
@@ -682,15 +730,34 @@ button.btn-plaintext {
     .tagline {
       text-align: center;
       color: #8E8E8E;
-      margin-bottom: 110px;
+      margin: 0 auto;
+      margin-bottom: 80px;
       font-size: 15px;
+      width: 80%;
+
+      @include tablet {
+    		width: 100%;
+        margin-bottom: 110px;
+    	}
+
+      @include desktop {
+    		width: 100%;
+        margin-bottom: 110px;
+    	}
     }
 
     .search-container {
       clear: both;
-      width: 560px;
+      width: calc(100vw - 60px);
       background: #e6e2e2;
       padding: 0px 6px 0 0;
+
+      @include tablet{
+    		width: calc(100vw - 140px);
+    	}
+    	@include desktop{
+    		width: 560px;
+    	}
 
       #search-box {
         font-size: 18px;
@@ -731,11 +798,15 @@ button.btn-plaintext {
 
     .additional-menus {
       justify-content: center;
-      margin-top: 40px;
+      margin-top: 30px;
 
-      button:first-child {
-        margin-right: 30px;
-      }
+      @include desktop{
+    		margin-top: 40px;
+    	}
+
+      // button:first-child {
+      //   margin-right: 30px;
+      // }
     }
   }
 
