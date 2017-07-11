@@ -114,8 +114,18 @@ function buildTreeFromData(rootParent, breadcrumb) {
     const {prettyName} = docsInfo[id]
     const slug = slugify(prettyName)
     const nextCrumb = breadcrumb ? breadcrumb.concat({ id: rootParent, slug: parentInfo.slug }) : []
+
     // recurse building up breadcrumb
     memo.children[slug] = buildTreeFromData(id, nextCrumb)
+
+    // Use this to cache the reader-facing path to the page
+    let path = '/'
+    if(nextCrumb.length > 0) {
+      path += nextCrumb.map((element) => { return element.slug }).join('/') + '/'
+    }
+    path += slug
+    docsInfo[id].path = path
+
     return memo
   }, Object.assign({}, parentNode, { children: {} }))
 }
