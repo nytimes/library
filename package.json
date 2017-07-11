@@ -15,7 +15,8 @@
     "moment": "^2.18.1",
     "node-sass": "^4.5.3",
     "nodemon": "^1.11.0",
-    "pretty": "^2.0.0"
+    "pretty": "^2.0.0",
+    "unescape": "^1.0.1"
   },
   "devDependencies": {
     "concurrently": "^3.4.0",

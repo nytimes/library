@@ -4,6 +4,7 @@ const async = require('async')
 const google = require('googleapis')
 const cheerio = require('cheerio')
 const pretty = require('pretty')
+const unescape = require('unescape')
 
 const {getAuth} = require('./auth')
 
@@ -136,6 +137,11 @@ function formatCode(html) {
   // Replace single backticks with <tt>
   html = html.replace(/`(.+?)`/g, (match, content) => {
     return `<tt>${formatCodeContent(content)}</tt>`
+  })
+
+  html = html.replace(/&lt;%-(.+)%&gt;/g, (match, content) => {
+    const html = unescape(content)
+    return formatCodeContent(html)
   })
 
   return html
