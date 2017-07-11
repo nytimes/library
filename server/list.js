@@ -21,7 +21,7 @@ exports.getTree = (cb) => {
 // exposes docs metadata
 exports.getMeta = (id) => {
   let doc = docsInfo[id]
-  if(doc) {
+  if (doc) {
     doc.lastUpdated = moment(doc.modifiedTime).fromNow()
   }
   return doc
@@ -120,7 +120,7 @@ function buildTreeFromData(rootParent, breadcrumb) {
 
     // Use this to cache the reader-facing path to the page
     let path = '/'
-    if(nextCrumb.length > 0) {
+    if (nextCrumb.length > 0) {
       path += nextCrumb.map((element) => { return element.slug }).join('/') + '/'
     }
     path += slug
@@ -128,7 +128,7 @@ function buildTreeFromData(rootParent, breadcrumb) {
 
     // as well as the folder
     docsInfo[id].folder = parentInfo
-    docsInfo[id].folder.path = '/' + nextCrumb.slice(0,-1).map((element) => { return element.slug }).join('/')
+    docsInfo[id].folder.path = '/' + nextCrumb.slice(0, -1).map((element) => { return element.slug }).join('/')
 
     return memo
   }, Object.assign({}, parentNode, { children: {} }))
@@ -142,12 +142,10 @@ function determineSort(name = '') {
 }
 
 function cleanResourceType(mimeType) {
-  var match = mimeType.match(/application\/vnd.google-apps.(.+)$/);
-  if(match) {
-    return match[1];
-  } else {
-    return mimeType;
-  }
+  const match = mimeType.match(/application\/vnd.google-apps.(.+)$/)
+  if (!match) return mimeType
+
+  return match[1]
 }
 
 function startTreeRefresh(interval) {

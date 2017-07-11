@@ -41,7 +41,6 @@ exports.fetchDoc = (docId, cb) => {
   })
 }
 
-
 function fetch(id, authClient, cb) {
   const drive = google.drive({version: 'v3', auth: authClient})
   async.parallel([
@@ -69,7 +68,7 @@ function fetch(id, authClient, cb) {
 
 function normalizeHtml(html) {
   // scrub all &nbsp;s (if there is a &nbsp; in a code block it will be escaped)
-  html = html.replace(/&nbsp;/g,' ')
+  html = html.replace(/&nbsp;/g, ' ')
 
   const $ = cheerio.load(html)
 
@@ -96,9 +95,9 @@ function normalizeHtml(html) {
     }
 
     // class attribute handling
-    if(['ol','ul'].includes(el.tagName) && $(el).attr('class')) {
+    if (['ol', 'ul'].includes(el.tagName) && $(el).attr('class')) {
       let lstClassMatch = $(el).attr('class').match(/lst-[^ ]+-(\d+)/)
-      if(lstClassMatch) {
+      if (lstClassMatch) {
         $(el).attr('class', $(el).attr('class') + ` level-${lstClassMatch[1]}`)
       }
     } else {
@@ -106,9 +105,9 @@ function normalizeHtml(html) {
     }
 
     // Google HTML wraps links in a google.com redirector, extract the original link at set this as an href
-    if(el.tagName == 'a' && $(el).attr('href')) {
-      var hrefMatch = $(el).attr('href').match('https://www.google.com/url\\?q=(.+)&sa=')
-      if(hrefMatch) {
+    if (el.tagName === 'a' && $(el).attr('href')) {
+      const hrefMatch = $(el).attr('href').match('https://www.google.com/url\\?q=(.+)&sa=')
+      if (hrefMatch) {
         $(el).attr('href', hrefMatch[1])
       }
 
@@ -120,7 +119,7 @@ function normalizeHtml(html) {
 
   // preserve style block from <head>, this contains the lst- class style
   // definitions that control list appearance
-  $('body').prepend($.html('head style'));
+  $('body').prepend($.html('head style'))
 
   return $('body').html()
 }
@@ -129,7 +128,7 @@ function formatCode(html) {
   // Expand code blocks
   html = html.replace(/<p>```(.*?)<\/p>(.+?)<p>```<\/p>/ig, (match, codeType, content) => {
     // strip interior <p> tags added by google
-    content = content.replace(/<\/p><p>/g, "\n").replace(/<\/?p>/g,'')
+    content = content.replace(/<\/p><p>/g, '\n').replace(/<\/?p>/g, '')
 
     return `<pre type="${codeType}">${formatCodeContent(content)}</pre>`
   })

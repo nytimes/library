@@ -6,7 +6,6 @@ const list = require('./list')
 const teamDriveId = '***REMOVED***'
 
 exports.run = (query, cb) => {
-
   getAuth((err, authClient) => {
     if (err) {
       return cb(err)
@@ -29,5 +28,4 @@ exports.run = (query, cb) => {
       cb(null, fileMetas)
     })
   })
-
 }

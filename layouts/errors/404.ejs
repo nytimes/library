@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <%- include('../partials/head', {title: 'Page Not Found'}) %>
+  <body>
+    <%- include('../partials/header', {title: 'Page Not Found', parentLinks: []}) %>
+    <div id="main-search-page">
+      <div class="main-item">
+        <div class="tagline">
+          <h1>Uh oh, that's a 404.</h1>
+          <p>Perhaps you'd like to search for something instead?</p>
+        </div>
+        <%- include('../partials/search', {style: 'homepage'}) %>
+      </div>
+
+      <div class="main-item main-item--bottom">
+        <button type="button" class="btn-plaintext"><a href="#">How do I use this site?</a></button>
+      </div>
+    </div>
+
+
+
+  </body>
+</html>

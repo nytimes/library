@@ -28,17 +28,16 @@ app.use('/assets', express.static(path.join(__dirname, '../public')))
 app.get('/', handlePage)
 app.get('/:page', handlePage)
 
-app.get('/view-on-site/:doc_id', (req, res) => {
-  let doc = getMeta(req.params.doc_id)
+app.get('/view-on-site/:docId', (req, res, next) => {
+  const {docId} = req.params
+  const doc = getMeta(docId)
 
-  if(doc) {
-    res.redirect(doc.path)
-  } else {
-    res.status(404).send('Not found.')
-  }
+  if (!doc) return next(Error('Not found'))
+
+  res.redirect(doc.path)
 })
 
-app.get('*', (req, res) => {
+app.get('*', (req, res, next) => {
   console.log(`GET ${req.path}`)
   const segments = req.path.split('/')
 
@@ -50,13 +49,13 @@ app.get('*', (req, res) => {
   // get an up to date doc tree
   getTree((err, tree) => {
     if (err) {
-      return res.status(500).send(err)
+      return next(err)
     }
 
     const [data, parent] = retrieveDataForPath(req.path, tree)
     const {id, breadcrumb} = data
     if (!id) {
-      return res.status(404).end('Not found.')
+      return next(Error('Not found'))
     }
 
     const root = segments[1]
@@ -83,7 +82,7 @@ app.get('*', (req, res) => {
     // for docs, fetch the html and then combine with the base data
     fetchDoc(data.id, (err, {html, originalRevision, sections} = {}) => {
       if (err) {
-        return res.status(500).send(err)
+        return next(err)
       }
 
       res.render(template, Object.assign({}, baseRenderData, {
@@ -94,7 +93,7 @@ app.get('*', (req, res) => {
     })
   })
 })
-
+app.use(errorPages)
 app.listen(3000)
 
 function getTemplates(subfolder) {
@@ -190,4 +189,12 @@ function prepareContextualData(url, breadcrumb, parent, slug) {
     parentLinks,
     siblings
   }
+}
+
+// generic error handler
+function errorPages(err, req, res, next) {
+  const code = err.message === 'Not found' ? 404 : 500
+  // @TODO: more robust error logging, maybe airbrake here.
+  console.log('Received an error!', err)
+  res.status(code).render(`errors/${code}`, {err})
 }
