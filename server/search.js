@@ -15,7 +15,7 @@ exports.run = (query, cb) => {
 
     drive.files.list({
       teamDriveId,
-      q: `fullText contains ${JSON.stringify(query)}`,
+      q: `fullText contains ${JSON.stringify(query)} AND mimeType != 'application/vnd.google-apps.folder'`,
       corpora: 'teamDrive',
       supportsTeamDrives: true,
       includeTeamDriveItems: true,
@@ -26,7 +26,6 @@ exports.run = (query, cb) => {
       }
 
       let fileMetas = files.map((file) => { return list.getMeta(file.id) })
-      fileMetas = fileMetas.filter((file) => { return file && file.resourceType !== 'folder' })
       cb(null, fileMetas)
     })
   })
