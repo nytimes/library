@@ -74,13 +74,13 @@ app.get('*', (req, res) => {
       url: req.path,
       title: meta.prettyName,
       lastUpdatedBy: meta.lastModifyingUser.displayName,
-      lastUpdated: moment(meta.modifiedTime).fromNow(),
+      lastUpdated: meta.lastUpdated,
       createdAt: moment(meta.createdTime).fromNow(),
       editLink: meta.webViewLink
     })
 
     // if this is a folder, just render from the generic data
-    if (meta.mimeType.split('.').pop() === 'folder') {
+    if (meta.resourceType === 'folder') {
       return res.render(layout, baseRenderData)
     }
 
