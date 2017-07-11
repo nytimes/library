@@ -58,7 +58,8 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: $franklin;
   margin-top: 45px;
-  margin-bottom: -10px;
+  // margin-bottom: -10px;
+  margin-bottom: 20px;
 }
 
 a:visited {
@@ -373,7 +374,7 @@ button.btn-plaintext {
 
 .additional-menus {
   clear: both;
-  margin-top: 10px;
+  margin-top: 5px;
   display: flex;
   justify-content: space-between;
 }
@@ -385,9 +386,9 @@ button.btn-plaintext {
   max-width: 600px;
   margin: 80px auto 30px auto;
 
-  @include desktop{
-    margin: 100px auto 30px auto;
-  }
+  // @include desktop{
+  //   margin: 100px auto 30px auto;
+  // }
 
   h1.headline {
     font-family: $chelt;
@@ -405,7 +406,7 @@ button.btn-plaintext {
     @include desktop {
       font-size: 44px;
       line-height: 48px;
-      margin: 60px 0 5px;
+      margin: 40px 0 5px;
     }
   }
 
@@ -518,9 +519,9 @@ button.btn-plaintext {
 
   .g-main-content {
     max-width: 600px;
-    margin: 20px auto 0 auto;
+    margin: 0px auto 0 auto;
     border-top: 5px solid #ddd;
-    padding: 10px 40px;
+    padding: 10px 0px;
 
     p, ul, li, dt, dd {
       font-family: $franklin;
@@ -531,14 +532,14 @@ button.btn-plaintext {
 
     h1 {
       font-size: 30px;
-      margin-bottom: 0px;
+      // margin-bottom: 20px;
     }
 
     h2 {
       font-weight: 400;
       font-size: 26px;
       line-height: 34px;
-      margin-bottom: 0px;
+      // margin-bottom: 0px;
     }
 
     img {
@@ -555,19 +556,26 @@ button.btn-plaintext {
        so that they are visually contiguous */
     ul, ol {
       margin: 0;
+
+      li {
+        text-indent: -23px;
+        &:before {
+          padding-right: 6px;
+        }
+      }
     }
 
     /* nested lists */
     ul.level-1 li, ol.level-1 li {
-      margin-left: 20px;
-    }
-
-    ul.level-2 li, ol.level-2 li {
       margin-left: 40px;
     }
 
-    ul.level-3 li, ol.level-3 li {
+    ul.level-2 li, ol.level-2 li {
       margin-left: 60px;
+    }
+
+    ul.level-3 li, ol.level-3 li {
+      margin-left: 80px;
     }
 
     pre{
@@ -651,7 +659,7 @@ button.btn-plaintext {
     max-width: 600px;
     margin: 120px auto 60px auto;
     border-top: 1px solid #ccc;
-    padding: 30px 40px;
+    padding: 30px 0px;
 
     button.btn-plaintext {
       float: right;
