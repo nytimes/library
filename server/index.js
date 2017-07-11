@@ -12,12 +12,8 @@ const search = require('./search')
 
 const indexName = 'home'
 const layoutsDir = path.join(__dirname, '../layouts')
-const availableLayouts = (fs.readdirSync(layoutsDir) || [])
-  .reduce((memo, filename) => {
-    const [name] = filename.split('.')
-    memo.add(name)
-    return memo
-  }, new Set())
+const pages = getTemplates('pages')
+const categories = getTemplates('categories')
 
 const app = express()
 app.set('view engine', 'ejs')
@@ -29,19 +25,8 @@ app.get('/healthcheck', (req, res) => {
 
 // serve all files in the public folder
 app.use('/assets', express.static(path.join(__dirname, '../public')))
-app.get('/', (req, res) => {
-    res.render('../layouts/index')
-})
-
-app.get('/search', (req, res) => {
-  if(req.query.q) {
-    search.run(req.query.q, (err, data) => {
-      res.render('../layouts/search', { q: req.query.q, results: data })
-    })
-  } else {
-    res.render('../layouts/search')
-  }
-})
+app.get('/', handlePage)
+app.get('/:page', handlePage)
 
 app.get('/view-on-site/:doc_id', (req, res) => {
   let doc = getMeta(req.params.doc_id)
@@ -76,7 +61,8 @@ app.get('*', (req, res) => {
 
     const root = segments[1]
     const meta = getMeta(id)
-    const layout = availableLayouts.has(root) ? root : 'default'
+    const layout = categories.has(root) ? root : 'default'
+    const template = `categories/${layout}`
 
     // don't try to fetch branch node
     const contextData = prepareContextualData(req.path, breadcrumb, parent, meta.slug)
@@ -91,7 +77,7 @@ app.get('*', (req, res) => {
 
     // if this is a folder, just render from the generic data
     if (meta.resourceType === 'folder') {
-      return res.render(layout, baseRenderData)
+      return res.render(template, baseRenderData)
     }
 
     // for docs, fetch the html and then combine with the base data
@@ -100,7 +86,7 @@ app.get('*', (req, res) => {
         return res.status(500).send(err)
       }
 
-      res.render(layout, Object.assign({}, baseRenderData, {
+      res.render(template, Object.assign({}, baseRenderData, {
         content: html,
         createdBy: originalRevision.lastModifyingUser.displayName,
         sections
@@ -110,6 +96,36 @@ app.get('*', (req, res) => {
 })
 
 app.listen(3000)
+
+function getTemplates(subfolder) {
+  return (fs.readdirSync(path.join(layoutsDir, subfolder)) || [])
+    .reduce((memo, filename) => {
+      const [name] = filename.split('.')
+      memo.add(name)
+      return memo
+    }, new Set())
+}
+
+function handlePage(req, res, next) {
+  const page = req.params.page || 'index'
+
+  if (!pages.has(page)) {
+    return next()
+  }
+
+  const template = `pages/${page}`
+  const {q} = req.query
+  if (page === 'search' && q) {
+    return search.run(q, (err, results) => {
+      if (err) return res.status(500).send(err)
+
+      res.render(template, {q, results})
+    })
+  }
+
+  // res.send('OK')
+  res.render(template)
+}
 
 function retrieveDataForPath(path, tree) {
   const segments = path.split('/').slice(1).filter((s) => s.length)
