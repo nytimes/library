@@ -126,6 +126,10 @@ function buildTreeFromData(rootParent, breadcrumb) {
     path += slug
     docsInfo[id].path = path
 
+    // as well as the folder
+    docsInfo[id].folder = parentInfo
+    docsInfo[id].folder.path = '/' + nextCrumb.slice(0,-1).map((element) => { return element.slug }).join('/')
+
     return memo
   }, Object.assign({}, parentNode, { children: {} }))
 }
