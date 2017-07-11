@@ -2,6 +2,7 @@
 
 const google = require('googleapis')
 const {getAuth} = require('./auth')
+const list = require('./list')
 const teamDriveId = '***REMOVED***'
 
 exports.run = (query, cb) => {
@@ -24,7 +25,8 @@ exports.run = (query, cb) => {
         return cb(err)
       }
 
-      cb(null, files)
+      let fileMetas = files.map((file) => { return list.getMeta(file.id) })
+      cb(null, fileMetas)
     })
   })
 
