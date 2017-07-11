@@ -68,7 +68,7 @@
           <% locals.results.forEach((res) => { %>
           <div class="search-result">
             <h3><a href="<%= res.webViewLink %>"><%= res.prettyName %></a></h3>
-            <p>Filed under: <span class="folder">Some Folder Name</span>. Last edited by <span class="author">Some Name</span> 5 hours ago.</p>
+            <p>Filed under: <span class="folder">Some Folder Name</span>. Last edited by <span class="author"><%= res.lastModifyingUser.displayName %></span> <%= res.lastUpdated %>.</p>
           </div>
           <% }) %>
         <% } %>

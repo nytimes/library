@@ -2,6 +2,7 @@
 
 const inflight = require('inflight')
 const google = require('googleapis')
+const moment = require('moment')
 
 const {getAuth} = require('./auth')
 const {cleanName, slugify} = require('./docs')
@@ -19,7 +20,11 @@ exports.getTree = (cb) => {
 
 // exposes docs metadata
 exports.getMeta = (id) => {
-  return docsInfo[id]
+  let doc = docsInfo[id]
+  if(doc) {
+    doc.lastUpdated = moment(doc.modifiedTime).fromNow()
+  }
+  return doc
 }
 
 exports.getChildren = (id) => {
