@@ -1,31 +1,13 @@
-<header id="masthead" class="masthead" role="banner">
-  <div class="container">
-    <div class="branding">
-      <h2 class="branding-heading">
-        <a id="branding-heading-link" href="http://www.nytimes.com/">
-          <span class="visually-hidden">The New York Times</span>
-          <img src="/assets/images/nyt-T-logo.png" class="nyt-logo" alt="The New York Times">
-        </a>
-      </h2>
-      <h3 class="branding-label"><a class="content-link" href="/">Library</a></h3>
-    </div>
-
-    <ul class="breadcrumb">
-      <!-- <li class="breadcrumb-item">
-        <a class="content-link" href="/">Home </a> ⇾
-      </li> -->
-    <% parentLinks.forEach((link) => { %>
-      <li class="breadcrumb-item">
-        ⇾ <a class="content-link" href="<%- link.url %>" ><%= link.name %> </a>
-      </li>
-    <% }) %>
-      <li class="breadcrumb-item">
-        ⇾ <%= title %>
-      </li>
-    </ul>
-
-    <div class="user-tools">
-
-    </div>
-  </div>
-</header>
+<ul class="breadcrumb">
+  <!-- <li class="breadcrumb-item">
+    <a class="content-link" href="/">Home </a> ⇾
+  </li> -->
+<% parentLinks.forEach((link) => { %>
+  <li class="breadcrumb-item">
+    ⇾ <a class="content-link" href="<%- link.url %>" ><%= link.name %> </a>
+  </li>
+<% }) %>
+  <li class="breadcrumb-item">
+    ⇾ <%= title %>
+  </li>
+</ul>

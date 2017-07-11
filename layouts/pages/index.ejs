@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <%- include('../partials/head', {title: 'NYT Library'}) %>
+  <body>
+
+    <header id="masthead" class="masthead" role="banner">
+      <div class="container">
+        <%- include ../partials/userTools %>
+      </div>
+    </header>
+
+    <div id="main-search-page">
+      <div class="main-item">
+        <%- include ../partials/branding %>
+        <div class="tagline">
+          <p>A collection of shared newsroom knowledge and training.</p>
+        </div>
+        <%- include('../partials/search', {style: 'homepage'}) %>
+      </div>
+
+      <div class="main-item main-item--bottom">
+        <button type="button" class="btn-plaintext"><a href="#">How do I use this site?</a></button>
+      </div>
+    </div>
+
+
+
+  </body>
+</html>
