@@ -26,7 +26,7 @@ exports.run = (query, cb) => {
       }
 
       let fileMetas = files.map((file) => { return list.getMeta(file.id) })
-      fileMetas = fileMetas.filter((file) => { return file })
+      fileMetas = fileMetas.filter((file) => { return file && file.resourceType !== 'folder' })
       cb(null, fileMetas)
     })
   })

@@ -81,6 +81,7 @@ function produceTree(files, firstParent) {
     const prettyName = cleanName(name)
     byId[id] = Object.assign({}, resource, {
       prettyName,
+      resourceType: cleanResourceType(resource.mimeType),
       sort: determineSort(name),
       slug: slugify(prettyName)
     })
@@ -124,6 +125,15 @@ function determineSort(name = '') {
   // to be consistent with drive API, we will do string sort
   // also means we can sort off a single field when number is absent
   return sort ? sort[1] : name // items without sort go alphabetically
+}
+
+function cleanResourceType(mimeType) {
+  var match = mimeType.match(/application\/vnd.google-apps.(.+)$/);
+  if(match) {
+    return match[1];
+  } else {
+    return mimeType;
+  }
 }
 
 function startTreeRefresh(interval) {
