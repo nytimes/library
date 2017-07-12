@@ -115,15 +115,32 @@ function handlePage(req, res, next) {
   const template = `pages/${page}`
   const {q} = req.query
   if (page === 'search' && q) {
-    return search.run(q, (err, results) => {
-      if (err) return res.status(500).send(err)
-
+    search.run(q, (err, results) => {
       res.render(template, {q, results})
     })
-  }
+  } else if(page == "categories") {
+    getTree((err, tree) => {
+      if (err) return res.status(500).send(err)
+      let categories  = Object.values(tree.children)
 
-  // res.send('OK')
-  res.render(template)
+      // Ignore pages at the root of the site on the category page
+      categories = categories.filter((child) => { return child.nodeType == 'branch' })
+
+      // For now, sort alphabetically:
+      categories = categories.sort((a,b) => { return a.sort.localeCompare(b.sort) })
+
+      categories = categories.map((category) => {
+        category = Object.assign({}, category)
+        category.children = Object.values(category.children).map((child) => {
+          return getMeta(child.id)
+        })
+        return category
+      })
+      res.render(template, {categories})
+    })
+  } else {
+    res.render(template)
+  }
 }
 
 function retrieveDataForPath(path, tree) {
