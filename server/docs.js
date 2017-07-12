@@ -5,6 +5,7 @@ const google = require('googleapis')
 const cheerio = require('cheerio')
 const pretty = require('pretty')
 const unescape = require('unescape')
+const slugify = require('slugify')
 
 const {getAuth} = require('./auth')
 
@@ -14,9 +15,8 @@ exports.cleanName = (name = '') => {
 }
 
 exports.slugify = (text = '') => {
-  return text
-    .toLowerCase()
-    .replace(/\s+/g, '-')
+  const lower = text.toLowerCase()
+  return slugify(lower)
 }
 
 exports.processHtml = (html) => {
