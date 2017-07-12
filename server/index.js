@@ -150,7 +150,6 @@ function buildDisplayCategories(tree) {
     })
     return category
   })
-  console.log(categories)
 
   return categories
 }
