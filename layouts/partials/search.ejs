@@ -6,9 +6,10 @@
     <button class="icon"><i class="fa fa-search"></i></button>
   </form>
 
-  <div class="additional-menus">
-    <% const style = locals.style || 'plaintext' %>
+  <% const style = locals.style || 'plaintext' %>
+  <div class="additional-menus <%= style %>"">
     <a href="/categories"><button type="button" class="button btn-<%= style %>">Find by Category</button></a>
     <%# <button type="button" class="btn-plaintext"><a href="#">Onboarding Guide</a></button>%>
   </div>
+
 </div>

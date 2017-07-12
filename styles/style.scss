@@ -91,6 +91,9 @@ th, td {
 }
 
 // Buttons
+button:focus {
+  outline: 0;
+}
 button.button {
   font-size: 15px;
   line-height: 20px;
@@ -179,6 +182,23 @@ button.btn-plaintext {
     a {
       color: $pink;
     }
+  }
+}
+
+button.btn-cat {
+  border: none;
+  background: #000;
+  border-radius: 0;
+  margin: 5px 0;
+
+  a:link, a:visited {
+    font-size: 13px;
+    color: #fff;
+    line-height: 29px;
+  }
+  &:hover {
+    cursor: pointer;
+    color: $pink;
   }
 }
 
@@ -672,8 +692,6 @@ button.btn-plaintext {
 }
 
 
-
-
 // Main Homepage
 //------------------------------------------------------------------------------
 #main-search-page {
@@ -703,6 +721,7 @@ button.btn-plaintext {
     @include desktop{
       top: 40%;
       transform: translate(-50%, -40%);
+      max-width: 600px;
     }
 
     .branding {
@@ -775,7 +794,7 @@ button.btn-plaintext {
     		width: calc(100vw - 140px);
     	}
     	@include desktop{
-    		width: 560px;
+    		width: 586px;
     	}
 
       #search-box {
@@ -823,14 +842,84 @@ button.btn-plaintext {
     		margin-top: 40px;
     	}
 
+      &.homepage{
+        display: none;
+      }
+
       // button:first-child {
       //   margin-right: 30px;
       // }
+    }
+
+    .featured-cat {
+      margin-top: 30px;
+
+      .featured-cat-list {
+        display: flex;
+        flex-flow: row wrap;
+
+        button {
+          margin-right: 10px;
+        }
+      }
     }
   }
 
   .main-item--bottom {
     top: auto;
     bottom: 0;
+  }
+}
+
+
+// Categories Homepage
+//------------------------------------------------------------------------------
+#category-page {
+  .g-main-content {
+    max-width: 960px;
+    display: flex;
+    align-content: stretch;
+    flex-flow: row wrap;
+    border-top: 0;
+    justify-content: space-between;
+
+    .category {
+      margin: 0 0 30px 0;
+      padding: 20px;
+      border: 1px solid #ddd;
+      width: 100%;
+      -webkit-box-shadow: -4px -4px 0px 0px rgba(239,239,239,1);
+      -moz-box-shadow: -4px -4px 0px 0px rgba(239,239,239,1);
+      box-shadow: -4px -4px 0px 0px rgba(239,239,239,1);
+
+      @include tablet {
+        width: 42.3%;
+      }
+      @include desktop {
+        width: 27.3%;
+      }
+
+      h3 {
+        font-weight: 300;
+        font-size: 24px;
+        margin-top: 0;
+      }
+
+      ol,ul {
+        margin: 0;
+        padding-left: 20px;
+
+        li {
+          text-indent: 0;
+          font-size: 16px;
+          line-height: 1.6;
+
+          a {
+            color: #000;
+          }
+        }
+
+      }
+    }
   }
 }

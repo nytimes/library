@@ -118,29 +118,41 @@ function handlePage(req, res, next) {
     search.run(q, (err, results) => {
       res.render(template, {q, results})
     })
-  } else if(page == "categories") {
+  } else if(page == "categories" || page == "index") {
     getTree((err, tree) => {
       if (err) return res.status(500).send(err)
-      let categories  = Object.values(tree.children)
-
-      // Ignore pages at the root of the site on the category page
-      categories = categories.filter((child) => { return child.nodeType == 'branch' })
-
-      // For now, sort alphabetically:
-      categories = categories.sort((a,b) => { return a.sort.localeCompare(b.sort) })
-
-      categories = categories.map((category) => {
-        category = Object.assign({}, category)
-        category.children = Object.values(category.children).map((child) => {
-          return getMeta(child.id)
-        })
-        return category
-      })
+      let categories = buildDisplayCategories(tree);
       res.render(template, {categories})
     })
   } else {
     res.render(template)
   }
+}
+
+function buildDisplayCategories(tree) {
+  let categories  = Object.keys(tree.children).map((key) => {
+    let data = tree.children[key]
+    data.path = `/${key}` // for now
+    return data
+  })
+
+
+  // Ignore pages at the root of the site on the category page
+  categories = categories.filter((child) => { return child.nodeType == 'branch' })
+
+  // For now, sort alphabetically:
+  categories = categories.sort((a,b) => { return a.sort.localeCompare(b.sort) })
+
+  categories = categories.map((category) => {
+    category = Object.assign({}, category)
+    category.children = Object.values(category.children).map((child) => {
+      return getMeta(child.id)
+    })
+    return category
+  })
+  console.log(categories)
+
+  return categories
 }
 
 function retrieveDataForPath(path, tree) {

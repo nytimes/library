@@ -16,6 +16,18 @@
           <p>A collection of shared newsroom knowledge and training.</p>
         </div>
         <%- include('../partials/search', {style: 'homepage', focus: 'autofocus', msgOnFocus: 'What are you looking for?'}) %>
+
+        <div class="featured-cat">
+          <button type="button" class="btn-plaintext"><a href="/categories">Find by category:</a></button>
+          <div class="featured-cat-list">
+            <% categories.forEach((category) => { %>
+              <% if (category.sort !== 'How do I use this site') { %>
+                <a href="<%= category.path %>"><button type="button" class="button btn-cat"><%= category.sort %></button></a>
+              <% } %>
+            <% }) %>
+          </div>
+        </div>
+
       </div>
 
       <div class="main-item main-item--bottom">
