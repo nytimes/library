@@ -81,4 +81,14 @@ describe("HTML processing", function() {
     })
   })
 
+  describe("comment handling", function() {
+    it("strips comments", function() {
+      assert.notMatch(this.processedHTML, /This comment text will not appear/)
+    })
+
+    it("strips inline comment anchors", function() {
+      let commentAnchorParent = this.output("p:contains('will be stripped from the')")
+      assert.notMatch(commentAnchorParent, /\[a\]/)
+    })
+  })
 })
