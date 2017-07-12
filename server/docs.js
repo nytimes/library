@@ -79,7 +79,6 @@ function normalizeHtml(html) {
   // as well as inline comment references
   $('sup').has('a[id^=cmnt]').remove()
 
-
   $('body *').map((idx, el) => {
     // Filter the style attr on each element
     const elStyle = $(el).attr('style')

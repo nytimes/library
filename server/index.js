@@ -116,12 +116,13 @@ function handlePage(req, res, next) {
   const {q} = req.query
   if (page === 'search' && q) {
     search.run(q, (err, results) => {
+      if (err) return next(err)
       res.render(template, {q, results})
     })
-  } else if(page == "categories" || page == "index") {
+  } else if (page === 'categories' || page === 'index') {
     getTree((err, tree) => {
       if (err) return res.status(500).send(err)
-      let categories = buildDisplayCategories(tree);
+      let categories = buildDisplayCategories(tree)
       res.render(template, {categories})
     })
   } else {
@@ -130,18 +131,17 @@ function handlePage(req, res, next) {
 }
 
 function buildDisplayCategories(tree) {
-  let categories  = Object.keys(tree.children).map((key) => {
+  let categories = Object.keys(tree.children).map((key) => {
     let data = tree.children[key]
     data.path = `/${key}` // for now
     return data
   })
 
-
   // Ignore pages at the root of the site on the category page
-  categories = categories.filter((child) => { return child.nodeType == 'branch' })
+  categories = categories.filter((child) => { return child.nodeType === 'branch' })
 
   // For now, sort alphabetically:
-  categories = categories.sort((a,b) => { return a.sort.localeCompare(b.sort) })
+  categories = categories.sort((a, b) => { return a.sort.localeCompare(b.sort) })
 
   categories = categories.map((category) => {
     category = Object.assign({}, category)
