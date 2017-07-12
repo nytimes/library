@@ -71,7 +71,7 @@ describe("HTML processing", function() {
 
     it("preserves whitespace at the start of a line", function() {
       let codeBlock = this.output('pre')
-      assert.match(codeBlock.html(), /   if \( \$\(this\)\.find/)
+      assert.match(codeBlock.html(), /  +jQuery.fn.calcSubWidth/)
     })
 
     it("scrubs smart quotes", function() {
