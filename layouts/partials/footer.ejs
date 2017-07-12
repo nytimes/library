@@ -1,0 +1,14 @@
+<% var style = locals.style === 'homepage' ? 'main-item main-item--bottom' : 'g-footer' %>
+<div class="<%= style %>">
+  <% if (locals.pager) { %>
+    <% pager.forEach((page, i) => { %>
+  <a href="<%- page.link %>"><button type="button" class="btn-footer"><%= i + 1 %></button></a>
+    <% }) %>
+  <% } %>
+  <% if (locals.editLink) { %>
+  <a href="<%- editLink %>"><button type="button" class="btn-footer">Edit This Page</button></a>
+  <a href="#"><button type="button" class="btn-footer">Create New Page</button></a>
+  <% } %>
+
+  <a href="/how-do-i-use-this-site"><button type="button" class="btn-plaintext">How do I use this site?</button></a>
+</div>

@@ -18,7 +18,7 @@
         <%- include('../partials/search', {style: 'homepage', focus: 'autofocus', msgOnFocus: 'What are you looking for?'}) %>
 
         <div class="featured-cat">
-          <button type="button" class="btn-plaintext"><a href="/categories">Find by category:</a></button>
+          <a href="/categories"><button type="button" class="btn-plaintext">Find by category:</button></a>
           <div class="featured-cat-list">
             <% categories.forEach((category) => { %>
               <% if (category.sort !== 'How do I use this site') { %>
@@ -29,13 +29,7 @@
         </div>
 
       </div>
-
-      <div class="main-item main-item--bottom">
-        <button type="button" class="btn-plaintext"><a href="#">How do I use this site?</a></button>
-      </div>
+      <%- include('../partials/footer', {style: 'homepage'}) %>
     </div>
-
-
-
   </body>
 </html>

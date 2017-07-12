@@ -9,29 +9,19 @@
     </div>
 
     <div id="category-page" class="g-body">
-
       <div class="g-main-content">
-        <% categories.forEach((category) => { %>
-          <div class="category">
-            <h3><a href="#"><%= category.sort %></a></h3>
-            <ul>
-              <% category.children.forEach((page) => { %>
-                <li><a href="<%= page.path %>"><%= page.prettyName %></a></li>
-              <% }) %>
-            </ul>
-          </div>
-        <% }) %>
-
+      <% categories.forEach((category) => { %>
+        <div class="category">
+          <h3><a href="<%= category.path %>"><%= category.sort %></a></h3>
+          <ul>
+            <% category.children.forEach((page) => { %>
+              <li><a href="<%= page.path %>"><%= page.prettyName %></a></li>
+            <% }) %>
+          </ul>
+        </div>
+      <% }) %>
       </div>
-
-      <!-- <p>Put some categories here.</p> -->
-
-      <div class="g-footer g-footer-shorter">
-        <!-- <button type="button" class="btn-footer"><a href="#">1</a></button>
-        <button type="button" class="btn-footer"><a href="#">2</a></button> -->
-        <button type="button" class="btn-plaintext"><a href="#">How do I use this site?</a></button>
-      </div>
+      <%- include('../partials/footer') %>
     </div>
-
   </body>
 </html>

@@ -5,6 +5,7 @@ const google = require('googleapis')
 const cheerio = require('cheerio')
 const pretty = require('pretty')
 const unescape = require('unescape')
+const slugify = require('slugify')
 
 const {getAuth} = require('./auth')
 
@@ -14,9 +15,8 @@ exports.cleanName = (name = '') => {
 }
 
 exports.slugify = (text = '') => {
-  return text
-    .toLowerCase()
-    .replace(/\s+/g, '-')
+  const lower = text.toLowerCase()
+  return slugify(lower)
 }
 
 exports.processHtml = (html) => {
@@ -78,7 +78,6 @@ function normalizeHtml(html) {
 
   // as well as inline comment references
   $('sup').has('a[id^=cmnt]').remove()
-
 
   $('body *').map((idx, el) => {
     // Filter the style attr on each element

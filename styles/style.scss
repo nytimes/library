@@ -108,7 +108,7 @@ button.button {
   border: 1px solid #ccc;
   color: #ccc;
   cursor: pointer;
-  -webkit-font-smoothing: antialiased;
+  // -webkit-font-smoothing: antialiased;
 }
 
 button.btn-homepage {
@@ -122,10 +122,7 @@ button.btn-homepage {
   -webkit-box-shadow: 3px 3px 0px 0px $lighterpink;
   -moz-box-shadow: 3px 3px 0px 0px $lighterpink;
   box-shadow: 3px 3px 0px 0px $lighterpink;
-
-  a:link, a:visited {
-    color: #fff;
-  }
+  color: #fff;
 
   &:hover {
     background: #333;
@@ -153,17 +150,11 @@ button.btn-footer {
   -moz-box-shadow: 5px 5px 0px 0px #ececec;
   box-shadow: 5px 5px 0px 0px #ececec;
   margin-right: 10px;
-
-  a:link, a:visited {
-    color: #333;
-  }
+  color: #333;
 
   &:hover {
     background: #333;
-    a {
-      color: #fff;
-      text-decoration: none;
-    }
+    color: #fff;
   }
 }
 
@@ -171,17 +162,13 @@ button.btn-plaintext {
   border: none;
   text-decoration: underline;
   background: transparent;
+  color: #999;
+  font-size: 13px;
+  line-height: 29px;
 
-  a:link, a:visited {
-    font-size: 13px;
-    color: #999;
-    line-height: 29px;
-  }
   &:hover {
     cursor: pointer;
-    a {
-      color: $pink;
-    }
+    color: $pink;
   }
 }
 
@@ -651,6 +638,25 @@ button.btn-cat {
     }
 
     .search-result {
+      a.folder {
+        span {
+          background: #f0f0f0;
+          color: #483d8b;
+          padding: 3px 7px;
+          font-weight: 400;
+        }
+        &:hover {
+          text-decoration: none;
+
+          span {
+            background: $lightestpink;
+            color: #000;
+          }
+        }
+      }
+      .author {
+        font-weight: 400;
+      }
       p {
         font-size: 15px;
         margin: 0;
@@ -664,14 +670,7 @@ button.btn-cat {
       }
       h3 {
         font-weight: 400;
-        margin: 20px 0 3px 0;
-
-        @include tablet{
-
-        }
-        @include desktop{
-          margin: 15px 0 3px 0;
-        }
+        margin: 20px 0 1px 0;
       }
     }
   }

@@ -21,8 +21,8 @@
           <div class="search-result">
             <h3><a href="<%= res.path %>"><%= res.prettyName %></a></h3>
             <p>
-              Filed under:
-              <a class="folder" href="<%= res.folder.path %>"><%= res.folder.name || 'Home' %></a>.
+              Filed under
+              <a class="folder" href="<%= res.folder.path %>"><span><%= res.folder.name || 'Home' %></span></a>&nbsp;
               Last edited by
                 <span class="author"><%= res.lastModifyingUser.displayName %></span>
                 <%= res.lastUpdated %>.
@@ -30,16 +30,9 @@
           </div>
           <% }) %>
         <% } %>
-
       </div>
 
-      <div class="g-footer g-footer-shorter">
-        <!-- how do we do pagination here?? -->
-        <button type="button" class="btn-footer"><a href="#">1</a></button>
-        <button type="button" class="btn-footer"><a href="#">2</a></button>
-        <button type="button" class="btn-plaintext"><a href="#">How do I use this site?</a></button>
-      </div>
+      <%- include('../partials/footer') %>
     </div>
-
   </body>
 </html>
