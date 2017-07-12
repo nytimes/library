@@ -48,6 +48,7 @@ function updateTree(cb) {
     const drive = google.drive({version: 'v3', auth: authClient})
     drive.files.list({
       teamDriveId,
+      q: 'trashed = false',
       corpora: 'teamDrive',
       supportsTeamDrives: true,
       includeTeamDriveItems: true,

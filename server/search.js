@@ -14,7 +14,7 @@ exports.run = (query, cb) => {
 
     drive.files.list({
       teamDriveId,
-      q: `fullText contains ${JSON.stringify(query)} AND mimeType != 'application/vnd.google-apps.folder'`,
+      q: `fullText contains ${JSON.stringify(query)} AND mimeType != 'application/vnd.google-apps.folder' AND trashed = false`,
       corpora: 'teamDrive',
       supportsTeamDrives: true,
       includeTeamDriveItems: true,
