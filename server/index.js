@@ -93,7 +93,10 @@ app.get('*', (req, res, next) => {
     })
   })
 })
+
+if(process.env.AIRBRAKE_PROJECT_ID) { initAirbrake() }
 app.use(errorPages)
+
 app.listen(3000)
 
 function getTemplates(subfolder) {
@@ -219,10 +222,25 @@ function prepareContextualData(url, breadcrumb, parent, slug) {
   }
 }
 
-// generic error handler
+function initAirbrake() {
+  const airbrake = require('airbrake').createClient(
+    process.env.AIRBRAKE_PROJECT_ID,
+    process.env.AIRBRAKE_API_KEY,
+  )
+  airbrake.addFilter(function(notice) {
+    // Don't report 404s to Airbrake
+    if(notice.errors[0].message === 'Not found') {
+      return null;
+    }
+
+    return notice;
+  })
+  app.use(airbrake.expressHandler())
+}
+
+// generic error handler to return error pages to user
 function errorPages(err, req, res, next) {
-  const code = err.message === 'Not found' ? 404 : 500
-  // @TODO: more robust error logging, maybe airbrake here.
+  const code = err.message === 'Not found' ? 404 : 500  
   console.log('Received an error!', err)
   res.status(code).render(`errors/${code}`, {err})
 }

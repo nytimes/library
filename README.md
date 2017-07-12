@@ -53,8 +53,7 @@ This app is hosted on the [Interactive News infrastructure](***REMOVED***/wiki).
 
 Logs: [stg](***REMOVED***&minLogLevel=0&expandAll=false&advancedFilter=resource.type%20%3D%20container%20AND%20resource.labels.cluster_name%20%3D%20%22stg-adm%22%20AND%20resource.labels.namespace_id%20%3D%20%22default%22%20AND%20resource.labels.container_name%20%3D%20%22nyt-library%22) | [prd](https://console.cloud.google.com/logs/viewer?project=***REMOVED***-prd&minLogLevel=0&expandAll=false&advancedFilter=resource.type%20%3D%20container%20AND%20resource.labels.cluster_name%20%3D%20%22prd-adm%22%20AND%20resource.labels.namespace_id%20%3D%20%22default%22%20AND%20resource.labels.container_name%20%3D%20%22nyt-library%22)
 
-Aibrake TK.
-
+When an unexpected error occurs, its stack trace is sent to [the library Airbrake project](https://***REMOVED***).
 
 ## App structure
 
