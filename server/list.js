@@ -82,6 +82,7 @@ function produceTree(files, firstParent) {
     const prettyName = cleanName(name)
     byId[id] = Object.assign({}, resource, {
       prettyName,
+      isHomePage: name.match(/[–—-]\s+home/i),
       resourceType: cleanResourceType(resource.mimeType),
       sort: determineSort(name),
       slug: slugify(prettyName)
