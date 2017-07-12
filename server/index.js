@@ -25,6 +25,12 @@ app.get('/healthcheck', (req, res) => {
 
 // serve all files in the public folder
 app.use('/assets', express.static(path.join(__dirname, '../public')))
+
+// strip trailing slashes from URLs
+app.get(/(.+)\/$/, (req, res, next) => {
+  res.redirect(req.params[0])
+})
+
 app.get('/', handlePage)
 app.get('/:page', handlePage)
 
