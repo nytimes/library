@@ -1,12 +1,14 @@
 <div class="search-topper">
   <form method="GET" action="/search" class="search-container">
-    <input id="search-box" type="text" name="q" value="<%= locals.q %>" placeholder="What are you looking for?" onfocus="this.placeholder = ''" onblur="this.placeholder = 'What are you looking for?'"/>
+    <% const focus = locals.focus || '' %>
+    <% const msgOnFocus = locals.msgOnFocus || '' %>
+    <input <%= focus %> id="search-box" type="text" name="q" value="<%= locals.q %>" placeholder="What are you looking for?" onfocus="this.placeholder = '<%= msgOnFocus %>'" onblur="this.placeholder = 'What are you looking for?'"/>
     <button class="icon"><i class="fa fa-search"></i></button>
   </form>
 
   <div class="additional-menus">
     <% const style = locals.style || 'plaintext' %>
-    <button type="button" class="button btn-<%= style %>"><a href="/categories">Find by Category</a></button>
+    <a href="/categories"><button type="button" class="button btn-<%= style %>">Find by Category</button></a>
     <%# <button type="button" class="btn-plaintext"><a href="#">Onboarding Guide</a></button>%>
   </div>
 </div>

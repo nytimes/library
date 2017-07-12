@@ -114,6 +114,7 @@ button.btn-homepage {
   background-color: #4D4D4D;
   padding: 10px 25px;
   border: none;
+  color: #fff;
   border-radius: 0;
   -webkit-box-shadow: 3px 3px 0px 0px $lighterpink;
   -moz-box-shadow: 3px 3px 0px 0px $lighterpink;
@@ -684,6 +685,10 @@ button.btn-plaintext {
   height: calc(100vh - 45px);
   overflow: hidden;
 
+  @include desktop{
+    left: 0;
+  }
+
   .mid-center {
     max-width: 640px;
     margin: 0 auto;
@@ -795,7 +800,7 @@ button.btn-plaintext {
         width: 55px;
         font-size: 15pt;
         margin-left: -60px;
-        opacity: 0;
+        opacity: 0.95;
         -webkit-transition: opacity .35s ease;
         -moz-transition: opacity .35s ease;
         -ms-transition: opacity .35s ease;
