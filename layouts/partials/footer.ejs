@@ -2,12 +2,13 @@
 <div class="<%= style %>">
   <% if (locals.pager) { %>
     <% pager.forEach((page, i) => { %>
-  <button type="button" class="btn-footer"><a href="<%- page.link %>"><%= i + 1 %></a></button>
+  <a href="<%- page.link %>"><button type="button" class="btn-footer"><%= i + 1 %></button></a>
     <% }) %>
   <% } %>
   <% if (locals.editLink) { %>
-  <button type="button" class="btn-footer"><a href="<%- editLink %>">Edit This Page</a></button>
-  <button type="button" class="btn-footer"><a href="#">Create New Page</a></button>
+  <a href="<%- editLink %>"><button type="button" class="btn-footer">Edit This Page</button></a>
+  <a href="#"><button type="button" class="btn-footer">Create New Page</button></a>
   <% } %>
-  <button type="button" class="btn-plaintext"><a href="/how-do-i-use-this-site">How do I use this site?</a></button>
+
+  <a href="/how-do-i-use-this-site"><button type="button" class="btn-plaintext">How do I use this site?</button></a>
 </div>
