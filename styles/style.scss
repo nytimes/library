@@ -604,7 +604,7 @@ button.btn-cat {
     ul.children {
       list-style-type: none;
       margin: 40px 0 40px 0;
-      padding: 20px 0px 20px 20px;
+      padding: 20px 0px 20px 40px;
       border: 1px solid #ddd;
       -webkit-box-shadow: -4px -4px 0px 0px #efefef;
       -moz-box-shadow: -4px -4px 0px 0px #efefef;
@@ -615,14 +615,16 @@ button.btn-cat {
 
       .foldericon {
         color: #444;
-        margin-right: 6px;
+        margin-right: 7px;
         font-size: 14px;
+        margin-left: -24px;
       }
 
       li {
         text-indent: 0;
-        width: 47.3%;
-        margin-right: 15px;
+        width: 42.1%;
+        margin-right: 34px;
+        margin-left: 10px;
         font-size: 16px;
         line-height: 1.6;
 
