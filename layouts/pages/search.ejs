@@ -11,18 +11,20 @@
     <div class="g-body">
       <div class="g-main-content" id="g-search-page">
 
-        <% if(locals.results) { %>
+        <% if (locals.results) { %>
           <h3 class="search-kicker">Showing results for '<%= locals.q %>':</h3>
         <% } %>
 
 
-        <% if(locals.results) { %>
+        <% if (locals.results) { %>
           <% locals.results.forEach((res) => { %>
           <div class="search-result">
             <h3><a href="<%= res.path %>"><%= res.prettyName %></a></h3>
             <p>
+              <% if (res.folder) { %>
               Filed under
               <a class="folder" href="<%= res.folder.path %>"><span><%= res.folder.name || 'Home' %></span></a>&nbsp;
+              <% } %>
               Last edited by
                 <span class="author"><%= res.lastModifyingUser.displayName %></span>
                 <%= res.lastUpdated %>.

@@ -124,7 +124,7 @@ function handlePage(req, res, next) {
   const template = `pages/${page}`
   const {q} = req.query
   if (page === 'search' && q) {
-    search.run(q, (err, results) => {
+    return search.run(q, (err, results) => {
       if (err) return next(err)
       res.render(template, {q, results})
     })
