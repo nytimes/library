@@ -10,14 +10,9 @@
 
     <div class="g-body">
       <div class="g-main-content" id="g-search-page">
-
-        <% if (locals.results) { %>
+        <% if (locals.results && results.length) { %>
           <h3 class="search-kicker">Showing results for '<%= locals.q %>':</h3>
-        <% } %>
-
-
-        <% if (locals.results) { %>
-          <% locals.results.forEach((res) => { %>
+          <% results.forEach((res) => { %>
           <div class="search-result">
             <h3><a href="<%= res.path %>"><%= res.prettyName %></a></h3>
             <p>
@@ -31,6 +26,9 @@
             </p>
           </div>
           <% }) %>
+        <% }  else { %>
+          <h3 class="search-kicker">There are no results for '<%= locals.q %>'</h3>
+          <p>To request a new page, email us at <a href="mailto:***REMOVED***">***REMOVED***</a>, or find us on slack in <a href="***REMOVED***/library">#library</a>.</p>
         <% } %>
       </div>
 
