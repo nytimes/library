@@ -18,7 +18,8 @@
     "nodemon": "^1.11.0",
     "pretty": "^2.0.0",
     "slugify": "^1.1.0",
-    "unescape": "^1.0.1"
+    "unescape": "^1.0.1",
+    "***REMOVED***":">=0.0.2"
   },
   "devDependencies": {
     "concurrently": "^3.4.0",

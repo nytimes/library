@@ -5,6 +5,7 @@ const path = require('path')
 
 const express = require('express')
 const moment = require('moment')
+const {verifyIapToken} = require('***REMOVED***');
 
 const {getTree, getMeta} = require('./list')
 const {fetchDoc, cleanName} = require('./docs')
@@ -18,6 +19,8 @@ const categories = getTemplates('categories')
 const app = express()
 app.set('view engine', 'ejs')
 app.set('views', layoutsDir)
+
+app.use(verifyIapToken())
 
 app.get('/healthcheck', (req, res) => {
   res.send('OK')
