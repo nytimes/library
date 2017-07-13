@@ -18,12 +18,14 @@
       <% if (locals.content) { %>
       <div class="g-main-content">
         <%- content %>
+
+        <% if (locals.children && children.length) { %>
+        <%- include ../partials/childrenList %>
+        <% } %>
       </div>
       <% } %>
 
-      <% if (locals.children && children.length) { %>
-      <%- include ../partials/childrenList %>
-      <% } %>
+
       <%- include ../partials/footer %>
     </div>
     <script>

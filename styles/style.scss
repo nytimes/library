@@ -177,12 +177,8 @@ button.btn-cat {
   background: #000;
   border-radius: 0;
   margin: 5px 0;
+  -webkit-font-smoothing: antialiased;
 
-  a:link, a:visited {
-    font-size: 13px;
-    color: #fff;
-    line-height: 29px;
-  }
   &:hover {
     cursor: pointer;
     color: $pink;
@@ -479,6 +475,8 @@ button.btn-cat {
       font-size: 14px;
       line-height: 24px;
       margin-bottom: 10px;
+    }
+    .section-kicker {
       margin-top: 20px;
     }
 
@@ -488,7 +486,7 @@ button.btn-cat {
 
     ul.section, ul.sibling {
       list-style-type: none;
-      margin: 0 0 40px 0;
+      margin: 0 0 20px 0;
       padding: 0;
 
       li {
@@ -517,7 +515,7 @@ button.btn-cat {
 
     ul.sibling {
       list-style-type: none;
-      margin: 0 0 40px 0;
+      margin: 40px 0 40px 0;
       padding: 20px;
       border: 1px solid #ddd;
       -webkit-box-shadow: -8px -8px 0px 0px rgba(236,236,236,1);
@@ -531,7 +529,7 @@ button.btn-cat {
       li {
         margin-left: 17px;
         border-bottom: 0;
-        font-weight: 300;
+        // font-weight: 300;
         text-indent: 3px;
 
         &:before {
@@ -587,12 +585,19 @@ button.btn-cat {
        so that they are visually contiguous */
     ul, ol {
       margin: 0;
+      // padding: 0;
 
       li {
         text-indent: -23px;
         &:before {
           padding-right: 6px;
         }
+      }
+    }
+
+    ul.children {
+      li {
+        text-indent: 0;
       }
     }
 
@@ -879,6 +884,7 @@ button.btn-cat {
       .featured-cat-list {
         display: flex;
         flex-flow: row wrap;
+        margin-top: -7px;
 
         button {
           margin-right: 10px;
