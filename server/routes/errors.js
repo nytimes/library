@@ -7,7 +7,7 @@ const router = express.Router()
 
 if (process.env.AIRBRAKE_PROJECT_ID) {
   const client = initAirbrake()
-  router.use(client)
+  router.use(client.expressHandler())
 }
 
 // error handler for rendering the 404 and 500 pages
