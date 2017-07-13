@@ -69,23 +69,31 @@ function produceTree(files, firstParent) {
   // then build out tree, by traversing top down
   // keep in mind that files can have multiple parents
   const [byParent, byId] = files.reduce(([byParent, byId], resource) => {
-    const {parents, id} = resource
-    // make sure we have an array for each possible parent
-    parents.forEach((parent) => {
-      byParent[parent] = byParent[parent] || []
-      byParent[parent].push(id)
-    })
+    const {parents, id, name} = resource
 
-    const {name} = resource
-    // should we add some extra data here at time of init?
-    // maybe sort or slug or clean name?
+    // prepare data for the individual file and store later for reference
     const prettyName = cleanName(name)
     byId[id] = Object.assign({}, resource, {
       prettyName,
-      isHomePage: name.match(/[–—-]\s+home/i),
       resourceType: cleanResourceType(resource.mimeType),
       sort: determineSort(name),
       slug: slugify(prettyName)
+    })
+
+    // for every parent, make sure the current file is in the list of children
+    // this is used later to traverse the tree
+    parents.forEach((parentId) => {
+      const parent = byParent[parentId] || {children: [], home: null}
+      const matchesHome = name.trim().match(/\bhome$/i)
+      // check if this is the first file for this parent with "home" at the end
+      // if not it is a child, if so it is the index
+      if (!matchesHome || parent.home) {
+        parent.children.push(id)
+      } else {
+        parent.home = id
+      }
+
+      byParent[parentId] = parent
     })
 
     return [byParent, byId]
@@ -98,11 +106,12 @@ function produceTree(files, firstParent) {
 
 // do we care about parent ids? maybe not?
 function buildTreeFromData(rootParent, breadcrumb) {
-  const children = driveBranches[rootParent]
+  const {children, home} = driveBranches[rootParent] || {}
   const parentInfo = docsInfo[rootParent] || {}
 
   const parentNode = {
     nodeType: children ? 'branch' : 'leaf',
+    home,
     id: rootParent,
     breadcrumb,
     sort: parentInfo ? determineSort(parentInfo.name) : Infinity // some number here that could be used to sort later

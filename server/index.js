@@ -100,7 +100,7 @@ app.get('*', (req, res, next) => {
   })
 })
 
-if(process.env.AIRBRAKE_PROJECT_ID) { initAirbrake() }
+if (process.env.AIRBRAKE_PROJECT_ID) { initAirbrake() }
 app.use(errorPages)
 
 app.listen(3000)
@@ -128,15 +128,17 @@ function handlePage(req, res, next) {
       if (err) return next(err)
       res.render(template, {q, results})
     })
-  } else if (page === 'categories' || page === 'index') {
-    getTree((err, tree) => {
-      if (err) return res.status(500).send(err)
-      let categories = buildDisplayCategories(tree)
+  }
+
+  if (page === 'categories' || page === 'index') {
+    return getTree((err, tree) => {
+      if (err) return next(err)
+      const categories = buildDisplayCategories(tree)
       res.render(template, {categories})
     })
-  } else {
-    res.render(template)
   }
+
+  res.render(template)
 }
 
 function buildDisplayCategories(tree) {
@@ -175,12 +177,9 @@ function retrieveDataForPath(path, tree) {
   }
 
   // if we used up segments and are looking at a folder, try index
-  if ((pointer || {}).nodeType === 'branch') {
+  if ((pointer || {}).nodeType === 'branch' && pointer.home) {
+    pointer = Object.assign({}, pointer, {id: pointer.home})
     parent = pointer
-
-    if (pointer.children[indexName]) {
-      pointer = pointer.children[indexName]
-    }
   }
 
   // return the leaf and its immediate branch
@@ -190,18 +189,20 @@ function retrieveDataForPath(path, tree) {
 function prepareContextualData(url, breadcrumb, parent, slug) {
   const breadcrumbInfo = breadcrumb.map(({id}) => getMeta(id))
 
-  const self = slug === indexName ? indexName : url.split('/').slice(-1)[0]
+  const {children, id, home, nodeType} = parent
+  const isHome = id === home || (nodeType === 'branch' && !home)
+  const self = isHome ? null : url.split('/').slice(-1)[0]
   // most of what we are doing here is preparing parents and siblings
   // we need the url and parent object, as well as the breadcrumb to do that
-  const siblings = Object.keys(parent.children)
-    .filter((slug) => slug !== self && slug !== indexName)
+  const siblings = Object.keys(children)
+    .filter((slug) => slug !== self)
     .map((slug) => {
-      const {id} = parent.children[slug] // we should do something here
+      const {id} = children[slug]
       const {sort, prettyName, webViewLink} = getMeta(id)
 
       // on an index page, the base url is the current url
       // for other pages, remove the slug from that url
-      const baseUrl = self === indexName ? url : `${url.split('/').slice(0, -1).join('/')}`
+      const baseUrl = isHome ? url : `${url.split('/').slice(0, -1).join('/')}`
       return {
         sort,
         name: prettyName,
@@ -231,22 +232,22 @@ function prepareContextualData(url, breadcrumb, parent, slug) {
 function initAirbrake() {
   const airbrake = require('airbrake').createClient(
     process.env.AIRBRAKE_PROJECT_ID,
-    process.env.AIRBRAKE_API_KEY,
+    process.env.AIRBRAKE_API_KEY
   )
-  airbrake.addFilter(function(notice) {
+  airbrake.addFilter((notice) => {
     // Don't report 404s to Airbrake
-    if(notice.errors[0].message === 'Not found') {
-      return null;
+    if (notice.errors[0].message === 'Not found') {
+      return null
     }
 
-    return notice;
+    return notice
   })
   app.use(airbrake.expressHandler())
 }
 
 // generic error handler to return error pages to user
 function errorPages(err, req, res, next) {
-  const code = err.message === 'Not found' ? 404 : 500  
+  const code = err.message === 'Not found' ? 404 : 500
   console.log('Received an error!', err)
   res.status(code).render(`errors/${code}`, {err})
 }

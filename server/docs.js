@@ -12,6 +12,7 @@ const {getAuth} = require('./auth')
 exports.cleanName = (name = '') => {
   return name
     .replace(/^\d+[-–—_\s]*/, '') // remove leading numbers and delimiters
+    .replace(/\W+home$/i, '') // remove 'Home' from the end
 }
 
 exports.slugify = (text = '') => {
@@ -160,7 +161,7 @@ function formatCodeContent(content) {
 
 function getSections(html) {
   const $ = cheerio.load(html)
-  const allHeaders = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
+  const allHeaders = ['h1', 'h2']
     .map((h) => `body ${h}`)
     .join(', ')
 
