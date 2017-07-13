@@ -1,13 +1,10 @@
 <ul class="sibling">
   <div class="sibling-kicker">Related Docs</div>
   <% siblings.forEach((link) => { %>
-    <% var type = link.nodeType === 'branch' ? 'folder' : 'file' %>
+    <% const type = link.nodeType === 'branch' ? 'folder' : 'file' %>
     <li class="type-<%= type %>">
-      <% if (type == 'folder') {%>
-        <i class="fa fa-folder foldericon" aria-hidden="true"></i>
-      <% } else { %>
-        <i class="fa fa-file-o foldericon" aria-hidden="true"></i>
-      <% } %>
+      <% const icon = type === 'folder' ? 'fa-folder' : 'fa-file-o'; %>
+      <i class="fa foldericon <%= icon %>" aria-hidden="true"></i>
       <a class="content-link" href="<%- link.url %>" ><%= link.name %></a>
     </li>
   <% }) %>
