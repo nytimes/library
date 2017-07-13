@@ -488,7 +488,7 @@ button.btn-cat {
 
     ul.section, ul.sibling {
       list-style-type: none;
-      margin: 0 0 60px 0;
+      margin: 0 0 40px 0;
       padding: 0;
 
       li {
@@ -496,8 +496,9 @@ button.btn-cat {
         font-size: 15px;
         line-height: 20px;
         text-indent: -4px;
-        padding: 5px 0px;
+        padding: 4px 0px;
         border-bottom: 0.5px solid #ddd;
+        font-weight: 400;
 
         &:last-child {
           border-bottom: none;
@@ -516,12 +517,34 @@ button.btn-cat {
 
     ul.sibling {
       list-style-type: none;
-      margin: 0;
+      margin: 0 0 40px 0;
       padding: 20px;
       border: 1px solid #ddd;
       -webkit-box-shadow: -8px -8px 0px 0px rgba(236,236,236,1);
       -moz-box-shadow: -8px -8px 0px 0px rgba(236,236,236,1);
       box-shadow: -8px -8px 0px 0px rgba(236,236,236,1);
+    }
+
+    ul.subsection {
+      padding:0;
+
+      li {
+        margin-left: 17px;
+        border-bottom: 0;
+        font-weight: 300;
+        text-indent: 3px;
+
+        &:before {
+          content: "";
+          // border-left: 1px solid #ddd;
+          border-bottom: 1px solid #ccc;
+          width: 10px;
+          // height: 7px;
+          display: inline-block;
+          vertical-align: middle;
+          margin: 0 -3px 0 -20px;
+        }
+      }
     }
   }
 
@@ -877,13 +900,12 @@ button.btn-cat {
   .g-main-content {
     max-width: 960px;
     display: flex;
-    align-content: stretch;
     flex-flow: row wrap;
     border-top: 0;
-    justify-content: space-between;
+    justify-content: flex-start;
 
     .category {
-      margin: 0 0 30px 0;
+      margin: 0 12px 30px 12px;
       padding: 20px;
       border: 1px solid #ddd;
       width: 100%;
@@ -892,10 +914,10 @@ button.btn-cat {
       box-shadow: -4px -4px 0px 0px rgba(239,239,239,1);
 
       @include tablet {
-        width: 42.3%;
+        width: 40.9%;
       }
       @include desktop {
-        width: 27.3%;
+        width: 26.4%;
       }
 
       h3 {
