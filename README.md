@@ -24,7 +24,7 @@ cd nyt-library && yarn install
 
 Start the app:
 ```
-npm build && npm run watch
+npm run build && npm run watch
 ```
 
 The app should now be running on port 3000:
