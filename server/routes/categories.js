@@ -121,11 +121,11 @@ function createRelatedList(slugs, self, baseUrl) {
   return Object.keys(slugs)
     .filter((slug) => slug !== self)
     .map((slug) => {
-      const {id} = slugs[slug]
+      const {id, nodeType} = slugs[slug]
       const {sort, prettyName, webViewLink} = getMeta(id)
-
       return {
         sort,
+        nodeType,
         name: prettyName,
         editLink: webViewLink,
         url: path.join(baseUrl, slug)
