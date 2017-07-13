@@ -10,7 +10,9 @@
         <% if (locals.sections && locals.sections.length) { %>
           <%- include ../partials/sectionList %>
         <% } %>
+        <% if (locals.siblings && siblings.length) { %>
         <%- include ../partials/siblingList %>
+        <% } %>
       </div>
 
       <% if (locals.content) { %>
@@ -19,6 +21,9 @@
       </div>
       <% } %>
 
+      <% if (locals.children && children.length) { %>
+      <%- include ../partials/childrenList %>
+      <% } %>
       <%- include ../partials/footer %>
     </div>
     <script>
