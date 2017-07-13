@@ -21,7 +21,7 @@
         <% } %>
 
         <% if (locals.children && children.length) { %>
-        <%- include ../partials/childrenList %>
+        <%- include('../partials/childrenList', {children, kicker: `Pages in ${title}`}) %>
         <% } %>
       </div>
 
