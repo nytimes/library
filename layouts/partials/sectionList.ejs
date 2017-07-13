@@ -4,5 +4,18 @@
     <li>
       <a href="<%- section.url %>" ><%= section.name %></a>
     </li>
+
+    <% if (section.subsections.length) { %>
+    <li>
+      <%# was trying to get this to just work with recursion but kept erroring %>
+      <ul class="subsection">
+        <% section.subsections.forEach((subsection) => { %>
+        <li>
+          <a href="<%- subsection.url %>"><%= subsection.name %></a>
+        </li>
+        <% }) %>
+      </ul>
+    </li>
+    <% } %>
   <% }) %>
 </ul>
