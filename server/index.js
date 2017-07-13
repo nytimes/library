@@ -178,8 +178,8 @@ function retrieveDataForPath(path, tree) {
 
   // if we used up segments and are looking at a folder, try index
   if ((pointer || {}).nodeType === 'branch' && pointer.home) {
-    pointer = Object.assign({}, pointer, {id: pointer.home})
     parent = pointer
+    pointer = Object.assign({}, pointer, {id: pointer.home})
   }
 
   // return the leaf and its immediate branch
@@ -190,7 +190,7 @@ function prepareContextualData(url, breadcrumb, parent, slug) {
   const breadcrumbInfo = breadcrumb.map(({id}) => getMeta(id))
 
   const {children, id, home, nodeType} = parent
-  const isHome = id === home || (nodeType === 'branch' && !home)
+  const isHome = home || nodeType === 'branch'
   const self = isHome ? null : url.split('/').slice(-1)[0]
   // most of what we are doing here is preparing parents and siblings
   // we need the url and parent object, as well as the breadcrumb to do that
@@ -224,6 +224,7 @@ function prepareContextualData(url, breadcrumb, parent, slug) {
     })
 
   return {
+    parentId: id,
     parentLinks,
     siblings
   }

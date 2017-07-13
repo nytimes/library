@@ -35,6 +35,7 @@ exports.getChildren = (id) => {
 const treeUpdateDelay = parseInt(process.env.UPDATE_INTERVAL || 60, 10) * 1000
 startTreeRefresh(treeUpdateDelay)
 
+// @TODO: page through results of tree if incompleteSearch
 function updateTree(cb) {
   cb = inflight('tree', cb)
   // guard against calling while already in progress
@@ -53,9 +54,13 @@ function updateTree(cb) {
       supportsTeamDrives: true,
       includeTeamDriveItems: true,
       fields: '*'
-    }, (err, {files} = {}) => {
+    }, (err, {files, incompleteSearch} = {}) => {
       if (err) {
         return cb(err)
+      }
+
+      if (incompleteSearch) {
+        // @TODO: perform additional queries to get the remaining data
       }
 
       currentTree = produceTree(files, teamDriveId)
