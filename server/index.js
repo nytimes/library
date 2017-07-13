@@ -59,7 +59,7 @@ app.get('*', (req, res, next) => {
     }
 
     const [data, parent] = retrieveDataForPath(req.path, tree)
-    const {id, breadcrumb} = data
+    const {id, breadcrumb, nodeType} = data
     if (!id) {
       return next(Error('Not found'))
     }
@@ -70,7 +70,7 @@ app.get('*', (req, res, next) => {
     const template = `categories/${layout}`
 
     // don't try to fetch branch node
-    const contextData = prepareContextualData(req.path, breadcrumb, parent, meta.slug)
+    const contextData = prepareContextualData(nodeType, req.path, breadcrumb, parent, meta.slug)
     const baseRenderData = Object.assign({}, contextData, {
       url: req.path,
       title: meta.prettyName,
@@ -186,11 +186,11 @@ function retrieveDataForPath(path, tree) {
   return [pointer || {}, parent]
 }
 
-function prepareContextualData(url, breadcrumb, parent, slug) {
+function prepareContextualData(nodeType, url, breadcrumb, parent, slug) {
   const breadcrumbInfo = breadcrumb.map(({id}) => getMeta(id))
 
-  const {children, id, home, nodeType} = parent
-  const isHome = home || nodeType === 'branch'
+  const {children, id} = parent
+  const isHome = nodeType === 'branch'
   const self = isHome ? null : url.split('/').slice(-1)[0]
   // most of what we are doing here is preparing parents and siblings
   // we need the url and parent object, as well as the breadcrumb to do that
