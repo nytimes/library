@@ -6,10 +6,10 @@
     <% }) %>
   <% } %>
   <% if (locals.editLink) { %>
-  <a href="<%- editLink %>"><button type="button" class="btn-footer">Edit This Page</button></a>
+  <a href="<%- editLink %>" target="_blank"><button type="button" class="btn-footer">Edit This Page</button></a>
   <% } %>
   <% if (locals.parentId) { %>
-  <a href="https://docs.google.com/a/nytimes.com/document/create?usp=drive_web&folder=<%- parentId %>&authuser=0"><button type="button" class="btn-footer">Create New Page</button></a>
+  <a href="https://docs.google.com/a/nytimes.com/document/create?usp=drive_web&folder=<%- parentId %>&authuser=0" target="_blank"><button type="button" class="btn-footer">Create New Page</button></a>
   <% } %>
 
   <a href="/how-do-i-use-this-site"><button type="button" class="btn-plaintext">How do I use this site?</button></a>
