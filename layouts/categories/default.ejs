@@ -15,16 +15,15 @@
         <% } %>
       </div>
 
-      <% if (locals.content) { %>
       <div class="g-main-content">
+        <% if (locals.content) { %>
         <%- content %>
+        <% } %>
 
         <% if (locals.children && children.length) { %>
         <%- include ../partials/childrenList %>
         <% } %>
       </div>
-      <% } %>
-
 
       <%- include ../partials/footer %>
     </div>
