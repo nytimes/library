@@ -611,24 +611,32 @@ button.btn-cat {
       position: relative;
 
       h3 {
-        margin: 0 0 20px;
-        font-weight: normal;
+        margin: 0 0 20px -20px;
+        font-weight: 600;
       }
 
-      #category-page & {
-        display: flex;
-
-        .children {
-          column-count: 1;
-        }
-      }
-
+      // #category-page & {
+      //   display: flex;
+      //
+      //   .children {
+      //     column-count: 1;
+      //     padding-left: 20px;
+      //   }
+      //   h3 {
+      //     margin-left: 20px;
+      //   }
+      // }
     }
 
     ul.children {
-      padding-left: 0;
-      column-count: 2;
+      padding-left: 5px;
       list-style-type: none;
+      column-count: 2;
+      -moz-column-count: 2;
+      -moz-columns: 2;
+      -webkit-columns: 2;
+      columns: 2;
+      column-gap: 2.67em;
 
       .foldericon {
         color: #444;
@@ -638,11 +646,10 @@ button.btn-cat {
       }
 
       li {
-        display: inline-block;
+        // display: inline-block;
         text-indent: 0;
         padding-right: 15px;
         font-size: 16px;
-        min-width: 100%;
         line-height: 1.6;
         box-sizing: border-box;
 
@@ -955,7 +962,7 @@ button.btn-cat {
 //------------------------------------------------------------------------------
 #category-page {
   .g-main-content {
-    max-width: 960px;
+    max-width: 1024px;
     display: flex;
     flex-flow: row wrap;
     border-top: 0;
@@ -963,7 +970,7 @@ button.btn-cat {
 
     .children-container {
       margin: 0 12px 30px 12px;
-      padding: 20px;
+      padding: 25px;
       border: 1px solid #ddd;
       width: 100%;
       -webkit-box-shadow: -4px -4px 0px 0px rgba(239,239,239,1);
@@ -974,19 +981,21 @@ button.btn-cat {
         width: 40.9%;
       }
       @include desktop {
-        width: 26.4%;
+        width: 25.4%;
       }
 
       h3 {
         font-weight: 300;
         font-size: 24px;
         margin-top: 0;
+        margin-left: -5px;
       }
 
       ol,ul {
         margin: 0;
         padding-left: 0px;
         column-count: 1;
+        padding-left: 20px;
 
         li {
           text-indent: 0;
@@ -998,7 +1007,6 @@ button.btn-cat {
             color: #000;
           }
         }
-
       }
     }
   }
