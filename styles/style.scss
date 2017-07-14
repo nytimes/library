@@ -601,9 +601,61 @@ button.btn-cat {
       }
     }
 
+    .children-container {
+      margin: 40px 0 40px 0;
+      padding: 20px 0px 20px 40px;
+      border: 1px solid #ddd;
+      -webkit-box-shadow: -4px -4px 0px 0px #efefef;
+      -moz-box-shadow: -4px -4px 0px 0px #efefef;
+      box-shadow: -4px -4px 0px 0px #efefef;
+      position: relative;
+
+      h3 {
+        margin: 0 0 20px -20px;
+        font-weight: 600;
+      }
+
+      // #category-page & {
+      //   display: flex;
+      //
+      //   .children {
+      //     column-count: 1;
+      //     padding-left: 20px;
+      //   }
+      //   h3 {
+      //     margin-left: 20px;
+      //   }
+      // }
+    }
+
     ul.children {
+      padding-left: 5px;
+      list-style-type: none;
+      column-count: 2;
+      -moz-column-count: 2;
+      -moz-columns: 2;
+      -webkit-columns: 2;
+      columns: 2;
+      column-gap: 2.67em;
+
+      .foldericon {
+        color: #444;
+        margin-right: 7px;
+        font-size: 14px;
+        margin-left: -24px;
+      }
+
       li {
+        // display: inline-block;
         text-indent: 0;
+        padding-right: 15px;
+        font-size: 16px;
+        line-height: 1.6;
+        box-sizing: border-box;
+
+        a {
+          color: #000;
+        }
       }
     }
 
@@ -711,7 +763,7 @@ button.btn-cat {
 
   .g-footer {
     max-width: 600px;
-    margin: 120px auto 60px auto;
+    margin: 80px auto 60px auto;
     border-top: 1px solid #ccc;
     padding: 30px 0px;
 
@@ -910,15 +962,15 @@ button.btn-cat {
 //------------------------------------------------------------------------------
 #category-page {
   .g-main-content {
-    max-width: 960px;
+    max-width: 1024px;
     display: flex;
     flex-flow: row wrap;
     border-top: 0;
     justify-content: flex-start;
 
-    .category {
+    .children-container {
       margin: 0 12px 30px 12px;
-      padding: 20px;
+      padding: 25px;
       border: 1px solid #ddd;
       width: 100%;
       -webkit-box-shadow: -4px -4px 0px 0px rgba(239,239,239,1);
@@ -929,29 +981,32 @@ button.btn-cat {
         width: 40.9%;
       }
       @include desktop {
-        width: 26.4%;
+        width: 25.4%;
       }
 
       h3 {
         font-weight: 300;
         font-size: 24px;
         margin-top: 0;
+        margin-left: -5px;
       }
 
       ol,ul {
         margin: 0;
+        padding-left: 0px;
+        column-count: 1;
         padding-left: 20px;
 
         li {
           text-indent: 0;
           font-size: 16px;
           line-height: 1.6;
+          padding-right: 0;
 
           a {
             color: #000;
           }
         }
-
       }
     }
   }

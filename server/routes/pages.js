@@ -57,8 +57,9 @@ function buildDisplayCategories(tree) {
 
   categories = categories.map((category) => {
     category = Object.assign({}, category)
-    category.children = Object.values(category.children).map((child) => {
-      return getMeta(child.id)
+    category.children = Object.values(category.children).map(({id, nodeType}) => {
+      const {prettyName: name, path: url} = getMeta(id)
+      return {name, url, nodeType}
     })
     return category
   })
