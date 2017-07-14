@@ -24,6 +24,7 @@ exports.processHtml = (html) => {
   html = normalizeHtml(html)
   html = formatCode(html)
   html = pretty(html)
+  fetchByline(html);
   return html
 }
 
@@ -68,6 +69,10 @@ function fetch(id, authClient, cb) {
   })
 }
 
+function fetchByline(html) {
+  console.log("html", html);
+}
+
 function normalizeHtml(html) {
   // scrub all &nbsp;s (if there is a &nbsp; in a code block it will be escaped)
   html = html.replace(/&nbsp;/g, ' ')
@@ -93,7 +98,7 @@ function normalizeHtml(html) {
       if (newStyle.length > 0) {
         $(el).attr('style', newStyle)
       } else {
-        $(el).removeAttr('style') // if a <p>, <h1>, or other tag has no styles kill the style attr
+        $(el).removeAttr('style') // if a <p>, <h1>, or other tag has no styles, kill the style attr
       }
     }
 
@@ -128,7 +133,7 @@ function normalizeHtml(html) {
   // preserve style block from <head>, this contains the lst- class style
   // definitions that control list appearance
   $('body').prepend($.html('head style'))
-
+  
   return $('body').html()
 }
 
@@ -150,7 +155,7 @@ function formatCode(html) {
     const html = unescape(content)
     return formatCodeContent(html)
   })
-
+  
   return html
 }
 
