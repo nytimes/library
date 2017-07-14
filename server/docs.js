@@ -24,7 +24,6 @@ exports.processHtml = (html) => {
   html = normalizeHtml(html)
   html = formatCode(html)
   html = pretty(html)
-  fetchByline(html);
   return html
 }
 
@@ -42,6 +41,32 @@ exports.fetchDoc = (docId, cb) => {
       cb(err, {html, originalRevision, sections})
     })
   })
+}
+
+exports.fetchByline = (html, creatorOfDoc) => {
+  let byline = creatorOfDoc
+  const $ = cheerio.load(html)
+
+  // Iterates through all p tags to find byline
+  $('p').each((index, p) => {
+    if (p.children.length > 0) {
+      // regex that checks for byline
+      let r = /^by.+[^.\n]$/mig
+      if (r.test(p.children[0].data)) {
+        byline = p.children[0].data
+        // Removes the word "By"
+        byline = byline.substring(3)
+        $(p).remove()
+        return false
+      }
+    }
+  });
+
+  let payload = {
+    byline : byline,
+    html : $.html()
+  }
+  return payload
 }
 
 function fetch(id, authClient, cb) {
@@ -67,10 +92,6 @@ function fetch(id, authClient, cb) {
     const [originalRevision] = revisionGet
     cb(err, html, originalRevision)
   })
-}
-
-function fetchByline(html) {
-  console.log("html", html);
 }
 
 function normalizeHtml(html) {
