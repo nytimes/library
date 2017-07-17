@@ -14,7 +14,7 @@
         <%- include('../partials/childrenList', {kicker: category.sort, children: category.children, link: category.path}) %>
       <% }) %>
       </div>
-      <%- include('../partials/footer') %>
+      <%- include('../partials/footer', { pageType: 'category_index' }) %>
     </div>
   </body>
 </html>
