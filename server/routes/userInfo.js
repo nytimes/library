@@ -2,6 +2,7 @@
 
 const express = require('express')
 const router = express.Router()
+const md5 = require('md5')
 
 // add userInfo to the req object
 router.use((req, res, next) => {
@@ -9,13 +10,15 @@ router.use((req, res, next) => {
   if(process.env.TEST_EMAIL) {
     res.locals.userInfo = {
       email: process.env.TEST_EMAIL,
-      userId: "10"
+      userId: "10",
+      analyticsUserId: md5('10library')
     }
   } else {
     // pluck data from headers set by iap-verify-middleware
     res.locals.userInfo = {
       email:  req.headers['auth.verified_email'],
-      userId: req.headers['auth.verified_sub']
+      userId: req.headers['auth.verified_sub'],
+      analyticsUserId: md5(req.headers['auth.verified_sub'] +'library')
     }
   }
   next()

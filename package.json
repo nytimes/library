@@ -4,6 +4,7 @@
   "description": "Docs generated from files in google drive",
   "main": "index.js",
   "dependencies": {
+    "***REMOVED***": ">=0.0.2",
     "airbrake": "^2.0.1",
     "async": "^2.4.1",
     "chai": "^4.0.2",
@@ -12,14 +13,14 @@
     "express": "^4.15.3",
     "googleapis": "^19.0.0",
     "inflight": "^1.0.6",
+    "md5": "^2.2.1",
     "mocha": "^3.4.2",
     "moment": "^2.18.1",
     "node-sass": "^4.5.3",
     "nodemon": "^1.11.0",
     "pretty": "^2.0.0",
     "slugify": "^1.1.0",
-    "unescape": "^1.0.1",
-    "***REMOVED***":">=0.0.2"
+    "unescape": "^1.0.1"
   },
   "devDependencies": {
     "concurrently": "^3.4.0",
