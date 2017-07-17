@@ -11,6 +11,9 @@
   <% if (locals.parentId) { %>
   <a href="https://docs.google.com/a/nytimes.com/document/create?usp=drive_web&folder=<%- parentId %>" target="_blank"><button type="button" class="btn-footer">Create New Page</button></a>
   <% } %>
+  <% if (locals.parentId) { %>
+  <a href="https://drive.google.com/drive/u/0/folders/<%- parentId %>" target="_blank"><button type="button" class="btn-footer">View Folder</button></a>
+  <% } %>
 
   <a href="/how-do-i-use-this-site"><button type="button" class="btn-plaintext">How do I use this site?</button></a>
 </div>
