@@ -22,6 +22,10 @@
   })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
   ga('create', '***REMOVED***', 'auto');
 
+  <% if(locals.userInfo) { %>
+    ga('set', 'userId', <%= locals.userInfo.userId %>); // Set the user ID using signed-in user_id.
+  <% } %>
+
   <% if(locals.pageType) { %>
     ga('set', 'contentGroup1', <%- JSON.stringify(locals.pageType) %>);
   <% } %>

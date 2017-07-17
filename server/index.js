@@ -6,6 +6,7 @@ const express = require('express')
 const moment = require('moment')
 
 const {verifyIapToken} = require('***REMOVED***');
+const userInfo = require('./routes/userInfo')
 const pages = require('./routes/pages')
 const categories = require('./routes/categories')
 const errors = require('./routes/errors')
@@ -39,6 +40,7 @@ app.get('/view-on-site/:docId', (req, res, next) => {
   res.redirect(doc.path)
 })
 
+app.use(userInfo)
 app.use(pages)
 app.use(categories)
 app.use(errors)
