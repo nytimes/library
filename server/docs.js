@@ -43,6 +43,32 @@ exports.fetchDoc = (docId, cb) => {
   })
 }
 
+exports.fetchByline = (html, creatorOfDoc) => {
+  let byline = creatorOfDoc
+  const $ = cheerio.load(html)
+
+  // Iterates through all p tags to find byline
+  $('p').each((index, p) => {
+    if (p.children.length > 0) {
+      // regex that checks for byline
+      let r = /^by.+[^.\n]$/mig
+      if (r.test(p.children[0].data)) {
+        byline = p.children[0].data
+        // Removes the word "By"
+        byline = byline.substring(3)
+        $(p).remove()
+        return false
+      }
+    }
+  });
+
+  let payload = {
+    byline : byline,
+    html : $.html()
+  }
+  return payload
+}
+
 function fetch(id, authClient, cb) {
   const drive = google.drive({version: 'v3', auth: authClient})
   async.parallel([
@@ -93,7 +119,7 @@ function normalizeHtml(html) {
       if (newStyle.length > 0) {
         $(el).attr('style', newStyle)
       } else {
-        $(el).removeAttr('style') // if a <p>, <h1>, or other tag has no styles kill the style attr
+        $(el).removeAttr('style') // if a <p>, <h1>, or other tag has no styles, kill the style attr
       }
     }
 
@@ -128,7 +154,7 @@ function normalizeHtml(html) {
   // preserve style block from <head>, this contains the lst- class style
   // definitions that control list appearance
   $('body').prepend($.html('head style'))
-
+  
   return $('body').html()
 }
 
@@ -150,7 +176,7 @@ function formatCode(html) {
     const html = unescape(content)
     return formatCodeContent(html)
   })
-
+  
   return html
 }
 
