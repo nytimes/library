@@ -1,15 +1,14 @@
 FROM node:8.1.0
 
-ARG NPM_TOKEN
-
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-RUN test -e /usr/src/app/.npmrc || echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > /usr/src/app/.npmrc
-
-COPY package.json yarn.lock /usr/src/app/
-
-RUN yarn install
+# Install NPMs
+ONBUILD COPY package.json* yarn.lock* .npmrc* /usr/src/app/
+ONBUILD RUN if [ -f package.json ]; then \
+    yarn install || { echo "\033[0;31mMake sure you have run 'npm login' and have an ~/.npmrc file" && exit 1; }; \
+    rm -f .npmrc; \
+    fi;
 
 COPY . /usr/src/app
 RUN npm run build
