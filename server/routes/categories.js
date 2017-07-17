@@ -61,7 +61,8 @@ function handleCategory(req, res, next) {
       
       res.render(template, Object.assign({}, baseRenderData, {
         content: payload.html,
-        createdBy: payload.byline,
+        byline: payload.byline,
+        createdBy: originalRevision.lastModifyingUser.displayName,
         sections
       }))
     })
