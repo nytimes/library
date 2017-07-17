@@ -7,7 +7,7 @@ const path = require('path')
 const router = express.Router()
 
 const {getTree, getMeta} = require('../list')
-const {fetchDoc, cleanName} = require('../docs')
+const {fetchDoc, cleanName, fetchByline} = require('../docs')
 const {getTemplates} = require('../utils')
 
 router.get('*', handleCategory)
@@ -56,9 +56,12 @@ function handleCategory(req, res, next) {
       if (err) {
         return next(err)
       }
-
+  
+      let payload = fetchByline(html, originalRevision.lastModifyingUser.displayName)
+      
       res.render(template, Object.assign({}, baseRenderData, {
-        content: html,
+        content: payload.html,
+        byline: payload.byline,
         createdBy: originalRevision.lastModifyingUser.displayName,
         sections
       }))
