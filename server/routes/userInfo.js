@@ -9,7 +9,7 @@ router.use((req, res, next) => {
   if(process.env.TEST_EMAIL) {
     res.locals.userInfo = {
       email: process.env.TEST_EMAIL,
-      userId: 0
+      userId: "10"
     }
   } else {
     // pluck data from headers set by iap-verify-middleware
