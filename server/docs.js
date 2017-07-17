@@ -12,6 +12,7 @@ const {getAuth} = require('./auth')
 exports.cleanName = (name = '') => {
   return name
     .replace(/^\d+[-–—_\s]*/, '') // remove leading numbers and delimiters
+    .replace(/\W+home$/i, '') // remove 'Home' from the end
 }
 
 exports.slugify = (text = '') => {
@@ -40,6 +41,34 @@ exports.fetchDoc = (docId, cb) => {
       cb(err, {html, originalRevision, sections})
     })
   })
+}
+
+exports.fetchByline = (html, creatorOfDoc) => {
+  let byline = creatorOfDoc
+  const $ = cheerio.load(html)
+
+  // Iterates through all p tags to find byline
+  $('p').each((index, p) => {
+    if (p.children.length < 1) {
+      return
+    }
+
+    // regex that checks for byline
+    const r = /^by.+[^.\n]$/mig
+    if (r.test(p.children[0].data)) {
+      byline = p.children[0].data
+      // Removes the word "By"
+      byline = byline.slice(3)
+      $(p).remove()
+      // prevents continued iteration
+      return false
+    }
+  })
+
+  return {
+    byline,
+    html: $.html()
+  }
 }
 
 function fetch(id, authClient, cb) {
@@ -92,7 +121,7 @@ function normalizeHtml(html) {
       if (newStyle.length > 0) {
         $(el).attr('style', newStyle)
       } else {
-        $(el).removeAttr('style') // if a <p>, <h1>, or other tag has no styles kill the style attr
+        $(el).removeAttr('style') // if a <p>, <h1>, or other tag has no styles, kill the style attr
       }
     }
 
@@ -103,7 +132,7 @@ function normalizeHtml(html) {
 
     // class attribute handling
     if (['ol', 'ul'].includes(el.tagName) && $(el).attr('class')) {
-      let lstClassMatch = $(el).attr('class').match(/lst-[^ ]+-(\d+)/)
+      const lstClassMatch = $(el).attr('class').match(/lst-[^ ]+-(\d+)/)
       if (lstClassMatch) {
         $(el).attr('class', $(el).attr('class') + ` level-${lstClassMatch[1]}`)
       }
@@ -160,17 +189,33 @@ function formatCodeContent(content) {
 
 function getSections(html) {
   const $ = cheerio.load(html)
-  const allHeaders = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
+  const headers = ['h1', 'h2']
     .map((h) => `body ${h}`)
     .join(', ')
 
-  return $(allHeaders).map((i, el) => {
+  const ordered = $(headers).map((i, el) => {
+    const tag = el.name
     const $el = $(el)
     const name = $el.text()
     const url = `#${$el.attr('id')}`
     return {
       name,
-      url
+      url,
+      level: parseInt(tag.slice(-1), 10)
     }
   }).toArray()
+
+  // take our ordered sections and turn them into appropriately nested headings
+  const nested = ordered.reduce((memo, heading) => {
+    const tail = memo.slice(-1)[0]
+    const extended = Object.assign({}, heading, {subsections: []})
+    if (!tail || heading.level <= tail.level) {
+      return memo.concat(extended)
+    }
+
+    tail.subsections.push(heading)
+    return memo
+  }, [])
+
+  return nested
 }

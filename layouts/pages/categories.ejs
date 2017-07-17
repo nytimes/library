@@ -11,19 +11,10 @@
     <div id="category-page" class="g-body">
       <div class="g-main-content">
       <% categories.forEach((category) => { %>
-        <div class="category">
-          <h3><a href="<%= category.path %>"><%= category.sort %></a></h3>
-          <ul>
-            <% category.children.forEach((page) => { %>
-              <% if(!page.isHomePage) { %>
-                <li><a href="<%= page.path %>"><%= page.prettyName %></a></li>
-              <% } %>
-            <% }) %>
-          </ul>
-        </div>
+        <%- include('../partials/childrenList', {kicker: category.sort, children: category.children, link: category.path}) %>
       <% }) %>
       </div>
-      <%- include('../partials/footer') %>
+      <%- include('../partials/footer', { pageType: 'category_index' }) %>
     </div>
   </body>
 </html>

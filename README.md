@@ -1,4 +1,4 @@
-<!-- NYT Library -->
+NYT Library
 ========
 
 A collaborative newsroom documentation site, powered by Google Docs.
@@ -24,7 +24,7 @@ cd nyt-library && yarn install
 
 Start the app:
 ```
-npm build && npm run watch
+npm run build && npm run watch
 ```
 
 The app should now be running on port 3000:
@@ -90,4 +90,4 @@ Authentication with the Google Drive v3 api is handled by the auth.js file, whic
 
 ### Previous code from tools.nyt.net
 
-Old code that powered a react version of this app and a slightly different auth pattern has been moved into the `docs_old` folder for reference. In particular, code written for coercing Docs HTML into more minimal markup and converting to archieml may be helpful. That is located in `/docs_old/src/server/getAndParseGoogleDoc`. A small piece of this logic has been copied in as a comment inside the `/docs.js` file.
+Library is based on a tool that was written by @thomasrhiel (***REMOVED***), although it shares no code with this project.

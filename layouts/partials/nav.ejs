@@ -4,9 +4,12 @@
   <h1 class="headline"><%= title %></h1>
   <div class="kicker">
     <div class="attribution">
-      <% if (locals.createdBy) { %>
-      <p>Created by <span class="author"><%= createdBy %></span> <%= createdAt %>.
-      <% } %>
+      <p>
+        <% if (locals.byline) { %>
+          By <span class="author"><%= locals.byline %></span>.
+        <% } else if (locals.createdBy && !locals.byline) { %>
+          Created by <span class="author"><%= createdBy %></span> <%= createdAt %>.
+        <% } %>
       Last edited by <span class="author"><%= lastUpdatedBy %></span> <%= lastUpdated %>.</p>
     </div>
     <div class="tool">
