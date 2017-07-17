@@ -1,4 +1,4 @@
-<!-- NYT Library -->
+NYT Library
 ========
 
 A collaborative newsroom documentation site, powered by Google Docs.
