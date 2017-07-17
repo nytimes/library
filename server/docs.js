@@ -49,24 +49,26 @@ exports.fetchByline = (html, creatorOfDoc) => {
 
   // Iterates through all p tags to find byline
   $('p').each((index, p) => {
-    if (p.children.length > 0) {
-      // regex that checks for byline
-      let r = /^by.+[^.\n]$/mig
-      if (r.test(p.children[0].data)) {
-        byline = p.children[0].data
-        // Removes the word "By"
-        byline = byline.substring(3)
-        $(p).remove()
-        return false
-      }
+    if (p.children.length < 1) {
+      return
     }
-  });
 
-  let payload = {
-    byline : byline,
-    html : $.html()
+    // regex that checks for byline
+    const r = /^by.+[^.\n]$/mig
+    if (r.test(p.children[0].data)) {
+      byline = p.children[0].data
+      // Removes the word "By"
+      byline = byline.slice(3)
+      $(p).remove()
+      // prevents continued iteration
+      return false
+    }
+  })
+
+  return {
+    byline,
+    html: $.html()
   }
-  return payload
 }
 
 function fetch(id, authClient, cb) {
@@ -130,7 +132,7 @@ function normalizeHtml(html) {
 
     // class attribute handling
     if (['ol', 'ul'].includes(el.tagName) && $(el).attr('class')) {
-      let lstClassMatch = $(el).attr('class').match(/lst-[^ ]+-(\d+)/)
+      const lstClassMatch = $(el).attr('class').match(/lst-[^ ]+-(\d+)/)
       if (lstClassMatch) {
         $(el).attr('class', $(el).attr('class') + ` level-${lstClassMatch[1]}`)
       }
@@ -154,7 +156,7 @@ function normalizeHtml(html) {
   // preserve style block from <head>, this contains the lst- class style
   // definitions that control list appearance
   $('body').prepend($.html('head style'))
-  
+
   return $('body').html()
 }
 
@@ -176,7 +178,7 @@ function formatCode(html) {
     const html = unescape(content)
     return formatCodeContent(html)
   })
-  
+
   return html
 }
 
