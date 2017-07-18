@@ -56,9 +56,9 @@ function handleCategory(req, res, next) {
       if (err) {
         return next(err)
       }
-  
-      let payload = fetchByline(html, originalRevision.lastModifyingUser.displayName)
-      
+
+      const payload = fetchByline(html, originalRevision.lastModifyingUser.displayName)
+
       res.render(template, Object.assign({}, baseRenderData, {
         content: payload.html,
         byline: payload.byline,

@@ -91,9 +91,9 @@ function fetch(id, authClient, cb) {
     }
   ], (err, [fileExport, revisionGet]) => {
     if (err) return cb(err)
-    
+
     const [html] = fileExport
-    const [originalRevision] = revisionGet    
+    const [originalRevision] = revisionGet
     cb(err, html, originalRevision)
   })
 }
