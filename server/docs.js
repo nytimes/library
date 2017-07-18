@@ -1,5 +1,7 @@
 'use strict'
 
+const qs = require('querystring')
+
 const async = require('async')
 const google = require('googleapis')
 const cheerio = require('cheerio')
@@ -144,7 +146,8 @@ function normalizeHtml(html) {
     if (el.tagName === 'a' && $(el).attr('href')) {
       const hrefMatch = $(el).attr('href').match('https://www.google.com/url\\?q=(.+)&sa=')
       if (hrefMatch) {
-        $(el).attr('href', hrefMatch[1])
+        const decoded = qs.unescape(hrefMatch[1])
+        $(el).attr('href', decoded)
       }
 
       // TODO if href is a drive or folder link, expand to docs.nyt.net link
