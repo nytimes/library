@@ -56,7 +56,9 @@ function handleCategory(req, res, next) {
       if (err) {
         return next(err)
       }
-  
+
+      res.locals.docId = data.id
+
       let payload = fetchByline(html, originalRevision.lastModifyingUser.displayName)
       
       res.render(template, Object.assign({}, baseRenderData, {

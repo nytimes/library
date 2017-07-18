@@ -1,0 +1,11 @@
+
+# gcloud datastore create-indexes ./datastore_indexes.yml --project ***REMOVED***
+
+indexes:
+
+- kind: LibraryView
+  properties:
+  - name: userId
+    direction: asc
+  - name: viewCount
+    direction: desc

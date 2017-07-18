@@ -8,6 +8,7 @@ const userInfo = require('./routes/userInfo')
 const pages = require('./routes/pages')
 const categories = require('./routes/categories')
 const errors = require('./routes/errors')
+const readingHistory = require('./routes/readingHistory')
 
 const {getMeta} = require('./list')
 
@@ -38,6 +39,7 @@ app.get('/view-on-site/:docId', (req, res, next) => {
   res.redirect(doc.path)
 })
 
+app.use(readingHistory.middleware)
 app.use(pages)
 app.use(categories)
 app.use(errors)
