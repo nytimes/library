@@ -19,7 +19,7 @@ exports.cleanName = (name = '') => {
 
 exports.slugify = (text = '') => {
   const lower = text.toLowerCase()
-  return slugify(lower)
+  return slugify(lower).replace(/['"]/g, "")
 }
 
 exports.processHtml = (html) => {
