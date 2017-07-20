@@ -51,9 +51,8 @@ exports.fetchByline = (html, creatorOfDoc) => {
 
   // Iterates through all p tags to find byline
   $('p').each((index, p) => {
-    if (p.children.length < 1) {
-      return
-    }
+    // don't search any empty p tags
+    if (p.children.length < 1) return
 
     // regex that checks for byline
     const r = /^by.+[^.\n]$/mig
@@ -62,9 +61,10 @@ exports.fetchByline = (html, creatorOfDoc) => {
       // Removes the word "By"
       byline = byline.slice(3)
       $(p).remove()
-      // prevents continued iteration
-      return false
     }
+
+    // only check the first p tag
+    return false
   })
 
   return {
