@@ -7,7 +7,7 @@ const express = require('express')
 const userInfo = require('./routes/userInfo')
 const pages = require('./routes/pages')
 const categories = require('./routes/categories')
-const errors = require('./routes/errors')
+const {airbrake, errorPages} = require('./routes/errors')
 
 const {getMeta} = require('./list')
 
@@ -38,8 +38,14 @@ app.get('/view-on-site/:docId', (req, res, next) => {
   res.redirect(doc.path)
 })
 
+// main pages
 app.use(pages)
 app.use(categories)
-app.use(errors)
+
+// errors are special, they must be attached individually
+// airbrake fallback and notifier for routes issues
+app.use(airbrake)
+// error handler for rendering the 404 and 500 pages
+app.use(errorPages)
 
 app.listen(3000)

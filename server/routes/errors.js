@@ -1,23 +1,17 @@
 'use strict'
 
-const express = require('express')
 const airbrake = require('airbrake')
 
-const router = express.Router()
+// error functions are special. They have to be attached directly to the app.
+exports.airbrake = process.env.AIRBRAKE_PROJECT_ID
+  ? initAirbrake().expressHandler()
+  : (res, req, next) => next() // empty airbrake code
 
-if (process.env.AIRBRAKE_PROJECT_ID) {
-  const client = initAirbrake()
-  router.use(client.expressHandler())
-}
-
-// error handler for rendering the 404 and 500 pages
-router.use((err, req, res, next) => {
+exports.errorPages = (err, req, res, next) => {
   const code = err.message === 'Not found' ? 404 : 500
   console.log('Received an error!', err)
   res.status(code).render(`errors/${code}`, {err})
-})
-
-module.exports = router
+}
 
 function initAirbrake() {
   const client = airbrake.createClient(
