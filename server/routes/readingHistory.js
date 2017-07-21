@@ -52,6 +52,7 @@ function fetchHistory(userInfo, doneCb) {
       },
       (cb) => {
         const query = datastoreClient.createQuery(['LibraryView'])
+          .filter('userId', '=', userInfo.userId)
           .order('lastViewedAt', { descending: true })
           .limit(10)
 
