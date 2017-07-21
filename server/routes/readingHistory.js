@@ -3,8 +3,12 @@
 const express = require('express')
 const router = express.Router()
 
+const async = require('async')
 const datastore = require('@google-cloud/datastore')
+const moment = require('moment')
+
 const {getAuth} = require('../auth')
+const {getMeta} = require('../list')
 
 router.use((req, res, next) => {
   getDatastoreClient((datastoreClient) => {
@@ -17,25 +21,61 @@ router.use((req, res, next) => {
   })
 })
 
-router.get('/me', (req, res) => {
+router.get('/reading-history', (req, res, next) => {
   fetchHistory(res.locals.userInfo, (err, results) => {
+    if (err) return next(err)
+    res.render(`pages/readingHistory`, {results})
+  })
+})
+
+router.get('/reading-history.json', (req, res, next) => {
+  fetchHistory(res.locals.userInfo, (err, results) => {
+    if (err) return next(err)
     res.send(JSON.stringify(results))
   })
 })
 
-function fetchHistory(userInfo, cb) {
-  getDatastoreClient((datastoreClient) => {
-    const query = datastoreClient.createQuery(['LibraryView'])
-      .filter('userId', '=', userInfo.userId)
-      .order('viewCount', { descending: true })
-      .limit(10)
+module.exports = {
+  middleware: router
+}
 
-    datastoreClient.runQuery(query, cb)
+function fetchHistory(userInfo, doneCb) {
+  getDatastoreClient((datastoreClient) => {
+    async.parallel([
+      (cb) => {
+        const query = datastoreClient.createQuery(['LibraryView'])
+          .filter('userId', '=', userInfo.userId)
+          .order('viewCount', { descending: true })
+          .limit(10)
+
+        datastoreClient.runQuery(query, cb)
+      },
+      (cb) => {
+        const query = datastoreClient.createQuery(['LibraryView'])
+          .order('lastViewedAt', { descending: true })
+          .limit(10)
+
+        datastoreClient.runQuery(query, cb)
+      }
+    ], (err, results) => {
+      if (err) {
+        doneCb(err)
+      } else {
+        doneCb(null, {
+          recentlyViewed: expandResults(results[1][0]),
+          mostViewed: expandResults(results[0][0])
+        })
+      }
+    })
   })
 }
 
-module.exports = {
-  middleware: router
+function expandResults(results) {
+  return results.map((result) => {
+    result.lastViewed = moment(result.lastViewedAt).fromNow()
+    result.doc = getMeta(result.documentId)
+    return result
+  })
 }
 
 function getDatastoreClient(cb) {
@@ -57,14 +97,14 @@ function recordView(docId, userInfo, datastoreClient) {
       if (existing) {
         updatedData = existing
         existing.viewCount += 1
-        existing.lastViewed = new Date()
+        existing.lastViewedAt = new Date()
       } else {
         updatedData = {
           documentId: docId,
           userId: userInfo.userId,
-          emailAddress: userInfo.emailAddress,
+          email: userInfo.email,
           viewCount: 1,
-          lastViewed: new Date()
+          lastViewedAt: new Date()
         }
       }
 
