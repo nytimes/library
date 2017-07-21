@@ -24,7 +24,7 @@ exports.run = (query, cb) => {
         return cb(err)
       }
 
-      let fileMetas = files.map((file) => { return list.getMeta(file.id) })
+      const fileMetas = files.map((file) => { return list.getMeta(file.id) })
       cb(null, fileMetas)
     })
   })

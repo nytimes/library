@@ -55,6 +55,10 @@ body {
   }
 }
 
+pre {
+  white-space: pre-wrap;
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: $franklin;
   margin-top: 45px;
@@ -675,12 +679,20 @@ button.btn-cat {
     pre{
       counter-reset:line-numbering;
       background: $lightestpink;
-      padding:0px 0px 14px 0;
+      padding:0px 0px 20px 0;
       width:600px;
       color:#000;
-      line-height:140%;
 
-      .line::before {
+      .line {
+        display: flex;
+        margin: 0 0 -12px;
+      }
+
+      .line-content {
+        flex: 1 auto;
+      }
+
+      .line-number::before {
         content: counter(line-numbering);
         counter-increment: line-numbering;
         padding-right: 1em;

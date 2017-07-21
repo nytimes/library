@@ -20,7 +20,7 @@ exports.getTree = (cb) => {
 
 // exposes docs metadata
 exports.getMeta = (id) => {
-  let doc = docsInfo[id]
+  const doc = docsInfo[id]
   if (doc) {
     doc.lastUpdated = moment(doc.modifiedTime).fromNow()
   }

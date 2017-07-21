@@ -44,7 +44,7 @@ function handlePage(req, res, next) {
 
 function buildDisplayCategories(tree) {
   let categories = Object.keys(tree.children).map((key) => {
-    let data = tree.children[key]
+    const data = tree.children[key]
     data.path = `/${key}` // for now
     return data
   })
