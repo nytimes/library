@@ -31,4 +31,5 @@ $(document).ready(function() {
       $document.scrollTop(currentScroll - mastheadHeight)
     }
   }
+
 })
