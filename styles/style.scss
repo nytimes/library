@@ -62,7 +62,6 @@ pre {
 h1, h2, h3, h4, h5, h6 {
   font-family: $franklin;
   margin-top: 45px;
-  // margin-bottom: -10px;
   margin-bottom: 20px;
 }
 
@@ -115,25 +114,38 @@ button.button {
   // -webkit-font-smoothing: antialiased;
 }
 
-button.btn-homepage {
-  font-size: 16px;
-  line-height: 30px;
-  background-color: #4D4D4D;
-  padding: 10px 25px;
+button.btn-cat {
   border: none;
-  color: #fff;
+  background: #000;
   border-radius: 0;
-  -webkit-box-shadow: 3px 3px 0px 0px $lighterpink;
-  -moz-box-shadow: 3px 3px 0px 0px $lighterpink;
-  box-shadow: 3px 3px 0px 0px $lighterpink;
-  color: #fff;
+  margin: 5px 0;
+  -webkit-font-smoothing: antialiased;
 
   &:hover {
-    background: #333;
-    a {
-      color: #fff;
-      text-decoration: none;
-    }
+    cursor: pointer;
+    color: $pink;
+  }
+}
+
+button.btn-homepage {
+  margin: 5px 0 7px 0;
+  -webkit-font-smoothing: antialiased;
+  font-size: 14px;
+  background-color: #4D4D4D;
+  border: none;
+  border-radius: 0;
+  color: #aaa;
+  -webkit-box-shadow: 2.5px 2.5px 0px -1px $lighterpink;
+  -moz-box-shadow: 2.5px 2.5px 0px -1px $lighterpink;
+  box-shadow: 2.5px 2.5px 0px -1px $lighterpink;
+  padding: 5px 12px;
+
+  &:hover {
+    background: $pink;
+    color: #fff;
+    -webkit-box-shadow: 3px 3px 0px 0px #4d4d4d;
+    -moz-box-shadow: 3px 3px 0px 0px #4d4d4d;
+    box-shadow: 3px 3px 0px 0px #4d4d4d;
   }
 }
 
@@ -169,19 +181,6 @@ button.btn-plaintext {
   color: #999;
   font-size: 13px;
   line-height: 29px;
-
-  &:hover {
-    cursor: pointer;
-    color: $pink;
-  }
-}
-
-button.btn-cat {
-  border: none;
-  background: #000;
-  border-radius: 0;
-  margin: 5px 0;
-  -webkit-font-smoothing: antialiased;
 
   &:hover {
     cursor: pointer;
@@ -341,7 +340,6 @@ button.btn-cat {
     .icon {
       outline: none;
       opacity: 1;
-      // margin-left: -50px;
     }
   }
 
@@ -539,15 +537,12 @@ button.btn-cat {
       li {
         margin-left: 17px;
         border-bottom: 0;
-        // font-weight: 300;
         text-indent: 3px;
 
         &:before {
           content: "";
-          // border-left: 1px solid #ddd;
           border-bottom: 1px solid #ccc;
           width: 10px;
-          // height: 7px;
           display: inline-block;
           vertical-align: middle;
           margin: 0 -3px 0 -20px;
@@ -571,19 +566,16 @@ button.btn-cat {
 
     h1 {
       font-size: 30px;
-      // margin-bottom: 20px;
     }
 
     h2 {
       font-weight: 400;
       font-size: 26px;
       line-height: 34px;
-      // margin-bottom: 0px;
     }
 
     img {
       max-width: 580px;
-      // box-shadow: -8px -8px 0px 0px #ececec;
       border: 1px solid #ddd;
       padding: 10px;
       display: block;
@@ -650,7 +642,6 @@ button.btn-cat {
       }
 
       li {
-        // display: inline-block;
         text-indent: 0;
         padding-right: 15px;
         font-size: 16px;
@@ -826,7 +817,6 @@ button.btn-cat {
       justify-content: center;
       align-content: center;
       margin-bottom: 20px;
-      // padding-left: 10px;
 
       .branding-heading {
         margin: 0;
@@ -907,7 +897,6 @@ button.btn-cat {
         background: #fff;
         .icon {
           opacity: 1;
-          // margin-left: -60px;
         }
       }
 
