@@ -20,8 +20,10 @@
               Filed under
               <a class="folder" href="<%= res.folder.path %>"><span><%= res.folder.name || 'Home' %></span></a>&nbsp;
               <% } %>
-              Last edited by
-                <span class="author"><%= res.lastModifyingUser.displayName %></span>
+              Last edited
+                <% if (res.lastModifyingUser) { %>
+                by <span class="author"><%= res.lastModifyingUser.displayName %></span>
+                <% } %>
                 <%= res.lastUpdated %>.
             </p>
           </div>
