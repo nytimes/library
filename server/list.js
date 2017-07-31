@@ -47,20 +47,9 @@ function updateTree(cb) {
     }
 
     const drive = google.drive({version: 'v3', auth: authClient})
-    drive.files.list({
-      teamDriveId,
-      q: 'trashed = false',
-      corpora: 'teamDrive',
-      supportsTeamDrives: true,
-      includeTeamDriveItems: true,
-      fields: '*'
-    }, (err, {files, incompleteSearch} = {}) => {
+    fetchAllFiles({drive}, (err, files) => {
       if (err) {
         return cb(err)
-      }
-
-      if (incompleteSearch) {
-        // @TODO: perform additional queries to get the remaining data
       }
 
       currentTree = produceTree(files, teamDriveId)
@@ -69,6 +58,36 @@ function updateTree(cb) {
   })
 }
 
+function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive} = {}, cb) {
+  const options = {
+    teamDriveId,
+    q: 'trashed = false',
+    corpora: 'teamDrive',
+    supportsTeamDrives: true,
+    includeTeamDriveItems: true,
+    fields: '*',
+    pageSize: 1000 // this value does not seem to be doing anything
+  }
+
+  if (pageToken) {
+    options.pageToken = pageToken
+  }
+
+  drive.files.list(options, (err, {files, nextPageToken} = {}) => {
+    if (err) return cb(err)
+
+    const combined = listSoFar.concat(files)
+    if (nextPageToken) {
+      return fetchAllFiles({
+        nextPageToken,
+        listSoFar: combined,
+        drive
+      }, cb)
+    }
+
+    cb(null, combined)
+  })
+}
 function produceTree(files, firstParent) {
   // maybe group into folders first?
   // then build out tree, by traversing top down
