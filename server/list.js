@@ -73,9 +73,11 @@ function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive} = {}, c
     options.pageToken = pageToken
   }
 
-  drive.files.list(options, (err, {files, nextPageToken} = {}) => {
+  drive.files.list(options, (err, data) => {
     if (err) return cb(err)
 
+    // don't pull these out in param because explicit null/undefined is passed
+    const {files, nextPageToken} = data || {}
     const combined = listSoFar.concat(files)
     if (nextPageToken) {
       return fetchAllFiles({
