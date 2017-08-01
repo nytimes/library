@@ -40,7 +40,7 @@ function handleCategory(req, res, next) {
     const baseRenderData = Object.assign({}, contextData, {
       url: req.path,
       title: meta.prettyName,
-      lastUpdatedBy: meta.lastModifyingUser.displayName,
+      lastUpdatedBy: (meta.lastModifyingUser || {}).displayName,
       lastUpdated: meta.lastUpdated,
       createdAt: moment(meta.createdTime).fromNow(),
       editLink: meta.webViewLink

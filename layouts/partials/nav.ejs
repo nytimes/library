@@ -10,7 +10,9 @@
         <% } else if (locals.createdBy && !locals.byline) { %>
           Created by <span class="author"><%= createdBy %></span> <%= createdAt %>.
         <% } %>
+        <% if (locals.lastUpdatedBy) { %>
       Last edited by <span class="author"><%= lastUpdatedBy %></span> <%= lastUpdated %>.</p>
+        <% } %>
     </div>
     <div class="tool">
 
