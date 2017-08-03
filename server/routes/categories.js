@@ -47,12 +47,13 @@ function handleCategory(req, res, next) {
     })
 
     // if this is a folder, just render from the generic data
-    if (meta.resourceType === 'folder') {
+    const {resourceType} = meta
+    if (resourceType === 'folder') {
       return res.render(template, baseRenderData)
     }
 
     // for docs, fetch the html and then combine with the base data
-    fetchDoc(data.id, (err, {html, originalRevision, sections} = {}) => {
+    fetchDoc({id, resourceType}, (err, {html, originalRevision, sections} = {}) => {
       if (err) {
         return next(err)
       }

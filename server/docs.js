@@ -8,6 +8,7 @@ const cheerio = require('cheerio')
 const pretty = require('pretty')
 const unescape = require('unescape')
 const slugify = require('slugify')
+const xlsx = require('xlsx')
 
 const {getAuth} = require('./auth')
 
@@ -29,13 +30,13 @@ exports.processHtml = (html) => {
   return html
 }
 
-exports.fetchDoc = (docId, cb) => {
+exports.fetchDoc = ({id, resourceType}, cb) => {
   getAuth((err, auth) => {
     if (err) {
       return cb(err)
     }
 
-    fetch(docId, auth, (err, html, originalRevision) => {
+    fetch({id, resourceType}, auth, (err, html, originalRevision) => {
       if (err) return cb(err)
       html = exports.processHtml(html)
       const sections = getSections(html)
@@ -73,10 +74,14 @@ exports.fetchByline = (html, creatorOfDoc) => {
   }
 }
 
-function fetch(id, authClient, cb) {
+function fetch({id, resourceType}, authClient, cb) {
   const drive = google.drive({version: 'v3', auth: authClient})
   async.parallel([
     (cb) => {
+      if (resourceType === 'spreadsheet') {
+        return fetchSpreadsheet(drive, id, cb)
+      }
+
       drive.files.export({
         fileId: id,
         mimeType: 'text/html'
@@ -95,6 +100,53 @@ function fetch(id, authClient, cb) {
     const [html] = fileExport
     const [originalRevision] = revisionGet
     cb(err, html, originalRevision)
+  })
+}
+
+function fetchSpreadsheet(drive, id, cb) {
+  drive.files.export({
+    fileId: id,
+    // for mimeTypes see https://developers.google.com/drive/v3/web/manage-downloads#downloading_google_documents
+    mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+  }, {
+    encoding: null // this returns binary data
+  }, (err, buffer) => {
+    if (err) return cb(err)
+    const spreadsheet = xlsx.read(buffer, {type: 'buffer'})
+    const {SheetNames, Sheets} = spreadsheet
+    // produce some html now since we got back and xls
+    const html = SheetNames.map((name) => {
+      const data = Sheets[name]
+      const slug = slugify(name)
+      const {rows} = Object.keys(data)
+        .filter((key) => key !== '!ref')
+        .reduce(({last, rows}, cell) => {
+          const [_, column, row] = cell.match(/(\D+)(\d+)/)
+          const {v: value} = data[cell]
+
+          if (last && last !== row) {
+            rows.push('</tr>', '<tr>')
+          }
+
+          // do headers and normal rows based on index
+          const tag = row === '1' ? 'th' : 'td'
+          rows.push(`<${tag}>${value}</${tag}>`)
+          return {
+            last: row,
+            rows,
+          }
+
+        }, {last: null, rows: []})
+
+      // spreadsheet names become h1 for TOC
+      return [`<h1 id="${slug}">${name}</h1>`, '<table>', '<tr>']
+        .concat(rows, ['</tr>', '</table>'])
+        .join('\n')
+
+    }, []).join('\n')
+
+    // expected to be an array because of the way the google api works
+    cb(null, [html])
   })
 }
 
