@@ -119,8 +119,9 @@ function fetchSpreadsheet(drive, id, cb) {
       const data = Sheets[name]
       const slug = slugify(name)
       const {rows} = Object.keys(data)
-        .filter((key) => key !== '!ref')
+        .filter((key) => key.slice(0, 1) !== '!')
         .reduce(({last, rows}, cell) => {
+          console.log(cell)
           const [_, column, row] = cell.match(/(\D+)(\d+)/)
           const {v: value} = data[cell]
 
