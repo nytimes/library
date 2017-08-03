@@ -117,33 +117,29 @@ function fetchSpreadsheet(drive, id, cb) {
     // produce some html now since we got back and xls
     const html = SheetNames.map((name) => {
       const data = Sheets[name]
-      const slug = slugify(name)
-      const {rows} = Object.keys(data)
-        .filter((key) => key.slice(0, 1) !== '!') // ignore special xls cells
-        .reduce(({last, rows}, cell) => {
-          console.log(cell)
-          const [_, column, row] = cell.match(/(\D+)(\d+)/)
-          const {v: value} = data[cell]
-
-          if (last && last !== row) {
-            rows.push('</tr>', '<tr>')
-          }
-
-          // do headers and normal rows based on index
-          const tag = row === '1' ? 'th' : 'td'
-          rows.push(`<${tag}>${value}</${tag}>`)
-          return {
-            last: row,
-            rows,
-          }
-
-        }, {last: null, rows: []})
+      // get base html from xlsx
+      const base = xlsx.utils.sheet_to_html(data)
+      // manipulate with cheerio
+      const $ = cheerio.load(base)
+      const table = $('table')
+      // add header styles
+      const firstRow = $('table tr:first-of-type')
+      const withHeader = firstRow.html().replace(/(<\/?)td(\s+|>)/ig, '$1th$2')
+      firstRow.html(withHeader)
+      // determine the last row and remove all rows after that
+      const max = Object.keys(data)
+        .filter((key) => key.slice(0, 1) !== '!') // ignore special rows in the sheet
+        .reduce((memo, cell) => {
+          const row = cell.match(/\d+/)
+          const value = parseInt(row, 10)
+          return value > memo ? value : memo
+        }, 0)
+      // remove any extra rows at the bottom of the sheet
+      $(`table tr:nth-of-type(n + ${max + 1})`).remove()
 
       // spreadsheet names become h1 for TOC
-      return [`<h1 id="${slug}">${name}</h1>`, '<table>', '<tr>']
-        .concat(rows, ['</tr>', '</table>'])
-        .join('\n')
-
+      const slug = slugify(name)
+      return [`<h1 id="${slug}">${name}</h1>`, '<table>', table.html(), '</table>'].join('\n')
     }, []).join('\n')
 
     // expected to be an array because of the way the google api works
