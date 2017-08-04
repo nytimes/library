@@ -5,6 +5,7 @@ const google = require('googleapis')
 const moment = require('moment')
 
 const {getAuth} = require('./auth')
+const {isSupported} = require('./utils')
 const {cleanName, slugify} = require('./docs')
 const teamDriveId = '***REMOVED***'
 let currentTree = null
@@ -148,20 +149,24 @@ function buildTreeFromData(rootParent, breadcrumb) {
   }
 
   return children.reduce((memo, id) => {
-    const {prettyName} = docsInfo[id]
+    const {prettyName, resourceType, webViewLink} = docsInfo[id]
     const slug = slugify(prettyName)
     const nextCrumb = breadcrumb ? breadcrumb.concat({ id: rootParent, slug: parentInfo.slug }) : []
 
     // recurse building up breadcrumb
     memo.children[slug] = buildTreeFromData(id, nextCrumb)
 
-    // Use this to cache the reader-facing path to the page
-    let path = '/'
-    if (nextCrumb.length > 0) {
-      path += nextCrumb.map((element) => { return element.slug }).join('/') + '/'
+    if (isSupported(resourceType)) {
+      // Use this to cache the reader-facing path to the page
+      let path = '/'
+      if (nextCrumb.length > 0) {
+        path += nextCrumb.map((element) => { return element.slug }).join('/') + '/'
+      }
+      path += slug
+      docsInfo[id].path = path
+    } else {
+      docsInfo[id].path = webViewLink
     }
-    path += slug
-    docsInfo[id].path = path
 
     // as well as the folder
     docsInfo[id].folder = parentInfo

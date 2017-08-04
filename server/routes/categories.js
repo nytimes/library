@@ -2,13 +2,12 @@
 
 const express = require('express')
 const moment = require('moment')
-const path = require('path')
 
 const router = express.Router()
 
 const {getTree, getMeta} = require('../list')
 const {fetchDoc, cleanName, fetchByline} = require('../docs')
-const {getTemplates, isSupported} = require('../utils')
+const {getTemplates} = require('../utils')
 
 router.get('*', handleCategory)
 module.exports = router
@@ -128,13 +127,13 @@ function createRelatedList(slugs, self, baseUrl) {
     .filter((slug) => slug !== self)
     .map((slug) => {
       const {id, nodeType} = slugs[slug]
-      const {sort, prettyName, webViewLink, resourceType} = getMeta(id)
+      const {sort, prettyName, webViewLink, path: url} = getMeta(id)
       return {
         sort,
         nodeType,
         name: prettyName,
         editLink: webViewLink,
-        url: isSupported(resourceType) ? path.join(baseUrl, slug) : webViewLink
+        url
       }
     })
     .sort((a, b) => a.sort > b.sort)
