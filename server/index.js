@@ -4,6 +4,7 @@ const path = require('path')
 
 const express = require('express')
 
+const {middleware: cache} = require('./cache')
 const userInfo = require('./routes/userInfo')
 const pages = require('./routes/pages')
 const categories = require('./routes/categories')
@@ -42,6 +43,8 @@ app.get('/view-on-site/:docId', (req, res, next) => {
 // main pages
 app.use(readingHistory.middleware)
 app.use(pages)
+app.use(cache)
+// category pages will be cache busted when their last updated timestamp changes
 app.use(categories)
 
 // errors are special, they must be attached individually

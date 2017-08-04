@@ -5,6 +5,7 @@ const moment = require('moment')
 
 const router = express.Router()
 
+const cache = require('../cache')
 const {getTree, getMeta} = require('../list')
 const {fetchDoc, cleanName, fetchByline} = require('../docs')
 const {getTemplates} = require('../utils')
@@ -48,7 +49,12 @@ function handleCategory(req, res, next) {
     // if this is a folder, just render from the generic data
     const {resourceType} = meta
     if (resourceType === 'folder') {
-      return res.render(template, baseRenderData)
+      return res.render(template, baseRenderData, (err, html) => {
+        if (err) return next(err)
+
+        cache.add(id, meta.modifiedTime, req.path, html)
+        res.end(html)
+      })
     }
 
     // for docs, fetch the html and then combine with the base data
@@ -66,7 +72,12 @@ function handleCategory(req, res, next) {
         byline: payload.byline,
         createdBy: originalRevision.lastModifyingUser.displayName,
         sections
-      }))
+      }), (err, html) => {
+        if (err) return next(err)
+
+        cache.add(id, meta.modifiedTime, req.path, html)
+        res.end(html)
+      })
     })
   })
 }

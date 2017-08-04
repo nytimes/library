@@ -4,6 +4,7 @@ const inflight = require('inflight')
 const google = require('googleapis')
 const moment = require('moment')
 
+const cache = require('./cache')
 const {getAuth} = require('./auth')
 const {isSupported} = require('./utils')
 const {cleanName, slugify} = require('./docs')
@@ -32,8 +33,8 @@ exports.getChildren = (id) => {
   return driveBranches[id]
 }
 
-// delay in ms, 60s default with env var
-const treeUpdateDelay = parseInt(process.env.UPDATE_INTERVAL || 60, 10) * 1000
+// delay in ms, 15s default with env var
+const treeUpdateDelay = parseInt(process.env.UPDATE_INTERVAL || 15, 10) * 1000
 startTreeRefresh(treeUpdateDelay)
 
 // @TODO: page through results of tree if incompleteSearch
@@ -106,6 +107,8 @@ function produceTree(files, firstParent) {
       sort: determineSort(name),
       slug: slugify(prettyName)
     })
+
+    cache.purge(id, resource.modifiedTime)
 
     // for every parent, make sure the current file is in the list of children
     // this is used later to traverse the tree
