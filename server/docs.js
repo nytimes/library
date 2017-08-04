@@ -11,7 +11,7 @@ const slugify = require('slugify')
 const xlsx = require('xlsx')
 
 const {getAuth} = require('./auth')
-
+const supportedTypes = new Set(['document', 'spreadsheet'])
 exports.cleanName = (name = '') => {
   return name
     .replace(/^\d+[-–—_\s]*/, '') // remove leading numbers and delimiters
@@ -20,7 +20,7 @@ exports.cleanName = (name = '') => {
 
 exports.slugify = (text = '') => {
   const lower = text.toLowerCase()
-  return slugify(lower).replace(/['"]/g, "")
+  return slugify(lower).replace(/['"]/g, '')
 }
 
 exports.processHtml = (html) => {
@@ -78,27 +78,27 @@ function fetch({id, resourceType}, authClient, cb) {
   const drive = google.drive({version: 'v3', auth: authClient})
   async.parallel([
     (cb) => {
+      if (!supportedTypes.has(resourceType)) {
+        return cb(null, `Library does not support viewing ${resourceType}s yet.`)
+      }
+
       if (resourceType === 'spreadsheet') {
         return fetchSpreadsheet(drive, id, cb)
       }
 
       drive.files.export({
         fileId: id,
-        mimeType: 'text/html'
-      }, cb)
+        mimeType: resourceType === 'presentation' ? 'text/plain' : 'text/html'
+      }, (err, data) => cb(err, data)) // this prevents receiving an array (?)
     },
     (cb) => {
       drive.revisions.get({
         fileId: id,
         revisionId: '1',
         fields: '*'
-      }, cb)
+      }, (err, data) => cb(err, data)) // this prevents receiving an array (?)
     }
-  ], (err, [fileExport, revisionGet]) => {
-    if (err) return cb(err)
-
-    const [html] = fileExport
-    const [originalRevision] = revisionGet
+  ], (err, [html, originalRevision]) => {
     cb(err, html, originalRevision)
   })
 }
@@ -143,7 +143,7 @@ function fetchSpreadsheet(drive, id, cb) {
     }, []).join('\n')
 
     // expected to be an array because of the way the google api works
-    cb(null, [html])
+    cb(null, html)
   })
 }
 
