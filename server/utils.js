@@ -11,3 +11,8 @@ exports.getTemplates = (subfolder) => {
       return memo
     }, new Set())
 }
+
+const supportedTypes = new Set(['folder', 'document', 'spreadsheet'])
+exports.isSupported = (resourceType) => {
+  return supportedTypes.has(resourceType)
+}

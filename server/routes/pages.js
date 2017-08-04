@@ -6,7 +6,7 @@ const search = require('../search')
 const router = express.Router()
 
 const {getTree, getMeta} = require('../list')
-const {getTemplates} = require('../utils')
+const {getTemplates, isSupported} = require('../utils')
 
 router.get('/', handlePage)
 router.get('/:page', handlePage)
@@ -58,8 +58,12 @@ function buildDisplayCategories(tree) {
   categories = categories.map((category) => {
     category = Object.assign({}, category)
     category.children = Object.values(category.children).map(({id, nodeType}) => {
-      const {prettyName: name, path: url} = getMeta(id)
-      return {name, url, nodeType}
+      const {prettyName: name, path: url, resourceType, webViewLink} = getMeta(id)
+      return {
+        name,
+        nodeType,
+        url: isSupported(resourceType) ? url : webViewLink
+      }
     })
     return category
   })

@@ -8,7 +8,7 @@ const router = express.Router()
 
 const {getTree, getMeta} = require('../list')
 const {fetchDoc, cleanName, fetchByline} = require('../docs')
-const {getTemplates} = require('../utils')
+const {getTemplates, isSupported} = require('../utils')
 
 router.get('*', handleCategory)
 module.exports = router
@@ -128,13 +128,13 @@ function createRelatedList(slugs, self, baseUrl) {
     .filter((slug) => slug !== self)
     .map((slug) => {
       const {id, nodeType} = slugs[slug]
-      const {sort, prettyName, webViewLink} = getMeta(id)
+      const {sort, prettyName, webViewLink, resourceType} = getMeta(id)
       return {
         sort,
         nodeType,
         name: prettyName,
         editLink: webViewLink,
-        url: path.join(baseUrl, slug)
+        url: isSupported(resourceType) ? path.join(baseUrl, slug) : webViewLink
       }
     })
     .sort((a, b) => a.sort > b.sort)
