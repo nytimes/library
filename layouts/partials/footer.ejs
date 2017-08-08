@@ -6,7 +6,7 @@
     <% }) %>
   <% } %>
   <% if (locals.editLink) { %>
-  <a href="<%- editLink %>" target="_blank"><button type="button" class="btn-footer">Edit This Page</button></a>
+  <a href="<%- editLink %>" id="edit-button" target="_blank"><button type="button" class="btn-footer">Edit This Page</button></a>
   <% } %>
   <% if (locals.parentId) { %>
   <a href="https://docs.google.com/a/nytimes.com/document/create?usp=drive_web&folder=<%- parentId %>" target="_blank"><button type="button" class="btn-footer">Create New Page</button></a>
@@ -40,5 +40,15 @@
     if (userId) ga('set', 'userId', userId);
     ga('send', 'pageview');
   });
+
+  $(document).on('click', '#edit-button', function () {
+    $.ajax({
+      method: 'GET',
+      url: window.location.pathname,
+      data: {
+        edit: 1 // purges and temporarily keeps the page being edited out of cache
+      }
+    }) // no callback on this.
+  })
 
 </script>

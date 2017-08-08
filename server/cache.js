@@ -14,14 +14,12 @@ startInstancePolling()
 exports.middleware = (req, res, next) => {
   const cachedHTML = cache[req.path]
 
-  const purge = req.param('purge')
-  const edit = req.param('edit') // edit will purge & invalidate caching for 1 hour
-  const recurse = req.param('recurse')
+  const {purge, edit, recurse} = req.query
   if (purge || edit) {
     return purgeCache(req.path, edit, recurse, (err) => {
       if (err) return res.statusCode(500)
 
-      console.log('purged cache!')
+      console.log('Distributed cache purged successfully.')
       res.end('OK')
     })
   } // deletes cache for a particular route
@@ -151,5 +149,5 @@ function purgeCache(path, preventCache, recurse, cb) {
   // if this is specifically to just purge on this node, don't make requests elsewhere
   console.log(`Purging cache of ${path}.`)
   delete cache[path]
-  cb(null)
+  if (cb) cb(null)
 }
