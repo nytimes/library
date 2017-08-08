@@ -5,7 +5,7 @@ const winston = require('winston')
 const logger = new (winston.Logger)({
   transports: [
     new (winston.transports.Console)({
-      colorize: true,
+      colorize: !process.env.NODE_ENV,
       prettyPrint: true
     })
   ]
