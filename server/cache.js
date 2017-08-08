@@ -86,7 +86,7 @@ function startInstancePolling() {
       console.log('Instance IP list updated.', ips)
 
       // after some delay, update again.
-      setTimeout(poll, 5 * 60 * 1000) // 5 min
+      setTimeout(poll, 1 * 60 * 1000) // 1 min
     })
   }
 
