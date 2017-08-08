@@ -124,17 +124,17 @@ function purgeCache(path, preventCache, recurse, cb) {
     // rather than try to delete our cache directly, purge all instances
     // we don't know what IP we are on
     return async.each(instances, (instance, cb) => {
-      const query = {
+      const qs = {
         purge: 1
       }
 
       // if we are setting a timeout, pass that along with the request
-      if (preventCache) query.edit = 1
+      if (preventCache) qs.edit = 1
 
       const url = `http://${instance}:3000${path}`
       request.get({
         url,
-        query
+        qs
       }, (err, res, body) => {
         if (err) return cb(err)
 
