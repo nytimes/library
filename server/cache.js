@@ -17,7 +17,7 @@ exports.middleware = (req, res, next) => {
   const {purge, edit} = req.query
   if (purge || edit) {
     return purgeCache(req.path, edit, true, (err) => {
-      if (err) return res.statusCode(500)
+      if (err) return res.status(500).send(err)
 
       console.log('Distributed cache purged successfully.')
       res.end('OK')
@@ -132,7 +132,7 @@ function purgeCache(path, preventCache, recurse, cb) {
         url,
         query
       }, (err, res, body) => {
-        if (err) cb(err)
+        if (err) return cb(err)
 
         if (res.statusCode !== 200) {
           return cb(Error(`Tried to purge ${url} but received ${res.statusCode}; expected 200.`))
