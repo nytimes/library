@@ -127,7 +127,7 @@ function purgeCache(path, preventCache, recurse, cb) {
       // if we are setting a timeout, pass that along with the request
       if (preventCache) query.edit = 1
 
-      const url = `${instance}:3000${path}`
+      const url = `http://${instance}:3000${path}`
       request.get({
         url,
         query
@@ -138,6 +138,7 @@ function purgeCache(path, preventCache, recurse, cb) {
           return cb(Error(`Tried to purge ${url} but received ${res.statusCode}; expected 200.`))
         }
 
+        console.log(`Purged cache @ ${url}`)
         cb(null, body)
       })
     }, cb)
