@@ -74,15 +74,19 @@ function startInstancePolling() {
     return console.log('No token file so will not produce an instance list.')
   }
 
-  updateInstances(kubeToken, (err, ips) => {
-    if (err) {
-      console.log('Got error while attempting to update instance IPs:', err)
-    }
-    console.log('Instance IP list updated.')
+  const poll = () => {
+    updateInstances(kubeToken, (err, ips) => {
+      if (err) {
+        console.log('Got error while attempting to update instance IPs:', err)
+      }
+      console.log('Instance IP list updated.')
 
-    // after some delay, update again.
-    setTimeout(() => updateInstances(kubeToken), 5 * 60 * 1000) // 5 min
-  })
+      // after some delay, update again.
+      setTimeout(poll, 5 * 60 * 1000) // 5 min
+    })
+  }
+
+  poll()
 }
 
 function updateInstances(token, cb) {
