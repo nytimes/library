@@ -14,9 +14,9 @@ startInstancePolling()
 exports.middleware = (req, res, next) => {
   const cachedHTML = cache[req.path]
 
-  const {purge, edit, recurse} = req.query
+  const {purge, edit} = req.query
   if (purge || edit) {
-    return purgeCache(req.path, edit, recurse, (err) => {
+    return purgeCache(req.path, edit, true, (err) => {
       if (err) return res.statusCode(500)
 
       console.log('Distributed cache purged successfully.')
