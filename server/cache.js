@@ -9,6 +9,7 @@ const cache = {} // simple path to html cache
 const byId = {} // id to last modified + paths
 const noCache = {} // paths not to cache, mapped to timeouts of when they can be cached again
 let instances = [] // the IPs of all the other library instances
+let kubeToken = null // store the kube token here after we read it
 startInstancePolling()
 
 exports.middleware = (req, res, next) => {
@@ -17,7 +18,11 @@ exports.middleware = (req, res, next) => {
   const {purge, edit, recurse} = req.query
   if (purge || edit) {
     return purgeCache(req.path, edit, recurse, (err) => {
-      if (err) return res.status(500).send(err)
+      if (err) {
+        // if we failed, we should probably update the instance list
+        if (kubeToken) updateInstances(kubeToken)
+        return res.status(500).send(err)
+      }
 
       console.log('Distributed cache purged successfully.')
       res.end('OK')
@@ -67,7 +72,6 @@ exports.purge = (id, newModified) => {
 }
 
 function startInstancePolling() {
-  let kubeToken = null
   try {
     kubeToken = fs.readFileSync('***REMOVED***', 'utf8')
   } catch (e) {
@@ -89,7 +93,7 @@ function startInstancePolling() {
   poll()
 }
 
-function updateInstances(token, cb) {
+function updateInstances(token, cb = () => {}) {
   request.get({
     url: '***REMOVED***',
     rejectUnauthorized: false,
