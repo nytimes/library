@@ -86,11 +86,11 @@ function startInstancePolling() {
       console.log('Instance IP list updated.', ips)
 
       // after some delay, update again.
-      setTimeout(poll, 1 * 60 * 1000) // 1 min
+      setTimeout(poll, 5 * 60 * 1000) // 1 min
     })
   }
 
-  poll()
+  setTimeout(poll, 90 * 1000) // wait 90s after deploy
 }
 
 function updateInstances(token, cb = () => {}) {
