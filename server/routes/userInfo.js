@@ -7,24 +7,22 @@ const md5 = require('md5')
 
 router.use(verifyIapToken())
 
-// add userInfo to res.locals
-router.use((req, res, next) => {
+// return userinfo as json
+router.get('/whoami.json', (req, res, next) => {
   // In development, use data from an ENV var
   if (process.env.TEST_EMAIL) {
-    res.locals.userInfo = {
+    return res.json({
       email: process.env.TEST_EMAIL,
       userId: '10',
       analyticsUserId: md5('10library')
-    }
-  } else {
-    // pluck data from headers set by iap-verify-middleware
-    res.locals.userInfo = {
-      email: req.headers['auth.verified_email'],
-      userId: req.headers['auth.verified_sub'],
-      analyticsUserId: md5(req.headers['auth.verified_sub'] + 'library')
-    }
+    })
   }
-  next()
+
+  res.json({
+    email: req.headers['auth.verified_email'],
+    userId: req.headers['auth.verified_sub'],
+    analyticsUserId: md5(req.headers['auth.verified_sub'] + 'library')
+  })
 })
 
 module.exports = router
