@@ -79,7 +79,7 @@ function startInstancePolling() {
       if (err) {
         console.log('Got error while attempting to update instance IPs:', err)
       }
-      console.log('Instance IP list updated.')
+      console.log('Instance IP list updated.', ips)
 
       // after some delay, update again.
       setTimeout(poll, 5 * 60 * 1000) // 5 min
