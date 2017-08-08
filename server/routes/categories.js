@@ -6,6 +6,7 @@ const moment = require('moment')
 const router = express.Router()
 
 const cache = require('../cache')
+const log = require('../logger')
 const {getTree, getMeta} = require('../list')
 const {fetchDoc, cleanName, fetchByline} = require('../docs')
 const {getTemplates} = require('../utils')
@@ -15,7 +16,7 @@ module.exports = router
 
 const categories = getTemplates('categories')
 function handleCategory(req, res, next) {
-  console.log(`GET ${req.path}`)
+  log.info(`GET ${req.path}`)
   const segments = req.path.split('/')
 
   // get an up to date doc tree

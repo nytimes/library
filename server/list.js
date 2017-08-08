@@ -5,9 +5,11 @@ const google = require('googleapis')
 const moment = require('moment')
 
 const cache = require('./cache')
+const log = require('./logger')
 const {getAuth} = require('./auth')
 const {isSupported} = require('./utils')
 const {cleanName, slugify} = require('./docs')
+
 const teamDriveId = '***REMOVED***'
 let currentTree = null
 let docsInfo = {}
@@ -34,7 +36,7 @@ exports.getChildren = (id) => {
 }
 
 // delay in ms, 15s default with env var
-const treeUpdateDelay = parseInt(process.env.UPDATE_INTERVAL || 15, 10) * 1000
+const treeUpdateDelay = parseInt(process.env.LIST_UPDATE_DELAY || 15, 10) * 1000
 startTreeRefresh(treeUpdateDelay)
 
 // @TODO: page through results of tree if incompleteSearch
@@ -194,13 +196,14 @@ function cleanResourceType(mimeType) {
 }
 
 function startTreeRefresh(interval) {
-  console.log('updating tree...')
+  log.debug('updating tree...')
   updateTree((err) => {
     if (err) {
-      console.warn('failed updating tree', err)
+      log.warn('failed updating tree', err)
+    } else {
+      log.debug('tree updated.')
     }
 
-    console.log('tree updated.')
     setTimeout(() => { startTreeRefresh(interval) }, interval)
   })
 }

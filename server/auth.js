@@ -4,11 +4,14 @@ const path = require('path')
 
 const inflight = require('inflight')
 const google = require('googleapis')
+
+const log = require('./logger')
+
 let authClient = null
 
 // In local development, look for an auth.json file.
 if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-  console.log('GOOGLE_APPLICATION_CREDENTIALS was undefined, using default ./auth.json credentials file...')
+  log.warn('GOOGLE_APPLICATION_CREDENTIALS was undefined, using default ./auth.json credentials file...')
   process.env.GOOGLE_APPLICATION_CREDENTIALS = path.join(__dirname, '.auth.json')
 }
 
@@ -41,7 +44,7 @@ function setAuthClient(cb) {
       ])
     }
 
-    console.log('auth successfully retreived.')
+    log.info('Google API auth successfully retreived.')
     cb(null, authClient)
   })
 }

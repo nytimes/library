@@ -2,6 +2,8 @@
 
 const airbrake = require('airbrake')
 
+const log = require('../logger')
+
 // error functions are special. They have to be attached directly to the app.
 exports.airbrake = process.env.AIRBRAKE_PROJECT_ID
   ? initAirbrake().expressHandler()
@@ -9,7 +11,7 @@ exports.airbrake = process.env.AIRBRAKE_PROJECT_ID
 
 exports.errorPages = (err, req, res, next) => {
   const code = err.message === 'Not found' ? 404 : 500
-  console.log('Received an error!', err)
+  log.error(`Serving an error page for ${req.url}`, err)
   res.status(code).render(`errors/${code}`, {err})
 }
 

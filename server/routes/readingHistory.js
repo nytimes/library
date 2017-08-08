@@ -7,6 +7,7 @@ const async = require('async')
 const datastore = require('@google-cloud/datastore')
 const moment = require('moment')
 
+const log = require('../logger')
 const {getAuth} = require('../auth')
 const {getMeta} = require('../list')
 
@@ -112,7 +113,7 @@ function recordView(docId, userInfo, datastoreClient) {
       datastoreClient.upsert({
         key: viewKey, data: updatedData
       }).catch((err) => {
-        console.error(`ERROR: ${err}`)
+        log.error('Failed saving reading history to GCloud datastore:', err)
       })
     })
 }
