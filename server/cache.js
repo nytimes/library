@@ -74,7 +74,7 @@ exports.purge = (id, newModified) => {
     // no recursion here since other instances will determine themselves when pages have expired
     segments.forEach((url) => {
       if (!cache[url]) return
-      log.debug(`Changes at ${path}; purging local cache for ${url}.`)
+      log.info(`Changes at ${path}; purging local cache for ${url}.`)
       purgeCache(url)
     })
   })
@@ -169,7 +169,7 @@ function purgeCache(path, preventCache, recurse, cb) {
   }
 
   // if this is specifically to just purge on this node, don't make requests elsewhere
-  log.info(`Purging local cache of ${path}.`)
+  log.debug(`Purging local cache of ${path}.`)
   delete cache[path]
   if (cb) cb(null)
 }
