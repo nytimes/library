@@ -7,6 +7,7 @@
     "@google-cloud/datastore": "^1.0.6",
     "***REMOVED***": ">=0.0.2",
     "airbrake": "^2.0.1",
+    "assert": "^1.4.1",
     "async": "^2.4.1",
     "chai": "^4.0.2",
     "cheerio": "^1.0.0-rc.1",
@@ -21,6 +22,8 @@
     "nodemon": "^1.11.0",
     "pretty": "^2.0.0",
     "slugify": "^1.1.0",
+    "supertest": "^3.0.0",
+    "supertest-as-promised": "^4.0.2",
     "unescape": "^1.0.1",
     "winston": "^2.3.1",
     "xlsx": "^0.11.0"
@@ -37,10 +40,11 @@
     "webpack-dev-server": "^2.4.5"
   },
   "scripts": {
-    "test": "node_modules/mocha/bin/mocha",
     "start": "node server/index.js",
     "build": "node-sass styles/style.scss public/css/style.css",
-    "watch": "concurrently \"nodemon server/index.js\" \"node-sass -w styles/style.scss public/css/style.css\""
+    "watch": "concurrently \"nodemon server/index.js\" \"node-sass -w styles/style.scss public/css/style.css\"",
+    "test": "mocha test/unit --recursive",
+    "test:cover": "nyc --reporter=html --reporter=text mocha test/unit --recursive"
   },
   "repository": {
     "type": "git",
