@@ -18,7 +18,7 @@
             <p>
               <% if (res.folder) { %>
               Filed under
-              <a class="folder" href="<%= res.folder.path %>"><span><%= res.folder.name || 'Home' %></span></a>&nbsp;
+              <a class="folder" href="<%= res.folder.path %>"><span><%= res.folder.prettyName || 'Home' %></span></a>&nbsp;
               <% } %>
               Last edited
                 <% if (res.lastModifyingUser) { %>
