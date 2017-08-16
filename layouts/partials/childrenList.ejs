@@ -8,7 +8,7 @@
   <% } %>
   <ul class="children">
     <% children.forEach((link) => { %>
-      <% const type = link.nodeType === 'branch' ? 'folder' : 'file' %>
+      <% const type = link.resourceType === 'folder' ? 'folder' : 'file' %>
       <li class="type-<%= type %>">
         <% const icon = type === 'folder' ? 'fa-folder' : 'fa-file-o'; %>
         <i class="fa foldericon <%= icon %>" aria-hidden="true"></i>

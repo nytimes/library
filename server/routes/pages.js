@@ -6,7 +6,7 @@ const search = require('../search')
 const router = express.Router()
 
 const {getTree, getMeta, getTagged} = require('../list')
-const {getTemplates} = require('../utils')
+const {getTemplates, sortDocs} = require('../utils')
 
 router.get('/', handlePage)
 router.get('/:page', handlePage)
@@ -49,17 +49,16 @@ function buildDisplayCategories(tree) {
     return data
   })
 
-  const sortDocs = (a, b) => { return a.sort.localeCompare(b.sort) }
   // Ignore pages at the root of the site on the category page
   const all = categories
     .filter(({nodeType}) => nodeType === 'branch')
     .sort(sortDocs)
     .map((category) => {
       category = Object.assign({}, category, getMeta(category.id))
-      category.children = Object.values(category.children).map(({id, nodeType}) => {
-        const {prettyName: name, path: url} = getMeta(id)
-        return { name, nodeType, url }
-      })
+      category.children = Object.values(category.children).map(({id}) => {
+        const {prettyName: name, path: url, resourceType, sort} = getMeta(id)
+        return { name, resourceType, url, sort }
+      }).sort(sortDocs)
       return category
     })
 

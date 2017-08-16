@@ -9,7 +9,7 @@ const cache = require('../cache')
 const log = require('../logger')
 const {getTree, getMeta} = require('../list')
 const {fetchDoc, cleanName, fetchByline} = require('../docs')
-const {getTemplates} = require('../utils')
+const {getTemplates, sortDocs} = require('../utils')
 
 router.get('*', handleCategory)
 module.exports = router
@@ -138,15 +138,15 @@ function createRelatedList(slugs, self, baseUrl) {
   return Object.keys(slugs)
     .filter((slug) => slug !== self)
     .map((slug) => {
-      const {id, nodeType} = slugs[slug]
-      const {sort, prettyName, webViewLink, path: url} = getMeta(id)
+      const {id} = slugs[slug]
+      const {sort, prettyName, webViewLink, path: url, resourceType} = getMeta(id)
       return {
         sort,
-        nodeType,
         name: prettyName,
         editLink: webViewLink,
+        resourceType,
         url
       }
     })
-    .sort((a, b) => a.sort > b.sort)
+    .sort(sortDocs)
 }
