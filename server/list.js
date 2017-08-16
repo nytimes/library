@@ -13,6 +13,7 @@ const {cleanName, slugify} = require('./docs')
 const teamDriveId = '***REMOVED***'
 let currentTree = null
 let docsInfo = {}
+let tags = {}
 let driveBranches = {}
 exports.getTree = (cb) => {
   if (currentTree) {
@@ -29,6 +30,13 @@ exports.getMeta = (id) => {
     doc.lastUpdated = moment(doc.modifiedTime).fromNow()
   }
   return doc
+}
+
+// returns all tags currently parsed from docs, by sort field
+exports.getTagged = (tag) => {
+  if (tag) return tags[tag]
+
+  return tags
 }
 
 exports.getChildren = (id) => {
@@ -98,13 +106,19 @@ function produceTree(files, firstParent) {
   // maybe group into folders first?
   // then build out tree, by traversing top down
   // keep in mind that files can have multiple parents
-  const [byParent, byId] = files.reduce(([byParent, byId], resource) => {
+  const [byParent, byId, tagIds] = files.reduce(([byParent, byId, tagIds], resource) => {
     const {parents, id, name} = resource
 
     // prepare data for the individual file and store later for reference
     const prettyName = cleanName(name)
+    const tagString = (name.match(/\|\s*([^|]+)$/i) || [])[1] || ''
+    const tags = tagString.split(',')
+      .map((t) => t.trim().toLowerCase())
+      .filter((t) => t.length > 0)
+
     byId[id] = Object.assign({}, resource, {
       prettyName,
+      tags,
       resourceType: cleanResourceType(resource.mimeType),
       sort: determineSort(name),
       slug: slugify(prettyName)
@@ -112,11 +126,20 @@ function produceTree(files, firstParent) {
 
     cache.purge(id, resource.modifiedTime)
 
+    // add the id of this item to a list of tags
+    tags.forEach((t) => {
+      const idsSoFar = tagIds[t] || []
+      idsSoFar.push(id)
+      tagIds[t] = idsSoFar
+    })
+
     // for every parent, make sure the current file is in the list of children
     // this is used later to traverse the tree
     parents.forEach((parentId) => {
       const parent = byParent[parentId] || {children: [], home: null}
-      const matchesHome = name.trim().match(/\bhome$/i)
+      const matchesHome = name.trim().match(/\bhome(?:,|$)/i)
+
+      // need to do something here with tags
       // check if this is the first file for this parent with "home" at the end
       // if not it is a child, if so it is the index
       if (!matchesHome || parent.home) {
@@ -128,9 +151,11 @@ function produceTree(files, firstParent) {
       byParent[parentId] = parent
     })
 
-    return [byParent, byId]
-  }, [{}, {}])
+    return [byParent, byId, tagIds]
+  }, [{}, {}, {}])
 
+  tags = tagIds
+  console.log(tags)
   docsInfo = byId // update our outer cache
   driveBranches = byParent
   return buildTreeFromData(firstParent)

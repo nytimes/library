@@ -19,9 +19,9 @@
 
         <div class="featured-cat">
           <div class="featured-cat-list">
-            <% categories.forEach((category) => { %>
+            <% categories.team.forEach((category) => { %>
               <% if (category.sort !== 'How do I use this site') { %>
-                <a href="<%= category.path %>"><button type="button" class="button btn-cat"><%= category.sort %></button></a>
+                <a href="<%= category.path %>"><button type="button" class="button btn-cat"><%= category.prettyName %></button></a>
               <% } %>
             <% }) %>
             <a href="/categories"><button type="button" class="button btn-homepage">View All Docs</button></a>

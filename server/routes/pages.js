@@ -5,7 +5,7 @@ const express = require('express')
 const search = require('../search')
 const router = express.Router()
 
-const {getTree, getMeta} = require('../list')
+const {getTree, getMeta, getTagged} = require('../list')
 const {getTemplates} = require('../utils')
 
 router.get('/', handlePage)
@@ -43,26 +43,33 @@ function handlePage(req, res, next) {
 }
 
 function buildDisplayCategories(tree) {
-  let categories = Object.keys(tree.children).map((key) => {
+  const categories = Object.keys(tree.children).map((key) => {
     const data = tree.children[key]
     data.path = `/${key}` // for now
     return data
   })
 
   // Ignore pages at the root of the site on the category page
-  categories = categories.filter((child) => { return child.nodeType === 'branch' })
-
-  // For now, sort alphabetically:
-  categories = categories.sort((a, b) => { return a.sort.localeCompare(b.sort) })
-
-  categories = categories.map((category) => {
-    category = Object.assign({}, category)
-    category.children = Object.values(category.children).map(({id, nodeType}) => {
-      const {prettyName: name, path: url} = getMeta(id)
-      return { name, nodeType, url }
+  const grouped = categories
+    .filter((child) => { return child.nodeType === 'branch' })
+    .sort((a, b) => { return a.sort.localeCompare(b.sort) })
+    .map((category) => {
+      category = Object.assign({}, category, getMeta(category.id))
+      category.children = Object.values(category.children).map(({id, nodeType}) => {
+        const {prettyName: name, path: url} = getMeta(id)
+        return { name, nodeType, url }
+      })
+      return category
     })
-    return category
-  })
+    .reduce((memo, category, i, all) => {
+      category.tags.forEach((tag) => {
+        const soFar = memo[tag] || []
+        memo[tag] = soFar.concat(category)
+      })
 
-  return categories
+      return Object.assign({}, memo, {all})
+    }, {all: []})
+
+  return grouped
+  // return {categories, teams}
 }
