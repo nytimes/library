@@ -10,7 +10,7 @@
 
     <div id="category-page" class="g-body">
       <div class="g-main-content">
-      <% categories.all.forEach((category) => { %>
+      <% all.forEach((category) => { %>
         <%- include('../partials/childrenList', {kicker: category.prettyName, children: category.children, link: category.path}) %>
       <% }) %>
       </div>

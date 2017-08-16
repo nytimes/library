@@ -34,7 +34,7 @@ exports.getMeta = (id) => {
 
 // returns all tags currently parsed from docs, by sort field
 exports.getTagged = (tag) => {
-  if (tag) return tags[tag]
+  if (tag) return tags[tag] || []
 
   return tags
 }
@@ -155,7 +155,6 @@ function produceTree(files, firstParent) {
   }, [{}, {}, {}])
 
   tags = tagIds
-  console.log(tags)
   docsInfo = byId // update our outer cache
   driveBranches = byParent
   return buildTreeFromData(firstParent)

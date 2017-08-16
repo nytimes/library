@@ -35,7 +35,7 @@ function handlePage(req, res, next) {
     return getTree((err, tree) => {
       if (err) return next(err)
       const categories = buildDisplayCategories(tree)
-      res.render(template, {categories})
+      res.render(template, categories)
     })
   }
 
@@ -49,10 +49,11 @@ function buildDisplayCategories(tree) {
     return data
   })
 
+  const sortDocs = (a, b) => { return a.sort.localeCompare(b.sort) }
   // Ignore pages at the root of the site on the category page
-  const grouped = categories
-    .filter((child) => { return child.nodeType === 'branch' })
-    .sort((a, b) => { return a.sort.localeCompare(b.sort) })
+  const all = categories
+    .filter(({nodeType}) => nodeType === 'branch')
+    .sort(sortDocs)
     .map((category) => {
       category = Object.assign({}, category, getMeta(category.id))
       category.children = Object.values(category.children).map(({id, nodeType}) => {
@@ -61,15 +62,14 @@ function buildDisplayCategories(tree) {
       })
       return category
     })
-    .reduce((memo, category, i, all) => {
-      category.tags.forEach((tag) => {
-        const soFar = memo[tag] || []
-        memo[tag] = soFar.concat(category)
-      })
 
-      return Object.assign({}, memo, {all})
-    }, {all: []})
+  const teams = getTagged('team')
+    .map(getMeta)
+    .sort(sortDocs)
 
-  return grouped
-  // return {categories, teams}
+  const featured = getTagged('featured')
+    .map(getMeta)
+    .sort(sortDocs)
+
+  return {all, teams, featured}
 }

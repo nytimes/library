@@ -1,0 +1,278 @@
+
+// Main Homepage
+//------------------------------------------------------------------------------
+#main-search-page {
+  background: #222;
+  position: relative;
+  top: 45px;
+  left: -20px;
+  width: 100vw;
+  height: calc(100vh - 45px);
+  overflow: hidden;
+
+  @include desktop{
+    left: 0;
+  }
+
+  .mid-center {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .main-item {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -30%);
+
+    @include desktop{
+      top: 40%;
+      transform: translate(-50%, -40%);
+      max-width: 600px;
+    }
+
+    .branding {
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      margin-bottom: 20px;
+
+      .branding-heading {
+        margin: 0;
+
+        .nyt-logo {
+          height: 36px;
+          filter: invert(100%) brightness(80%);
+          padding-top: 7px;
+        }
+      }
+
+      .branding-label {
+        margin: 0 0 0 15px;
+        height: 30px;
+        padding: 15px 0 9px 18px;
+        vertical-align: top;
+        border-left: 1px solid rgba(255, 255, 255, 0.35);
+        color: #ccc;
+        font-family: $karnak;
+        font-size: 38px;
+        text-transform: none;
+        -webkit-font-smoothing: antialiased;
+        font-weight: 100;
+        line-height: 26px;
+
+        a:link, a:visited {
+          color: #ccc;
+        }
+        a:hover {
+          color: $pink;
+          text-decoration: none;
+        }
+      }
+    }
+
+    .tagline {
+      text-align: center;
+      color: #8E8E8E;
+      margin: 0 auto;
+      margin-bottom: 80px;
+      font-size: 15px;
+      width: 80%;
+
+      @include tablet {
+    		width: 100%;
+        margin-bottom: 110px;
+    	}
+
+      @include desktop {
+    		width: 100%;
+        margin-bottom: 110px;
+    	}
+    }
+
+    .search-container {
+      clear: both;
+      width: calc(100vw - 60px);
+      background: #e6e2e2;
+      padding: 0px 6px 0 0;
+
+      @include tablet{
+    		width: calc(100vw - 140px);
+    	}
+    	@include desktop{
+    		width: 586px;
+    	}
+
+      #search-box {
+        font-size: 18px;
+        line-height: 36px;
+        box-shadow: 6px 6px 0px 0px #4d4d4d;
+        float: none;
+      }
+
+      &:hover,
+      &:focus,
+      &:active {
+        background: #fff;
+        .icon {
+          opacity: 1;
+        }
+      }
+
+      .icon{
+        height: 51px;
+        width: 55px;
+        font-size: 15pt;
+        margin-left: -60px;
+        opacity: 0.95;
+        -webkit-transition: opacity .35s ease;
+        -moz-transition: opacity .35s ease;
+        -ms-transition: opacity .35s ease;
+        -o-transition: opacity .35s ease;
+        transition: opacity .35s ease;
+      }
+
+      &:hover {
+        .icon:hover {
+          background: $pink;
+        }
+      }
+    }
+
+    .additional-menus {
+      justify-content: center;
+      margin-top: 30px;
+
+      @include desktop{
+    		margin-top: 40px;
+    	}
+
+      &.homepage{
+        display: none;
+      }
+
+      // button:first-child {
+      //   margin-right: 30px;
+      // }
+    }
+
+    .featured-cat {
+      margin-top: 30px;
+      display: flex;
+
+      .featured-cat-container,
+      .teams-cat-container {
+        flex: 0 50%;
+        margin-top: -7px;
+
+        h3 {
+          font-weight: normal;
+          font-size: 18px;
+          color: #8e8e8e;
+          margin: 15px 0;
+        }
+
+        li {
+          display: block;
+        }
+
+        ul {
+          padding-left: 0;
+        }
+
+      }
+
+      .featured-cat-list {
+        padding-left: 7px;
+
+        a {
+          color: #ccc;
+          -webkit-font-smoothing: antialiased;
+        }
+
+        li {
+          padding-left: 10px;
+          margin-bottom: 7px;
+          position: relative;
+
+          &:before {
+            content: '-';
+            color: #ccc;
+            left: 0;
+            position: absolute;
+          }
+
+          &:last-of-type {
+            &:before {
+              display: none;
+            }
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+  .main-item--bottom {
+    top: auto;
+    bottom: 0;
+  }
+}
+
+
+// Categories Homepage
+//------------------------------------------------------------------------------
+#category-page {
+  .g-main-content {
+    max-width: 1024px;
+    display: flex;
+    flex-flow: row wrap;
+    border-top: 0;
+    justify-content: flex-start;
+
+    .children-container {
+      margin: 0 12px 30px 12px;
+      padding: 25px;
+      border: 1px solid #ddd;
+      width: 100%;
+      -webkit-box-shadow: -4px -4px 0px 0px rgba(239,239,239,1);
+      -moz-box-shadow: -4px -4px 0px 0px rgba(239,239,239,1);
+      box-shadow: -4px -4px 0px 0px rgba(239,239,239,1);
+
+      @include tablet {
+        width: 40.9%;
+      }
+      @include desktop {
+        width: 25.4%;
+      }
+
+      h3 {
+        font-weight: 300;
+        font-size: 24px;
+        margin-top: 0;
+        margin-left: -5px;
+      }
+
+      ol,ul {
+        margin: 0;
+        padding-left: 0px;
+        column-count: 1;
+        padding-left: 20px;
+
+        li {
+          text-indent: 0;
+          font-size: 16px;
+          line-height: 1.6;
+          padding-right: 0;
+
+          a {
+            color: #000;
+          }
+        }
+      }
+    }
+  }
+}

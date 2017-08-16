@@ -1,9 +1,56 @@
-@import "vars";
-@import "mixins";
-@import "base";
-@import "furniture";
-@import "pages";
-@import "categories";
+// Basic Styling
+//------------------------------------------------------------------------------
+body {
+  font-family: $franklin;
+  font-weight: 100;
+  margin: 0;
+  padding: 0 20px;
+
+  @include desktop {
+    padding: 0;
+  }
+}
+
+pre {
+  white-space: pre-wrap;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $franklin;
+  margin-top: 45px;
+  margin-bottom: 20px;
+}
+
+a {
+  color: $pink;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+    outline: 0;
+  }
+
+}
+
+// Tables
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+th, td {
+  padding: 0.25rem 0.5rem;
+  text-align: left;
+  border: 1px solid #ccc;
+  p {
+    margin: 0;
+  }
+}
+
+// Buttons
+button:focus {
+  outline: 0;
+}
+
 
 .legibility {
   -webkit-font-smoothing: antialiased;

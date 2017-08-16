@@ -18,15 +18,23 @@
         <%- include('../partials/search', {style: 'homepage', focus: 'autofocus', msgOnFocus: 'What are you looking for?'}) %>
 
         <div class="featured-cat">
-          <div class="featured-cat-list">
-            <% categories.team.forEach((category) => { %>
-              <% if (category.sort !== 'How do I use this site') { %>
-                <a href="<%= category.path %>"><button type="button" class="button btn-cat"><%= category.prettyName %></button></a>
-              <% } %>
-            <% }) %>
-            <a href="/categories"><button type="button" class="button btn-homepage">View All Docs</button></a>
+          <div class="teams-cat-container">
+            <h3>Find by team:</h3>
+            <ul class="teams-cat-list">
+              <% teams.forEach((team) => { %>
+                <li><a class="button btn-cat" href="<%= team.path %>"><%= team.prettyName %></a></li>
+              <% }) %>
+            </ul>
           </div>
-
+          <div class="featured-cat-container">
+            <h3>Useful Docs:</h3>
+            <ul class="featured-cat-list">
+              <% featured.forEach((doc) => { %>
+                <li><a href="<%= doc.path %>"><%= doc.prettyName %></a></li>
+              <% }) %>
+              <li><a class="button btn-homepage" href="/categories">View All Docs</a></li>
+            </ul>
+          </div>
         </div>
 
       </div>
