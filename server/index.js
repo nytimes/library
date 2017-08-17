@@ -42,6 +42,12 @@ app.get('/view-on-site/:docId', (req, res, next) => {
 
 // main pages
 app.use(readingHistory.middleware)
+// don't allow using cache for normal pages
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'no-cache')
+  next()
+})
+
 app.use(pages)
 app.use(cache)
 // category pages will be cache busted when their last updated timestamp changes
