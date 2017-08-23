@@ -8,9 +8,6 @@ const router = express.Router()
 const {getTree, getMeta, getTagged} = require('../list')
 const {getTemplates, sortDocs} = require('../utils')
 
-const {supportedTypes} = require('../docs')
-console.log("supportedTypes: ", supportedTypes)
-
 router.get('/', handlePage)
 router.get('/:page', handlePage)
 
