@@ -154,6 +154,9 @@ function normalizeHtml(html) {
 
   const $ = cheerio.load(html)
 
+  // Remove p tags with links to headers
+  $('p').has('a[href^=#h]').remove()
+
   // remove comments container in footer
   $('div').has('a[href^=#cmnt_ref][id^=cmnt]').remove()
 
