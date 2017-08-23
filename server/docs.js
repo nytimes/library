@@ -161,7 +161,7 @@ function normalizeHtml(html) {
     // and the last character of the p tag is a number...
     // remove the p tag
     const aTags = $(p).find('a')
-    return (aTags.length > 0) && (aTags[aTags.length - 1].attribs.href.match('#h.').length > 0) && /(\d+$)/mig.test($(p).text())
+    return (aTags.length > 0) && aTags[aTags.length - 1].attribs.href.match('#h.') && /(\d+$)/mig.test($(p).text())
   }).remove()
 
   // remove comments container in footer
