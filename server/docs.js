@@ -155,7 +155,14 @@ function normalizeHtml(html) {
   const $ = cheerio.load(html)
 
   // Remove p tags with links to headers
-  $('p').has('a[href^=#h]').remove()
+  $('p').filter((index, p) => {
+    // If the p tag has an a tag child...
+    // and that a tag has an href with "#h."...
+    // and the last character of the p tag is a number...
+    // remove the p tag
+    const aTags = $(p).find('a')
+    return (aTags.length > 0) && (aTags[aTags.length - 1].attribs.href.match('#h.').length > 0) && /(\d+$)/mig.test($(p).text())
+  }).remove()
 
   // remove comments container in footer
   $('div').has('a[href^=#cmnt_ref][id^=cmnt]').remove()
