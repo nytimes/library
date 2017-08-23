@@ -8,9 +8,28 @@
   <% } %>
   <ul class="children">
     <% children.forEach((link) => { %>
-      <% const type = link.resourceType === 'folder' ? 'folder' : 'file' %>
+      <% const type = link.resourceType %>
       <li class="type-<%= type %>">
-        <% const icon = type === 'folder' ? 'fa-folder' : 'fa-file-o'; %>
+        <%
+          let icon
+          switch(type) {
+            case 'document':
+              icon = 'fa-file-o'
+              break
+            case 'spreadsheet':
+              icon = 'fa-table'
+              break
+            case 'folder':
+              icon = 'fa-folder'
+              break
+            case 'presentation':
+              icon = 'fa-file-powerpoint-o'
+              break
+            default:
+              icon = 'fa-external-link'
+              break
+          }
+        %>
         <i class="fa foldericon <%= icon %>" aria-hidden="true"></i>
         <a class="content-link" href="<%- link.url %>" ><%= link.name %></a>
         <p>Type: <%= link.resourceType %></p>
