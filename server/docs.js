@@ -12,6 +12,8 @@ const xlsx = require('xlsx')
 
 const {getAuth} = require('./auth')
 const supportedTypes = new Set(['document', 'spreadsheet'])
+exports.supportedTypes = supportedTypes
+
 exports.cleanName = (name = '') => {
   return name
     .replace(/^\d+[-–—_\s]*/, '') // remove leading numbers and delimiters
