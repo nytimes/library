@@ -164,9 +164,10 @@ function normalizeHtml(html) {
     // Filter the style attr on each element
     const elStyle = $(el).attr('style')
     if (elStyle) {
-      // keep italic and bold style definitons
+      // keep italic, bold and width (for images) style definitons
       // TODO: should we replace with <strong> and <em> eventually?
       const newStyle = elStyle.split(';').filter((styleRule) => {
+        if (['img'].includes(el.tagName) && /width/.test(styleRule)) { return true }
         return /font-style:italic|font-weight:700|text-decoration:underline/.test(styleRule)
       }).join(';')
 
