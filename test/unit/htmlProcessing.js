@@ -44,7 +44,8 @@ describe('HTML processing', () => {
 
     it('preserves image widths', function () {
       const imageWidth = this.output("img").first()
-      assert.isOk('width', imageWidth.attr('style'))
+      const width_match = imageWidth.attr('style').match('width')
+      assert.isNotNull(width_match)
     })
   })
 
