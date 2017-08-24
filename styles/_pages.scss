@@ -219,7 +219,18 @@
   .main-item--bottom {
     top: auto;
     bottom: 0;
+
+    .help-text {
+      color: #8E8E8E;
+
+      a {
+        color: #ccc;
+      }
+
+    }
+
   }
+  
 }
 
 
