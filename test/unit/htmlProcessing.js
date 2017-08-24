@@ -41,6 +41,11 @@ describe('HTML processing', () => {
       const combinedSpan = this.output("span:contains('combined')").first()
       assert.equal('font-style:italic;font-weight:700;text-decoration:underline', combinedSpan.attr('style'))
     })
+
+    it('preserves image widths', function () {
+      const imageWidth = this.output("img").first()
+      assert.isOk('width', imageWidth.attr('style'))
+    })
   })
 
   describe('list handling', () => {
