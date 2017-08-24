@@ -12,7 +12,8 @@ exports.getTemplates = (subfolder) => {
     }, new Set())
 }
 
-const supportedTypes = new Set(['folder', 'document', 'spreadsheet'])
+// disable spreadsheets from being linked to directly for now
+const supportedTypes = new Set(['folder', 'document']) //, 'spreadsheet'])
 exports.isSupported = (resourceType) => {
   return supportedTypes.has(resourceType)
 }
