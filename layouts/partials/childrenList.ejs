@@ -11,26 +11,19 @@
       <% const type = link.resourceType %>
       <li class="type-<%= type %>">
         <%
-          let icon
-          switch(type) {
-            case 'document':
-              icon = 'fa-file-o'
-              break
-            case 'spreadsheet':
-              icon = 'fa-table'
-              break
-            case 'folder':
-              icon = 'fa-folder'
-              break
-            case 'presentation':
-              icon = 'fa-file-powerpoint-o'
-              break
-            default:
-              icon = 'fa-external-link'
-              break
-          }
+        const iconMap = {
+          document: 'file-o',
+          spreadsheet: 'table',
+          folder: 'folder',
+          presentation: 'clone',
+          image: 'picture-o',
+          video: 'video-camera',
+          pdf: 'file-pdf-o'
+        }
+        const iconName = iconMap[type] || 'external-link'
+        const className = `fa-${iconName}`
         %>
-        <i class="fa foldericon <%= icon %>" aria-hidden="true"></i>
+        <i class="fa foldericon <%= className %>" aria-hidden="true"></i>
         <a class="content-link" href="<%- link.url %>" ><%= link.name %></a>
       </li>
     <% }) %>
