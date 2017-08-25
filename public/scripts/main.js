@@ -32,4 +32,49 @@ $(document).ready(function() {
     }
   }
 
+  function getReadingHistory(cb) {
+    $.ajax({
+      method: 'GET',
+      url: '/reading-history.json'
+    }).always(function(data) {
+      cb(data);
+    })
+  }
+
+  $document.one('click', '.user-tools', function() {
+    getReadingHistory(generateLists);
+  })
+
+  function generateLists(data) {
+    var contentHolders = $('.user-tools > #me > div.popup > ul.content');
+    var recentlyViewed = data['recentlyViewed'];
+    var mostViewed = data['mostViewed'];
+
+    addElements(recentlyViewed, contentHolders[0]);
+    addElements(mostViewed, contentHolders[1]);
+  }
+
+  function addElements(data, target) {
+    var $target = $(target);
+
+    var items = data.map(function(el) {
+      var item = el.doc
+      var folder = item.folder ? item.folder.prettyName : '' // lets not try to show a folder if there isn't one
+      return [
+      '<li>',
+        '<a href="' + item.path + '">',
+          '<p class="docs-title">' + item.prettyName + '</p>',
+          '<p class="docs-attr">',
+            '<span class="docs-folder">' + folder + '</span>',
+            '<span class="timestamp">' + el.lastViewed + '</span>',
+          '</p>',
+         '</a>',
+      '</li>'
+      // use .join() to turn to html string
+      ].join('')
+    });
+      
+    $target.html(items.join('')) // perform all the DOM manipulation as a single operation
+  }
+
 })
