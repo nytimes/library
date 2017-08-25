@@ -11,10 +11,10 @@ const {isSupported} = require('./utils')
 const {cleanName, slugify} = require('./docs')
 
 const teamDriveId = '***REMOVED***'
-let currentTree = null
-let docsInfo = {}
-let tags = {}
-let driveBranches = {}
+let currentTree = null // current route data by slug
+let docsInfo = {} // doc info by id
+let tags = {} // tags to doc id
+let driveBranches = {} // map of id to nodes
 exports.getTree = (cb) => {
   if (currentTree) {
     return cb(null, currentTree)
@@ -47,7 +47,6 @@ exports.getChildren = (id) => {
 const treeUpdateDelay = parseInt(process.env.LIST_UPDATE_DELAY || 15, 10) * 1000
 startTreeRefresh(treeUpdateDelay)
 
-// @TODO: page through results of tree if incompleteSearch
 function updateTree(cb) {
   cb = inflight('tree', cb)
   // guard against calling while already in progress
@@ -154,14 +153,15 @@ function produceTree(files, firstParent) {
     return [byParent, byId, tagIds]
   }, [{}, {}, {}])
 
+  const oldTree = docsInfo
   tags = tagIds
   docsInfo = byId // update our outer cache
   driveBranches = byParent
-  return buildTreeFromData(firstParent)
+  return buildTreeFromData(firstParent, oldTree)
 }
 
 // do we care about parent ids? maybe not?
-function buildTreeFromData(rootParent, breadcrumb) {
+function buildTreeFromData(rootParent, oldTree, breadcrumb) {
   const {children, home} = driveBranches[rootParent] || {}
   const parentInfo = docsInfo[rootParent] || {}
 
@@ -183,8 +183,9 @@ function buildTreeFromData(rootParent, breadcrumb) {
     const nextCrumb = breadcrumb ? breadcrumb.concat({ id: rootParent, slug: parentInfo.slug }) : []
 
     // recurse building up breadcrumb
-    memo.children[slug] = buildTreeFromData(id, nextCrumb)
+    memo.children[slug] = buildTreeFromData(id, oldTree, nextCrumb)
 
+    // @TODO support more than one path for a doc
     if (isSupported(resourceType)) {
       // Use this to cache the reader-facing path to the page
       let path = '/'
@@ -192,6 +193,10 @@ function buildTreeFromData(rootParent, breadcrumb) {
         path += nextCrumb.map((element) => { return element.slug }).join('/') + '/'
       }
       path += slug
+
+      const oldPath = oldTree[id] ? oldTree[id].path : null
+      if (oldPath && path !== oldPath) cache.redirect(oldPath, path)
+
       docsInfo[id].path = path
     } else {
       docsInfo[id].path = webViewLink
@@ -199,7 +204,8 @@ function buildTreeFromData(rootParent, breadcrumb) {
 
     // as well as the folder
     docsInfo[id].folder = parentInfo
-    docsInfo[id].folder.path = '/' + nextCrumb.slice(0, -1).map((element) => { return element.slug }).join('/')
+    const folderPath = '/' + nextCrumb.slice(0, -1).map((element) => { return element.slug }).join('/')
+    docsInfo[id].folder.path = folderPath
 
     return memo
   }, Object.assign({}, parentNode, { children: {} }))

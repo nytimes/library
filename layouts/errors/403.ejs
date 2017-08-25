@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <%- include('../partials/head', {title: 'Operation Not Permitted'}) %>
+  <body>
+    <%- include('../partials/header', {title: 'Operation Not Permitted', parentLinks: []}) %>
+    <div id="main-search-page">
+      <div class="main-item">
+        <div class="tagline">
+          <h1>Not Authorized</h1>
+          <p>Check the request and try again. For assistance, contact #newstools.</p>
+          <p>Perhaps you'd like to search for something instead?</p>
+        </div>
+        <%- include('../partials/search', {style: 'homepage'}) %>
+      </div>
+
+      <%- include('../partials/footer', {style: 'homepage'}) %>
+    </div>
+
+  </body>
+</html>

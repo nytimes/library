@@ -10,7 +10,12 @@ exports.airbrake = process.env.AIRBRAKE_PROJECT_ID
   : (res, req, next) => next() // empty airbrake code
 
 exports.errorPages = (err, req, res, next) => {
-  const code = err.message === 'Not found' ? 404 : 500
+  const messages = {
+    'Not found': 404,
+    'Unauthorized': 403
+  }
+
+  const code = messages[err.message] || 500
   log.error(`Serving an error page for ${req.url}`, err)
   res.status(code).render(`errors/${code}`, {err})
 }
