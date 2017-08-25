@@ -23,13 +23,6 @@ router.use((req, res, next) => {
   })
 })
 
-router.get('/reading-history', (req, res, next) => {
-  fetchHistory(getUserInfo(req), (err, results) => {
-    if (err) return next(err)
-    res.render(`pages/readingHistory`, {results})
-  })
-})
-
 router.get('/reading-history.json', (req, res, next) => {
   fetchHistory(getUserInfo(req), (err, results) => {
     if (err) return next(err)
