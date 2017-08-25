@@ -154,15 +154,21 @@ function normalizeHtml(html) {
 
   const $ = cheerio.load(html)
 
-  // Remove p tags with links to headers
-  $('p').filter((index, p) => {
-    // If the p tag has an a tag child...
-    // and that a tag has an href with "#h."...
+  // Remove p tags in Table of Contents
+  $('p').each((index, p) => {
+    // If the p tag has <a> tag child(ren)...
+    // and the last <a> tag has an href with "#h."...
     // and the last character of the p tag is a number...
-    // remove the p tag
     const aTags = $(p).find('a')
-    return (aTags.length > 0) && aTags[aTags.length - 1].attribs.href.match('#h.') && /(\d+$)/mig.test($(p).text())
-  }).remove()
+    const inTableOfContents = (aTags.length > 0) && aTags[aTags.length - 1].attribs.href.match('#h.') && /(\d+$)/mig.test($(p).text())
+    
+    // Lucky number 7!
+    // If we've passed the 8th <p> tag on the page...
+    // and we're yet to see signs of a table of contents...
+    // exit the loop.
+    if (index > 7 && !(inTableOfContents)) { return false }
+    if (inTableOfContents) { $(p).remove() }
+  });
 
   // remove comments container in footer
   $('div').has('a[href^=#cmnt_ref][id^=cmnt]').remove()
