@@ -42,7 +42,7 @@ function fetchHistory(userInfo, doneCb) {
         const query = datastoreClient.createQuery(['LibraryView'])
           .filter('userId', '=', userInfo.userId)
           .order('viewCount', { descending: true })
-          .limit(10)
+          .limit(4)
 
         datastoreClient.runQuery(query, cb)
       },
@@ -50,7 +50,7 @@ function fetchHistory(userInfo, doneCb) {
         const query = datastoreClient.createQuery(['LibraryView'])
           .filter('userId', '=', userInfo.userId)
           .order('lastViewedAt', { descending: true })
-          .limit(10)
+          .limit(4)
 
         datastoreClient.runQuery(query, cb)
       }
