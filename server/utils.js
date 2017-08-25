@@ -1,6 +1,7 @@
 'use strict'
 const fs = require('fs')
 const path = require('path')
+const md5 = require('md5')
 
 const layoutsDir = path.join(__dirname, '../layouts')
 exports.getTemplates = (subfolder) => {
@@ -25,4 +26,21 @@ exports.sortDocs = (a, b) => {
   }
 
   return b.resourceType === 'folder' ? 1 : -1
+}
+
+exports.getUserInfo = (req) => {
+  // In development, use stub data
+  if (process.env.NODE_ENV === 'development') {
+    return {
+      email: process.env.TEST_EMAIL || 'test.user@nytimes.com',
+      userId: '10',
+      analyticsUserId: md5('10library')
+    }
+  }
+
+  return {
+    email: req.headers['auth.verified_email'],
+    userId: req.headers['auth.verified_sub'],
+    analyticsUserId: md5(req.headers['auth.verified_sub'] + 'library')
+  }
 }

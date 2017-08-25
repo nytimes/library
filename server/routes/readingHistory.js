@@ -10,6 +10,7 @@ const moment = require('moment')
 const log = require('../logger')
 const {getAuth} = require('../auth')
 const {getMeta} = require('../list')
+const {getUserInfo} = require('../utils')
 
 router.use((req, res, next) => {
   getDatastoreClient((datastoreClient) => {
@@ -23,14 +24,14 @@ router.use((req, res, next) => {
 })
 
 router.get('/reading-history', (req, res, next) => {
-  fetchHistory(res.locals.userInfo, (err, results) => {
+  fetchHistory(getUserInfo(req), (err, results) => {
     if (err) return next(err)
     res.render(`pages/readingHistory`, {results})
   })
 })
 
 router.get('/reading-history.json', (req, res, next) => {
-  fetchHistory(res.locals.userInfo, (err, results) => {
+  fetchHistory(getUserInfo(req), (err, results) => {
     if (err) return next(err)
     res.send(JSON.stringify(results))
   })
@@ -75,7 +76,7 @@ function fetchHistory(userInfo, doneCb) {
 function expandResults(results) {
   return results.map((result) => {
     result.lastViewed = moment(result.lastViewedAt).fromNow()
-    result.doc = getMeta(result.documentId)
+    result.doc = getMeta(result.documentId) || {}
     return result
   })
 }
