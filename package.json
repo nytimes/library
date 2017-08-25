@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "concurrently": "^3.4.0",
+    "dotenv": "^4.0.0",
     "eslint": "^3.19.0",
     "eslint-config-standard": "^10.2.1",
     "eslint-plugin-import": "^2.3.0",
@@ -42,7 +43,7 @@
   "scripts": {
     "start": "node server/index.js",
     "build": "node-sass styles/style.scss public/css/style.css",
-    "watch": "concurrently \"nodemon server/index.js\" \"node-sass -w styles/style.scss public/css/style.css\"",
+    "watch": "concurrently \"nodemon -r dotenv/config server/index.js\" \"node-sass -w styles/style.scss public/css/style.css\"",
     "test": "mocha test/unit --recursive",
     "test:cover": "nyc --reporter=html --reporter=text mocha test/unit --recursive"
   },
