@@ -26,7 +26,8 @@ router.use((req, res, next) => {
 router.get('/reading-history.json', (req, res, next) => {
   fetchHistory(getUserInfo(req), (err, results) => {
     if (err) return next(err)
-    res.send(JSON.stringify(results))
+    //res.send(JSON.stringify(results))
+    res.send(results)
   })
 })
 
