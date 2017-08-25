@@ -44,90 +44,12 @@
 
   function setUserInfo(data) {
     setUsername(data);
-    //setUserInitials(data);
   }
 
   function setUsername(data) {
     var username = data['email'] || 'NYTimes User';
     $('.user-fullname').text(username);
   }
-
-  function setUserInitials(data) {
-    //$('.btn-user-initial').text();
-  }
-
-  function getReadingHistory(cb) {
-    $.ajax({
-      method: 'GET',
-      url: '/reading-history.json'
-    }).always(function(data) {
-      console.log("DATA: ", data)
-      cb(data);
-    })
-  }
-
-  $(document).one('click', '.user-tools', function() {
-    getReadingHistory(generateLists);
-  })
-
-  function generateLists(data) {
-    var contentHolders = $('.user-tools > #me > div.popup > ul.content');
-    var recentlyViewed = data['recentlyViewed'];
-    var mostViewed = data['mostViewed'];
-
-    addElements(recentlyViewed, contentHolders[0]);
-    addElements(mostViewed, contentHolders[1]);
-  }
-
-  function addElements(data, target) {
-    /*
-      <li>
-        <a href="#">
-          <p class="docs-title">Double Byline Hack for Scoop Articles</p>
-          <p class="docs-attr">
-            <span class="docs-folder">Digital News Design</span>
-            <span class="timestamp">(3 mins ago)</span>
-          </p>
-        </a>
-      </li>
-    */
-    var $target = $(target);
-    data.forEach(function(element, index) {
-      var my_li = $('<li/>');
-      var link = $('<a/>', {
-        "href" : element['doc']['path'] || element['doc']['slug']
-      });
-      var docs_title = $('<p/>', {
-        "class" : "docs-title",
-        "text" : element['doc']['prettyName']
-      })
-      var docs_attr = $('<p/>', {
-        "class" : "docs-attr"
-      })
-
-      var folder_name = element['doc']['folder'] != undefined ? element['doc']['folder']['prettyName'] : element['doc']['prettyName']
-      var docs_folder = $('<span/>', {
-        "class" : "docs-folder",
-        "text" : folder_name
-      })
-
-      var timestamp = $('<span/>', {
-        "class" : "timestamp",
-        "text" : "(" + element['lastViewed'] + ")"
-      })
-
-      docs_attr.append(docs_folder);
-      docs_attr.append(timestamp);
-
-      link.append(docs_title);
-      link.append(docs_attr)
-
-      my_li.append(link);
-      $target.append(my_li);
-    });
-
-  }
-
 
   $(document).on('click', '#edit-button', function () {
     $.ajax({
