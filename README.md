@@ -22,6 +22,11 @@ Install dependencies:
 cd nyt-library && yarn install
 ```
 
+Add the .env file into the root directory (get this from someone else) or as a start, just do:
+```
+echo "NODE_ENV=development" >> .env
+```
+
 Start the app:
 ```
 npm run build && npm run watch
