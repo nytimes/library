@@ -39,7 +39,26 @@
     var userId = (data || {}).analyticsUserId;
     if (userId) ga('set', 'userId', userId);
     ga('send', 'pageview');
+    setUserInfo(data);
   });
+
+  function setUserInfo(data) {
+    setUsername(data);
+    //setUserInitials(data);
+  }
+
+  function setUsername(data) {
+    var username = data['email'] || 'NYTimes User';
+    $('.user-fullname').text(username);
+  }
+
+  function setUserInitials(data) {
+    //$('.btn-user-initial').text();
+  }
+
+  function getReadingHistory(data) {
+    
+  }
 
   $(document).on('click', '#edit-button', function () {
     $.ajax({
