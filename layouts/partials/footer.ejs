@@ -67,15 +67,32 @@
   }
 
   $(document).one('click', '.user-tools', function() {
-    getReadingHistory(generateReadingHistoryList);
+    getReadingHistory(generateLists);
   })
 
-  function generateReadingHistoryList(data) {
-    var contentHolder = $('.user-tools > #me > div.popup > ul.content');
-    contentHolder.empty();
+  function generateLists(data) {
+    var contentHolders = $('.user-tools > #me > div.popup > ul.content');
     var recentlyViewed = data['recentlyViewed'];
+    var mostViewed = data['mostViewed'];
 
-    recentlyViewed.forEach(function(element, index) {
+    addElements(recentlyViewed, contentHolders[0]);
+    addElements(mostViewed, contentHolders[1]);
+  }
+
+  function addElements(data, target) {
+    /*
+      <li>
+        <a href="#">
+          <p class="docs-title">Double Byline Hack for Scoop Articles</p>
+          <p class="docs-attr">
+            <span class="docs-folder">Digital News Design</span>
+            <span class="timestamp">(3 mins ago)</span>
+          </p>
+        </a>
+      </li>
+    */
+    var $target = $(target);
+    data.forEach(function(element, index) {
       var my_li = $('<li/>');
       var link = $('<a/>', {
         "href" : element['doc']['path'] || element['doc']['slug']
@@ -106,23 +123,11 @@
       link.append(docs_attr)
 
       my_li.append(link);
-      contentHolder.append(my_li);
+      $target.append(my_li);
     });
 
-    
   }
 
-  /*
-        <li>
-          <a href="#">
-            <p class="docs-title">Double Byline Hack for Scoop Articles</p>
-            <p class="docs-attr">
-              <span class="docs-folder">Digital News Design</span>
-              <span class="timestamp">(3 mins ago)</span>
-            </p>
-          </a>
-        </li>
-  */
 
   $(document).on('click', '#edit-button', function () {
     $.ajax({
