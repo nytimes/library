@@ -57,8 +57,17 @@
   }
 
   function getReadingHistory(data) {
-    
+    $.ajax({
+      method: 'GET',
+      url: '/reading-history.json'
+    }).always(function(data) {
+      console.log("DATA: ", data)
+    })
   }
+
+  $(document).on('click', '.user-tools', function() {
+    getReadingHistory();
+  })
 
   $(document).on('click', '#edit-button', function () {
     $.ajax({
