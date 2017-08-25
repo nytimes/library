@@ -156,6 +156,9 @@ function normalizeHtml(html) {
 
   // Remove p tags in Table of Contents
   $('p').each((index, p) => {
+    // don't search any empty p tags
+    if (p.children.length < 1) return
+
     // If the p tag has <a> tag child(ren)...
     // and the last <a> tag has an href with "#h."...
     // and the last character of the p tag is a number...
