@@ -95,7 +95,7 @@ exports.add = (id, newModified, path, html) => {
     if (noCache) return // refuse to cache any items that are being edited
     if (modified === newModified) return // nothing to do if data is current
 
-    console.log(`CACHE ADD ${path}`)
+    // console.log(`CACHE ADD ${path}`)
     cache.set(path, {html, modified: newModified, id})
   })
 }
@@ -107,9 +107,9 @@ exports.redirect = (path, newPath) => {
     const {noCache} = data || {}
 
     if (err) console.warn(`Failed retrieving data for redirect of ${path}`)
-    console.log(`redirecting ${path} => ${newPath}`)
+    // console.log(`redirecting ${path} => ${newPath}`)
     cache.set(path, {redirectUrl: newPath}, (err) => {
-      console.log(`CACHE REDIRECT FROM ${path}`)
+      // console.log(`CACHE REDIRECT FROM ${path}`)
       if (err) log.warn(`Failed setting redirect for ${path} => ${newPath}`, err)
     })
 
@@ -120,7 +120,7 @@ exports.redirect = (path, newPath) => {
     // either purge the destination or set it to a noCache
     // we need to update the destination to prevent redirect loops
     if (noCache) {
-      console.log('passing along nocache')
+      // console.log('passing along nocache')
       cache.set(newPath, {noCache}, {ttl: noCacheDelay}, purgeCb)
     } else {
       purgeCache(newPath, null, true, purgeCb) // force purge the cache
