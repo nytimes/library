@@ -145,6 +145,7 @@ function produceTree(files, firstParent) {
         parent.children.push(id)
       } else {
         parent.home = id
+        byId[id].isHome = true
       }
 
       byParent[parentId] = parent
@@ -173,42 +174,44 @@ function buildTreeFromData(rootParent, oldTree, breadcrumb) {
     sort: parentInfo ? determineSort(parentInfo.name) : Infinity // some number here that could be used to sort later
   }
 
+  extendItemsWithPath(rootParent, breadcrumb)
+  // @TODO: detect redirects around here
+
   if (!children) {
     return parentNode
   }
 
+  // we have to assemble these paths differently
   return children.reduce((memo, id) => {
-    const {prettyName, resourceType, webViewLink} = docsInfo[id]
-    const slug = slugify(prettyName)
+    const {slug} = docsInfo[id]
     const nextCrumb = breadcrumb ? breadcrumb.concat({ id: rootParent, slug: parentInfo.slug }) : []
 
     // recurse building up breadcrumb
     memo.children[slug] = buildTreeFromData(id, oldTree, nextCrumb)
 
-    // @TODO support more than one path for a doc
-    if (isSupported(resourceType)) {
-      // Use this to cache the reader-facing path to the page
-      let path = '/'
-      if (nextCrumb.length > 0) {
-        path += nextCrumb.map((element) => { return element.slug }).join('/') + '/'
-      }
-      path += slug
-
-      const oldPath = oldTree[id] ? oldTree[id].path : null
-      if (oldPath && path !== oldPath) cache.redirect(oldPath, path)
-
-      docsInfo[id].path = path
-    } else {
-      docsInfo[id].path = webViewLink
-    }
-
-    // as well as the folder
-    docsInfo[id].folder = parentInfo
-    const folderPath = '/' + nextCrumb.slice(0, -1).map((element) => { return element.slug }).join('/')
-    docsInfo[id].folder.path = folderPath
-
     return memo
   }, Object.assign({}, parentNode, { children: {} }))
+}
+
+// @TODO: put back redirect logic
+function extendItemsWithPath(id, breadcrumb) {
+  const parent = docsInfo[id] || {}
+  const segments = (breadcrumb ? breadcrumb.concat({slug: parent.slug}) : []).map((s) => s.slug)
+  const baseUrl = segments.length ? `/${segments.join('/')}` : ''
+
+  const node = driveBranches[id] || {}
+  const contents = (node.children || []).concat(node.home).filter((i) => i)
+
+  contents.forEach((id) => {
+    const item = docsInfo[id]
+    // the item will already have these props on it
+    const {resourceType, webViewLink: drivePath, slug, isHome} = item
+
+    const viewPath = isHome ? baseUrl : `${baseUrl}/${slug}`
+    item.path = isSupported(resourceType) ? viewPath : drivePath
+    // we don't need to set path on parent because we are doing a depth first traversal
+    item.folder = parent
+  })
 }
 
 function determineSort(name = '') {
