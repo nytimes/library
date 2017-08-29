@@ -39,10 +39,9 @@ $(document).ready(function() {
   function getReadingHistory(cb) {
     $.ajax({
       method: 'GET',
-      url: '/reading-history.json'
-    }).always(function(data) {
-      cb(JSON.parse(data));
-    })
+      url: '/reading-history.json',
+      json: true
+    }).always(cb)
   }
 
   $html.one('mouseenter', '.user-tools', function() {
@@ -50,27 +49,29 @@ $(document).ready(function() {
   })
 
   function generateLists(data) {
-    var contentHolders = $('.user-tools > #me > div.popup > ul.content');
+    var recentlyViewedHolder = '#me ul.recently-viewed-content';
+    var mostViewedHolder = '#me ul.most-viewed-content';
     var recentlyViewed = data.recentlyViewed;
     var mostViewed = data.mostViewed;
 
-    addElements(recentlyViewed, contentHolders[0]);
-    addElements(mostViewed, contentHolders[1]);
+    addElements(recentlyViewed, recentlyViewedHolder);
+    addElements(mostViewed, mostViewedHolder);
   }
 
   function addElements(data, target) {
     var $target = $(target);
 
     var items = data.map(function(el) {
-      var item = el.doc
-      var folder = item.folder ? item.folder.prettyName : '' // lets not try to show a folder if there isn't one
+      var item = el.doc;
+      var folder = item.folder ? item.folder.prettyName : ''; // lets not try to show a folder if there isn't one
+      var path = item.path ? item.path : '#';
       return [
       '<li>',
-        '<a href="' + item.path + '">',
+        '<a href="' + path + '">',
           '<p class="docs-title">' + item.prettyName + '</p>',
           '<p class="docs-attr">',
             '<span class="docs-folder">' + folder + '</span>',
-            '<span class="timestamp">' + el.lastViewed + '</span>',
+            '<span class="timestamp">(' + el.lastViewed + ')</span>',
           '</p>',
          '</a>',
       '</li>'
