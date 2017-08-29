@@ -40,19 +40,17 @@ $(document).ready(function() {
     $.ajax({
       method: 'GET',
       url: '/reading-history.json'
-    }).always(function(data) {
-      cb(data);
-    })
+    }).always(cb)
   }
 
-  $html.one('click', '.user-tools', function() {
+  $html.one('mouseenter', '.user-tools', function() {
     getReadingHistory(generateLists);
   })
 
   function generateLists(data) {
     var contentHolders = $('.user-tools > #me > div.popup > ul.content');
-    var recentlyViewed = data['recentlyViewed'];
-    var mostViewed = data['mostViewed'];
+    var recentlyViewed = data.recentlyViewed;
+    var mostViewed = data.mostViewed;
 
     addElements(recentlyViewed, contentHolders[0]);
     addElements(mostViewed, contentHolders[1]);
