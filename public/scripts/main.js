@@ -40,7 +40,9 @@ $(document).ready(function() {
     $.ajax({
       method: 'GET',
       url: '/reading-history.json'
-    }).always(cb)
+    }).always(function(data) {
+      cb(JSON.parse(data));
+    })
   }
 
   $html.one('mouseenter', '.user-tools', function() {
