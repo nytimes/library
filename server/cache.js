@@ -2,6 +2,7 @@
 
 const cacheManager = require('cache-manager')
 const redisStore = require('cache-manager-ioredis')
+const moment = require('moment')
 
 const log = require('./logger')
 const list = require('./list') // we must use top level because of circular ref
@@ -85,6 +86,13 @@ function purgeCache(url, edit, force, cb = () => {}) {
   })
 }
 
+function isNewer(oldModified, newModified) {
+  const older = moment(oldModified)
+  const newer = moment(newModified)
+
+  return newer.diff(older) > 0
+}
+
 exports.add = (id, newModified, path, html) => {
   if (!newModified) return // refused to add anything without a modified timestamp
 
@@ -93,7 +101,7 @@ exports.add = (id, newModified, path, html) => {
 
     const {modified, noCache} = data || {}
     if (noCache) return // refuse to cache any items that are being edited
-    if (modified === newModified) return // nothing to do if data is current
+    if (modified && !isNewer(modified, newModified)) return // nothing to do if data is current
 
     // console.log(`CACHE ADD ${path}`)
     cache.set(path, {html, modified: newModified, id})
@@ -137,17 +145,20 @@ exports.purge = (id, newModified) => {
 
   cache.get(path, (err, data) => {
     if (err) log.warn(`Can't purge data for ${data.path} because failed reading previous cache`, err)
-    if (!data) return // nothing to do if no data is in the database
+    if (!data) return // without data (or if we got an error) don't purge
 
     const {modified} = data
-    if (modified === newModified) return // nothing to do if modified has not changed
+    const {home} = list.getChildren(id) || {}
+    // don't proceed if the data is not newer or we are comparing a folder to its home contents
+    if (!isNewer(modified, newModified) || home) return
 
     const segments = path.split('/').map((segment, i, segments) => {
       return segments.slice(0, i).concat([segment]).join('/')
-    })
+    }).filter((s) => s.length) // don't allow purging empty string
 
     // purge each individual segment
     segments.forEach((url) => {
+      log.info(`CACHE PURGE ${url} DETECTED CHANGE AT ${path}`)
       purgeCache(url) // apply normal safeguards; don't delete redirects
     })
   })

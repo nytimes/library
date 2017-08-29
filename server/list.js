@@ -25,11 +25,7 @@ exports.getTree = (cb) => {
 
 // exposes docs metadata
 exports.getMeta = (id) => {
-  const doc = docsInfo[id]
-  if (doc) {
-    doc.lastUpdated = moment(doc.modifiedTime).fromNow()
-  }
-  return doc
+  return docsInfo[id]
 }
 
 // returns all tags currently parsed from docs, by sort field

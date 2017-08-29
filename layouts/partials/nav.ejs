@@ -11,7 +11,17 @@
           Created by <span class="author"><%= createdBy %></span> <%= createdAt %>.
         <% } %>
         <% if (locals.lastUpdatedBy) { %>
-      Last edited by <span class="author"><%= lastUpdatedBy %></span> <%= lastUpdated %>.</p>
+          <%# just encode the last updated date as data property to make relative time work for cache %>
+      Last edited by <span class="author"><%= lastUpdatedBy %></span> <span class="last-updated" data-last-updated="<%= modifiedAt %>"></span>.</p>
+          <!-- populate last updated time -->
+          <script>
+          (function () {
+            var $lastUpdated = $('.last-updated')
+            var utcUpdated = $lastUpdated.data('last-updated')
+            var updatedMoment = moment(utcUpdated)
+            $lastUpdated.html(updatedMoment.fromNow())
+          })()
+          </script>
         <% } %>
     </div>
     <div class="tool">
