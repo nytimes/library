@@ -1,6 +1,7 @@
 $(document).ready(function() {
   var $window = $(window)
   var $document = $(document)
+  var $html = $('html')
 
   $("pre").html(function (index, html) {
       return html.replace(/^(.*)$/mg, [
@@ -13,10 +14,13 @@ $(document).ready(function() {
 
   // make TOC sticky
   var $toc = $(".g-left-panel");
-  var stickyTop = $toc.offset().top - 100;
-  $window.on('scroll', function(){
-    ($window.scrollTop() >= stickyTop) ? $toc.addClass('d-fixed') : $toc.removeClass('d-fixed');
-  });
+  if ($toc.length) {
+    var stickyTop = $toc.offset().top - 100;
+    $window.on('scroll', function(){
+      ($window.scrollTop() >= stickyTop) ? $toc.addClass('d-fixed') : $toc.removeClass('d-fixed');
+    });
+  }
+  
 
   $window.on('hashchange', correctHashScroll)
   correctHashScroll()
@@ -41,7 +45,7 @@ $(document).ready(function() {
     })
   }
 
-  $document.one('click', '.user-tools', function() {
+  $html.one('click', '.user-tools', function() {
     getReadingHistory(generateLists);
   })
 
