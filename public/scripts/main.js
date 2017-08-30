@@ -20,7 +20,7 @@ $(document).ready(function() {
       ($window.scrollTop() >= stickyTop) ? $toc.addClass('d-fixed') : $toc.removeClass('d-fixed');
     });
   }
-  
+
 
   $window.on('hashchange', correctHashScroll)
   correctHashScroll()
@@ -49,7 +49,7 @@ $(document).ready(function() {
       var mostViewedHolder = '#me ul.most-viewed-content';
       var recentlyViewed = data.recentlyViewed;
       var mostViewed = data.mostViewed;
-  
+
       addElements(recentlyViewed, recentlyViewedHolder);
       addElements(mostViewed, mostViewedHolder);
     })
@@ -62,7 +62,7 @@ $(document).ready(function() {
 
     var items = data.map(function(el) {
       var item = el.doc;
-      var folder = item.folder ? item.folder.prettyName : ''; // lets not try to show a folder if there isn't one
+      var folder = (item.folder || {}).prettyName || ''; // lets not try to show a folder if there isn't one
       var path = item.path ? item.path : '#';
       return [
       '<li>',
@@ -77,7 +77,7 @@ $(document).ready(function() {
       // use .join() to turn to html string
       ].join('')
     });
-      
+
     $target.html(items.join('')) // perform all the DOM manipulation as a single operation
   }
 

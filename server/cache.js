@@ -142,7 +142,7 @@ exports.redirect = (path, newPath) => {
 }
 
 // purge assets by id and their modified times
-exports.purge = (id, newModified) => {
+exports.purge = (id, newModified, force) => {
   const meta = list.getMeta(id)
   const {path} = meta || {}
   // we need a path in order to purge
@@ -150,12 +150,12 @@ exports.purge = (id, newModified) => {
 
   cache.get(path, (err, data) => {
     if (err) log.warn(`Can't purge data for ${data.path} because failed reading previous cache`, err)
-    if (!data) return // without data (or if we got an error) don't purge
+    if (!data && !force) return // without data (or if we got an error) don't purge
 
-    const {modified} = data
+    const {modified} = data || {}
     const {home} = list.getChildren(id) || {}
     // don't proceed if the data is not newer or we are comparing a folder to its home contents
-    if (!isNewer(modified, newModified) || home) return
+    if (!force && (!isNewer(modified, newModified) || home)) return
 
     const segments = path.split('/').map((segment, i, segments) => {
       return segments.slice(0, i).concat([segment]).join('/')
