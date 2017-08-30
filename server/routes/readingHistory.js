@@ -24,7 +24,7 @@ router.use((req, res, next) => {
 })
 
 router.get('/reading-history.json', (req, res, next) => {
-  fetchHistory(getUserInfo(req), req.query.queryLimit, (err, results) => {
+  fetchHistory(getUserInfo(req), req.query.limit, (err, results) => {
     if (err) return next(err)
     res.json(results)
   })
@@ -36,7 +36,7 @@ module.exports = {
 
 function fetchHistory(userInfo, queryLimit, doneCb) {
   getDatastoreClient((datastoreClient) => {
-    const limit = parseInt(queryLimit) || 4
+    const limit = parseInt(queryLimit, 10) || 10
     async.parallel([
       (cb) => {
         const query = datastoreClient.createQuery(['LibraryView'])
