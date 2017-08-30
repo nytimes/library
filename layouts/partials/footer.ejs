@@ -39,7 +39,19 @@
     var userId = (data || {}).analyticsUserId;
     if (userId) ga('set', 'userId', userId);
     ga('send', 'pageview');
+    renderUserInfo(data);
   });
+
+  function renderUserInfo(data) {
+    var username = data.email || 'nyt.user@nytimes.com';
+    $('.user-fullname').text(username);
+
+    var initials = username.split('@')[0].split('.').map(function(name) {
+      return name[0].toUpperCase();
+    });
+    
+    $('.btn-user-initial').text(initials.join(''));
+  }
 
   $(document).on('click', '#edit-button', function () {
     $.ajax({
