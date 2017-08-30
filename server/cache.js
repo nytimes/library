@@ -54,12 +54,14 @@ exports.middleware = (req, res, next) => {
     }
 
     // might get redirect info back or html
-    const {html, redirectUrl} = data || {}
+    const {html, redirectUrl, id} = data || {}
     if (redirectUrl) {
       return res.redirect(redirectUrl)
     }
 
     if (!html) return next()
+    // store the retrieved doc id (for reading history)
+    res.locals.docId = id
 
     log.info(`CACHE HIT ${req.path}.`)
     res.end(html)

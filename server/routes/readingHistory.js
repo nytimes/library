@@ -15,8 +15,9 @@ const {getUserInfo} = require('../utils')
 router.use((req, res, next) => {
   getDatastoreClient((datastoreClient) => {
     req.on('end', () => {
-      if (res.locals.userInfo && res.locals.docId) {
-        recordView(res.locals.docId, res.locals.userInfo, datastoreClient)
+      if (res.locals.docId) {
+        const userInfo = getUserInfo(req)
+        recordView(res.locals.docId, userInfo, datastoreClient)
       }
     })
     next()
