@@ -24,7 +24,7 @@ const cache = process.env.REDIS_URI
 // if we are using a redis instance, listen for errors
 if (process.env.REDIS_URI) {
   const redisClient = cache.store.getClient()
-  redisClient.on('error', (err) => log.err(err))
+  redisClient.on('error', (err) => log.error('ERROR FROM REDIS CLIENT:', err))
 }
 
 // delay caching for 1 hour by default after editing, with env var override
