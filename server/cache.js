@@ -6,6 +6,7 @@ const moment = require('moment')
 
 const log = require('./logger')
 const list = require('./list') // we must use top level because of circular ref
+const {getUserInfo} = require('./utils')
 
 const cache = process.env.REDIS_URI
   ? cacheManager.caching({
@@ -34,7 +35,8 @@ exports.middleware = (req, res, next) => {
   // if purge or edit params are passed, we should purge cache for this url
   const {purge, edit, force} = req.query
   if (purge || edit) {
-    return purgeCache(req.path, edit, force, (err) => {
+    const {email} = edit ? getUserInfo(req) : {}
+    return purgeCache(req.path, email, force, (err) => {
       if (err) {
         log.warn(`Cache purge failed for ${req.path}`, err)
         return next(err)
@@ -64,14 +66,14 @@ exports.middleware = (req, res, next) => {
   })
 }
 
-function purgeCache(url, edit, force, cb = () => {}) {
+function purgeCache(url, editEmail, force, cb = () => {}) {
   cache.get(url, (err, data) => {
     if (err) log.warn(`Received error while trying to purge cache on demand for ${url}`, err)
     const {redirectUrl, noCache} = data || {}
 
-    if (edit) {
+    if (editEmail) {
       if (redirectUrl && !force) return cb(new Error('Unauthorized'))
-      log.info(`CACHE PURGE PERSIST ${noCacheDelay}s: ${url}`)
+      log.info(`CACHE PURGE PERSIST for ${noCacheDelay}s (${editEmail}): ${url}`)
       return cache.set(url, {noCache: true}, {ttl: noCacheDelay}, cb)
     }
 
