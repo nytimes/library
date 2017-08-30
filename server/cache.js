@@ -112,7 +112,10 @@ exports.add = (id, newModified, path, html) => {
 exports.redirect = (path, newPath) => {
   // take the existing data and extend it
   cache.get(path, (err, data) => {
-    const {noCache} = data || {}
+    const {noCache, redirectUrl} = data || {}
+
+    // since we run multiple pods, we don't need to set the redirect more than once
+    if (redirectUrl === newPath) return
 
     log.info(`ADDING REDIRECT: ${path} => ${newPath}`)
     if (err) log.warn(`Failed retrieving data for redirect of ${path}`)
