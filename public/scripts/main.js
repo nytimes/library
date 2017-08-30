@@ -36,27 +36,23 @@ $(document).ready(function() {
     }
   }
 
-  function getReadingHistory(cb) {
+  function populateUserHistoryData() {
     $.ajax({
       method: 'GET',
       url: '/reading-history.json',
       json: true
-    }).always(cb)
+    }).always(function(data) {
+      var recentlyViewedHolder = '#me ul.recently-viewed-content';
+      var mostViewedHolder = '#me ul.most-viewed-content';
+      var recentlyViewed = data.recentlyViewed;
+      var mostViewed = data.mostViewed;
+  
+      addElements(recentlyViewed, recentlyViewedHolder);
+      addElements(mostViewed, mostViewedHolder);
+    })
   }
 
-  $html.one('mouseenter', '.user-tools', function() {
-    getReadingHistory(generateLists);
-  })
-
-  function generateLists(data) {
-    var recentlyViewedHolder = '#me ul.recently-viewed-content';
-    var mostViewedHolder = '#me ul.most-viewed-content';
-    var recentlyViewed = data.recentlyViewed;
-    var mostViewed = data.mostViewed;
-
-    addElements(recentlyViewed, recentlyViewedHolder);
-    addElements(mostViewed, mostViewedHolder);
-  }
+  $html.one('mouseenter', '.user-tools', populateUserHistoryData);
 
   function addElements(data, target) {
     var $target = $(target);
