@@ -41,7 +41,7 @@ $(document).ready(function() {
       method: 'GET',
       url: '/reading-history.json',
       data: {
-        queryLimit: 4
+        limit: 4
       },
       json: true
     }).always(function(data) {
