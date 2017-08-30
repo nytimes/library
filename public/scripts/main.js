@@ -40,6 +40,9 @@ $(document).ready(function() {
     $.ajax({
       method: 'GET',
       url: '/reading-history.json',
+      data: {
+        queryLimit: 4
+      },
       json: true
     }).always(function(data) {
       var recentlyViewedHolder = '#me ul.recently-viewed-content';

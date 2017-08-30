@@ -24,7 +24,7 @@ router.use((req, res, next) => {
 })
 
 router.get('/reading-history.json', (req, res, next) => {
-  fetchHistory(getUserInfo(req), (err, results) => {
+  fetchHistory(getUserInfo(req), req.query.queryLimit, (err, results) => {
     if (err) return next(err)
     res.json(results)
   })
@@ -34,14 +34,15 @@ module.exports = {
   middleware: router
 }
 
-function fetchHistory(userInfo, doneCb) {
+function fetchHistory(userInfo, queryLimit, doneCb) {
   getDatastoreClient((datastoreClient) => {
+    const limit = parseInt(queryLimit) || 4
     async.parallel([
       (cb) => {
         const query = datastoreClient.createQuery(['LibraryView'])
           .filter('userId', '=', userInfo.userId)
           .order('viewCount', { descending: true })
-          .limit(4)
+          .limit(limit)
 
         datastoreClient.runQuery(query, cb)
       },
@@ -49,7 +50,7 @@ function fetchHistory(userInfo, doneCb) {
         const query = datastoreClient.createQuery(['LibraryView'])
           .filter('userId', '=', userInfo.userId)
           .order('lastViewedAt', { descending: true })
-          .limit(4)
+          .limit(limit)
 
         datastoreClient.runQuery(query, cb)
       }
