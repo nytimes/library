@@ -40,7 +40,6 @@ exports.middleware = (req, res, next) => {
         return next(err)
       }
 
-      log.info(`Cache purge complete for ${req.path}.`)
       res.end('OK')
     })
   }
@@ -72,6 +71,7 @@ function purgeCache(url, edit, force, cb = () => {}) {
 
     if (edit) {
       if (redirectUrl && !force) return cb(new Error('Unauthorized'))
+      log.info(`CACHE PURGE PERSIST ${noCacheDelay}s: ${url}`)
       return cache.set(url, {noCache: true}, {ttl: noCacheDelay}, cb)
     }
 
@@ -81,7 +81,7 @@ function purgeCache(url, edit, force, cb = () => {}) {
     }
 
     // don't proceed with a normal purge of redirect or noCache without force param
-    log.debug(`CACHE PURGE ${url}`)
+    log.info(`CACHE PURGE ${url}`)
     cache.del(url, cb)
   })
 }
@@ -114,10 +114,9 @@ exports.redirect = (path, newPath) => {
   cache.get(path, (err, data) => {
     const {noCache} = data || {}
 
-    if (err) console.warn(`Failed retrieving data for redirect of ${path}`)
-    // console.log(`redirecting ${path} => ${newPath}`)
+    log.info(`ADDING REDIRECT: ${path} => ${newPath}`)
+    if (err) log.warn(`Failed retrieving data for redirect of ${path}`)
     cache.set(path, {redirectUrl: newPath}, (err) => {
-      // console.log(`CACHE REDIRECT FROM ${path}`)
       if (err) log.warn(`Failed setting redirect for ${path} => ${newPath}`, err)
     })
 
@@ -128,7 +127,6 @@ exports.redirect = (path, newPath) => {
     // either purge the destination or set it to a noCache
     // we need to update the destination to prevent redirect loops
     if (noCache) {
-      // console.log('passing along nocache')
       cache.set(newPath, {noCache}, {ttl: noCacheDelay}, purgeCb)
     } else {
       purgeCache(newPath, null, true, purgeCb) // force purge the cache
@@ -158,7 +156,7 @@ exports.purge = (id, newModified) => {
 
     // purge each individual segment
     segments.forEach((url) => {
-      log.info(`CACHE PURGE ${url} DETECTED CHANGE AT ${path}`)
+      log.info(`CACHE ANCESTOR PURGE ${url} FROM CHANGE AT ${path}`)
       purgeCache(url) // apply normal safeguards; don't delete redirects
     })
   })

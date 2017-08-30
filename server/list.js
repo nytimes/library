@@ -2,7 +2,6 @@
 
 const inflight = require('inflight')
 const google = require('googleapis')
-const moment = require('moment')
 
 const cache = require('./cache')
 const log = require('./logger')
@@ -119,8 +118,6 @@ function produceTree(files, firstParent) {
       slug: slugify(prettyName)
     })
 
-    cache.purge(id, resource.modifiedTime)
-
     // add the id of this item to a list of tags
     tags.forEach((t) => {
       const idsSoFar = tagIds[t] || []
@@ -171,6 +168,7 @@ function buildTreeFromData(rootParent, oldTree, breadcrumb) {
   }
 
   extendItemsWithPath(rootParent, breadcrumb)
+  handleUpdates(rootParent, oldTree) // detect redirects or purge cache
   // @TODO: detect redirects around here
 
   if (!children) {
@@ -199,14 +197,36 @@ function extendItemsWithPath(id, breadcrumb) {
   const contents = (node.children || []).concat(node.home).filter((i) => i)
 
   contents.forEach((id) => {
+    // at this point the new item is already assigned over the old
     const item = docsInfo[id]
     // the item will already have these props on it
     const {resourceType, webViewLink: drivePath, slug, isHome} = item
 
     const viewPath = isHome ? baseUrl : `${baseUrl}/${slug}`
-    item.path = isSupported(resourceType) ? viewPath : drivePath
+    const renderInLibrary = isSupported(resourceType)
+    item.path = renderInLibrary ? viewPath : drivePath
+    if (renderInLibrary) {
+      // check and issue redirects here
+    }
     // we don't need to set path on parent because we are doing a depth first traversal
     item.folder = parent
+  })
+}
+
+function handleUpdates(id, oldTree) {
+  const node = driveBranches[id] || {}
+  const children = node.children || []
+  children.forEach((id) => {
+    // check the new path
+    const newItem = docsInfo[id]
+    const oldItem = oldTree[id]
+
+    // if this existed before and the path changed, issue redirects
+    if (oldItem && newItem.path !== oldItem.path) {
+      cache.redirect(oldItem.path, newItem.path)
+    } else {
+      cache.purge(id, newItem.modifiedTime)
+    }
   })
 }
 
