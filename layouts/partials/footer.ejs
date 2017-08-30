@@ -43,10 +43,6 @@
   });
 
   function setUserInfo(data) {
-    setUsername(data);
-  }
-
-  function setUsername(data) {
     var username = data.email || 'NYTimes User';
     $('.user-fullname').text(username);
   }
