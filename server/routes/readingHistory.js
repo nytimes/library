@@ -15,8 +15,9 @@ const {getUserInfo} = require('../utils')
 router.use((req, res, next) => {
   getDatastoreClient((datastoreClient) => {
     req.on('end', () => {
-      if (res.locals.userInfo && res.locals.docId) {
-        recordView(res.locals.docId, res.locals.userInfo, datastoreClient)
+      if (res.locals.docId) {
+        const docMeta = getMeta(res.locals.docId)
+        recordView(docMeta, getUserInfo(req), datastoreClient)
       }
     })
     next()
@@ -24,7 +25,7 @@ router.use((req, res, next) => {
 })
 
 router.get('/reading-history.json', (req, res, next) => {
-  fetchHistory(getUserInfo(req), (err, results) => {
+  fetchHistory(getUserInfo(req), 'Doc', (err, results) => {
     if (err) return next(err)
     res.send(JSON.stringify(results))
   })
@@ -34,11 +35,11 @@ module.exports = {
   middleware: router
 }
 
-function fetchHistory(userInfo, doneCb) {
+function fetchHistory(userInfo, historyType, doneCb) {
   getDatastoreClient((datastoreClient) => {
     async.parallel([
       (cb) => {
-        const query = datastoreClient.createQuery(['LibraryView'])
+        const query = datastoreClient.createQuery(['LibraryView' + historyType])
           .filter('userId', '=', userInfo.userId)
           .order('viewCount', { descending: true })
           .limit(10)
@@ -46,7 +47,7 @@ function fetchHistory(userInfo, doneCb) {
         datastoreClient.runQuery(query, cb)
       },
       (cb) => {
-        const query = datastoreClient.createQuery(['LibraryView'])
+        const query = datastoreClient.createQuery(['LibraryView' + historyType])
           .filter('userId', '=', userInfo.userId)
           .order('lastViewedAt', { descending: true })
           .limit(10)
@@ -81,10 +82,15 @@ function getDatastoreClient(cb) {
   })
 }
 
-function recordView(docId, userInfo, datastoreClient) {
-  const viewId = [userInfo.userId, docId].join(':')
-  const viewKey = datastoreClient.key(['LibraryView', viewId])
+function recordView(docMeta, userInfo, datastoreClient) {
+  const docKey = datastoreClient.key(['LibraryViewDoc', [userInfo.userId, docMeta.id].join(':')])
+  updateViewRecord(docKey, { documentId: docMeta.id }, userInfo, datastoreClient)
 
+  const folderKey = datastoreClient.key(['LibraryViewFolder', [userInfo.userId, docMeta.folder].join(':')])
+  updateViewRecord(folderKey, { folder: docMeta.folder }, userInfo, datastoreClient)
+}
+
+function updateViewRecord(viewKey, metadata, userInfo, datastoreClient) {
   datastoreClient.get(viewKey)
     .then((results) => {
       const existing = results[0]
@@ -95,13 +101,12 @@ function recordView(docId, userInfo, datastoreClient) {
         existing.viewCount += 1
         existing.lastViewedAt = new Date()
       } else {
-        updatedData = {
-          documentId: docId,
+        updatedData = Object.assign({
           userId: userInfo.userId,
           email: userInfo.email,
           viewCount: 1,
           lastViewedAt: new Date()
-        }
+        }, metadata)
       }
 
       datastoreClient.upsert({
