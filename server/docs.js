@@ -149,11 +149,40 @@ function fetchSpreadsheet(drive, id, cb) {
   })
 }
 
+function checkForTableOfContents($, aTags) {
+  return aTags.length === 2 && // TOC links title and number
+  aTags[0].attribs.href.match('#h.') && // the links go to a heading in the doc
+  aTags[0].attribs.href === aTags[1].attribs.href && // they should both link the the same heading
+  /(\d+$)/mg.test($(aTags[1]).text()) // the second link should contain only a number
+}
+
 function normalizeHtml(html) {
   // scrub all &nbsp;s (if there is a &nbsp; in a code block it will be escaped)
   html = html.replace(/&nbsp;/g, ' ')
 
   const $ = cheerio.load(html)
+
+  const $p = $('p')
+
+  // Remove p tags in Table of Contents
+  $p.each((index, p) => {
+    if (p.children.length < 1) return // don't search any empty p tags
+
+    const aTags = $(p).find('a')
+    const inTableOfContents = checkForTableOfContents($, aTags)
+
+    if (index > 0 && (inTableOfContents === false)) {
+      const aTagsPrevious = $($p[index - 1]).find('a')
+      const inTableOfContentsPrevious = checkForTableOfContents($, aTagsPrevious)
+      // If the last <p> was in the TOC...
+      // exit the loop. It is assumed that we've exited the TOC.
+      if (inTableOfContentsPrevious === true) { return false }
+    }
+    // Lucky number 7! If we've passed the 8th <p> tag on the page...
+    // and we're yet to see signs of a table of contents...exit the loop.
+    if (index > 7 && !(inTableOfContents)) { return false }
+    if (inTableOfContents) { $(p).remove() }
+  })
 
   // remove comments container in footer
   $('div').has('a[href^=#cmnt_ref][id^=cmnt]').remove()

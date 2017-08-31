@@ -44,7 +44,7 @@ function setAuthClient(cb) {
       ])
     }
 
-    log.info('Google API auth successfully retreived.')
+    log.info('Google API auth successfully retrieved.')
     cb(null, authClient)
   })
 }

@@ -304,7 +304,7 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  ul.content {
+  ul.recently-viewed-content, ul.most-viewed-content {
     margin: 0;
     padding: 0;
     list-style: none;
@@ -325,12 +325,18 @@
         margin:0;
       }
       .docs-folder {
+        display: inline-block;
+        margin-right: 4px;
         background: #ddd;
         color: #666;
         padding: 3px 4px;
         font-weight: 400;
         font-size: 12px;
         border-radius: 3px;
+
+        &:empty {
+          display: none;
+        }
       }
       .timestamp {
         font-size: 12px;
