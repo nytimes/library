@@ -147,15 +147,16 @@ function produceTree(files, firstParent) {
     return [byParent, byId, tagIds]
   }, [{}, {}, {}])
 
-  const oldTree = docsInfo
+  const oldInfo = docsInfo
+  const oldBranches = driveBranches
   tags = tagIds
   docsInfo = byId // update our outer cache
   driveBranches = byParent
-  return buildTreeFromData(firstParent, oldTree)
+  return buildTreeFromData(firstParent, {info: oldInfo, tree: oldBranches})
 }
 
 // do we care about parent ids? maybe not?
-function buildTreeFromData(rootParent, oldTree, breadcrumb) {
+function buildTreeFromData(rootParent, previousData, breadcrumb) {
   const {children, home} = driveBranches[rootParent] || {}
   const parentInfo = docsInfo[rootParent] || {}
 
@@ -168,7 +169,7 @@ function buildTreeFromData(rootParent, oldTree, breadcrumb) {
   }
 
   extendItemsWithPath(rootParent, breadcrumb)
-  handleUpdates(rootParent, oldTree) // detect redirects or purge cache
+  handleUpdates(rootParent, previousData) // detect redirects or purge cache
   // @TODO: detect redirects around here
 
   if (!children) {
@@ -181,7 +182,7 @@ function buildTreeFromData(rootParent, oldTree, breadcrumb) {
     const nextCrumb = breadcrumb ? breadcrumb.concat({ id: rootParent, slug: parentInfo.slug }) : []
 
     // recurse building up breadcrumb
-    memo.children[slug] = buildTreeFromData(id, oldTree, nextCrumb)
+    memo.children[slug] = buildTreeFromData(id, previousData, nextCrumb)
 
     return memo
   }, Object.assign({}, parentNode, { children: {} }))
@@ -213,27 +214,37 @@ function extendItemsWithPath(id, breadcrumb) {
   })
 }
 
-function handleUpdates(id, oldTree) {
-  const node = driveBranches[id] || {}
-  const children = node.children || []
-  children.forEach((id) => {
+function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
+  const currentNode = driveBranches[id] || {}
+  const lastNode = lastTree[id] || {}
+  const isFirstRun = !Object.keys(lastTree).length // oldTree is empty on the first check
+
+  // combine current and previous children ids uniquely
+  const allChildren = (currentNode.children || [])
+    .concat(lastNode.children || [])
+    .filter((v, i, list) => list.indexOf(v) === i)
+
+  allChildren.forEach((id) => {
     // compare old item to new item
     const newItem = docsInfo[id]
-    const oldItem = oldTree[id]
+    const oldItem = lastInfo[id]
 
-     // force a purge of all ancestors for new docs
-     // small possibility this does not fire while no instances are polling
-     // this condition will never be true on the first poll of the instance
-    if (!oldItem && Object.keys(oldTree).length) {
-      // @TODO: Try to make this only fire once instead of on each instance
-      return cache.purge(id, null, true)
+    // if a document is added or removed, we should purge it from cache
+    // @TODO: This conditional does not work here yet
+    // because all children in this list are from the _current_ tree
+    if (!isFirstRun && (!newItem || !oldItem)) {
+      const item = newItem || oldItem
+      const {path, modifiedTime} = item
+      // we should dedupe this in the purge method
+      return cache.purge(path, modifiedTime, null, 'all')
     }
 
     // if this existed before and the path changed, issue redirects
     if (oldItem && newItem.path !== oldItem.path) {
       cache.redirect(oldItem.path, newItem.path)
+      // the redirect should trigger purges for the new path
     } else {
-      cache.purge(id, newItem.modifiedTime)
+      cache.purge(newItem.path, newItem.modifiedTime)
     }
   })
 }
