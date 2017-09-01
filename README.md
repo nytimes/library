@@ -53,6 +53,7 @@ This app is hosted on the [Interactive News infrastructure](***REMOVED***/wiki).
   * Use the [stg deploy page](https://***REMOVED***/***REMOVED***/default/deploy) to cut a release.  Once the build is complete, you'll see a link that says "Make this version active."  Click this to push the version live.  It may take a minute or two for the new version to start.
   * You can see additional information about the deployment on the [app detail page](https://***REMOVED***/***REMOVED***/default), access logs, edit environmental variables, and retrieve commands to open a bash prompt on the staging servers.
   * When you're ready to move the app to prodution, select the release tag you just created on the [prd deploy page](https://***REMOVED***/***REMOVED***/default/deploy), then click "Make this version active."
+  * After deployment, visit [https://***REMOVED***/cache-purge-everything](https://***REMOVED***/cache-purge-everything) to flush the app's internal caches.
 
 ## Monitoring
 
