@@ -68,9 +68,11 @@ function fetchHistory(userInfo, historyType, queryLimit, doneCb) {
       if (err) {
         doneCb(err)
       } else {
+        const recentlyViewed = expandResults(results[1][0])
+        const mostViewed = expandResults(results[0][0].filter((r) => { return r.viewCount >= 5 }))
         doneCb(null, {
-          recentlyViewed: expandResults(results[1][0]),
-          mostViewed: expandResults(results[0][0])
+          recentlyViewed,
+          mostViewed
         })
       }
     })
