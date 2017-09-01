@@ -38,6 +38,14 @@ exports.getChildren = (id) => {
   return driveBranches[id]
 }
 
+exports.getAllRoutes = () => {
+  return Object.values(docsInfo)
+    .filter(({path}) => path && path.slice(0, 1) === '/')
+    .reduce((urls, {path}) => {
+      return urls.add(path)
+    }, new Set())
+}
+
 // delay in ms, 15s default with env var
 const treeUpdateDelay = parseInt(process.env.LIST_UPDATE_DELAY || 15, 10) * 1000
 startTreeRefresh(treeUpdateDelay)
@@ -220,29 +228,34 @@ function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
   const isFirstRun = !Object.keys(lastTree).length // oldTree is empty on the first check
 
   // combine current and previous children ids uniquely
-  const allChildren = (currentNode.children || [])
+  const allPages = (currentNode.children || [])
+    .concat(currentNode.home || [])
     .concat(lastNode.children || [])
+    .concat(lastNode.home || [])
     .filter((v, i, list) => list.indexOf(v) === i)
 
-  allChildren.forEach((id) => {
+  // check all the nodes to see if they have changes
+  allPages.forEach((id) => {
     // compare old item to new item
     const newItem = docsInfo[id]
     const oldItem = lastInfo[id]
 
     // if a document is added or removed, we should purge it from cache
-    // @TODO: This conditional does not work here yet
-    // because all children in this list are from the _current_ tree
     if (!isFirstRun && (!newItem || !oldItem)) {
       const item = newItem || oldItem
       const {path, modifiedTime} = item
-      // we should dedupe this in the purge method
-      return cache.purge(path, modifiedTime, null, 'all')
+      const action = newItem ? 'Added' : 'Removed'
+      // @TODO: This does not restore deleted documents which are undone to the same location
+      return cache.purge(path, modifiedTime, `item${action}`, ['missing', 'modified'])
     }
+
+    // don't allow direct purges updates for folders with a home file
+    const hasHome = newItem && (driveBranches[newItem.id] || {}).home
+    if (hasHome) return
 
     // if this existed before and the path changed, issue redirects
     if (oldItem && newItem.path !== oldItem.path) {
-      cache.redirect(oldItem.path, newItem.path)
-      // the redirect should trigger purges for the new path
+      cache.redirect(oldItem.path, newItem.path, newItem.modifiedTime)
     } else {
       cache.purge(newItem.path, newItem.modifiedTime)
     }

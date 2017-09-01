@@ -33,12 +33,12 @@ const noCacheDelay = parseInt(process.env.EDIT_CACHE_DELAY, 10) || 60 * 60
 
 // detects purge requests and serves cached responses when available
 exports.middleware = (req, res, next) => {
-  // if purge or edit params are passed, we should purge cache for this url
-  const {purge, edit, force} = req.query
+  // handle the purge request if purge or edit params are present
+  const {purge, edit, ignore} = req.query
   if (purge || edit) {
     const {email} = edit ? getUserInfo(req) : {}
-    // pass modified time of 1 hour ago to not conflict with change
-    return purgeCache(req.path, null, email, force, (err) => {
+    const overrides = ignore ? ignore.split(',') : null
+    return purgeCache(req.path, null, email, overrides, (err) => {
       if (err) {
         log.warn(`Cache purge failed for ${req.path}`, err)
         return next(err)
@@ -48,21 +48,22 @@ exports.middleware = (req, res, next) => {
     })
   }
 
-  // retrieve the cached data
+  // otherwise consult cache for stored html
   cache.get(req.path, (err, data) => {
     if (err) {
       log.warn(`Failed retrieving cache for ${req.path}`, err)
       return next() // silently proceed in the stack
     }
 
-    // might get redirect info back or html
     const {html, redirectUrl, id} = data || {}
     if (redirectUrl) {
       return res.redirect(redirectUrl)
     }
 
+    // if no html was returned proceed to next middleware
     if (!html) return next()
-    // store the retrieved doc id (for reading history)
+
+    // attach doc id to the request for reading history tracking
     res.locals.docId = id
 
     log.info(`CACHE HIT ${req.path}.`)
@@ -71,7 +72,6 @@ exports.middleware = (req, res, next) => {
 }
 
 exports.add = (id, newModified, path, html) => {
-  // console.log('ADD', p)
   if (!newModified) return // refused to add anything without a modified timestamp
 
   cache.get(path, (err, data) => {
@@ -90,7 +90,7 @@ exports.add = (id, newModified, path, html) => {
 }
 
 // redirects when a url changes
-exports.redirect = (path, newPath) => {
+exports.redirect = (path, newPath, modified) => {
   cache.get(path, (err, data) => {
     const {noCache, redirectUrl} = data || {}
 
@@ -108,47 +108,42 @@ exports.redirect = (path, newPath) => {
     const preventCacheReason = noCache ? 'redirect_detected' : null
     // purge the cache on the destination to eliminate old redirects
     // we should ignore redirects at the new location
-    purgeCache(newPath, null, preventCacheReason, 'all', (err) => { // @TODO change to redirect logic when working
+    // @TODO: why do we need to pass 'modified' as an ignore param here?
+    purgeCache(newPath, modified, preventCacheReason, ['redirect', 'missing', 'modified'], (err) => {
       if (err && err.message !== 'Not found') log.warn(`Failed purging redirect destination ${newPath}`, err)
-    }) // force purge the cache
+    })
   })
 }
 
-// passthrough method for purging by ID
-// maybe we should not support purging by id, just by path
+// expose the purgeCache method externally so that list can call while building tree
 exports.purge = purgeCache
-// we should enable this to traverse ancestors always
-function purgeCache(url, modified, editEmail, ignore, cb) {
+
+function purgeCache(url, modified, editEmail, ignore, cb = () => {}) {
   modified = modified || moment().subtract(1, 'hour').utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
-  const shouldIgnore = (type) => ignore === type || ignore === 'all' || ignore === true
-  const debug = (...args) => {
-    // if (url.indexOf('test-document') > -1) console.log.apply(console, args)
-  }
 
-  const opts = {url, modified, editEmail, ignore}
-  if (!cb) {
-    cb = (err) => { debug(`${url}:${((err || {}).message || 'purged')}`) }
-  }
+  const overrides = ignore && Array.isArray(ignore) ? new Set(ignore) : new Set().add(ignore)
+  const shouldIgnore = (type) => overrides.has(type) || overrides.has('all') || overrides.has('1')
 
-  debug('purging', opts)
-  // get the current cache entry
   cache.get(url, (err, data) => {
     if (err) log.warn(`Received error while trying to retrieve existing cache for purge of ${url}`, err)
-    const {redirectUrl, noCache, html, modified: oldModified} = data || {}
+    // compare current cache entry data vs this request
+    const {redirectUrl, noCache, html, modified: oldModified, purgeId: lastPurgeId} = data || {}
 
     if (redirectUrl && !shouldIgnore('redirect')) return cb(new Error('Unauthorized'))
     // edit is considered its own override for everything but redirect
-    if (editEmail) {
+    if (editEmail && editEmail.includes('@')) { // @TODO cleanup this hack
       log.info(`CACHE PURGE PERSIST for ${noCacheDelay}s (${editEmail}): ${url}`)
       return cache.set(url, {noCache: true}, {ttl: noCacheDelay}, cb)
     }
 
-    // the rest of the necessary overrides are specific by their reason
+    // try and dedupe extra requests from multiple pods (tidier logs)
+    const purgeId = `${modified}-${editEmail || ''}-${ignore}`
+    if (purgeId === lastPurgeId && !shouldIgnore('all')) return
     // by default, don't try to purge empty
     if (!html && !shouldIgnore('missing')) return cb(new Error('Not found'))
     // by default, don't purge a noCache entry
     if (noCache && !shouldIgnore('editing')) return cb(new Error('Unauthorized'))
-    // by default, don't purge when the modification time is not fresher than
+    // by default, don't purge when the modification time is not fresher than previous
     if (!isNewer(oldModified, modified) && !shouldIgnore('modified')) return cb(new Error('No purge of fresh content'))
 
     // if we passed all the checks, determine all ancestor links and purge
@@ -156,12 +151,11 @@ function purgeCache(url, modified, editEmail, ignore, cb) {
       return segments.slice(0, i).concat([segment]).join('/')
     }).filter((s) => s.length) // don't allow purging empty string
 
-    debug('proceeding to purge', Object.assign({}, {segments}, opts))
     // call the callback when all segments have been purged
     async.parallel(segments.map((path) => {
       return (cb) => {
         log.info(`CACHE PURGE ${path} FROM CHANGE AT ${url}`)
-        cache.set(path, {modified, purged: true}, cb) // store the modification time to allow for deduping deletes
+        cache.set(path, {modified, purgeId}, cb)
       }
     }), cb)
   })

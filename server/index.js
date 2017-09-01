@@ -2,15 +2,16 @@
 const path = require('path')
 
 const express = require('express')
+const async = require('async')
 
-const {middleware: cache} = require('./cache')
+const {middleware: cache, purge} = require('./cache')
 const userInfo = require('./routes/userInfo')
 const pages = require('./routes/pages')
 const categories = require('./routes/categories')
 const readingHistory = require('./routes/readingHistory')
 const {airbrake, errorPages} = require('./routes/errors')
 
-const {getMeta} = require('./list')
+const {getMeta, getAllRoutes} = require('./list')
 
 const app = express()
 app.set('view engine', 'ejs')
@@ -45,6 +46,19 @@ app.use(readingHistory.middleware)
 app.use((req, res, next) => {
   res.set('Cache-Control', 'no-cache')
   next()
+})
+
+// a utility route that can be used to purge everything in the current tree
+app.get('/cache-purge-everything', (req, res, next) => {
+  const urls = Array.from(getAllRoutes())
+
+  async.parallelLimit(urls.map((url) => {
+    return (cb) => purge(url, null, null, 'all', cb)
+  }), 10, (err, data) => {
+    if (err) return next(err)
+
+    res.end('OK')
+  })
 })
 
 app.use(pages)
