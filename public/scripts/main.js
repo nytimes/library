@@ -39,7 +39,7 @@ $(document).ready(function() {
   function populateUserHistoryData() {
     $.ajax({
       method: 'GET',
-      url: '/reading-history.json',
+      url: '/reading-history/docs.json',
       data: {
         limit: 4
       },
@@ -82,3 +82,68 @@ $(document).ready(function() {
   }
 
 })
+
+function personalizeHomepage(userId) {
+
+  // Personalize the team listing on the left.
+  // Most-frequently-visited teams are inserted at the top, then padded with default entries.
+  fetchHistory('teams', userId, function(data) {
+    var items = data.mostViewed.map(function(el) {
+      // kill existing elements that on the mostViewed list to avoid dupes
+      $('ul.teams-cat-list li[data-team-id="' + el.team.id + '"]').detach()
+
+      return '<li><a class="button btn-cat" href="' + el.team.path + '">' + el.team.prettyName + '</a></li>'
+    }).join('')
+
+    var numToPrune = $('ul.teams-cat-list li').length - data.mostViewed.length
+    $('ul.teams-cat-list li:gt(' + numToPrune + ')').detach()
+    $('ul.teams-cat-list').prepend(items)
+  })
+
+  /*
+    This code swaps "Favorite Docs" into the "Useful Docs" panel if you have at least three favorites.
+    We decided that we'll disable for v1 but perhaps incorporate after initial launch.
+
+    fetchHistory('docs', userId, function(data) {
+      var favorites = data.mostViewed.filter(function(el) {
+        return el.viewCount > 5
+      })
+
+      if(favorites.length < 3) { return }
+
+      var items = favorites.map(function (el) {
+         return '<li><a href="' + el.doc.path + '">' + el.doc.prettyName + '</a></li>'
+      })
+
+      $('.featured-cat-container h3').html('Favorite Docs')
+      $('ul.featured-cat-list').html(items)
+    })
+  */
+}
+
+function fetchHistory(type, userId, cb) {
+  var key = "libraryHistory:" + userId + ':' + type
+  var data
+
+  if(data = localStorage.getItem(key)) {
+    data = JSON.parse(data)
+
+    // refresh localStorage data in the background if it's older than an hour
+    if(!data.ts || new Date(data.ts) < (new Date() - 60 * 60 * 1000)) {
+      refreshHistory(key, type)
+    }
+
+    return cb(data.history)
+  } else {
+    return refreshHistory(key, type, cb)
+  }
+}
+
+function refreshHistory(localStorageKey, type, cb) {
+  $.ajax('/reading-history/' + type + '.json?limit=5', {
+    success: function(data) {
+      localStorage.setItem(localStorageKey, JSON.stringify({ ts: new Date(), history: data }))
+      if(cb) { return cb(data) }
+    }
+  })
+}

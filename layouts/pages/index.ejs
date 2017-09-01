@@ -19,15 +19,15 @@
 
         <div class="featured-cat">
           <div class="teams-cat-container">
-            <h3>Find by team:</h3>
+            <h3>Find by Team</h3>
             <ul class="teams-cat-list">
               <% teams.forEach((team) => { %>
-                <li><a class="button btn-cat" href="<%= team.path %>"><%= team.prettyName %></a></li>
+                <li data-team-id="<%= team.id %>"><a class="button btn-cat" href="<%= team.path %>"><%= team.prettyName %></a></li>
               <% }) %>
             </ul>
           </div>
           <div class="featured-cat-container">
-            <h3>Useful Docs:</h3>
+            <h3>Useful Docs</h3>
             <ul class="featured-cat-list">
               <% featured.forEach((doc) => { %>
                 <li><a href="<%= doc.path %>"><%= doc.prettyName %></a></li>

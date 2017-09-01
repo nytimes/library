@@ -37,7 +37,16 @@
     url: '/whoami.json'
   }).always(function (data) {
     var userId = (data || {}).analyticsUserId;
-    if (userId) ga('set', 'userId', userId);
+    if (userId) {
+      ga('set', 'userId', userId)
+
+      if(window.location.pathname === '/') {
+        $(document).ready(function() {
+          personalizeHomepage(userId)        
+        })
+      }
+    }
+
     ga('send', 'pageview');
     renderUserInfo(data);
   });

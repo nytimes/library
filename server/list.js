@@ -210,6 +210,16 @@ function extendItemsWithPath(id, breadcrumb) {
     }
     // we don't need to set path on parent because we are doing a depth first traversal
     item.folder = parent
+
+    // traverse back up the tree to see if this doc belongs to a team
+    let topLevelFolder = parent
+    while (topLevelFolder.folder && Object.keys(topLevelFolder.folder).length > 0) {
+      topLevelFolder = topLevelFolder.folder
+    }
+
+    if (topLevelFolder.tags && topLevelFolder.tags.includes('team')) {
+      item.team = topLevelFolder
+    }
   })
 }
 
@@ -221,9 +231,9 @@ function handleUpdates(id, oldTree) {
     const newItem = docsInfo[id]
     const oldItem = oldTree[id]
 
-     // force a purge of all ancestors for new docs
-     // small possibility this does not fire while no instances are polling
-     // this condition will never be true on the first poll of the instance
+    // force a purge of all ancestors for new docs
+    // small possibility this does not fire while no instances are polling
+    // this condition will never be true on the first poll of the instance
     if (!oldItem && Object.keys(oldTree).length) {
       // @TODO: Try to make this only fire once instead of on each instance
       return cache.purge(id, null, true)

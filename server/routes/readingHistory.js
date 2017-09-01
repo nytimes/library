@@ -12,6 +12,7 @@ const {getAuth} = require('../auth')
 const {getMeta} = require('../list')
 const {getUserInfo} = require('../utils')
 
+// Middleware to record views into Cloud Datastore
 router.use((req, res, next) => {
   getDatastoreClient((datastoreClient) => {
     req.on('end', () => {
@@ -25,8 +26,15 @@ router.use((req, res, next) => {
   })
 })
 
-router.get('/reading-history.json', (req, res, next) => {
+router.get('/reading-history/docs.json', (req, res, next) => {
   fetchHistory(getUserInfo(req), 'Doc', req.query.limit, (err, results) => {
+    if (err) return next(err)
+    res.json(results)
+  })
+})
+
+router.get('/reading-history/teams.json', (req, res, next) => {
+  fetchHistory(getUserInfo(req), 'Team', req.query.limit, (err, results) => {
     if (err) return next(err)
     res.json(results)
   })
@@ -38,7 +46,7 @@ module.exports = {
 
 function fetchHistory(userInfo, historyType, queryLimit, doneCb) {
   getDatastoreClient((datastoreClient) => {
-    const limit = parseInt(queryLimit, 10) || 10
+    const limit = parseInt(queryLimit, 10) || 5
     async.parallel([
       (cb) => {
         const query = datastoreClient.createQuery(['LibraryView' + historyType])
@@ -69,10 +77,19 @@ function fetchHistory(userInfo, historyType, queryLimit, doneCb) {
   })
 }
 
+// Merge full doc/folder metadata into record retrieved from Cloud Datastore
 function expandResults(results) {
   return results.map((result) => {
     result.lastViewed = moment(result.lastViewedAt).fromNow()
-    result.doc = getMeta(result.documentId) || {}
+
+    if (result.documentId) {
+      result.doc = getMeta(result.documentId) || {}
+    }
+
+    if (result.teamId) {
+      result.team = getMeta(result.teamId) || {}
+    }
+
     return result
   })
 }
@@ -88,10 +105,14 @@ function recordView(docMeta, userInfo, datastoreClient) {
   const docKey = datastoreClient.key(['LibraryViewDoc', [userInfo.userId, docMeta.id].join(':')])
   updateViewRecord(docKey, { documentId: docMeta.id }, userInfo, datastoreClient)
 
-  const folderKey = datastoreClient.key(['LibraryViewFolder', [userInfo.userId, docMeta.folder].join(':')])
-  updateViewRecord(folderKey, { folder: docMeta.folder }, userInfo, datastoreClient)
+  if (docMeta.team) {
+    const teamKey = datastoreClient.key(['LibraryViewTeam', [userInfo.userId, docMeta.team.id].join(':')])
+    updateViewRecord(teamKey, { teamId: docMeta.team.id }, userInfo, datastoreClient)
+  }
 }
 
+// shared function to increment counters in Cloud Datastore, or create a new view record
+// if one does not already exist
 function updateViewRecord(viewKey, metadata, userInfo, datastoreClient) {
   datastoreClient.get(viewKey)
     .then((results) => {
