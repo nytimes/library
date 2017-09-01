@@ -220,7 +220,12 @@ function extendItemsWithPath(id, breadcrumb) {
     // we don't need to set path on parent because we are doing a depth first traversal
 
     item.folder = parent
-    item.topLevelFolder = [parent.topLevelFolder, parent, item].find((elem) => { return elem && Object.keys(elem).length > 0 })
+
+    if (!parent || Object.keys(parent).length === 0) {
+      item.topLevelFolder = Object.assign({}, item) // used cloned ref to avoid circular JSON references
+    } else {
+      item.topLevelFolder = parent.topLevelFolder
+    }
   })
 }
 
