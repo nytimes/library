@@ -95,8 +95,9 @@ function expandResults(results) {
 }
 
 function getDatastoreClient(cb) {
+  const gcpProjectId = process.env.GCP_PROJECT_ID || '***REMOVED***'
   getAuth((authClient) => {
-    const datastoreClient = datastore({ projectId: '***REMOVED***', auth: authClient })
+    const datastoreClient = datastore({ projectId: gcpProjectId, auth: authClient })
     cb(datastoreClient)
   })
 }
