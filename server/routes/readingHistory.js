@@ -105,9 +105,10 @@ function recordView(docMeta, userInfo, datastoreClient) {
   const docKey = datastoreClient.key(['LibraryViewDoc', [userInfo.userId, docMeta.id].join(':')])
   updateViewRecord(docKey, { documentId: docMeta.id }, userInfo, datastoreClient)
 
-  if (docMeta.team) {
-    const teamKey = datastoreClient.key(['LibraryViewTeam', [userInfo.userId, docMeta.team.id].join(':')])
-    updateViewRecord(teamKey, { teamId: docMeta.team.id }, userInfo, datastoreClient)
+  if (docMeta.topLevelFolder && docMeta.topLevelFolder.tags.includes('team')) {
+    const teamId = docMeta.topLevelFolder.id
+    const teamKey = datastoreClient.key(['LibraryViewTeam', [userInfo.userId, teamId].join(':')])
+    updateViewRecord(teamKey, { teamId: teamId }, userInfo, datastoreClient)
   }
 }
 

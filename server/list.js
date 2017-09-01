@@ -218,17 +218,9 @@ function extendItemsWithPath(id, breadcrumb) {
       // check and issue redirects here
     }
     // we don't need to set path on parent because we are doing a depth first traversal
+
     item.folder = parent
-
-    // traverse back up the tree to see if this doc belongs to a team
-    let topLevelFolder = parent
-    while (topLevelFolder.folder && Object.keys(topLevelFolder.folder).length > 0) {
-      topLevelFolder = topLevelFolder.folder
-    }
-
-    if (topLevelFolder.tags && topLevelFolder.tags.includes('team')) {
-      item.team = topLevelFolder
-    }
+    item.topLevelFolder = [parent.topLevelFolder, parent, item].find((elem) => { return elem && !Object.keys(elem).length === 0 })
   })
 }
 
