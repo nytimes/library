@@ -61,6 +61,8 @@ $(document).ready(function() {
         header: '<h3>Most Viewed</h3>',
         ul: '<ul class="most-viewed-content"></ul>'
       });
+
+      $('#me .popup .fa-spinner').remove();
     })
   }
 
