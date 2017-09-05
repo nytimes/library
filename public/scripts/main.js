@@ -50,15 +50,30 @@ $(document).ready(function() {
       var recentlyViewed = data.recentlyViewed;
       var mostViewed = data.mostViewed;
 
-      addElements(recentlyViewed, recentlyViewedHolder);
-      addElements(mostViewed, mostViewedHolder);
+      addElements(recentlyViewed, {
+        target: '#me .popup',
+        header: '<h3>Recently Viewed</h3>',
+        ul: '<ul class="recently-viewed-content"></ul>'
+      });
+
+      addElements(mostViewed, {
+        target: '#me .popup',
+        header: '<h3>Most Viewed</h3>',
+        ul: '<ul class="most-viewed-content"></ul>'
+      });
     })
   }
 
   $html.one('mouseenter', '.user-tools', populateUserHistoryData);
 
-  function addElements(data, target) {
-    var $target = $(target);
+  function addElements(data, elementAttributes) {
+    var $target = $(elementAttributes.target);
+
+    if (data.length == 0) {
+      if (elementAttributes.header === '<h3>Most Viewed</h3>') {return;}
+      $target.html("<p>You've viewed no stories!</p>");
+      return;
+    }
 
     var items = data.map(function(el) {
       var item = el.doc;
@@ -78,7 +93,9 @@ $(document).ready(function() {
       ].join('')
     });
 
-    $target.html(items.join('')) // perform all the DOM manipulation as a single operation
+    var ul = $(elementAttributes.ul).append(items.join(''));
+
+    $target.append(elementAttributes.header + ul.prop('outerHTML')); // perform all the DOM manipulation as a single operation
   }
 
 })
