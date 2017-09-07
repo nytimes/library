@@ -48,8 +48,14 @@ $(document).ready(function() {
       var recentlyViewed = data.recentlyViewed;
       var mostViewed = data.mostViewed;
 
-      addElements(recentlyViewed, {name: 'Recently Viewed'});
-      addElements(mostViewed, {name: 'Most Viewed'});
+      addElements(recentlyViewed, {
+        name: 'Recently Viewed',
+        emptyText: "You've viewed no stories!"
+      });
+
+      addElements(mostViewed, {
+        name: 'Most Viewed'
+      });
 
       $('#me .popup .fa-spinner').remove();
     })
@@ -61,8 +67,9 @@ $(document).ready(function() {
     var $target = $('#me .popup');
 
     if (data.length == 0) {
-      if (elementAttributes.name === 'Most Viewed') {return;}
-      $target.html("<p>You've viewed no stories!</p>");
+      if (elementAttributes.emptyText) {
+        $target.append("<p>" + elementAttributes.emptyText + "</p>");
+      }     
       return;
     }
 
@@ -84,14 +91,12 @@ $(document).ready(function() {
       ].join('')
     });
 
-    var ul = elementAttributes.name === 'Most Viewed' ? '<ul class="most-viewed-content"></ul>' : '<ul class="recently-viewed-content"></ul>';    
-    
-    var $ul = $(ul).append(items.join(''));
-    var header = $('<h3/>', {
-      html: elementAttributes.name
-    });
+    var className = elementAttributes.name.toLowerCase().replace(' ', '-') + '-content';
 
-    var fullSection = header.prop('outerHTML') + $ul.prop('outerHTML');
+    var fullSection = [
+      "<h3>" + elementAttributes.name + "</h3>",
+      "<ul class='" + className + "'>" + items.join('') + "</ul>"
+    ].join('');
 
      // perform all the DOM manipulation as a single operation
     $target.append(fullSection);
