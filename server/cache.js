@@ -155,6 +155,8 @@ function purgeCache(url, modified, editEmail, ignore, cb = () => {}) {
     async.parallel(segments.map((path) => {
       return (cb) => {
         log.info(`CACHE PURGE ${path} FROM CHANGE AT ${url}`)
+        // there is an edge here where a homepage upstream was being edited and already not in cache.
+        // we need to get the cache entries for all of these in case and not purge them to account for that edge
         cache.set(path, {modified, purgeId}, cb)
       }
     }), cb)
