@@ -45,20 +45,33 @@ $(document).ready(function() {
       },
       json: true
     }).always(function(data) {
-      var recentlyViewedHolder = '#me ul.recently-viewed-content';
-      var mostViewedHolder = '#me ul.most-viewed-content';
       var recentlyViewed = data.recentlyViewed;
       var mostViewed = data.mostViewed;
 
-      addElements(recentlyViewed, recentlyViewedHolder);
-      addElements(mostViewed, mostViewedHolder);
+      addElements(recentlyViewed, {
+        name: 'Recently Viewed',
+        emptyText: "You've viewed no stories!"
+      });
+
+      addElements(mostViewed, {
+        name: 'Most Viewed'
+      });
+
+      $('#me .popup .fa-spinner').remove();
     })
   }
 
   $html.one('mouseenter', '.user-tools', populateUserHistoryData);
 
-  function addElements(data, target) {
-    var $target = $(target);
+  function addElements(data, elementAttributes) {
+    var $target = $('#me .popup');
+
+    if (data.length == 0) {
+      if (elementAttributes.emptyText) {
+        $target.append("<p>" + elementAttributes.emptyText + "</p>");
+      }     
+      return;
+    }
 
     var items = data.map(function(el) {
       var item = el.doc;
@@ -78,7 +91,15 @@ $(document).ready(function() {
       ].join('')
     });
 
-    $target.html(items.join('')) // perform all the DOM manipulation as a single operation
+    var className = elementAttributes.name.toLowerCase().replace(' ', '-') + '-content';
+
+    var fullSection = [
+      "<h3>" + elementAttributes.name + "</h3>",
+      "<ul class='" + className + "'>" + items.join('') + "</ul>"
+    ].join('');
+
+     // perform all the DOM manipulation as a single operation
+    $target.append(fullSection);
   }
 
 })
