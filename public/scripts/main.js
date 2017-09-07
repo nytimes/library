@@ -45,22 +45,11 @@ $(document).ready(function() {
       },
       json: true
     }).always(function(data) {
-      var recentlyViewedHolder = '#me ul.recently-viewed-content';
-      var mostViewedHolder = '#me ul.most-viewed-content';
       var recentlyViewed = data.recentlyViewed;
       var mostViewed = data.mostViewed;
 
-      addElements(recentlyViewed, {
-        target: '#me .popup',
-        header: '<h3>Recently Viewed</h3>',
-        ul: '<ul class="recently-viewed-content"></ul>'
-      });
-
-      addElements(mostViewed, {
-        target: '#me .popup',
-        header: '<h3>Most Viewed</h3>',
-        ul: '<ul class="most-viewed-content"></ul>'
-      });
+      addElements(recentlyViewed, {name: 'Recently Viewed'});
+      addElements(mostViewed, {name: 'Most Viewed'});
 
       $('#me .popup .fa-spinner').remove();
     })
@@ -69,10 +58,10 @@ $(document).ready(function() {
   $html.one('mouseenter', '.user-tools', populateUserHistoryData);
 
   function addElements(data, elementAttributes) {
-    var $target = $(elementAttributes.target);
+    var $target = $('#me .popup');
 
     if (data.length == 0) {
-      if (elementAttributes.header === '<h3>Most Viewed</h3>') {return;}
+      if (elementAttributes.name === 'Most Viewed') {return;}
       $target.html("<p>You've viewed no stories!</p>");
       return;
     }
@@ -95,9 +84,17 @@ $(document).ready(function() {
       ].join('')
     });
 
-    var ul = $(elementAttributes.ul).append(items.join(''));
+    var ul = elementAttributes.name === 'Most Viewed' ? '<ul class="most-viewed-content"></ul>' : '<ul class="recently-viewed-content"></ul>';    
+    
+    var $ul = $(ul).append(items.join(''));
+    var header = $('<h3/>', {
+      html: elementAttributes.name
+    });
 
-    $target.append(elementAttributes.header + ul.prop('outerHTML')); // perform all the DOM manipulation as a single operation
+    var fullSection = header.prop('outerHTML') + $ul.prop('outerHTML');
+
+     // perform all the DOM manipulation as a single operation
+    $target.append(fullSection);
   }
 
 })
