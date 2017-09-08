@@ -302,9 +302,15 @@
       text-align: left;
 
       a {
-        color: #ccc;
+        color: #8e8e8e;
         border-bottom: 1px solid #8e8e8e;
         padding-bottom: 1px;
+
+        &:hover {
+          color: #ccc;
+          border-bottom: 1px solid #ccc;
+          text-decoration: none;
+        }
       }
 
       @include tablet{
