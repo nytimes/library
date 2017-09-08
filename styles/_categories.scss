@@ -4,9 +4,12 @@
 .g-upper-body {
   max-width: 600px;
   margin: 80px auto 30px auto;
-
+  padding: 0 20px;
+  // @include tablet{
+  //   margin: 80px auto 30px auto;
+  // }
   // @include desktop{
-  //   margin: 100px auto 30px auto;
+  //   margin: 80px auto 30px auto;
   // }
 
   h1.headline {
@@ -58,6 +61,7 @@
 .g-body {
   max-width: 1280px;
   margin: 0 auto;
+  padding: 0 20px;
 
   .g-left-panel {
     float: left;
@@ -173,8 +177,17 @@
     p, ul, li, dt, dd {
       font-family: $franklin;
       font-weight: 300;
-      font-size: 1.125rem;
-      line-height: 1.5;
+      font-size: 1rem;
+      line-height: 1.4;
+
+      @include tablet{
+        font-size: 1.125rem;
+        line-height: 1.5;
+      }
+      @include desktop{
+        font-size: 1.125rem;
+        line-height: 1.5;
+      }
     }
 
     h1 {
@@ -188,11 +201,19 @@
     }
 
     img {
-      max-width: 580px;
+      max-width: calc(100vw - 20px);
       border: 1px solid #ddd;
       padding: 10px;
       display: block;
       margin: 20px auto;
+
+      @include tablet{
+        max-width: 580px;
+      }
+      @include desktop{
+        max-width: 580px;
+      }
+
     }
 
     /* google output sometimes breaks <li>s across separate
@@ -240,12 +261,24 @@
     ul.children {
       padding-left: 5px;
       list-style-type: none;
-      column-count: 2;
-      -moz-column-count: 2;
-      -moz-columns: 2;
-      -webkit-columns: 2;
-      columns: 2;
-      column-gap: 2.67em;
+
+      @include tablet{
+        column-count: 2;
+        -moz-column-count: 2;
+        -moz-columns: 2;
+        -webkit-columns: 2;
+        columns: 2;
+        column-gap: 2.67em;
+      }
+
+      @include desktop{
+        column-count: 2;
+        -moz-column-count: 2;
+        -moz-columns: 2;
+        -webkit-columns: 2;
+        columns: 2;
+        column-gap: 2.67em;
+      }
 
       .foldericon {
         color: #444;
@@ -387,10 +420,18 @@
     max-width: 600px;
     margin: 80px auto 60px auto;
     border-top: 1px solid #ccc;
-    padding: 30px 0px;
+    padding: 20px 0px;
 
     .button.btn-plaintext {
       float: right;
+    }
+
+    p {
+      font-family: $franklin;
+      font-weight: 300;
+      font-size: 14px;
+      line-height: 18px;
+      margin-top: 30px;
     }
   }
   .g-footer-shorter {

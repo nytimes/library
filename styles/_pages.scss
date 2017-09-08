@@ -3,15 +3,17 @@
 //------------------------------------------------------------------------------
 #main-search-page {
   background: #222;
-  position: relative;
-  top: 45px;
-  left: -20px;
-  width: 100vw;
-  height: calc(100vh - 45px);
-  overflow: hidden;
+  padding: 85px 20px 3px 20px;
+  min-height: calc(100vh - 88px);
+
+  @include tablet{
+    padding: 85px 0px 3px 0px;
+    min-height: calc(100vh - 88px);
+  }
 
   @include desktop{
-    left: 0;
+    padding: 85px 0px 3px 0px;
+    min-height: calc(100vh - 88px);
   }
 
   .mid-center {
@@ -20,15 +22,15 @@
   }
 
   .main-item {
-    position: absolute;
-    top: 30%;
-    left: 50%;
-    transform: translate(-50%, -30%);
+
+    @include tablet{
+      max-width: 600px;
+      margin: 30px auto 0 auto;
+    }
 
     @include desktop{
-      top: 40%;
-      transform: translate(-50%, -40%);
       max-width: 600px;
+      margin: 30px auto 0 auto;
     }
 
     .branding {
@@ -41,25 +43,47 @@
         margin: 0;
 
         .nyt-logo {
-          height: 36px;
+          height: 26px;
           filter: invert(100%) brightness(80%);
           padding-top: 7px;
+
+          @include tablet{
+            height: 36px;
+          }
+
+          @include desktop{
+            height: 36px;
+          }
         }
       }
 
       .branding-label {
         margin: 0 0 0 15px;
-        height: 30px;
-        padding: 15px 0 9px 18px;
+        height: 21px;
+        padding: 13px 0 9px 18px;
         vertical-align: top;
         border-left: 1px solid rgba(255, 255, 255, 0.35);
         color: #ccc;
         font-family: $karnak;
-        font-size: 38px;
+        font-size: 28px;
         text-transform: none;
         -webkit-font-smoothing: antialiased;
         font-weight: 100;
-        line-height: 26px;
+        line-height: 21px;
+
+        @include tablet{
+          height: 30px;
+          padding: 15px 0 9px 18px;
+          font-size: 38px;
+          line-height: 26px;
+        }
+
+        @include desktop{
+          height: 30px;
+          padding: 15px 0 9px 18px;
+          font-size: 38px;
+          line-height: 26px;
+        }
 
         a:link, a:visited {
           color: #ccc;
@@ -75,29 +99,32 @@
       text-align: center;
       color: #8E8E8E;
       margin: 0 auto;
-      margin-bottom: 80px;
-      font-size: 15px;
-      width: 80%;
+      margin-bottom: 60px;
+      font-size: 14px;
+      line-height: 21px;
+      // width: 90%;
 
       @include tablet {
+        font-size: 15px;
     		width: 100%;
-        margin-bottom: 110px;
+        margin-bottom: 10vh;
     	}
 
       @include desktop {
-    		width: 100%;
-        margin-bottom: 110px;
+        font-size: 15px;
+        width: 100%;
+        margin-bottom: 10vh;
     	}
     }
 
     .search-container {
       clear: both;
-      width: calc(100vw - 60px);
+      // width: calc(100vw - 60px);
       background: #e6e2e2;
       padding: 0px 6px 0 0;
 
       @include tablet{
-    		width: calc(100vw - 140px);
+    		// width: calc(100vw - 140px);
     	}
     	@include desktop{
     		width: 586px;
@@ -150,46 +177,76 @@
       &.homepage{
         display: none;
       }
-
       // button:first-child {
       //   margin-right: 30px;
       // }
     }
 
     .featured-cat {
-      margin-top: 30px;
-      display: flex;
+      margin-top: 40px;
+
+      @include tablet{
+    		margin-top: 30px;
+        display: flex;
+    	}
+      @include desktop{
+    		margin-top: 30px;
+        display: flex;
+    	}
 
       .featured-cat-container,
       .teams-cat-container {
         flex: 0 50%;
-        margin-top: -7px;
+        // margin-top: -7px;
+        margin-bottom: 40px;
 
         h3 {
           font-weight: normal;
-          font-size: 18px;
+          font-size: 14px;
           color: #8e8e8e;
           margin: 15px 0;
-        }
 
-        li {
-          display: block;
+          @include tablet{
+            font-size: 15px;
+          }
+          @include desktop{
+            font-size: 15px;
+          }
         }
-
+        // li {
+        //   display: block;
+        // }
         ul {
           padding-left: 0;
+          list-style-type: none;
         }
 
       }
 
+      .teams-cat-container {
+        ul {
+          margin-top: -10px;
+          margin-bottom: 25px;
+
+          li {
+            display: inline-block;
+
+            @include tablet{
+          		display: block;
+          	}
+            @include desktop{
+          		display: block;
+          	}
+          }
+        }
+      }
+
       .featured-cat-list {
         padding-left: 7px;
-
         a {
           color: #ccc;
           -webkit-font-smoothing: antialiased;
         }
-
         li {
           padding-left: 10px;
           margin-bottom: 7px;
@@ -207,30 +264,49 @@
               display: none;
             }
           }
-
         }
-
       }
-
     }
-
   }
 
   .main-item--bottom {
-    top: auto;
-    bottom: 0;
+
+    @include tablet{
+      top: 20px;
+      max-width: 100%;
+      padding-bottom: 20px;
+    }
+    @include desktop{
+      top: 20px;
+      max-width: 100%;
+      padding-bottom: 20px;
+    }
 
     .help-text {
       color: #8E8E8E;
+      font-size: 14px;
+      line-height: 21px;
+      letter-spacing: 0;
+      text-align: left;
 
       a {
         color: #ccc;
+        border-bottom: 1px solid #8e8e8e;
+        padding-bottom: 1px;
       }
 
+      @include tablet{
+        line-height: 18px;
+        letter-spacing: 0.01em;
+        text-align: center;
+      }
+      @include desktop{
+        line-height: 18px;
+        letter-spacing: 0.01em;
+        text-align: center;
+      }
     }
-
   }
-  
 }
 
 

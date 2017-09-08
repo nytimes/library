@@ -72,6 +72,6 @@ app.use(airbrake)
 // error handler for rendering the 404 and 500 pages
 app.use(errorPages)
 
-app.listen(3000)
+app.listen(process.env.PORT || 3000)
 
 module.exports = app

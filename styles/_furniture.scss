@@ -12,21 +12,21 @@
 
   .container {
     position: relative;
-    min-height: 50px;
+    min-height: 49px;
 
     .branding {
-      padding-top: 5px;
+      padding-top: 3px;
       margin-bottom: 0px;
       background: transparent;
       float: left;
 
       .branding-heading {
-        margin-top: 8px;
+        margin-top: 9px;
         left: 20px;
         position: absolute;
 
         .nyt-logo {
-          height: 25px;
+          height: 23px;
           filter: invert(100%) brightness(80%);
         }
       }
@@ -34,7 +34,7 @@
       .branding-label {
         margin: 5px auto auto 50px;
         display: inline-block;
-        height: 30px;
+        height: 28px;
         padding: 4px 0 0 15px;
         vertical-align: top;
         border-left: 1px solid rgba(255, 255, 255, 0.35);
@@ -58,10 +58,18 @@
     }
 
     .user-tools {
-      right: 20px;
+      text-align: right;
+      right: 10px;
       float: none;
       position: fixed;
-      top: 10px;
+      top: 9px;
+
+      @include tablet{
+        right: 20px;
+      }
+      @include desktop{
+        right: 20px;
+      }
     }
   }
 }
@@ -73,7 +81,9 @@
   padding-left: 8px;
   float: left;
   // padding-top: 1px;
-  display: inline-grid;
+  // display: inline-grid;
+  margin: 15px 0;
+  display: none;
 
   @include tablet{
     display: block;
@@ -112,6 +122,8 @@
   width: calc(100% - 20px);
 
   #search-box {
+    -webkit-appearance: none;
+    border-radius: 0;
     font-size: 16px;
     line-height: 30px;
     font-weight: 400;
@@ -221,20 +233,29 @@
 
   .user-fullname {
     margin-right: 5px;
+    display: none;
+
+    @include tablet{
+      display: inline-block;
+    }
+    @include desktop{
+      display: inline-block;
+    }
   }
 
   button.btn-user-initial {
     border-radius: 50%;
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     position: relative;
-    top: -1px;
-    font-size: 15px;
+    top: 1px;
+    font-size: 14px;
     -webkit-font-smoothing: antialiased;
-    text-indent: -4px;
+    text-indent: -3px;
     background: #ccc;
     color: #666;
     margin-right: 5px;
+    line-height: 0px;
   }
 }
 
@@ -248,6 +269,7 @@
 	transition: opacity 100ms;
   visibility: hidden;
 	opacity: 0;
+  text-align: left;
 
   .cancel {
     position: fixed;
@@ -312,6 +334,14 @@
     li {
       a {
         color: #333;
+
+        &:hover {
+          text-decoration: none;
+
+          p {
+            color: #000;
+          }
+        }
       }
       margin: 13px 0;
       font-size: 15px;

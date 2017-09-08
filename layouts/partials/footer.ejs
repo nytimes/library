@@ -42,7 +42,7 @@
 
       if(window.location.pathname === '/') {
         $(document).ready(function() {
-          personalizeHomepage(userId)        
+          personalizeHomepage(userId)
         })
       }
     }
@@ -58,7 +58,7 @@
     var initials = username.split('@')[0].split('.').map(function(name) {
       return name[0].toUpperCase();
     });
-    
+
     $('.btn-user-initial').text(initials.join(''));
   }
 
