@@ -289,7 +289,7 @@
 
 .popup {
   margin-top: 40px;
-	padding: 20px;
+	padding: 0 20px 5px 20px;
   background-image: linear-gradient(215deg, #FFFFFF 0%, #ececec 100%);
 	border: 1px solid #d4d4d4;
 	width: 260px;
@@ -298,9 +298,11 @@
 
   @include tablet{
     width: 300px;
+    padding: 20px;
   }
   @include desktop{
     width: 300px;
+    padding: 20px;
   }
 
   .close {
@@ -321,12 +323,21 @@
   }
 
   h3 {
-    margin: 10px auto;
+    margin: 10px auto 0px auto;
     color: #333;
     border-bottom: 2px solid #333;
     font-size: 16px;
-    line-height: 32px;
+    line-height: 30px;
     -webkit-font-smoothing: antialiased;
+
+    @include tablet{
+      margin: 10px auto;
+      line-height: 32px;
+    }
+    @include desktop{
+      margin: 10px auto;
+      line-height: 32px;
+    }
   }
 
   ul.recently-viewed-content, ul.most-viewed-content {
@@ -346,8 +357,15 @@
           }
         }
       }
-      margin: 13px 0;
+      margin: 0px 0 5px 0;
       font-size: 15px;
+
+      @include tablet{
+        margin: 13px 0;
+      }
+      @include desktop{
+        margin: 13px 0;
+      }
 
       .docs-title {
         color: $pink;
