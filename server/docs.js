@@ -11,13 +11,14 @@ const slugify = require('slugify')
 const xlsx = require('xlsx')
 
 const {getAuth} = require('./auth')
-const supportedTypes = new Set(['document', 'spreadsheet'])
+const supportedTypes = new Set(['document', 'spreadsheet', 'text/html'])
 
 exports.cleanName = (name = '') => {
   return name
     .replace(/^\d+[-–—_\s]*/, '') // remove leading numbers and delimiters
     .replace(/\|\s*([^|]+)$/i, '')
     .replace(/\W+home$/i, '')
+    .replace(/\.[^.]+$/, '') // remove file extensions
 }
 
 exports.slugify = (text = '') => {
@@ -88,12 +89,23 @@ function fetch({id, resourceType}, authClient, cb) {
         return fetchSpreadsheet(drive, id, cb)
       }
 
+      if (resourceType === 'text/html') {
+        return fetchHTML(drive, id, cb)
+      }
+
       drive.files.export({
         fileId: id,
         mimeType: resourceType === 'presentation' ? 'text/plain' : 'text/html'
       }, (err, data) => cb(err, data)) // this prevents receiving an array (?)
     },
     (cb) => {
+      // we shouldn't try to fetch revisions for non docs
+      if (resourceType.indexOf('html') > -1) {
+        return cb(null, {
+          lastModifyingUser: {}
+        }) // return an empty revisions object
+      }
+
       drive.revisions.get({
         fileId: id,
         revisionId: '1',
@@ -149,6 +161,16 @@ function fetchSpreadsheet(drive, id, cb) {
   })
 }
 
+// returns raw html from the drive
+function fetchHTML(drive, id, cb) {
+  drive.files.get({
+    fileId: id,
+    supportsTeamDrives: true,
+    alt: 'media'
+  }, (err, html) => {
+    cb(err, html)
+  })
+}
 function checkForTableOfContents($, aTags) {
   return aTags.length === 2 && // TOC links title and number
   aTags[0].attribs.href.match('#h.') && // the links go to a heading in the doc
