@@ -2,13 +2,13 @@
 
 const winston = require('winston')
 
-const logger = new (winston.Logger)({
-  transports: [
-    new (winston.transports.Console)({
-      colorize: !process.env.NODE_ENV,
-      prettyPrint: true
-    })
-  ]
-})
+const transports = process.env.NODE_ENV === 'test'
+? []
+: [
+  new (winston.transports.Console)({
+    colorize: !process.env.NODE_ENV,
+    prettyPrint: true
+  })
+]
 
-module.exports = logger
+module.exports = new (winston.Logger)({ transports })
