@@ -185,6 +185,7 @@ function normalizeHtml(html) {
   const $ = cheerio.load(html)
 
   const $p = $('p')
+  const isClean = $('meta[name="library-html-doc"]').attr('content') === '1'
 
   // Remove p tags in Table of Contents
   $p.each((index, p) => {
@@ -225,7 +226,7 @@ function normalizeHtml(html) {
 
       if (newStyle.length > 0) {
         $(el).attr('style', newStyle)
-      } else {
+      } else if (!isClean) {
         $(el).removeAttr('style') // if a <p>, <h1>, or other tag has no styles, kill the style attr
       }
     }
@@ -241,7 +242,7 @@ function normalizeHtml(html) {
       if (lstClassMatch) {
         $(el).attr('class', $(el).attr('class') + ` level-${lstClassMatch[1]}`)
       }
-    } else {
+    } else if (!isClean) {
       $(el).removeAttr('class')
     }
 
