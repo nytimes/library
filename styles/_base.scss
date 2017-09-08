@@ -102,10 +102,10 @@ button:focus {
   -webkit-font-smoothing: antialiased;
 
   @include tablet{
-    margin: 2px 0 0 0;
+    margin: 3px 0 0 0;
   }
   @include desktop{
-    margin: 2px 0 0 0;
+    margin: 3px 0 0 0;
   }
 
   &:hover {

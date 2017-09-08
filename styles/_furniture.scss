@@ -292,14 +292,17 @@
 	padding: 20px;
   background-image: linear-gradient(215deg, #FFFFFF 0%, #ececec 100%);
 	border: 1px solid #d4d4d4;
-	width: 300px;
+	width: 260px;
   float: right;
-	// box-shadow: 0 0 50px rgba(0,0,0,0.5);
 	position: relative;
-  // background: #ececec;
 
-  // max-height: 400px;
-  // overflow: auto;
+  @include tablet{
+    width: 300px;
+  }
+  @include desktop{
+    width: 300px;
+  }
+
   .close {
     position: absolute;
     width: 20px;
