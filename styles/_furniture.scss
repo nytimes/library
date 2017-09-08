@@ -119,7 +119,13 @@
 .search-container {
   vertical-align: middle;
   white-space: nowrap;
-  width: calc(100% - 20px);
+
+  @include tablet{
+    width: calc(100% - 20px);
+  }
+  @include desktop{
+    width: calc(100% - 20px);
+  }
 
   #search-box {
     -webkit-appearance: none;
@@ -245,23 +251,23 @@
 
   button.btn-user-initial {
     border-radius: 50%;
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 31px;
     position: relative;
     top: 1px;
     font-size: 14px;
     -webkit-font-smoothing: antialiased;
-    text-indent: -3px;
+    text-indent: -1px;
     background: #ccc;
     color: #666;
     margin-right: 5px;
     line-height: 0px;
 
     @include tablet{
-      text-indent: -4px;
+      text-indent: -3px;
     }
     @include desktop{
-      text-indent: -4px;
+      text-indent: -3px;
     }
   }
 }

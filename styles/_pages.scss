@@ -132,9 +132,21 @@
 
       #search-box {
         font-size: 18px;
-        line-height: 36px;
-        box-shadow: 6px 6px 0px 0px #4d4d4d;
+        line-height: 30px;
         float: none;
+        border: 0;
+        box-shadow: none;
+
+        @include tablet{
+          width: calc(100% - 20px);
+          box-shadow: 6px 6px 0px 0px #4d4d4d;
+          line-height: 37px;
+        }
+        @include desktop{
+          width: calc(100% - 20px);
+          box-shadow: 6px 6px 0px 0px #4d4d4d;
+          line-height: 37px;
+        }
       }
 
       &:hover,
@@ -150,7 +162,7 @@
         height: 51px;
         width: 55px;
         font-size: 15pt;
-        margin-left: -60px;
+        margin-left: -59px;
         opacity: 0.95;
         -webkit-transition: opacity .35s ease;
         -moz-transition: opacity .35s ease;
