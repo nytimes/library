@@ -71,20 +71,24 @@ exports.middleware = (req, res, next) => {
   })
 }
 
-exports.add = (id, newModified, path, html) => {
+exports.add = (id, newModified, path, html, cb = () => {}) => {
   if (!newModified) return // refused to add anything without a modified timestamp
 
   cache.get(path, (err, data) => {
-    if (err) return log.warn(`Failed saving cache data for ${path}`, err)
+    if (err) {
+      log.warn(`Failed saving cache data for ${path}`, err)
+      return cb(err)
+    }
 
     const {modified, noCache, html: oldHtml} = data || {}
     // don't store any items over noCache entries
-    if (noCache) return // refuse to cache any items that are being edited
+    if (noCache) return cb()// refuse to cache any items that are being edited
     // if there was previous data and it is not older than the new data, don't do anything
-    if (oldHtml && modified && !isNewer(modified, newModified)) return // nothing to do if data is current
+    if (oldHtml && modified && !isNewer(modified, newModified)) return cb()// nothing to do if data is current
     // store new data in the cache
     cache.set(path, {html, modified: newModified, id}, (err) => {
       if (err) log.warn(`Failed saving new cache data for ${path}`, err)
+      cb(err)
     })
   })
 }

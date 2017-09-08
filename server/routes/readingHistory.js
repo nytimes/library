@@ -19,6 +19,7 @@ router.use((req, res, next) => {
       if (res.locals.docId) {
         const docMeta = getMeta(res.locals.docId)
         const userInfo = getUserInfo(req)
+        if (!docMeta || !userInfo) return
         recordView(docMeta, userInfo, datastoreClient)
       }
     })
