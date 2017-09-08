@@ -256,6 +256,13 @@
     color: #666;
     margin-right: 5px;
     line-height: 0px;
+
+    @include tablet{
+      text-indent: -4px;
+    }
+    @include desktop{
+      text-indent: -4px;
+    }
   }
 }
 
