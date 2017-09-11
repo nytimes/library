@@ -28,8 +28,6 @@ $(document).ready(function() {
   function correctHashScroll() {
     var currentScroll = $document.scrollTop();
     var mastheadHeight = $('#masthead').outerHeight() + 15; // extra padding
-    console.log(mastheadHeight)
-    console.log(currentScroll)
     if (window.location.hash && currentScroll > mastheadHeight) {
       console.log('reducing scroll from ' + currentScroll)
       $document.scrollTop(currentScroll - mastheadHeight)
@@ -69,7 +67,7 @@ $(document).ready(function() {
     if (data.length == 0) {
       if (elementAttributes.emptyText) {
         $target.append("<p>" + elementAttributes.emptyText + "</p>");
-      }     
+      }
       return;
     }
 

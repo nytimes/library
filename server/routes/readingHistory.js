@@ -47,13 +47,15 @@ module.exports = {
 
 function fetchHistory(userInfo, historyType, queryLimit, doneCb) {
   getDatastoreClient((datastoreClient) => {
-    const limit = parseInt(queryLimit, 10) || 5
+    const limit = (parseInt(queryLimit, 10) || 5)
+    // include a bit extra that we will filter out based on other criteria later
+    const datastoreLimit = Math.ceil(limit * 1.5)
     async.parallel([
       (cb) => {
         const query = datastoreClient.createQuery(['LibraryView' + historyType])
           .filter('userId', '=', userInfo.userId)
           .order('viewCount', { descending: true })
-          .limit(limit)
+          .limit(datastoreLimit)
 
         datastoreClient.runQuery(query, cb)
       },
@@ -61,7 +63,7 @@ function fetchHistory(userInfo, historyType, queryLimit, doneCb) {
         const query = datastoreClient.createQuery(['LibraryView' + historyType])
           .filter('userId', '=', userInfo.userId)
           .order('lastViewedAt', { descending: true })
-          .limit(limit)
+          .limit(datastoreLimit)
 
         datastoreClient.runQuery(query, cb)
       }
@@ -69,8 +71,16 @@ function fetchHistory(userInfo, historyType, queryLimit, doneCb) {
       if (err) {
         doneCb(err)
       } else {
+        const hasName = ({doc}) => doc && doc.prettyName
+
         const recentlyViewed = expandResults(results[1][0])
+          .filter(hasName)
+          .slice(0, limit)
+
         const mostViewed = expandResults(results[0][0].filter((r) => { return r.viewCount >= 5 }))
+          .filter(hasName)
+          .slice(0, limit)
+
         doneCb(null, {
           recentlyViewed,
           mostViewed
