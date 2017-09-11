@@ -173,6 +173,7 @@
     margin: 0px auto 0 auto;
     border-top: 5px solid #ddd;
     padding: 10px 0px;
+    word-break: break-word; // force break on very long lines without spaces
 
     p, ul, li, dt, dd {
       font-family: $franklin;
