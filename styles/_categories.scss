@@ -190,6 +190,21 @@
       }
     }
 
+    // emulate google docs spacing
+    // @TODO: touch this up in the actual markup rather than hiding through css
+    & > p {
+      margin: 0;
+
+      &:first-of-type {
+        margin-top: 1em;
+      }
+
+      &:empty {
+        height: 1.125rem
+      }
+
+    }
+
     h1 {
       font-size: 30px;
     }
