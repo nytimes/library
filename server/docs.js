@@ -15,6 +15,7 @@ const supportedTypes = new Set(['document', 'spreadsheet', 'text/html'])
 
 exports.cleanName = (name = '') => {
   return name
+    .trim()
     .replace(/^\d+[-–—_\s]*/, '') // remove leading numbers and delimiters
     .replace(/\|\s*([^|]+)$/i, '')
     .replace(/\W+home$/i, '')
