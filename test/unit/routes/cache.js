@@ -48,13 +48,10 @@ describe('the cache', f((mocha) => {
   }))
 
   it('should successfully purge items on demand', f((mocha) => {
-    mocha.timeout(10000) // @TODO: investigate why this takes so long
     return request(server)
       .get(path)
       .expect(200)
       .then(() => {
-        // why doesn't this purge work?
-        // oh we need to purge by path now
         return purgePromise({url: path, modified: nextModified()})
           .catch((err) => {
             console.log('purging error!', err)
@@ -63,7 +60,7 @@ describe('the cache', f((mocha) => {
       .then(() => {
         return request(server)
           .get(path)
-          .expect(404) // this might take a while without stubbing
+          .expect(404)
       })
   }))
 

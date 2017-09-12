@@ -67,6 +67,12 @@ function updateTree(cb) {
       }
 
       currentTree = produceTree(files, teamDriveId)
+      const count = Object.values(docsInfo)
+        .filter((f) => f.resourceType !== 'folder')
+        .length
+
+      log.debug(`Current file count in drive: ${count}`)
+
       cb(null, currentTree)
     })
   })
