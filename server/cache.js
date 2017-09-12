@@ -38,7 +38,11 @@ exports.middleware = (req, res, next) => {
   if (purge || edit) {
     const {email} = edit ? getUserInfo(req) : {}
     const overrides = ignore ? ignore.split(',') : null
-    return purgeCache(req.path, null, email, overrides, (err) => {
+    return purgeCache({
+      url: req.path,
+      editEmail: email,
+      ignore: overrides
+    }, (err) => {
       if (err) {
         log.warn(`Cache purge failed for ${req.path}`, err)
         return next(err)
@@ -113,7 +117,12 @@ exports.redirect = (path, newPath, modified) => {
     // purge the cache on the destination to eliminate old redirects
     // we should ignore redirects at the new location
     // @TODO: why do we need to pass 'modified' as an ignore param here?
-    purgeCache(newPath, modified, preventCacheReason, ['redirect', 'missing', 'modified'], (err) => {
+    purgeCache({
+      url: newPath,
+      modified,
+      editEmail: preventCacheReason,
+      ignore: ['redirect', 'missing', 'modified']
+    }, (err) => {
       if (err && err.message !== 'Not found') log.warn(`Failed purging redirect destination ${newPath}`, err)
     })
   })
@@ -122,7 +131,7 @@ exports.redirect = (path, newPath, modified) => {
 // expose the purgeCache method externally so that list can call while building tree
 exports.purge = purgeCache
 
-function purgeCache(url, modified, editEmail, ignore, cb = () => {}) {
+function purgeCache({url, modified, editEmail, ignore}, cb = () => {}) {
   modified = modified || moment().subtract(1, 'hour').utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
 
   const overrides = ignore && Array.isArray(ignore) ? new Set(ignore) : new Set().add(ignore)

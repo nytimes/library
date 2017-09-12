@@ -4,12 +4,15 @@ const request = require('supertest-as-promised')
 const assert = require('assert')
 const bluebird = require('bluebird')
 const moment = require('moment')
+const express = require('express')
 
 const {f} = require('../../utils')
-const server = require('../../../server')
 const {middleware: cache, add, purge} = require('../../../server/cache')
 const purgePromise = bluebird.promisify(purge)
 const addPromise = bluebird.promisify(add)
+
+const server = express()
+server.use(cache)
 
 const sampleEntry = {
   id: 'some_id',
@@ -28,7 +31,7 @@ const nextModified = () => {
 // can we run against cache explicitly?
 describe('the cache', f((mocha) => {
   beforeEach(f((mocha) => {
-    return purgePromise(path, nextModified(), null, null)
+    return purgePromise({url: path, modified: nextModified()})
       .catch((err) => {}) // silence errors from purging when empty
       .then(() => {
         return addPromise(id, nextModified(), path, html) // this is a noop
@@ -52,7 +55,7 @@ describe('the cache', f((mocha) => {
       .then(() => {
         // why doesn't this purge work?
         // oh we need to purge by path now
-        return purgePromise(path, nextModified(), null, null)
+        return purgePromise({url: path, modified: nextModified()})
           .catch((err) => {
             console.log('purging error!', err)
           })

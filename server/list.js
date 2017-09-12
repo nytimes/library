@@ -253,7 +253,12 @@ function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
       const {path, modifiedTime} = item
       const action = newItem ? 'Added' : 'Removed'
       // @TODO: This does not restore deleted documents which are undone to the same location
-      return cache.purge(path, modifiedTime, `item${action}`, ['missing', 'modified'])
+      return cache.purge({
+        url: path,
+        modified: modifiedTime,
+        editEmail: `item${action}`,
+        ignore: ['missing', 'modified']
+      })
     }
 
     // don't allow direct purges updates for folders with a home file
@@ -264,7 +269,7 @@ function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
     if (oldItem && newItem.path !== oldItem.path) {
       cache.redirect(oldItem.path, newItem.path, newItem.modifiedTime)
     } else {
-      cache.purge(newItem.path, newItem.modifiedTime)
+      cache.purge({url: newItem.path, modified: newItem.modifiedTime})
     }
   })
 }
