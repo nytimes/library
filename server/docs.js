@@ -11,6 +11,8 @@ const slugify = require('slugify')
 const xlsx = require('xlsx')
 
 const {getAuth} = require('./auth')
+const log = require('./logger')
+
 const supportedTypes = new Set(['document', 'spreadsheet', 'text/html'])
 
 exports.cleanName = (name = '') => {
@@ -100,18 +102,21 @@ function fetch({id, resourceType}, authClient, cb) {
       }, (err, data) => cb(err, data)) // this prevents receiving an array (?)
     },
     (cb) => {
-      // we shouldn't try to fetch revisions for non docs
-      if (resourceType.indexOf('html') > -1) {
-        return cb(null, {
-          lastModifyingUser: {}
-        }) // return an empty revisions object
-      }
-
       drive.revisions.get({
         fileId: id,
         revisionId: '1',
         fields: '*'
-      }, (err, data) => cb(err, data)) // this prevents receiving an array (?)
+      }, (err, data) => {
+        // suppress revision history errors, but log them for later
+        if (err) {
+          log.warn(`Failed retrieving revision data for ${resourceType}:${id}. Error was:`, err)
+          return cb(null, {
+            lastModifyingUser: {}
+          }) // return mock/empty revision object
+        }
+
+        cb(err, data)
+      })
     }
   ], (err, [html, originalRevision]) => {
     cb(err, html, originalRevision)

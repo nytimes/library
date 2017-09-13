@@ -40,6 +40,7 @@
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
     "nock": "^9.0.14",
+    "nyc": "^11.2.1",
     "webpack": "^2.6.1",
     "webpack-dev-server": "^2.4.5"
   },
