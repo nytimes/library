@@ -76,7 +76,7 @@ exports.middleware = (req, res, next) => {
 }
 
 exports.add = (id, newModified, path, html, cb = () => {}) => {
-  if (!newModified) return // refused to add anything without a modified timestamp
+  if (!newModified) return cb(new Error('Refusing to store new item without modified time.'))
 
   cache.get(path, (err, data) => {
     if (err) {
@@ -98,33 +98,41 @@ exports.add = (id, newModified, path, html, cb = () => {}) => {
 }
 
 // redirects when a url changes
-exports.redirect = (path, newPath, modified) => {
+// should we expose a cb here for testing?
+exports.redirect = (path, newPath, modified, cb = () => {}) => {
   cache.get(path, (err, data) => {
     const {noCache, redirectUrl} = data || {}
 
     // since we run multiple pods, we don't need to set the redirect more than once
-    if (redirectUrl === newPath) return
+    if (redirectUrl === newPath) return cb(new Error('Already configured that redirect'))
 
     log.info(`ADDING REDIRECT: ${path} => ${newPath}`)
     if (err) log.warn(`Failed retrieving data for redirect of ${path}`)
 
-    // store redirect url at current location
-    cache.set(path, {redirectUrl: newPath}, (err) => {
-      if (err) log.warn(`Failed setting redirect for ${path} => ${newPath}`, err)
-    })
-
     const preventCacheReason = noCache ? 'redirect_detected' : null
-    // purge the cache on the destination to eliminate old redirects
-    // we should ignore redirects at the new location
-    // @TODO: why do we need to pass 'modified' as an ignore param here?
-    purgeCache({
-      url: newPath,
-      modified,
-      editEmail: preventCacheReason,
-      ignore: ['redirect', 'missing', 'modified']
-    }, (err) => {
-      if (err && err.message !== 'Not found') log.warn(`Failed purging redirect destination ${newPath}`, err)
-    })
+    async.parallel([
+      (cb) => {
+        // store redirect url at current location
+        cache.set(path, {redirectUrl: newPath}, (err) => {
+          if (err) log.warn(`Failed setting redirect for ${path} => ${newPath}`, err)
+          cb(err)
+        })
+      },
+      (cb) => {
+        // purge the cache on the destination to eliminate old redirects
+        // we should ignore redirects at the new location
+        // @TODO: why do we need to pass 'modified' as an ignore param here?
+        purgeCache({
+          url: newPath,
+          modified,
+          editEmail: preventCacheReason,
+          ignore: ['redirect', 'missing', 'modified']
+        }, (err) => {
+          if (err && err.message !== 'Not found') log.warn(`Failed purging redirect destination ${newPath}`, err)
+          cb(err)
+        })
+      }
+    ], cb)
   })
 }
 

@@ -7,12 +7,11 @@ const moment = require('moment')
 const express = require('express')
 
 const {f} = require('../../utils')
-const {middleware: cache, add, purge} = require('../../../server/cache')
-const purgePromise = bluebird.promisify(purge)
-const addPromise = bluebird.promisify(add)
+const cache = require('../../../server/cache')
+const {purgeAsync, addAsync, redirectAsync, middleware} = bluebird.promisifyAll(cache)
 
 const server = express()
-server.use(cache)
+server.use(middleware)
 
 const sampleEntry = {
   id: 'some_id',
@@ -28,42 +27,77 @@ const nextModified = () => {
   return moment(modified).add(count, 'days').format()
 }
 
+const purgeCache = () => purgeAsync({url: path, modified: nextModified(), ignore: 'all'})
+const addCache = () => addAsync(id, nextModified(), path, html)
+const getCache = (url = path) => request(server).get(url)
+
 // can we run against cache explicitly?
-describe('the cache', f((mocha) => {
-  beforeEach(f((mocha) => {
-    return purgePromise({url: path, modified: nextModified()})
-      .catch((err) => {}) // silence errors from purging when empty
-      .then(() => {
-        return addPromise(id, nextModified(), path, html) // this is a noop
-      })
+describe('The cache', f((mocha) => {
+  describe('adding to the cache', f((mocha) => {
+    beforeEach(f((mocha) => purgeCache))
+
+    it('should not save if no modification time is passed', f((mocha) => {
+      return addAsync(id, null, path, html)
+        .catch((err) => assert(err, 'an error is returned'))
+    }))
+
+    it('should save successfully with valid data', f((mocha) => {
+      return addAsync(id, nextModified(), path, html) // no error is returned
+    }))
   }))
 
-  it('should return items that have been stored', f((mocha) => {
-    return request(server)
-      .get(path)
-      .expect(200)
-      .then((res) => {
-        assert.equal(res.text, html, 'the returned html should match what was cached')
-      })
+  describe('purging the cache', f((mocha) => {
+    beforeEach(() => purgeCache().then(addCache))
+
+    it('should succeed via the purge method', f((mocha) => {
+      return getCache()
+        .expect(200)
+        .then(() => purgeAsync({url: path, modified: nextModified()}))
+        .then(() => getCache().expect(404))
+    }))
+
+    it('should succeed via "purge" query param', f((mocha) => {
+      return getCache()
+        .query({purge: 1})
+        .expect(200)
+        .then(() => getCache().expect(404))
+    }))
+
+    it('should succeed via "edit" query param', f((mocha) => {
+      return getCache()
+        .query({edit: 1})
+        .expect(200)
+        .then(() => getCache().expect(404))
+    }))
   }))
 
-  it('should successfully purge items on demand', f((mocha) => {
-    return request(server)
-      .get(path)
-      .expect(200)
-      .then(() => {
-        return purgePromise({url: path, modified: nextModified()})
-          .catch((err) => {
-            console.log('purging error!', err)
-          })
-      })
-      .then(() => {
-        return request(server)
-          .get(path)
-          .expect(404)
-      })
+  describe('saved html', f((mocha) => {
+    beforeEach(() => purgeCache().then(addCache))
+
+    it('should be returned when available', f((mocha) => {
+      return getCache()
+        .expect(200)
+        .then((res) => {
+          assert.equal(res.text, html, 'the returned html should match what was cached')
+        })
+    }))
+
+    it('should not be returned when empty', f((mocha) => {
+      return purgeAsync({ url: path, modified: nextModified() })
+        .then(() => getCache().expect(404))
+    }))
   }))
 
-  // @TODO: add better test coverage for the cache
-  // existing tests do not cover all cases
+  describe('redirects', f((mocha) => {
+    beforeEach(() => purgeCache().then(addCache))
+
+    it('should save redirects when valid', f((mocha) => {
+      const newPath = '/parent/sample-entry-2'
+      return redirectAsync(path, newPath, modified)
+        // check the redirect saved
+        .then(() => getCache().expect(302).expect('Location', newPath))
+        // and that cache was purged at the destination
+        .then(() => getCache(newPath).expect(404))
+    }))
+  }))
 }))
