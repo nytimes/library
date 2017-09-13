@@ -159,7 +159,7 @@ function purgeCache({url, modified, editEmail, ignore}, cb = () => {}) {
 
     // try and dedupe extra requests from multiple pods (tidier logs)
     const purgeId = `${modified}-${editEmail || ''}-${ignore}`
-    if (purgeId === lastPurgeId && !shouldIgnore('all')) return
+    if (purgeId === lastPurgeId && !shouldIgnore('all')) return cb(new Error(`Same purge id as previous request ${purgeId}`))
     // by default, don't try to purge empty
     if (!html && !shouldIgnore('missing')) return cb(new Error('Not found'))
     // by default, don't purge a noCache entry
