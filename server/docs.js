@@ -9,6 +9,7 @@ const pretty = require('pretty')
 const unescape = require('unescape')
 const slugify = require('slugify')
 const xlsx = require('xlsx')
+const inflight = require('inflight')
 
 const {getAuth} = require('./auth')
 const log = require('./logger')
@@ -37,6 +38,9 @@ exports.processHtml = (html) => {
 }
 
 exports.fetchDoc = ({id, resourceType}, cb) => {
+  cb = inflight(id, cb)
+  if (!cb) return
+
   getAuth((err, auth) => {
     if (err) {
       return cb(err)
