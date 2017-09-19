@@ -53,7 +53,7 @@ app.get('/cache-purge-everything', (req, res, next) => {
   const urls = Array.from(getAllRoutes())
 
   async.parallelLimit(urls.map((url) => {
-    return (cb) => purge(url, null, null, 'all', cb)
+    return (cb) => purge({url, ignore: 'all'}, cb)
   }), 10, (err, data) => {
     if (err) return next(err)
 

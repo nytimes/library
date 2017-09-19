@@ -17,7 +17,9 @@ exports.run = (query, cb) => {
         return cb(err)
       }
 
-      const fileMetas = files.map((file) => { return list.getMeta(file.id) })
+      const fileMetas = files
+        .map((file) => { return list.getMeta(file.id) })
+        .filter(({path}) => path.split('/')[1] !== 'trash')
       cb(null, fileMetas)
     })
   })

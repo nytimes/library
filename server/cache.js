@@ -146,6 +146,8 @@ function purgeCache({url, modified, editEmail, ignore}, cb = () => {}) {
   const overrides = ignore && Array.isArray(ignore) ? new Set(ignore) : new Set().add(ignore)
   const shouldIgnore = (type) => overrides.has(type) || overrides.has('all') || overrides.has('1')
 
+  if (!url) return cb(Error(`Can't purge cache without url! Given url was ${url}`))
+
   cache.get(url, (err, data) => {
     if (err) log.warn(`Received error while trying to retrieve existing cache for purge of ${url}`, err)
     // compare current cache entry data vs this request

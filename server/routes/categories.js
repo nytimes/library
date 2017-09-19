@@ -90,6 +90,11 @@ function retrieveDataForPath(path, tree) {
 
   let pointer = tree
   let parent = null
+
+  if (segments[0] === 'trash') {
+    return [{}, {}]
+  }
+
   // continue traversing down the tree while there are still segements to go
   while ((pointer || {}).nodeType === 'branch' && segments.length) {
     parent = pointer

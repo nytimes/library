@@ -70,11 +70,11 @@ function buildDisplayCategories(tree) {
 
   // Ignore pages at the root of the site on the category page
   const all = categories
-    .filter(({nodeType}) => nodeType === 'branch')
+    .map((c) => Object.assign({}, c, getMeta(c.id)))
+    .filter(({resourceType, tags, slug}) => resourceType === 'folder' && !tags.includes('hidden') && slug !== 'trash')
     .sort(sortDocs)
     .map((category) => {
-      category = Object.assign({}, category, getMeta(category.id))
-      category.children = Object.values(category.children).map(({id}) => {
+      category.children = Object.values(category.children || {}).map(({id}) => {
         const {prettyName: name, path: url, resourceType, sort} = getMeta(id)
         return { name, resourceType, url, sort }
       }).sort(sortDocs)

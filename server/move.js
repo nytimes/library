@@ -44,6 +44,10 @@ exports.moveFile = (id, destination, cb) => {
     }, (err, result) => {
       if (err) return cb(err)
 
+      if (basePath === '/trash') {
+        return cb(null, '/')
+      }
+
       const newUrl = `${basePath}/${slug}`
       const oldUrls = parents.map((id) => {
         const {path} = getMeta(id)

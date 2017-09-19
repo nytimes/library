@@ -2,6 +2,7 @@
 
 const inflight = require('inflight')
 const google = require('googleapis')
+const path = require('path')
 
 const cache = require('./cache')
 const log = require('./logger')
@@ -66,6 +67,7 @@ function updateTree(cb) {
         return cb(err)
       }
 
+      console.time('updating tree')
       currentTree = produceTree(files, teamDriveId)
       const count = Object.values(docsInfo)
         .filter((f) => f.resourceType !== 'folder')
@@ -110,6 +112,7 @@ function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive} = {}, c
     cb(null, combined)
   })
 }
+
 function produceTree(files, firstParent) {
   // maybe group into folders first?
   // then build out tree, by traversing top down
@@ -164,7 +167,7 @@ function produceTree(files, firstParent) {
   const oldInfo = docsInfo
   const oldBranches = driveBranches
   tags = tagIds
-  docsInfo = byId // update our outer cache
+  docsInfo = addPaths(byId) // update our outer cache w/ data including path information
   driveBranches = byParent
   return buildTreeFromData(firstParent, {info: oldInfo, tree: oldBranches})
 }
@@ -182,7 +185,7 @@ function buildTreeFromData(rootParent, previousData, breadcrumb) {
     sort: parentInfo ? determineSort(parentInfo.name) : Infinity // some number here that could be used to sort later
   }
 
-  extendItemsWithPath(rootParent, breadcrumb)
+  // extendItemsWithPath(rootParent, breadcrumb)
   handleUpdates(rootParent, previousData) // detect redirects or purge cache
   // @TODO: detect redirects around here
 
@@ -202,37 +205,30 @@ function buildTreeFromData(rootParent, previousData, breadcrumb) {
   }, Object.assign({}, parentNode, { children: {} }))
 }
 
-// @TODO: put back redirect logic
-function extendItemsWithPath(id, breadcrumb) {
-  const parent = docsInfo[id] || {}
-  const segments = (breadcrumb ? breadcrumb.concat({slug: parent.slug}) : []).map((s) => s.slug)
-  const baseUrl = segments.length ? `/${segments.join('/')}` : ''
+function addPaths(byId) {
+  return Object.values(byId)
+    .reduce((memo, data) => {
+      const parentData = derivePathInfo(data, byId)
+      memo[data.id] = Object.assign({}, data, parentData)
+      return memo
+    }, {})
 
-  const node = driveBranches[id] || {}
-  const contents = (node.children || []).concat(node.home).filter((i) => i)
-
-  contents.forEach((id) => {
-    // at this point the new item is already assigned over the old
-    const item = docsInfo[id]
-    // the item will already have these props on it
-    const {resourceType, webViewLink: drivePath, slug, isHome} = item
-
-    const viewPath = isHome ? baseUrl : `${baseUrl}/${slug}`
+  function derivePathInfo(item) {
+    const {parents, slug, webViewLink: drivePath, isHome, resourceType} = item
+    const parentId = parents[0]
+    const hasParent = parentId && parentId !== teamDriveId
+    const parent = byId[parentId]
     const renderInLibrary = isSupported(resourceType)
-    item.path = renderInLibrary ? viewPath : drivePath
-    if (renderInLibrary) {
-      // check and issue redirects here
-    }
-    // we don't need to set path on parent because we are doing a depth first traversal
 
-    item.folder = parent
-
-    if (!parent || Object.keys(parent).length === 0) {
-      item.topLevelFolder = Object.assign({}, item) // used cloned ref to avoid circular JSON references
-    } else {
-      item.topLevelFolder = parent.topLevelFolder
+    const parentInfo = hasParent ? derivePathInfo(parent) : {path: '/', tags: []}
+    const libraryPath = isHome ? parentInfo.path : path.join(parentInfo.path, slug)
+    // the end of the path will be item.slug
+    return {
+      folder: Object.assign({}, parent, parentInfo), // make sure folder contains path
+      topLevelFolder: hasParent ? parentInfo.folder : Object.assign({}, item),
+      path: renderInLibrary ? libraryPath : drivePath
     }
-  })
+  }
 }
 
 function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
@@ -253,11 +249,23 @@ function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
     const newItem = docsInfo[id]
     const oldItem = lastInfo[id]
 
+    if ((oldItem && !oldItem.path) ||
+        (newItem && !newItem.path)) {
+      const whichItem = newItem.path ? 'old' : 'new'
+      const missingPath = whichItem === 'old' ? oldItem : newItem
+      log.warn('Found item without a path!', missingPath)
+    }
+
+    // just remove items from cache if they are trashed
+    const topPath = (newItem || {}).path || ''
+    const isTrashed = topPath.split('/')[1] === 'trash' && oldItem
     // if a document is added or removed, we should purge it from cache
-    if (!isFirstRun && (!newItem || !oldItem)) {
-      const item = newItem || oldItem
+    // this is also the case when doc is moved to trash
+    if (!isFirstRun && (!newItem || !oldItem || isTrashed)) {
+      const item = newItem && !isTrashed ? newItem : oldItem
       const {path, modifiedTime} = item
       const action = newItem ? 'Added' : 'Removed'
+      console.log('purging from item trashed:', path)
       // @TODO: This does not restore deleted documents which are undone to the same location
       return cache.purge({
         url: path,
@@ -303,6 +311,7 @@ function startTreeRefresh(interval) {
       log.debug('tree updated.')
     }
 
+    console.timeEnd('updating tree')
     setTimeout(() => { startTreeRefresh(interval) }, interval)
   })
 }
