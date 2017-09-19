@@ -44,7 +44,8 @@ function handleCategory(req, res, next) {
       lastUpdatedBy: (meta.lastModifyingUser || {}).displayName,
       modifiedAt: meta.modifiedTime,
       createdAt: moment(meta.createdTime).fromNow(),
-      editLink: meta.webViewLink
+      editLink: meta.webViewLink,
+      id
     })
 
     // if this is a folder, just render from the generic data
@@ -128,7 +129,7 @@ function prepareContextualData(data, url, breadcrumb, parent, slug) {
     })
 
   return {
-    parentId: originalId || id,
+    parentId: originalId || id, // this seems broken
     parentLinks,
     siblings: siblingLinks,
     children: childrenLinks

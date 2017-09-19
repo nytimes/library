@@ -3,6 +3,7 @@
 const express = require('express')
 
 const search = require('../search')
+const move = require('../move')
 const router = express.Router()
 
 const {getTree, getMeta, getTagged} = require('../list')
@@ -23,11 +24,29 @@ function handlePage(req, res, next) {
   }
 
   const template = `pages/${page}`
-  const {q} = req.query
+  const {q, id, dest} = req.query
   if (page === 'search' && q) {
     return search.run(q, (err, results) => {
       if (err) return next(err)
       res.render(template, {q, results})
+    })
+  }
+
+  if (page === 'move-file' && id) {
+    if (!dest) {
+      return move.getFolders(id, (err, folders) => {
+        if (err) return next(err)
+        const {prettyName, parents} = getMeta(id)
+
+        res.render(template, {prettyName, folders, id, parents})
+      })
+    }
+
+    return move.moveFile(id, dest, (err, newPath) => {
+      if (err) return next(err)
+
+      // if we were successful, we will be holding a new path
+      res.redirect(newPath)
     })
   }
 

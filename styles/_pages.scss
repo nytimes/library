@@ -381,3 +381,26 @@
     }
   }
 }
+
+#move-file-page {
+
+  li {
+    text-indent: 0;
+    display: block;
+  }
+
+  .folder {
+
+    i {
+      color: ($lighterpink * 0.5) + #333;
+    }
+
+    &.active {
+      > i {
+        color: #000;
+      }
+    }
+
+  }
+
+}

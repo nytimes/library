@@ -31,6 +31,7 @@ if (process.env.REDIS_URI) {
 // delay caching for 1 hour by default after editing, with env var override
 const noCacheDelay = parseInt(process.env.EDIT_CACHE_DELAY, 10) || 60 * 60
 
+exports.get = cache.get // expose the ability to retreive cache data internally
 // detects purge requests and serves cached responses when available
 exports.middleware = (req, res, next) => {
   // handle the purge request if purge or edit params are present

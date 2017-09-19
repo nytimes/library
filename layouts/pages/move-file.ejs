@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <%- include('../partials/head', {title: `Move ${locals.prettyName}`}) %>
+  <body>
+    <%- include('../partials/header', {parentLinks: [], title: `Move ${locals.prettyName}`}) %>
+
+    <div class="g-upper-body">
+    <%- include('../partials/nav') %>
+    </div>
+    <div class="g-body">
+      <div class="g-main-content" id="move-file-page">
+        <h2>Choose a folder to move '<%= locals.prettyName %>' to:</h2>
+        <%- include('../partials/folderList', {folders, id, parents}) %>
+      </div>
+      <%- include('../partials/footer', { pageType: 'search' }) %>
+    </div>
+  </body>
+</html>

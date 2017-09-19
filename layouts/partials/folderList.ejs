@@ -1,0 +1,20 @@
+<% if (folders.length) { %>
+<ul class="folder-list">
+<% } %>
+
+    <% folders.forEach(function(folder){ %>
+    <% var isActive = parents.includes(folder.id) %>
+    <li class="folder<%= isActive ? ' active' : ''%>">
+      <i class="fa foldericon fa-folder" aria-hidden="true"></i>
+      <% if (parents.includes(folder.id)) { %>
+        <%= folder.prettyName %>
+      <% } else { %>
+        <a href="?id=<%= locals.id %>&dest=<%= folder.id %>"><%= folder.prettyName %></a>
+      <% } %>
+      <%- include('./folderList', {folders: folder.children, id, parents}) %>
+    </li>
+    <% }) %>
+
+<% if (folders.length) { %>
+</ul>
+<% } %>
