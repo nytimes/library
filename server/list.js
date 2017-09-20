@@ -67,7 +67,6 @@ function updateTree(cb) {
         return cb(err)
       }
 
-      console.time('updating tree')
       currentTree = produceTree(files, teamDriveId)
       const count = Object.values(docsInfo)
         .filter((f) => f.resourceType !== 'folder')
@@ -304,7 +303,6 @@ function startTreeRefresh(interval) {
       log.debug('tree updated.')
     }
 
-    console.timeEnd('updating tree')
     setTimeout(() => { startTreeRefresh(interval) }, interval)
   })
 }
