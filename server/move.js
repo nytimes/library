@@ -81,22 +81,22 @@ exports.moveFile = (id, destination, cb) => {
 
 // converts raw tree data used for routing into sorted lists with resource
 function extendTree({id, children: keys}) {
-  const {prettyName, resourceType, sort} = getMeta(id) || {}
+  const {prettyName, resourceType, sort, isTrashCan} = getMeta(id) || {}
 
   const children = Object.values(keys || {})
-  const extended = children && children.length
+  const extended = children && children.length && !isTrashCan
     ? children.map(extendTree).sort(sortDocs)
     : []
 
-  return Object.assign({}, {id, prettyName, resourceType, sort}, { children: extended })
+  return Object.assign({}, {id, prettyName, resourceType, sort, isTrashCan}, { children: extended })
 }
 
-function selectFolders({id, prettyName, children}) {
+function selectFolders({id, prettyName, children, isTrashCan}) {
   const filtered = children
     .filter(isFolder)
     .map(selectFolders)
 
-  return {id, prettyName, children: filtered}
+  return {id, prettyName, children: filtered, isTrashCan}
 }
 
 function isFolder({resourceType}) {

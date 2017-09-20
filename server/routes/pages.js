@@ -71,7 +71,7 @@ function buildDisplayCategories(tree) {
   // Ignore pages at the root of the site on the category page
   const all = categories
     .map((c) => Object.assign({}, c, getMeta(c.id)))
-    .filter(({resourceType, tags, slug}) => resourceType === 'folder' && !tags.includes('hidden') && slug !== 'trash')
+    .filter(({resourceType, tags, isTrashCan}) => resourceType === 'folder' && !tags.includes('hidden') && !isTrashCan)
     .sort(sortDocs)
     .map((category) => {
       category.children = Object.values(category.children || {}).map(({id}) => {

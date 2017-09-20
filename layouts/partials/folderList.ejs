@@ -5,7 +5,8 @@
     <% folders.forEach(function(folder){ %>
     <% var isActive = parents.includes(folder.id) %>
     <li class="folder<%= isActive ? ' active' : ''%>">
-      <i class="fa foldericon fa-folder" aria-hidden="true"></i>
+      <% var iconClass = folder.isTrashCan ? 'trash' : 'folder' %>
+      <i class="fa foldericon fa-<%= iconClass %>" aria-hidden="true"></i>
       <% if (parents.includes(folder.id)) { %>
         <%= folder.prettyName %>
       <% } else { %>

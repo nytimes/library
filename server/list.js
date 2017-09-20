@@ -122,6 +122,7 @@ function produceTree(files, firstParent) {
 
     // prepare data for the individual file and store later for reference
     const prettyName = cleanName(name)
+    const slug = slugify(prettyName)
     const tagString = (name.match(/\|\s*([^|]+)$/i) || [])[1] || ''
     const tags = tagString.split(',')
       .map((t) => t.trim().toLowerCase())
@@ -132,7 +133,8 @@ function produceTree(files, firstParent) {
       tags,
       resourceType: cleanResourceType(resource.mimeType),
       sort: determineSort(name),
-      slug: slugify(prettyName)
+      slug,
+      isTrashCan: slug === 'trash' && parents.includes(teamDriveId)
     })
 
     // add the id of this item to a list of tags
@@ -185,9 +187,8 @@ function buildTreeFromData(rootParent, previousData, breadcrumb) {
     sort: parentInfo ? determineSort(parentInfo.name) : Infinity // some number here that could be used to sort later
   }
 
-  // extendItemsWithPath(rootParent, breadcrumb)
-  handleUpdates(rootParent, previousData) // detect redirects or purge cache
-  // @TODO: detect redirects around here
+  // detect redirects or purge cache for items not contained in trash
+  if (!parentInfo.isTrashCan) handleUpdates(rootParent, previousData)
 
   if (!children) {
     return parentNode
@@ -249,23 +250,13 @@ function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
     const newItem = docsInfo[id]
     const oldItem = lastInfo[id]
 
-    if ((oldItem && !oldItem.path) ||
-        (newItem && !newItem.path)) {
-      const whichItem = newItem.path ? 'old' : 'new'
-      const missingPath = whichItem === 'old' ? oldItem : newItem
-      log.warn('Found item without a path!', missingPath)
-    }
-
-    // just remove items from cache if they are trashed
-    const topPath = (newItem || {}).path || ''
-    const isTrashed = topPath.split('/')[1] === 'trash' && oldItem
-    // if a document is added or removed, we should purge it from cache
-    // this is also the case when doc is moved to trash
-    if (!isFirstRun && (!newItem || !oldItem || isTrashed)) {
-      const item = newItem && !isTrashed ? newItem : oldItem
+    // since we have a "trash" folder we need to account
+    // for both missing items and "trashed" items
+    const isTrashed = (item) => !item || item.path.split('/')[1] === 'trash'
+    if (!isFirstRun && (isTrashed(newItem) || isTrashed(oldItem))) {
+      const item = isTrashed(oldItem) ? newItem : oldItem
       const {path, modifiedTime} = item
-      const action = newItem ? 'Added' : 'Removed'
-      console.log('purging from item trashed:', path)
+      const action = isTrashed(oldItem) ? 'Added' : 'Removed'
       // @TODO: This does not restore deleted documents which are undone to the same location
       return cache.purge({
         url: path,
@@ -283,6 +274,8 @@ function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
     if (oldItem && newItem.path !== oldItem.path) {
       cache.redirect(oldItem.path, newItem.path, newItem.modifiedTime)
     } else {
+      // should we be calling purge every time?
+      // basically we are just calling purge because we don't know the last modified
       cache.purge({url: newItem.path, modified: newItem.modifiedTime})
     }
   })
