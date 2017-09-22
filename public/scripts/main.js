@@ -21,20 +21,6 @@ $(document).ready(function() {
     });
   }
 
-  // easter egg for moving files
-  // @TODO: implement actual restrictions to keep random people from moving other docs
-  var keysPressed = []
-  $document.on('keypress', function (e) {
-    var letter = String.fromCharCode(e.which)
-    keysPressed.push(letter)
-    keysPressed = keysPressed.slice(-4)
-
-    var word = keysPressed.join('')
-    console.log(word)
-    if (word === 'move') $('.move-file-button').show()
-  })
-
-
   $window.on('hashchange', correctHashScroll)
   correctHashScroll()
 

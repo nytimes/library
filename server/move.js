@@ -17,8 +17,12 @@ exports.getFolders = (id, cb) => {
 
     // map to just the data that we need, the ignore the top level drive entry
     const extended = extendTree(data)
-    const {children: filtered} = selectFolders(extended)
-    return cb(null, filtered)
+    const folders = Object.assign({}, selectFolders(extended), {
+      // The drive doesn't have the same props as other folders
+      prettyName: 'NYT Library',
+      isTrashCan: false
+    })
+    return cb(null, [folders])
   })
 }
 
@@ -26,7 +30,6 @@ exports.moveFile = (id, destination, cb) => {
   const {parents, slug} = getMeta(id) || {}
   const {path: basePath} = getMeta(destination) || {}
 
-  console.log(`id: ${id}, destination: ${destination}`)
   if (!parents) return cb(Error('Not found'))
 
   getAuth((err, authClient) => {
@@ -44,14 +47,21 @@ exports.moveFile = (id, destination, cb) => {
     }, (err, result) => {
       if (err) return cb(err)
 
+      const oldUrls = parents.map((id) => {
+        const {path} = getMeta(id) || {}
+        return path ? `${path}/${slug}` : `/${slug}`
+      })
+
       if (basePath === '/trash') {
+        oldUrls.forEach((url) => log.info(`TRASHED ${url}`))
         return cb(null, '/')
       }
 
-      const newUrl = `${basePath}/${slug}`
-      const oldUrls = parents.map((id) => {
-        const {path} = getMeta(id)
-        return `${path}/${slug}`
+      const newUrl = basePath ? `${basePath}/${slug}` : `/${slug}`
+
+      // log that we moved the page(s) to the new url
+      oldUrls.forEach((url) => {
+        log.info(`MOVED ${url} => ${newUrl}`)
       })
 
       // fake the drive updating immediately by manually copying cache
