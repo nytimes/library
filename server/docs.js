@@ -26,8 +26,10 @@ exports.cleanName = (name = '') => {
 }
 
 exports.slugify = (text = '') => {
-  const lower = text.toLowerCase()
-  return slugify(lower).replace(/['"]/g, '')
+  return slugify(text, {
+    remove: /[$*_+~.()'"!\-:@]/g,
+    lower: true
+  })
 }
 
 exports.processHtml = (html) => {
