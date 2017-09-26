@@ -13,6 +13,7 @@ const inflight = require('inflight')
 
 const {getAuth} = require('./auth')
 const log = require('./logger')
+const list = require('./list')
 
 const supportedTypes = new Set(['document', 'spreadsheet', 'text/html'])
 
@@ -260,13 +261,16 @@ function normalizeHtml(html) {
 
     // Google HTML wraps links in a google.com redirector, extract the original link at set this as an href
     if (el.tagName === 'a' && $(el).attr('href')) {
-      const hrefMatch = $(el).attr('href').match('https://www.google.com/url\\?q=(.+)&sa=')
-      if (hrefMatch) {
-        const decoded = qs.unescape(hrefMatch[1])
-        $(el).attr('href', decoded)
-      }
+      const [isRedirected, redirectUrl] = $(el).attr('href').match('https://www.google.com/url\\?q=(.+)&sa=')
+      if (!isRedirected) return el
 
-      // TODO if href is a drive or folder link, expand to docs.nyt.net link
+      const decoded = qs.unescape(redirectUrl)
+      const [isDoc, docId] = decoded.match(/docs\.google\.com.+\/d\/([^/]+)/i) || []
+
+      const {path: libraryPath} = isDoc ? list.getMeta(docId) || {} : {}
+
+      $(el).attr('href', libraryPath || decoded)
+      return el
     }
 
     return el
