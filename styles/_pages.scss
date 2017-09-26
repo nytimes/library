@@ -331,12 +331,14 @@
 // Categories Homepage
 //------------------------------------------------------------------------------
 #category-page {
+  max-width: 90%;
+
   .g-main-content {
-    max-width: 1024px;
+    max-width: 100%;
     display: flex;
     flex-flow: row wrap;
     border-top: 0;
-    justify-content: flex-start;
+    justify-content: center;
 
     .children-container {
       margin: 0 12px 30px 12px;
@@ -350,8 +352,14 @@
       @include tablet {
         width: 40.9%;
       }
+      @include smalldesktop {
+        width: 34.9%;
+      }
       @include desktop {
         width: 25.4%;
+      }
+      @include largedesktop {
+        width: 18.4%;
       }
 
       h3 {

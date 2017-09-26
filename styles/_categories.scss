@@ -278,23 +278,23 @@
       padding-left: 5px;
       list-style-type: none;
 
-      @include tablet{
-        column-count: 2;
-        -moz-column-count: 2;
-        -moz-columns: 2;
-        -webkit-columns: 2;
-        columns: 2;
-        column-gap: 2.67em;
-      }
-
-      @include desktop{
-        column-count: 2;
-        -moz-column-count: 2;
-        -moz-columns: 2;
-        -webkit-columns: 2;
-        columns: 2;
-        column-gap: 2.67em;
-      }
+      // @include tablet{
+      //   column-count: 2;
+      //   -moz-column-count: 2;
+      //   -moz-columns: 2;
+      //   -webkit-columns: 2;
+      //   columns: 2;
+      //   column-gap: 2.67em;
+      // }
+      //
+      // @include desktop{
+      //   column-count: 2;
+      //   -moz-column-count: 2;
+      //   -moz-columns: 2;
+      //   -webkit-columns: 2;
+      //   columns: 2;
+      //   column-gap: 2.67em;
+      // }
 
       .foldericon {
         color: #444;
