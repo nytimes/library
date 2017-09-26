@@ -270,7 +270,6 @@ function normalizeHtml(html) {
       const {path: libraryPath} = isDoc ? list.getMeta(docId) || {} : {}
 
       $(el).attr('href', libraryPath || decoded)
-      return el
     }
 
     return el
