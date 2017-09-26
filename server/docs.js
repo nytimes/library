@@ -261,7 +261,7 @@ function normalizeHtml(html) {
 
     // Google HTML wraps links in a google.com redirector, extract the original link at set this as an href
     if (el.tagName === 'a' && $(el).attr('href')) {
-      const [isRedirected, redirectUrl] = $(el).attr('href').match('https://www.google.com/url\\?q=(.+)&sa=')
+      const [isRedirected, redirectUrl] = $(el).attr('href').match('https://www.google.com/url\\?q=(.+)&sa=') || []
       if (!isRedirected) return el
 
       const decoded = qs.unescape(redirectUrl)
