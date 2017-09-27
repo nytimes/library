@@ -28,7 +28,7 @@ exports.cleanName = (name = '') => {
 
 exports.slugify = (text = '') => {
   return slugify(text, {
-    remove: /[$*_+~.()'"!\-:@]/g,
+    remove: /[$*_+~.()'"!\-:@#]/g,
     lower: true
   })
 }
@@ -184,6 +184,7 @@ function fetchHTML(drive, id, cb) {
     cb(err, html)
   })
 }
+
 function checkForTableOfContents($, aTags) {
   return aTags.length === 2 && // TOC links title and number
   aTags[0].attribs.href.match('#h.') && // the links go to a heading in the doc
@@ -191,6 +192,7 @@ function checkForTableOfContents($, aTags) {
   /(\d+$)/mg.test($(aTags[1]).text()) // the second link should contain only a number
 }
 
+// this is getting a little long, maybe tweak so that we do subtasks separately
 function normalizeHtml(html) {
   // scrub all &nbsp;s (if there is a &nbsp; in a code block it will be escaped)
   html = html.replace(/&nbsp;/g, ' ')
