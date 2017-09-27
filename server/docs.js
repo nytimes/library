@@ -28,7 +28,7 @@ exports.cleanName = (name = '') => {
 
 exports.slugify = (text = '') => {
   return slugify(text, {
-    remove: /[$*_+~.()'"!\-:@#]/g,
+    remove: /[$*_+~.()'"!\-:@#?]/g,
     lower: true
   })
 }
