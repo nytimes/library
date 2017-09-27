@@ -260,21 +260,20 @@
           -webkit-font-smoothing: antialiased;
         }
         li {
-          padding-left: 10px;
           margin-bottom: 7px;
           position: relative;
-
-          &:before {
-            content: '-';
-            color: #ccc;
-            left: 0;
-            position: absolute;
-          }
 
           &:last-of-type {
             &:before {
               display: none;
             }
+          }
+
+          .fa {
+            color: #aaa;
+            margin-right: 7px;
+            font-size: 14px;
+            line-height: 18px;
           }
         }
       }

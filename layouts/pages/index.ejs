@@ -13,7 +13,7 @@
       <div class="main-item">
         <%- include ../partials/branding %>
         <div class="tagline">
-          <p>A collection of tools and tips for creating great Times journalism. <a href="/faq">Get started.</a></p> 
+          <p>A collection of tools and tips for creating great Times journalism. <a href="/faq">Get started.</a></p>
         </div>
         <%- include('../partials/search', {style: 'homepage', focus: 'autofocus', msgOnFocus: 'What are you looking for?'}) %>
 
@@ -30,7 +30,25 @@
             <h3>Useful Docs</h3>
             <ul class="featured-cat-list">
               <% featured.forEach((doc) => { %>
-                <li><a href="<%= doc.path %>"><%= doc.prettyName %></a></li>
+                <% const type = doc.resourceType %>
+                <li>
+                  <%
+                  const iconMap = {
+                    document: 'file-o',
+                    spreadsheet: 'table',
+                    'text/html': 'file-o',
+                    folder: 'folder',
+                    presentation: 'clone',
+                    image: 'picture-o',
+                    video: 'video-camera',
+                    pdf: 'file-pdf-o'
+                  }
+                  const iconName = iconMap[type] || 'external-link'
+                  const className = `fa-${iconName}`
+                  %>
+                  <i class="fa foldericon <%= className %>" aria-hidden="true"></i>
+                  <a href="<%= doc.path %>"><%= doc.prettyName %></a>
+                </li>
               <% }) %>
               <li><a class="button btn-homepage" href="/categories">View All Docs</a></li>
             </ul>
