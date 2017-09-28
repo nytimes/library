@@ -64,14 +64,16 @@ function fetchHistory(userInfo, historyType, queryLimit, doneCb) {
           .filter('userId', '=', userInfo.userId)
           .order('lastViewedAt', { descending: true })
           .limit(datastoreLimit)
-
         datastoreClient.runQuery(query, cb)
       }
     ], (err, results) => {
       if (err) {
         doneCb(err)
       } else {
-        const hasName = ({doc}) => doc && doc.prettyName
+        const hasName = (result) => {
+          return (result && result.doc && result.doc.prettyName) ||
+                 (result && result.team && result.team.prettyName)
+        }
 
         const recentlyViewed = expandResults(results[1][0])
           .filter(hasName)
