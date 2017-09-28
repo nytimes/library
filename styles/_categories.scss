@@ -53,6 +53,29 @@
       }
     }
   }
+
+  .tool {
+    font-size: 13px;
+    font-weight: 400;
+
+    a {
+      color: #999;
+      text-decoration: underline;
+      .fa {
+        margin-left: 5px;
+        color: #999;
+      }
+    }
+
+    a:hover {
+      color: $pink;
+      .fa {
+        color: $pink;
+      }
+    }
+
+
+  }
 }
 
 
