@@ -90,7 +90,7 @@
   .g-left-panel {
     float: left;
     position: relative;
-    top: 40px;
+    top: 8px;
     width: 220px;
     font-weight: 300;
     padding: 10px 20px;
@@ -103,7 +103,14 @@
   	}
   	@include desktop{
   		display: block;
+      padding: 10px 0;
+      width: 180px;
   	}
+    @media (min-width: 1175px) {
+      display: block;
+      padding: 10px 20px;
+      width: 220px;
+    }
 
     &.d-fixed {
       position: fixed;
@@ -241,7 +248,7 @@
     }
 
     img {
-      max-width: calc(100vw - 20px);
+      max-width: calc(100vw - 80px);
       border: 1px solid #ddd;
       padding: 10px;
       display: block;
@@ -253,7 +260,6 @@
       @include desktop{
         max-width: 580px;
       }
-
     }
 
     /* google output sometimes breaks <li>s across separate
