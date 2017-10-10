@@ -27,8 +27,9 @@ exports.cleanName = (name = '') => {
 }
 
 exports.slugify = (text = '') => {
-  return slugify(text, {
-    remove: /[$*_+~.()'"!\-:@#?]/g,
+  // convert non alpha numeric into whitespace, rather than removing
+  const alphaNumeric = text.replace(/[^\w\d]/g, ' ')
+  return slugify(alphaNumeric, {
     lower: true
   })
 }

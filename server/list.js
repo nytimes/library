@@ -86,7 +86,8 @@ function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive} = {}, c
     corpora: 'teamDrive',
     supportsTeamDrives: true,
     includeTeamDriveItems: true,
-    fields: '*',
+    // fields: '*', // setting fields to '*' returns all fields but ignores pageSize
+    fields: 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)',
     pageSize: 1000 // this value does not seem to be doing anything
   }
 
@@ -94,6 +95,7 @@ function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive} = {}, c
     options.pageToken = pageToken
   }
 
+  log.debug(`searching for files > ${listSoFar.length}`)
   drive.files.list(options, (err, data) => {
     if (err) return cb(err)
 
