@@ -115,7 +115,7 @@ function personalizeHomepage(userId) {
     }).join('')
 
     $('ul.teams-cat-list').prepend(items)
-    $('ul.teams-cat-list li:gt(' + expectedLength + ')').detach()
+    $('ul.teams-cat-list li:gt(' + (expectedLength - 1) + ')').detach()
   })
 
   /*
