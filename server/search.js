@@ -18,8 +18,8 @@ exports.run = (query, cb) => {
       }
 
       const fileMetas = files
-        .map((file) => { return list.getMeta(file.id) })
-        .filter(({path}) => path.split('/')[1] !== 'trash')
+        .map((file) => { return list.getMeta(file.id) || {} })
+        .filter(({path}) => (path || '').split('/')[1] !== 'trash')
       cb(null, fileMetas)
     })
   })

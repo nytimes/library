@@ -21,7 +21,7 @@ exports.cleanName = (name = '') => {
   return name
     .trim()
     .replace(/^\d+[-–—_\s]*/, '') // remove leading numbers and delimiters
-    .replace(/\|\s*([^|]+)$/i, '')
+    .replace(/\s*\|\s*([^|]+)$/i, '')
     .replace(/\W+home$/i, '')
     .replace(/\.[^.]+$/, '') // remove file extensions
 }

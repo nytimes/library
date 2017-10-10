@@ -73,7 +73,7 @@ exports.moveFile = (id, destination, cb) => {
         if (err) return cb(null, '/')
 
         const hasHtml = data.filter(({html}) => html && html.length)
-        if (!hasHtml) return cb(null, '/') // take back to the home page
+        if (!hasHtml.length) return cb(null, '/') // take back to the home page
 
         const {id, modified, html} = hasHtml[0]
         cache.add(id, modified, newUrl, html, (err) => {

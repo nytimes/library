@@ -214,11 +214,16 @@ function addPaths(byId) {
     }, {})
 
   function derivePathInfo(item) {
-    const {parents, slug, webViewLink: drivePath, isHome, resourceType} = item
+    const {parents, slug, webViewLink: drivePath, isHome, resourceType} = item || {}
     const parentId = parents[0]
     const hasParent = parentId && parentId !== teamDriveId
     const parent = byId[parentId]
     const renderInLibrary = isSupported(resourceType)
+
+    if (hasParent && !parent) {
+      log.warn(`Found file (${item.name}) with parent (${parentId}) but no parent info!`)
+      return {}
+    }
 
     const parentInfo = hasParent ? derivePathInfo(parent) : {path: '/', tags: []}
     const libraryPath = isHome ? parentInfo.path : path.join(parentInfo.path, slug)
