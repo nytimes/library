@@ -106,6 +106,7 @@ function personalizeHomepage(userId) {
   // Personalize the team listing on the left.
   // Most-frequently-visited teams are inserted at the top, then padded with default entries.
   fetchHistory('teams', userId, function(data) {
+    var expectedLength = $('.teams-cat-list li').length
     var items = data.mostViewed.map(function(el) {
       // kill existing elements that on the mostViewed list to avoid dupes
       $('ul.teams-cat-list li[data-team-id="' + el.team.id + '"]').detach()
@@ -113,9 +114,8 @@ function personalizeHomepage(userId) {
       return '<li><a class="button btn-cat" href="' + el.team.path + '">' + el.team.prettyName + '</a></li>'
     }).join('')
 
-    var numToPrune = $('ul.teams-cat-list li').length - data.mostViewed.length
-    $('ul.teams-cat-list li:gt(' + numToPrune + ')').detach()
     $('ul.teams-cat-list').prepend(items)
+    $('ul.teams-cat-list li:gt(' + expectedLength + ')').detach()
   })
 
   /*

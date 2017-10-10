@@ -21,7 +21,7 @@
           <div class="teams-cat-container">
             <h3>Find by Team</h3>
             <ul class="teams-cat-list">
-              <% teams.forEach((team) => { %>
+              <% teams.slice(0, 6).forEach((team) => { %>
                 <li data-team-id="<%= team.id %>"><a class="button btn-cat" href="<%= team.path %>"><%= team.prettyName %></a></li>
               <% }) %>
             </ul>

@@ -27,7 +27,7 @@
     "supertest": "^3.0.0",
     "supertest-as-promised": "^4.0.2",
     "unescape": "^1.0.1",
-    "winston": "^2.3.1",
+    "winston": "^2.4.0",
     "xlsx": "^0.11.0"
   },
   "devDependencies": {
@@ -48,7 +48,7 @@
     "start": "node server/index.js",
     "build": "node-sass styles/style.scss public/css/style.css",
     "debug": "node -r dotenv/config --inspect --debug-brk server/index.js",
-    "watch": "concurrently \"nodemon -r dotenv/config server/index.js\" \"node-sass -w styles/style.scss public/css/style.css\"",
+    "watch": "concurrently \"nodemon -r dotenv/config -e js,ejs server/index.js\" \"node-sass -w styles/style.scss public/css/style.css\"",
     "test": "NODE_ENV=test mocha test/unit --recursive",
     "test:cover": "nyc --reporter=html --reporter=text mocha test/unit --recursive"
   },
