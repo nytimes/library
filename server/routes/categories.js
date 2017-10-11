@@ -146,14 +146,16 @@ function createRelatedList(slugs, self, baseUrl) {
     .filter((slug) => slug !== self)
     .map((slug) => {
       const {id} = slugs[slug]
-      const {sort, prettyName, webViewLink, path: url, resourceType} = getMeta(id)
+      const {sort, prettyName, webViewLink, path: url, resourceType, tags} = getMeta(id)
       return {
         sort,
         name: prettyName,
         editLink: webViewLink,
         resourceType,
-        url
+        url,
+        tags
       }
     })
+    .filter(({tags}) => !tags.includes('hidden'))
     .sort(sortDocs)
 }
