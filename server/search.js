@@ -19,7 +19,7 @@ exports.run = (query, cb) => {
 
       const fileMetas = files
         .map((file) => { return list.getMeta(file.id) || {} })
-        .filter(({path}) => (path || '').split('/')[1] !== 'trash')
+        .filter(({path, tags}) => (path || '').split('/')[1] !== 'trash' && !tags.includes('hidden'))
       cb(null, fileMetas)
     })
   })
