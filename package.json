@@ -5,7 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "@google-cloud/datastore": "^1.0.6",
-    "***REMOVED***": ">=0.0.2",
+    "***REMOVED***": ">=0.0.7",
     "airbrake": "^2.0.1",
     "assert": "^1.4.1",
     "async": "^2.4.1",
