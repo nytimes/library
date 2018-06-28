@@ -131,8 +131,6 @@ function checkForTableOfContents($, aTags) {
 }
 
 /** BETA API JSON PARSING BELOW */
-
-
 function formatParagraph(json) {
   const text = json.elements.map((elt) => {
     if (elt.textRun) {
@@ -191,7 +189,6 @@ function jsonToHtml(json) {
   })
   return html
 }
-
 
 exports.getProcessedHtml = (src) => {
   if (process.env.BETA_API) {

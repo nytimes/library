@@ -108,7 +108,6 @@ function fetch({id, resourceType}, authClient, cb) {
           mimeType: resourceType === 'presentation' ? 'text/plain' : 'text/html'
         }, (err, {data}) => cb(err, data)) // this prevents receiving an array (?)
       }
-
     },
     (cb) => {
       drive.revisions.get({
@@ -186,7 +185,6 @@ function fetchHTML(drive, id, cb) {
     cb(err, html)
   })
 }
-
 
 function getSections(html) {
   const $ = cheerio.load(html)
