@@ -134,7 +134,13 @@ function checkForTableOfContents($, aTags) {
 
 
 function formatParagraph(json) {
-  const text = json.elements.map((elt) => elt.textRun.content).join()
+  const text = json.elements.map((elt) => {
+    if (elt.textRun) {
+      const content = elt.textRun.content
+      return content === '\n' ? '' : content
+    }
+    // TODO: handle inline objects
+  }).join('')
   return `<p>${text}</p>`
 }
 

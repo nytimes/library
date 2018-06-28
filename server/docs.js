@@ -93,10 +93,22 @@ function fetch({id, resourceType}, authClient, cb) {
         return fetchHTML(drive, id, cb)
       }
 
-      drive.files.export({
-        fileId: id,
-        mimeType: resourceType === 'presentation' ? 'text/plain' : 'text/html'
-      }, (err, {data}) => cb(err, data)) // this prevents receiving an array (?)
+      if (process.env.BETA_API) {
+        google.discoverAPI(`***REMOVED***${process.env.API_KEY}`)
+          .then((docs) => {
+            docs.documents.get({
+              name: `documents/${id}`
+            }, (err, {data}) => {
+              cb(err, data)
+            })
+          })
+      } else {
+        drive.files.export({
+          fileId: id,
+          mimeType: resourceType === 'presentation' ? 'text/plain' : 'text/html'
+        }, (err, {data}) => cb(err, data)) // this prevents receiving an array (?)
+      }
+
     },
     (cb) => {
       drive.revisions.get({
