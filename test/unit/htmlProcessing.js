@@ -1,13 +1,13 @@
 const fs = require('fs')
 const path = require('path')
-const docs = require('../../server/docs')
+const formatter = require('../../server/formatter')
 const cheerio = require('cheerio')
 const assert = require('chai').assert
 
 describe('HTML processing', () => {
   before(function () {
     this.rawHTML = fs.readFileSync(path.join(__dirname, '../utils/supportedFormats.html'), { encoding: 'utf8' })
-    this.processedHTML = docs.processHtml(this.rawHTML)
+    this.processedHTML = formatter.getProcessedHtml(this.rawHTML)
     this.output = cheerio.load(this.processedHTML)
   })
 
