@@ -65,15 +65,14 @@ function handleCategory(req, res, next) {
         return next(err)
       }
 
-      // we need this for history later
-      res.locals.docId = data.id
-
-      const payload = fetchByline(html, originalRevision.lastModifyingUser.displayName)
+      res.locals.docId = data.id // we need this for history later
+      const revisionData = originalRevision.data
+      const payload = fetchByline(html, revisionData.lastModifyingUser.displayName)
 
       res.render(template, Object.assign({}, baseRenderData, {
         content: payload.html,
         byline: payload.byline,
-        createdBy: originalRevision.lastModifyingUser.displayName,
+        createdBy: revisionData.lastModifyingUser.displayName,
         sections
       }), (err, html) => {
         if (err) return next(err)
