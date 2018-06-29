@@ -131,7 +131,8 @@ function checkForTableOfContents($, aTags) {
 }
 
 /** BETA API JSON PARSING BELOW */
-function htmlEncode(str){
+
+function htmlEncode(str) {
   return str.replace(/[\x26<>'"]/g, (str) => {
     return `&#${str.charCodeAt(0)};`
   })
@@ -141,14 +142,25 @@ function formatCodeInline(textRun) {
   return textRun.replace(/`([^`].*?)`/g, '<tt>$1</tt>')
 }
 
+function formatCodeBlocks(html) {
+  const codeBlockRe = /<p>```(.+?)?\n?<\/p><p>(.*\n)?<\/p><p>```/gi
+  html = html.replace(codeBlockRe, (match, codeType, content) => {
+    // newlines are sometimes LINE TABULATIONs for some reason
+    content = content.replace(/\u000b/gi, '\n')
+    return `<pre type="${codeType}">${content}</pre>`
+  })
+  return html
+}
+
 function formatParagraph(json) {
   const text = json.elements.map((elt) => {
     if (elt.textRun) {
       let content = htmlEncode(elt.textRun.content)
       content = formatCodeInline(content)
-      return content === '\n' ? '' : content
+      return content
     }
-    // TODO: handle inline objects
+
+    // TODO: handle inline objects when the API makes them available
   }).join('')
   return `<p>${text}</p>`
 }
@@ -198,6 +210,8 @@ function jsonToHtml(json) {
       }
     })
   })
+
+  html = formatCodeBlocks(html)
   return html
 }
 
