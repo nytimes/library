@@ -131,10 +131,21 @@ function checkForTableOfContents($, aTags) {
 }
 
 /** BETA API JSON PARSING BELOW */
+function htmlEncode(str){
+  return str.replace(/[\x26<>'"]/g, (str) => {
+    return `&#${str.charCodeAt(0)};`
+  })
+}
+
+function formatCodeInline(textRun) {
+  return textRun.replace(/`([^`].*?)`/g, '<tt>$1</tt>')
+}
+
 function formatParagraph(json) {
   const text = json.elements.map((elt) => {
     if (elt.textRun) {
-      const content = elt.textRun.content
+      let content = htmlEncode(elt.textRun.content)
+      content = formatCodeInline(content)
       return content === '\n' ? '' : content
     }
     // TODO: handle inline objects
