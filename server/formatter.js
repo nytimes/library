@@ -143,7 +143,7 @@ function formatCodeInline(textRun) {
 }
 
 function formatCodeBlocks(html) {
-  const codeBlockRe = /<p>```(.+?)?\n?<\/p><p>(.*\n)?<\/p><p>```/gi
+  const codeBlockRe = /<p>```(.+?)?\n?<\/p><p>(.*\n)?.*?\n?<\/p><p>```/gi
   html = html.replace(codeBlockRe, (match, codeType, content) => {
     // newlines are sometimes LINE TABULATIONs for some reason
     content = content.replace(/\u000b/gi, '\n')
