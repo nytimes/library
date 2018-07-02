@@ -4,6 +4,9 @@ const path = require('path')
 const md5 = require('md5')
 const yaml = require('js-yaml')
 
+// Name of yaml file in config folder
+const configFile = 'strings.yaml'
+
 const layoutsDir = path.join(__dirname, '../layouts')
 exports.getTemplates = (subfolder) => {
   return (fs.readdirSync(path.join(layoutsDir, subfolder)) || [])
@@ -47,4 +50,4 @@ exports.getUserInfo = (req) => {
 }
 
 // TODO: refactor function to extend a custom config from base?
-exports.config = yaml.safeLoad(fs.readFileSync('./config/strings.yaml'), 'utf8')
+exports.config = yaml.safeLoad(fs.readFileSync(path.join(__dirname, '../config', configFile)), 'utf8')

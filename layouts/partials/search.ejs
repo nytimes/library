@@ -2,7 +2,7 @@
   <form method="GET" action="/search" class="search-container">
     <% const focus = locals.focus || '' %>
     <% const msgOnFocus = locals.msgOnFocus || '' %>
-    <input <%= focus %> id="search-box" type="text" name="q" value="<%= locals.q %>" placeholder="What are you looking for?" onfocus="this.placeholder = '<%= msgOnFocus %>'" onblur="this.placeholder = 'What are you looking for?'"/>
+    <input <%= focus %> id="search-box" type="text" name="q" value="<%= locals.q %>" placeholder=<%= config.search_placeholder %> onfocus="this.placeholder = '<%= msgOnFocus %>'" onblur="this.placeholder = <%= config.search_placeholder %>"/>
     <button class="icon"><i class="fa fa-search"></i></button>
   </form>
 
