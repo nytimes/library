@@ -1,5 +1,5 @@
 const fs = require('fs')
-const google = require('googleapis')
+const {google} = require('googleapis')
 const {getAuth} = require('../../server/auth')
 
 // Run this from root of project as "node test/data/update.js"

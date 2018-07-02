@@ -1,6 +1,6 @@
 'use strict'
 
-const google = require('googleapis')
+const {google} = require('googleapis')
 const {getAuth} = require('./auth')
 const list = require('./list')
 const teamDriveId = '***REMOVED***'
@@ -35,9 +35,7 @@ function fullSearch({drive, query, results = [], next}, cb) {
     fields: '*'
   }
 
-  if (next) options.pageToken = next
-
-  drive.files.list(options, (err, {files, nextPageToken: next}) => {
+  drive.files.list(options, (err, {data: {files, nextPageToken: next}}) => {
     if (err) return cb(err)
 
     const total = results.concat(files)

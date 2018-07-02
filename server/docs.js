@@ -3,7 +3,7 @@
 const qs = require('querystring')
 
 const async = require('async')
-const google = require('googleapis')
+const {google} = require('googleapis')
 const cheerio = require('cheerio')
 const pretty = require('pretty')
 const unescape = require('unescape')
@@ -108,7 +108,7 @@ function fetch({id, resourceType}, authClient, cb) {
       drive.files.export({
         fileId: id,
         mimeType: resourceType === 'presentation' ? 'text/plain' : 'text/html'
-      }, (err, data) => cb(err, data)) // this prevents receiving an array (?)
+      }, (err, {data}) => cb(err, data)) // this prevents receiving an array (?)
     },
     (cb) => {
       drive.revisions.get({
