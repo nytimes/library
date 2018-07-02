@@ -80,7 +80,9 @@ exports.middleware = (req, res, next) => {
 }
 
 exports.add = (id, newModified, path, html, cb = () => {}) => {
+  // don't cache if using beta
   if (process.env.BETA_API === 'true') return cb()
+
   if (!newModified) return cb(new Error('Refusing to store new item without modified time.'))
 
   cache.get(path, (err, data) => {

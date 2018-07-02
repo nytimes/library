@@ -94,10 +94,7 @@ function fetch({id, resourceType}, authClient, cb) {
         return fetchHTML(drive, id, cb)
       }
 
-      const useBeta = process.env.BETA_API === 'true'
-      console.log('in docs we have', !!useBeta);
-      if (useBeta) {
-        console.log('hi');
+      if (process.env.BETA_API === 'true') {
         google.discoverAPI(`***REMOVED***${process.env.API_KEY}`)
           .then((docs) => {
             docs.documents.get({
