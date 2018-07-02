@@ -1,0 +1,4 @@
+branding:
+  # Name of the app
+  name: Library
+  icon: '/assets/images/nyt-T-logo.png'

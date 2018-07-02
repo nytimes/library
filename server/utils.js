@@ -46,4 +46,5 @@ exports.getUserInfo = (req) => {
   }
 }
 
-exports.parseYaml = () => yaml.safeLoad(fs.readFileSync('./config.yml'), 'utf8')
+// TODO: refactor function to extend base config?
+exports.config = yaml.safeLoad(fs.readFileSync('./config/nyt-strings.yaml'), 'utf8')
