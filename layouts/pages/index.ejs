@@ -15,7 +15,8 @@
         <div class="tagline">
           <p><%= config.tagline %> <a href="/faq">Get started.</a></p>
         </div>
-        <%- include('../partials/search', {style: 'homepage', focus: 'autofocus', msgOnFocus: 'What are you looking for?'}) %>
+        <% const searchPlaceholder = config.search_placeholder%>
+        <%- include('../partials/search', {style: 'homepage', focus: 'autofocus', msgOnFocus: searchPlaceholder}) %>
 
         <div class="featured-cat">
           <div class="teams-cat-container">

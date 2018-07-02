@@ -14,6 +14,7 @@ const inflight = require('inflight')
 const {getAuth} = require('./auth')
 const log = require('./logger')
 const list = require('./list')
+const {config} = require('./utils')
 
 const supportedTypes = new Set(['document', 'spreadsheet', 'text/html'])
 
@@ -55,7 +56,7 @@ exports.fetchDoc = ({id, resourceType}, cb) => {
       html = exports.processHtml(html)
       const sections = getSections(html)
       // maybe we should pull out headers here
-      cb(err, {html, originalRevision, sections})
+      cb(err, {html, originalRevision, sections, config})
     })
   })
 }
