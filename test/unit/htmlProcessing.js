@@ -1,11 +1,11 @@
 const fs = require('fs')
 const path = require('path')
-const formatter = require('../../server/formatter')
 const cheerio = require('cheerio')
 const { assert } = require('chai')
 
 describe('HTML processing', () => {
   before(function () {
+    const formatter = require('../../server/formatter')
     this.rawHTML = fs.readFileSync(path.join(__dirname, '../fixtures/supportedFormats.html'), { encoding: 'utf8' })
     this.processedHTML = formatter.getProcessedHtml(this.rawHTML)
     this.output = cheerio.load(this.processedHTML)
@@ -101,6 +101,7 @@ describe('HTML processing', () => {
 
 describe('JSON Payload Formatting', () => {
   before(function () {
+    const formatter = require('../../server/formatter-beta')
     const payload = require('../fixtures/docv4.json')
     this.rawJSON = payload
     this.processedJSON = formatter.jsonToHtml(this.rawJSON)

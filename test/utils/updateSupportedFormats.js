@@ -23,7 +23,7 @@ getAuth((err, auth) => {
   google.discoverAPI(`***REMOVED***${process.env.API_KEY}`).then((docs) => {
     docs.documents.get({ name: `documents/${TEST_FILE_ID}` }, (err, {data}) => {
       if (err) { return console.log('Failed fetching v4 file!', err) }
-      const json = JSON.stringify(data, null, 2)
+      const json = JSON.stringify(data)
       fs.writeFileSync('test/fixtures/docv4.json', json, { encoding: 'utf8' })
       console.log('Successfully fetched v4 json payload.')
     })
