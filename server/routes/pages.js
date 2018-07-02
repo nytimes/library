@@ -7,7 +7,7 @@ const move = require('../move')
 const router = express.Router()
 
 const {getTree, getMeta, getTagged} = require('../list')
-const {getTemplates, sortDocs} = require('../utils')
+const {getTemplates, sortDocs, getConfig} = require('../utils')
 
 router.get('/', handlePage)
 router.get('/:page', handlePage)

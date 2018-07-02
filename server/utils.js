@@ -2,6 +2,7 @@
 const fs = require('fs')
 const path = require('path')
 const md5 = require('md5')
+const yaml = require('js-yaml')
 
 const layoutsDir = path.join(__dirname, '../layouts')
 exports.getTemplates = (subfolder) => {
@@ -44,3 +45,5 @@ exports.getUserInfo = (req) => {
     analyticsUserId: md5(req.headers['auth.verified_sub'] + 'library')
   }
 }
+
+exports.parseYaml = () => yaml.safeLoad(fs.readFileSync('./config.yml'), 'utf8')
