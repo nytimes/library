@@ -1,7 +1,7 @@
 'use strict'
 
 const inflight = require('inflight')
-const google = require('googleapis')
+const {google} = require('googleapis')
 const path = require('path')
 
 const cache = require('./cache')
@@ -66,7 +66,6 @@ function updateTree(cb) {
       if (err) {
         return cb(err)
       }
-
       currentTree = produceTree(files, teamDriveId)
       const count = Object.values(docsInfo)
         .filter((f) => f.resourceType !== 'folder')
@@ -96,7 +95,7 @@ function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive} = {}, c
   }
 
   log.debug(`searching for files > ${listSoFar.length}`)
-  drive.files.list(options, (err, data) => {
+  drive.files.list(options, (err, {data}) => {
     if (err) return cb(err)
 
     // don't pull these out in param because explicit null/undefined is passed

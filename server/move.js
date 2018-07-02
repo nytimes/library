@@ -1,5 +1,5 @@
 'use strict'
-const google = require('googleapis')
+const {google} = require('googleapis')
 const async = require('async')
 
 const log = require('./logger')

@@ -3,7 +3,7 @@
 const path = require('path')
 
 const inflight = require('inflight')
-const google = require('googleapis')
+const {google} = require('googleapis')
 
 const log = require('./logger')
 
@@ -43,7 +43,7 @@ function setAuthClient(cb) {
         'https://www.googleapis.com/auth/datastore'
       ])
     }
-
+    google.options({auth: authClient})
     log.info('Google API auth successfully retrieved.')
     cb(null, authClient)
   })
