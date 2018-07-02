@@ -143,9 +143,10 @@ function formatCodeInline(textRun) {
 }
 
 function formatCodeBlocks(html) {
-  const codeBlockRe = /<p>```(.+?)?\n?<\/p><p>(.*\n)?.*?\n?<\/p><p>```/gi
+  const codeBlockRe = /<p>```(.+)?\n?([\s\S]*?)<p>```/gi
   html = html.replace(codeBlockRe, (match, codeType, content) => {
     // newlines are sometimes LINE TABULATIONs for some reason
+    content = content.replace(/<\/p><p>/g, '\n').replace(/<\/?p>/g, '')
     content = content.replace(/\u000b/gi, '\n')
     return `<pre type="${codeType}">${content}</pre>`
   })
@@ -212,7 +213,7 @@ function jsonToHtml(json) {
   })
 
   html = formatCodeBlocks(html)
-  return html
+  return pretty(html)
 }
 
 exports.getProcessedHtml = (src) => {
