@@ -9,7 +9,6 @@ const inflight = require('inflight')
 
 const {getAuth} = require('./auth')
 const log = require('./logger')
-const formatter = process.env.BETA_API ? require('./formatter-beta') : require('./formatter')
 
 const supportedTypes = new Set(['document', 'spreadsheet', 'text/html'])
 
@@ -31,6 +30,8 @@ exports.slugify = (text = '') => {
 }
 
 exports.fetchDoc = ({id, resourceType}, cb) => {
+  const useBeta = process.env.BETA_API === 'true'
+  const formatter = useBeta ? require('./formatter-beta') : require('./formatter')
   cb = inflight(id, cb)
   if (!cb) return
 
@@ -93,7 +94,10 @@ function fetch({id, resourceType}, authClient, cb) {
         return fetchHTML(drive, id, cb)
       }
 
-      if (process.env.BETA_API) {
+      const useBeta = process.env.BETA_API === 'true'
+      console.log('in docs we have', !!useBeta);
+      if (useBeta) {
+        console.log('hi');
         google.discoverAPI(`***REMOVED***${process.env.API_KEY}`)
           .then((docs) => {
             docs.documents.get({

@@ -44,6 +44,9 @@ app.get('/view-on-site/:docId', (req, res, next) => {
 app.use(readingHistory.middleware)
 // don't allow using cache for normal pages
 app.use((req, res, next) => {
+  process.env.BETA_API = Object.keys(req.query).includes('beta')
+  delete require.cache[require.resolve('./formatter')]
+
   res.set('Cache-Control', 'no-cache')
   next()
 })
