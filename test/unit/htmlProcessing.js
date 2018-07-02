@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const formatter = require('../../server/formatter')
 const cheerio = require('cheerio')
-const { assert, expect } = require('chai')
+const { assert } = require('chai')
 
 describe('HTML processing', () => {
   before(function () {
@@ -43,9 +43,9 @@ describe('HTML processing', () => {
     })
 
     it('preserves image widths', function () {
-      const imageWidth = this.output("img").first()
-      const width_match = imageWidth.attr('style').match('width')
-      assert.isNotNull(width_match)
+      const imageWidth = this.output('img').first()
+      const widthMatch = imageWidth.attr('style').match('width')
+      assert.isNotNull(widthMatch)
     })
   })
 
@@ -101,7 +101,7 @@ describe('HTML processing', () => {
 
 describe('JSON Payload Formatting', () => {
   before(function () {
-    const payload = require('../fixtures/docV4.json')
+    const payload = require('../fixtures/docv4.json')
     this.rawJSON = payload
     this.processedJSON = formatter.jsonToHtml(this.rawJSON)
     this.output = cheerio.load(this.processedJSON)
@@ -113,7 +113,7 @@ describe('JSON Payload Formatting', () => {
       assert.match(codeBlock.html(), /&amp;nbsp/)
     })
 
-    it('preserves whitespace at the start of a line', function () {
+    it('preserves whitespace/tabs at the start of a line', function () {
       const codeBlock = this.output('pre')
       assert.match(codeBlock.html(), /[ \w\t]+jQuery.fn.calcSubWidth/)
     })
