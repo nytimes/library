@@ -5,7 +5,7 @@ const md5 = require('md5')
 const yaml = require('js-yaml')
 
 // Name of yaml file in config folder
-const configFile = 'strings.yaml'
+const configFile = 'default-strings.yaml'
 
 const layoutsDir = path.join(__dirname, '../layouts')
 exports.getTemplates = (subfolder) => {
