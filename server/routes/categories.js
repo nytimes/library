@@ -9,7 +9,7 @@ const cache = require('../cache')
 const log = require('../logger')
 const {getTree, getMeta} = require('../list')
 const {fetchDoc, cleanName, fetchByline} = require('../docs')
-const {getTemplates, sortDocs} = require('../utils')
+const {getTemplates, sortDocs, config} = require('../utils')
 
 router.get('*', handleCategory)
 module.exports = router
@@ -45,7 +45,8 @@ function handleCategory(req, res, next) {
       modifiedAt: meta.modifiedTime,
       createdAt: moment(meta.createdTime).fromNow(),
       editLink: meta.webViewLink,
-      id
+      id,
+      config
     })
 
     // if this is a folder, just render from the generic data

@@ -1,4 +1,4 @@
-branding:
-  # Name of the app
-  name: Library
-  icon: '/assets/images/nyt-T-logo.png'
+name: Library
+icon: '/assets/images/nyt-T-logo.png'
+tagline: 'A collection of tools and tips for creating great Times journalism.'
+# help_text: 'For help contributing or to report a problem, email ***REMOVED*** or leave a message in the #library slack channel.'

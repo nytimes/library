@@ -3,12 +3,12 @@
     <% const shouldLink = locals.context !== 'home' %>
     <% if (shouldLink) { %><a id="branding-heading-link" href="/"><% } %>
       <span class="visually-hidden">The New York Times</span>
-      <img src=<%=config.branding.icon%> class="nyt-logo" alt="The New York Times">
+      <img src=<%= config.icon %> class="nyt-logo" alt="The New York Times">
     <% if (shouldLink) { %></a><% } %>
   </h2>
   <h3 class="branding-label">
     <% if (shouldLink) { %><a class="content-link" href="/"><% } %>
-      <%=config.branding.name%>
+      <%= config.name %>
     <% if (shouldLink) { %></a><% } %>
   </h3>
 </div>

@@ -13,7 +13,7 @@
       <div class="main-item">
         <%- include('../partials/branding', {context: 'home'}) %>
         <div class="tagline">
-          <p>A collection of tools and tips for creating great Times journalism. <a href="/faq">Get started.</a></p>
+          <p><%= config.tagline %> <a href="/faq">Get started.</a></p>
         </div>
         <%- include('../partials/search', {style: 'homepage', focus: 'autofocus', msgOnFocus: 'What are you looking for?'}) %>
 

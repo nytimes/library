@@ -1,4 +1,4 @@
-branding:
-  # Name of the app
-  name: Lib
-  icon: "https://***REMOVED***"
+# Name of the app
+name: Lib
+icon: "https://***REMOVED***"
+tagline: One place for your organization's documents.
