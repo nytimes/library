@@ -3,6 +3,7 @@ const cheerio = require('cheerio')
 const qs = require('querystring')
 const unescape = require('unescape')
 const list = require('./list')
+const log = require('./logger')
 
 // this is getting a little long, maybe tweak so that we do subtasks separately
 function normalizeHtml(html) {
@@ -138,8 +139,12 @@ function htmlEncode(str) {
   })
 }
 
+function scrubSmartQuotes(text) {
+  return text.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"')
+}
+
 function formatCodeInline(textRun) {
-  return textRun.replace(/`([^`].*?)`/g, '<tt>$1</tt>')
+  return scrubSmartQuotes(textRun.replace(/`([^`].*?)`/g, '<tt>$1</tt>'))
 }
 
 function formatCodeBlocks(html) {
@@ -151,7 +156,7 @@ function formatCodeBlocks(html) {
     content = content.replace(/\u000b/gi, '\n').replace(/\n$/, '')
     return `<pre type="${codeType}">${content}</pre>`
   })
-  return html
+  return scrubSmartQuotes(html)
 }
 
 function formatParagraph(json) {
@@ -174,7 +179,7 @@ function formatTable(json) {
   rows.forEach((row) => {
     let rowHtml = ''
     row.tableCells.forEach((cell) => {
-      const cellContents = exports.getHtml(cell)
+      const cellContents = exports.jsonToHtml(cell)
       const colspan = cell.tableCellStyle.columnSpan
       rowHtml += colspan > 1 ? `<td colspan="${colspan}">${cellContents}</td>`
                              : `<td>${cellContents}</td>`
@@ -184,11 +189,7 @@ function formatTable(json) {
   return `<table>${html}</table>`
 }
 
-function formatToC() {
-
-}
-
-function jsonToHtml(json) {
+exports.jsonToHtml = (json) => {
   const body = json.body ? json.body.content : json.content
   let html = ''
 
@@ -202,12 +203,9 @@ function jsonToHtml(json) {
         case 'table':
           html += formatTable(element[contentType])
           break
-        case 'tableOfContents':
-          html += formatToC(element[contentType])
-          break
         default:
           if (contentType.includes('Index')) { break }
-          console.log('Unsupported Structural Element type', contentType)
+          log.debug('Unsupported Structural Element type', contentType)
           break
       }
     })
@@ -219,7 +217,7 @@ function jsonToHtml(json) {
 
 exports.getProcessedHtml = (src) => {
   if (process.env.BETA_API) {
-    return jsonToHtml(src)
+    return exports.jsonToHtml(src)
   }
   let html = normalizeHtml(src)
   html = formatCode(html)

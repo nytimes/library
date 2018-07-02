@@ -2,11 +2,11 @@ const fs = require('fs')
 const path = require('path')
 const formatter = require('../../server/formatter')
 const cheerio = require('cheerio')
-const assert = require('chai').assert
+const { assert, expect } = require('chai')
 
 describe('HTML processing', () => {
   before(function () {
-    this.rawHTML = fs.readFileSync(path.join(__dirname, '../utils/supportedFormats.html'), { encoding: 'utf8' })
+    this.rawHTML = fs.readFileSync(path.join(__dirname, '../fixtures/supportedFormats.html'), { encoding: 'utf8' })
     this.processedHTML = formatter.getProcessedHtml(this.rawHTML)
     this.output = cheerio.load(this.processedHTML)
   })
@@ -95,6 +95,51 @@ describe('HTML processing', () => {
     it('strips inline comment anchors', function () {
       const commentAnchorParent = this.output("p:contains('will be stripped from the')")
       assert.notMatch(commentAnchorParent, /\[a\]/)
+    })
+  })
+})
+
+describe('JSON Payload Formatting', () => {
+  before(function () {
+    const payload = require('../fixtures/docV4.json')
+    this.rawJSON = payload
+    this.processedJSON = formatter.jsonToHtml(this.rawJSON)
+    this.output = cheerio.load(this.processedJSON)
+  })
+
+  describe('code block handling', () => {
+    it('allows &nbsp; as part of a code block', function () {
+      const codeBlock = this.output('pre')
+      assert.match(codeBlock.html(), /&amp;nbsp/)
+    })
+
+    it('preserves whitespace at the start of a line', function () {
+      const codeBlock = this.output('pre')
+      assert.match(codeBlock.html(), /[ \w\t]+jQuery.fn.calcSubWidth/)
+    })
+
+    it('scrubs smart quotes', function () {
+      const codeBlock = this.output('pre')
+      assert.match(codeBlock.html(), /singleQuotedStr = &apos;str&apos;/)
+      assert.match(codeBlock.html(), /doubleQuotedStr = &quot;str&quot;/)
+    })
+  })
+
+  describe('inline formats', () => {
+    it('should handle formatting', () => {
+      // Formatting not currently supported
+    })
+  })
+
+  describe('list handling', () => {
+    it('should handle lists', () => {
+      // lists not currently supported
+    })
+  })
+
+  describe('comment handling', () => {
+    it('should handle comments', () => {
+      // comments not currently supported
     })
   })
 })
