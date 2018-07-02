@@ -9,7 +9,7 @@ const inflight = require('inflight')
 
 const {getAuth} = require('./auth')
 const log = require('./logger')
-const formatter = require('./formatter')
+const formatter = process.env.BETA_API ? require('./formatter-beta') : require('./formatter')
 
 const supportedTypes = new Set(['document', 'spreadsheet', 'text/html'])
 

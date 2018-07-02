@@ -3,7 +3,6 @@ const cheerio = require('cheerio')
 const qs = require('querystring')
 const unescape = require('unescape')
 const list = require('./list')
-const log = require('./logger')
 
 // this is getting a little long, maybe tweak so that we do subtasks separately
 function normalizeHtml(html) {
@@ -131,94 +130,7 @@ function checkForTableOfContents($, aTags) {
   /(\d+$)/mg.test($(aTags[1]).text()) // the second link should contain only a number
 }
 
-/** BETA API JSON PARSING BELOW */
-
-function htmlEncode(str) {
-  return str.replace(/[\x26<>'"]/g, (str) => {
-    return `&#${str.charCodeAt(0)};`
-  })
-}
-
-function scrubSmartQuotes(text) {
-  return text.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"')
-}
-
-function formatCodeInline(textRun) {
-  return scrubSmartQuotes(textRun.replace(/`([^`].*?)`/g, '<tt>$1</tt>'))
-}
-
-function formatCodeBlocks(html) {
-  const codeBlockRe = /<p>```(.+)?\n?([\s\S]*?)<p>```/gi
-  html = html.replace(codeBlockRe, (match, codeType, content) => {
-    // remove paragraph elements
-    content = content.replace(/<\/p><p>/g, '').replace(/<\/?p>/g, '')
-    // newlines are LINE TABULATIONs for some reason, trim trailing newline
-    content = content.replace(/\u000b/gi, '\n').replace(/\n$/, '')
-    return `<pre type="${codeType}">${content}</pre>`
-  })
-  return scrubSmartQuotes(html)
-}
-
-function formatParagraph(json) {
-  const text = json.elements.map((elt) => {
-    if (elt.textRun) {
-      let content = htmlEncode(elt.textRun.content)
-      content = formatCodeInline(content)
-      return content
-    }
-
-    // TODO: handle inline objects when the API makes them available
-  }).join('')
-  return `<p>${text}</p>`
-}
-
-function formatTable(json) {
-  let html = ''
-  const rows = json.tableRows
-
-  rows.forEach((row) => {
-    let rowHtml = ''
-    row.tableCells.forEach((cell) => {
-      const cellContents = exports.jsonToHtml(cell)
-      const colspan = cell.tableCellStyle.columnSpan
-      rowHtml += colspan > 1 ? `<td colspan="${colspan}">${cellContents}</td>`
-                             : `<td>${cellContents}</td>`
-    })
-    html += `<tr>${rowHtml}</tr>`
-  })
-  return `<table>${html}</table>`
-}
-
-exports.jsonToHtml = (json) => {
-  const body = json.body ? json.body.content : json.content
-  let html = ''
-
-  body.forEach((element) => {
-    const contentKeys = Object.keys(element)
-    contentKeys.forEach((contentType) => {
-      switch (contentType) {
-        case 'paragraph':
-          html += formatParagraph(element[contentType])
-          break
-        case 'table':
-          html += formatTable(element[contentType])
-          break
-        default:
-          if (contentType.includes('Index')) { break }
-          log.debug('Unsupported Structural Element type', contentType)
-          break
-      }
-    })
-  })
-
-  html = formatCodeBlocks(html)
-  return pretty(html)
-}
-
 exports.getProcessedHtml = (src) => {
-  if (process.env.BETA_API) {
-    return exports.jsonToHtml(src)
-  }
   let html = normalizeHtml(src)
   html = formatCode(html)
   html = pretty(html)
