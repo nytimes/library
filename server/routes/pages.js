@@ -58,7 +58,7 @@ function handlePage(req, res, next) {
     })
   }
 
-  res.render(template, config)
+  res.render(template, {config})
 }
 
 function buildDisplayCategories(tree) {

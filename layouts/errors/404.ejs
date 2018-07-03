@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
-  <%- include('../partials/head', {title: 'Page Not Found'}) %>
+  <% const {title, heading, message} = config.error_404 %>
+  <%- include('../partials/head', {title}) %>
   <body>
-    <%- include('../partials/header', {title: 'Page Not Found', parentLinks: []}) %>
+    <%- include('../partials/header', {title, parentLinks: []}) %>
     <div id="main-search-page">
       <div class="main-item">
         <div class="tagline">
-          <h1>Uh oh, that's a 404.</h1>
-          <p>Perhaps you'd like to search for something instead?</p>
+          <h1><%= heading %></h1>
+          <p><%- message %></p>
         </div>
         <%- include('../partials/search', {style: 'homepage'}) %>
       </div>

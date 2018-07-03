@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
-  <%- include('../partials/head', {title: 'Operation Not Permitted'}) %>
+  <% const {title, heading, message} = config.error_403 %>
+  <%- include('../partials/head', {title}) %>
   <body>
-    <%- include('../partials/header', {title: 'Operation Not Permitted', parentLinks: []}) %>
+    <%- include('../partials/header', {title, parentLinks: []}) %>
     <div id="main-search-page">
       <div class="main-item">
         <div class="tagline">
-          <h1>Not Authorized</h1>
-          <p>Check the request and try again. For assistance, contact #newstools.</p>
-          <p>Perhaps you'd like to search for something instead?</p>
+          <h1><%= heading %></h1>
+          <p><%- message %></p>
         </div>
         <%- include('../partials/search', {style: 'homepage'}) %>
       </div>
