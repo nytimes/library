@@ -33,18 +33,20 @@ function handleCategory(req, res, next) {
 
     const root = segments[1]
     const meta = getMeta(id)
+    const mimeType = meta.mimeType
     const layout = categories.has(root) ? root : 'default'
     const template = `categories/${layout}`
 
     // don't try to fetch branch node
     const contextData = prepareContextualData(data, req.path, breadcrumb, parent, meta.slug)
+
     const baseRenderData = Object.assign({}, contextData, {
       url: req.path,
       title: meta.prettyName,
       lastUpdatedBy: (meta.lastModifyingUser || {}).displayName,
       modifiedAt: meta.modifiedTime,
       createdAt: moment(meta.createdTime).fromNow(),
-      editLink: meta.webViewLink,
+      editLink: mimeType === 'text/html' ? meta.folder.webViewLink : meta.webViewLink,
       id
     })
 
@@ -68,7 +70,6 @@ function handleCategory(req, res, next) {
       res.locals.docId = data.id // we need this for history later
       const revisionData = originalRevision.data
       const payload = fetchByline(html, revisionData.lastModifyingUser.displayName)
-
       res.render(template, Object.assign({}, baseRenderData, {
         content: payload.html,
         byline: payload.byline,
