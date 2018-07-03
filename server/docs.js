@@ -10,6 +10,9 @@ const inflight = require('inflight')
 const {getAuth} = require('./auth')
 const log = require('./logger')
 
+const formatterV3 = require('./formatter')
+const formatterV4 = require('./formatter-beta')
+
 const supportedTypes = new Set(['document', 'spreadsheet', 'text/html'])
 
 exports.cleanName = (name = '') => {
@@ -29,9 +32,11 @@ exports.slugify = (text = '') => {
   })
 }
 
-exports.fetchDoc = ({id, resourceType}, cb) => {
-  const useBeta = process.env.BETA_API === 'true'
-  const formatter = useBeta ? require('./formatter-beta') : require('./formatter')
+exports.fetchDoc = ({id, resourceType, req}, cb) => {
+  const useBeta = process.env.BETA_API === 'true' || Object.keys(req.query).includes('beta')
+  if (useBeta) log.debug('Using beta formatter')
+  const formatter = useBeta ? formatterV4 : formatterV3
+
   cb = inflight(id, cb)
   if (!cb) return
 

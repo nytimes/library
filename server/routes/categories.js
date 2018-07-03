@@ -60,7 +60,7 @@ function handleCategory(req, res, next) {
     }
 
     // for docs, fetch the html and then combine with the base data
-    fetchDoc({id, resourceType}, (err, {html, originalRevision, sections} = {}) => {
+    fetchDoc({id, resourceType, req}, (err, {html, originalRevision, sections} = {}) => {
       if (err) {
         return next(err)
       }
