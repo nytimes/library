@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-  <%- include('../partials/head', {title: 'NYT Library'}) %>
+  <%- include('../partials/head') %>
   <body>
 
     <header id="masthead" class="masthead" role="banner">
@@ -16,7 +16,7 @@
           <p><%= config.tagline %> <a href="/faq">Get started.</a></p>
         </div>
         <% const searchPlaceholder = config.search_placeholder%>
-        <%- include('../partials/search', {style: 'homepage', focus: 'autofocus', msgOnFocus: searchPlaceholder}) %>
+        <%- include('../partials/search', {style: 'homepage', focus: 'autofocus'}) %>
 
         <div class="featured-cat">
           <div class="teams-cat-container">
@@ -51,7 +51,7 @@
                   <a href="<%= doc.path %>"><%= doc.prettyName %></a>
                 </li>
               <% }) %>
-              <li><a class="button btn-homepage" href="/categories">View All Docs</a></li>
+              <li><a class="button btn-homepage" href="/categories"><%= config.view_all_docs_button %></a></li>
             </ul>
           </div>
         </div>

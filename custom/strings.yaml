@@ -1,5 +1,7 @@
+#### Uncomment to use NYT-specific wording
+
 # name: Library
 # icon: "/assets/images/nyt-T-logo.png"
 # tagline: A collection of tools and tips for creating great Times journalism.
 # search_placeholder: What are you looking for?
-help_text: For help contributing or to report a problem, email <a href="mailto:***REMOVED***">***REMOVED***</a> or leave a message in the <a href="***REMOVED***/library">#library</a> slack channel.
+# help_text: For help contributing or to report a problem, email <a href="mailto:***REMOVED***">***REMOVED***</a> or leave a message in the <a href="***REMOVED***/library">#library</a> slack channel.

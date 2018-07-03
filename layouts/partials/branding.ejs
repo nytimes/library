@@ -2,8 +2,8 @@
   <h2 class="branding-heading">
     <% const shouldLink = locals.context !== 'home' %>
     <% if (shouldLink) { %><a id="branding-heading-link" href="/"><% } %>
-      <span class="visually-hidden">The New York Times</span>
-      <img src=<%= config.icon %> class="nyt-logo" alt="The New York Times">
+      <span class="visually-hidden"><%= config.organization %></span>
+      <img src=<%= config.icon %> class="logo" alt=<%= config.organization %>>
     <% if (shouldLink) { %></a><% } %>
   </h2>
   <h3 class="branding-label">

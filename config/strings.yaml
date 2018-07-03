@@ -1,6 +1,9 @@
 # Name of the app
+title: Library App
 name: Lib
+organization: Your Organization
 icon: "https://***REMOVED***"
 tagline: One place for your organization's documents.
 search_placeholder: Search...
 help_text: Questions? Contact your organization's administrators.
+view_all_docs_button: View All
