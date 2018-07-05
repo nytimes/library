@@ -144,6 +144,8 @@ function fetchSpreadsheet(drive, id, cb) {
     // for mimeTypes see https://developers.google.com/drive/v3/web/manage-downloads#downloading_google_documents
     mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
   }, {
+    // HTML export for sheets is limiting. Instead, download as a buffer and use
+    // the xlsx library to parse the contents of the file and convert to HTML.
     responseType: 'arraybuffer'
   }, (err, {data}) => {
     if (err) return cb(err)
