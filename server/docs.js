@@ -110,6 +110,13 @@ function fetch({id, resourceType}, authClient, cb) {
       }, (err, {data}) => cb(err, data)) // this prevents receiving an array (?)
     },
     (cb) => {
+      const revisionSupported = ['document', 'spreadsheet', 'presentation']
+      if (!revisionSupported.includes(resourceType)) {
+        log.info(`Revision data not supported for ${resourceType}:${id}`)
+        return cb(null, {
+          data: { lastModifyingUser: {} }
+        }) // return mock/empty revision object
+      }
       drive.revisions.get({
         fileId: id,
         revisionId: '1',
@@ -117,12 +124,7 @@ function fetch({id, resourceType}, authClient, cb) {
       }, (err, data) => {
         // suppress revision history errors, but log them for later
         if (err) {
-          log.warn(`Failed retrieving revision data for ${resourceType}:${id}.`)
-          if (resourceType === 'text/html') {
-            log.info('Revision history is not available for HTML files')
-          } else {
-            log.warn(`Error was:`, err)
-          }
+          log.warn(`Failed retrieving revision data for ${resourceType}:${id}. Error was:`, err)
           return cb(null, {
             data: { lastModifyingUser: {} }
           }) // return mock/empty revision object
