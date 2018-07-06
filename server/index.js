@@ -9,7 +9,8 @@ const userInfo = require('./routes/userInfo')
 const pages = require('./routes/pages')
 const categories = require('./routes/categories')
 const readingHistory = require('./routes/readingHistory')
-const {airbrake, errorPages} = require('./routes/errors')
+const errorPages = require('./routes/errors')
+const errorReporter = require('./plugins/airbrake')
 
 const {getMeta, getAllRoutes} = require('./list')
 
@@ -68,7 +69,8 @@ app.use(categories)
 
 // errors are special, they must be attached individually
 // airbrake fallback and notifier for routes issues
-app.use(airbrake)
+app.use(errorReporter)
+
 // error handler for rendering the 404 and 500 pages
 app.use(errorPages)
 
