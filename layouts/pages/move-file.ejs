@@ -9,7 +9,7 @@
     </div>
     <div class="g-body">
       <div class="g-main-content" id="move-file-page">
-        <h2>Choose a folder to move '<%= locals.prettyName %>' to:</h2>
+        <h2><%= config.move_file_prompt %> '<%= locals.prettyName %>' to:</h2>
         <%- include('../partials/folderList', {folders, id, parents}) %>
       </div>
       <%- include('../partials/footer', { pageType: 'search' }) %>

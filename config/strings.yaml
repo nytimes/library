@@ -1,6 +1,7 @@
 # Name of the app
 title: Library App
 name: Lib
+pretty_name: Team Library
 organization: Your Organization
 icon: "https://***REMOVED***"
 tagline: One place for your organization's documents.
@@ -22,3 +23,6 @@ error_500:
   title: Server Error
   heading: Uh oh, that's a 500.
   message: Perhaps try to search for something else instead?
+
+kicker: View documents in #[section] 
+move_file_prompt: Choose a folder to move
