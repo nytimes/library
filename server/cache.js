@@ -3,8 +3,9 @@
 const async = require('async')
 const moment = require('moment')
 
+const cache = require('./cache/redis')
+
 const log = require('./logger')
-const cache = require('./plugins/redis')
 const {getUserInfo} = require('./utils')
 
 // delay caching for 1 hour by default after editing, with env var override
