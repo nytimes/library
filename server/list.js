@@ -78,7 +78,11 @@ function updateTree(cb) {
   })
 }
 
-function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive, parentId} = {}, cb) {
+let all = []
+
+
+function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive, parentId, name} = {}, cb) {
+  console.log('\nENTERING FETCH', name)
   const options = {
     // folderId: teamDriveId,
     q: parentId ? `'${parentId}' in parents` : `'${teamDriveId}' in parents`,
@@ -90,45 +94,50 @@ function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive, parentI
     // pageSize: 1000 // this value does not seem to be doing anything
   }
 
-
   if (pageToken) {
     options.pageToken = pageToken
   }
 
-  log.debug(`searching for files > ${listSoFar.length}`)
+  // log.debug(`searching for files > ${listSoFar.length}`)
 
   drive.files.list(options, (err, {data}) => {
-    console.log(data)
     if (err) return cb(err)
 
     // don't pull these out in param because explicit null/undefined is passed
     const {files, nextPageToken} = data || {}
+    console.log('\nFound files', files.map(o => o.name))
     const combined = listSoFar.concat(files)
-    // if (nextPageToken) {
-    //   return fetchAllFiles({
-    //     nextPageToken,
-    //     listSoFar: combined,
-    //     drive
-    //   }, cb)
-    // }
-    files.forEach(item => {
+    all.push(...files)
+
+    if (nextPageToken) {
+      return fetchAllFiles({
+        nextPageToken,
+        listSoFar: combined,
+        drive
+      }, cb)
+    }
+
+    for (var i = 0; i < files.length; i++) {
+      const item = files[i]
+      console.log('\nIN FOR LOOP', item.name)
+
       if (item.mimeType === 'application/vnd.google-apps.folder') {
-        return fetchAllFiles({
+        console.log('FOUND A FOLDER', item.name)
+        fetchAllFiles({
           parentId: item.id,
           listSoFar: combined,
-          drive
+          drive,
+          name: item.name
         }, cb)
-      }
-    })
+      } 
+    }
 
+    console.log('all', all.map(o => o.name))
 
-    cb(null, combined)
+    cb(null, all)
   })
 }
 
-function fetchFileHelper() {
-
-}
 
 function produceTree(files, firstParent) {
   // maybe group into folders first?
