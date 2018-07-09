@@ -1,8 +1,8 @@
 'use strict'
 
-const airbrake = require('airbrake')
-
 function initAirbrake() {
+  const airbrake = require('airbrake')
+
   const client = airbrake.createClient(
     process.env.AIRBRAKE_PROJECT_ID,
     process.env.AIRBRAKE_API_KEY
@@ -13,10 +13,8 @@ function initAirbrake() {
     if (notice.errors[0].message === 'Not found') {
       return null
     }
-
     return notice
   })
-
   return client
 }
 

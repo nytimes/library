@@ -6,7 +6,6 @@
   "dependencies": {
     "@google-cloud/datastore": "^1.0.6",
     "***REMOVED***": ">=0.0.7",
-    "airbrake": "^2.0.1",
     "assert": "^1.4.1",
     "async": "^2.4.1",
     "cache-manager": "^2.4.0",
@@ -23,13 +22,15 @@
     "node-sass": "^4.9.2",
     "nodemon": "^1.17.5",
     "pretty": "^2.0.0",
-    "raven": "^2.6.3",
     "slugify": "^1.2.1",
     "supertest": "^3.0.0",
     "supertest-as-promised": "^4.0.2",
     "unescape": "^1.0.1",
     "winston": "^2.4.0",
     "xlsx": "^0.11.0"
+  },
+  "optionalDependencies": {
+    "raven": "^2.6.3"
   },
   "devDependencies": {
     "concurrently": "^3.4.0",

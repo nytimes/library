@@ -1,8 +1,8 @@
 'use strict'
 
-const raven = require('raven')
-
 function initSentry() {
+  const raven = require('raven')
+
   raven.config(process.env.SENTRY_DSN).install()
   return raven.errorHandler() // @COMBAK or request handler? Both?
 }
