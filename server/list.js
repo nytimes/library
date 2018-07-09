@@ -80,22 +80,25 @@ function updateTree(cb) {
 
 function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive} = {}, cb) {
   const options = {
-    teamDriveId,
-    q: 'trashed = false',
-    corpora: 'teamDrive',
-    supportsTeamDrives: true,
-    includeTeamDriveItems: true,
-    // fields: '*', // setting fields to '*' returns all fields but ignores pageSize
+    // folderId: teamDriveId,
+    q: `'${teamDriveId}' in parents`,
+    // corpora: 'domain',
+    // supportsTeamDrives: true,
+    includeTeamDriveItems: false,
+    fields: '*', // setting fields to '*' returns all fields but ignores pageSize
     fields: 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)',
     pageSize: 1000 // this value does not seem to be doing anything
   }
+
 
   if (pageToken) {
     options.pageToken = pageToken
   }
 
   log.debug(`searching for files > ${listSoFar.length}`)
+
   drive.files.list(options, (err, {data}) => {
+    console.log(data)
     if (err) return cb(err)
 
     // don't pull these out in param because explicit null/undefined is passed
