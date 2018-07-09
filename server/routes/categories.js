@@ -33,7 +33,7 @@ function handleCategory(req, res, next) {
 
     const root = segments[1]
     const meta = getMeta(id)
-    const mimeType = meta.mimeType
+    const {mimeType} = meta
     const layout = categories.has(root) ? root : 'default'
     const template = `categories/${layout}`
 

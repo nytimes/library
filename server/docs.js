@@ -110,8 +110,8 @@ function fetch({id, resourceType}, authClient, cb) {
       }, (err, {data}) => cb(err, data)) // this prevents receiving an array (?)
     },
     (cb) => {
-      const revisionSupported = ['document', 'spreadsheet', 'presentation']
-      if (!revisionSupported.includes(resourceType)) {
+      const revisionSupported = new Set(['document', 'spreadsheet', 'presentation'])
+      if (!revisionSupported.has(resourceType)) {
         log.info(`Revision data not supported for ${resourceType}:${id}`)
         return cb(null, {
           data: { lastModifyingUser: {} }
