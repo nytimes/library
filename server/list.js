@@ -78,16 +78,16 @@ function updateTree(cb) {
   })
 }
 
-function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive} = {}, cb) {
+function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive, parentId} = {}, cb) {
   const options = {
     // folderId: teamDriveId,
-    q: `'${teamDriveId}' in parents`,
+    q: parentId ? `'${parentId}' in parents` : `'${teamDriveId}' in parents`,
     // corpora: 'domain',
     // supportsTeamDrives: true,
-    includeTeamDriveItems: false,
-    fields: '*', // setting fields to '*' returns all fields but ignores pageSize
+    // includeTeamDriveItems: false,
+    // fields: '*', // setting fields to '*' returns all fields but ignores pageSize
     fields: 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)',
-    pageSize: 1000 // this value does not seem to be doing anything
+    // pageSize: 1000 // this value does not seem to be doing anything
   }
 
 
@@ -104,16 +104,30 @@ function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive} = {}, c
     // don't pull these out in param because explicit null/undefined is passed
     const {files, nextPageToken} = data || {}
     const combined = listSoFar.concat(files)
-    if (nextPageToken) {
-      return fetchAllFiles({
-        nextPageToken,
-        listSoFar: combined,
-        drive
-      }, cb)
-    }
+    // if (nextPageToken) {
+    //   return fetchAllFiles({
+    //     nextPageToken,
+    //     listSoFar: combined,
+    //     drive
+    //   }, cb)
+    // }
+    files.forEach(item => {
+      if (item.mimeType === 'application/vnd.google-apps.folder') {
+        return fetchAllFiles({
+          parentId: item.id,
+          listSoFar: combined,
+          drive
+        }, cb)
+      }
+    })
+
 
     cb(null, combined)
   })
+}
+
+function fetchFileHelper() {
+
 }
 
 function produceTree(files, firstParent) {
