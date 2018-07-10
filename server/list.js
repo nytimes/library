@@ -136,7 +136,7 @@ function updateTree(cb) {
 // }
 
 
-async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive} = {}, cb) {
+async function fetchAllFiles({drive}, cb) {
   var result = []
   var queue = []
 
@@ -145,15 +145,18 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive} =
     fields: 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)',
   }
 
-  if (pageToken) {
-    options.pageToken = pageToken
-  }
-
-  log.debug(`searching for files > ${listSoFar.length}`)
-
   let {files, nextPageToken} = await fetchFromDrive(drive, options, cb)
 
   queue = queue.concat(files)
+
+  while (nextPageToken) {
+    let {files, nextPageToken} = await fetchFromDrive(drive, {
+      ...options,
+      nextPageToken
+    }, cb)
+
+    queue.concat(files)
+  }
 
   while (queue.length > 0) {
     let node = queue.shift()
@@ -165,7 +168,7 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive} =
         q: `'${node.id}' in parents`
       }, cb)
 
-      queue.push(...files)
+      queue = queue.concat(...files)
     }
   }
 
