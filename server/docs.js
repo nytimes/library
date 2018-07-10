@@ -110,6 +110,13 @@ function fetch({id, resourceType}, authClient, cb) {
       }, (err, {data}) => cb(err, data)) // this prevents receiving an array (?)
     },
     (cb) => {
+      const revisionSupported = new Set(['document', 'spreadsheet', 'presentation'])
+      if (!revisionSupported.has(resourceType)) {
+        log.info(`Revision data not supported for ${resourceType}:${id}`)
+        return cb(null, {
+          data: { lastModifyingUser: {} }
+        }) // return mock/empty revision object
+      }
       drive.revisions.get({
         fileId: id,
         revisionId: '1',
@@ -119,7 +126,7 @@ function fetch({id, resourceType}, authClient, cb) {
         if (err) {
           log.warn(`Failed retrieving revision data for ${resourceType}:${id}. Error was:`, err)
           return cb(null, {
-            lastModifyingUser: {}
+            data: { lastModifyingUser: {} }
           }) // return mock/empty revision object
         }
 
@@ -137,11 +144,15 @@ function fetchSpreadsheet(drive, id, cb) {
     // for mimeTypes see https://developers.google.com/drive/v3/web/manage-downloads#downloading_google_documents
     mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
   }, {
-    encoding: null // this returns binary data
-  }, (err, buffer) => {
+    // HTML export for sheets is limiting. Instead, download as a buffer and use
+    // the xlsx library to parse the contents of the file and convert to HTML.
+    responseType: 'arraybuffer'
+  }, (err, {data}) => {
     if (err) return cb(err)
-    const spreadsheet = xlsx.read(buffer, {type: 'buffer'})
+
+    const spreadsheet = xlsx.read(data, {type: 'buffer'})
     const {SheetNames, Sheets} = spreadsheet
+
     // produce some html now since we got back and xls
     const html = SheetNames.map((name) => {
       const data = Sheets[name]
@@ -181,8 +192,8 @@ function fetchHTML(drive, id, cb) {
     fileId: id,
     supportsTeamDrives: true,
     alt: 'media'
-  }, (err, html) => {
-    cb(err, html)
+  }, (err, {data}) => {
+    cb(err, data)
   })
 }
 
