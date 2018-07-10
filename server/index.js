@@ -48,6 +48,7 @@ app.get('/view-on-site/:docId', (req, res, next) => {
 // main pages
 app.use(readingHistory.middleware)
 
+// don't cache pages client-side to ensure browser always gets latest revision
 app.use((req, res, next) => {
   res.set('Cache-Control', 'no-cache')
   next()
