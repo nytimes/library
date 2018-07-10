@@ -55,6 +55,12 @@ exports.middleware = (req, res, next) => {
 
   // otherwise consult cache for stored html
   cache.get(req.path, (err, data) => {
+    const useBeta = process.env.BETA_API === 'true' || Object.keys(req.query).includes('beta')
+    if (useBeta) {
+      log.info('Skipping cache for beta API')
+      return next()
+    }
+
     if (err) {
       log.warn(`Failed retrieving cache for ${req.path}`, err)
       return next() // silently proceed in the stack
@@ -77,6 +83,8 @@ exports.middleware = (req, res, next) => {
 }
 
 exports.add = (id, newModified, path, html, cb = () => {}) => {
+  // don't cache if using beta
+
   if (!newModified) return cb(new Error('Refusing to store new item without modified time.'))
 
   cache.get(path, (err, data) => {
