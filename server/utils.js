@@ -47,19 +47,22 @@ exports.getUserInfo = (req) => {
 }
 
 const getStringConfig = () => {
-  try {
-    var baseConfig = yaml.safeLoad(fs.readFileSync(path.join(__dirname, '../config/strings.yaml')), 'utf8')
-  } catch (err) {
-    console.error(`Error while fetching default string config: ${err}`)
+  const defaultExists = fs.existsSync(path.join(__dirname, '../config/strings.yaml')) 
+  const customExists = fs.existsSync(path.join(__dirname, '../custom/strings.yaml'))
+
+  var config = {}
+
+  if (defaultExists) {
+    const baseConfig = yaml.safeLoad(fs.readFileSync(path.join(__dirname, '../config/strings.yaml')), 'utf8')
+    config = {...baseConfig}
   }
 
-  if (fs.existsSync(path.join(__dirname, '../custom/strings.yaml'))) {
-    console.log('Found custom configuration')
-    var customConfig = yaml.safeLoad(fs.readFileSync(path.join(__dirname, '../custom/strings.yaml')), 'utf8')
-    return Object.assign({}, baseConfig, customConfig)
+  if (customExists) {
+    const customConfig = yaml.safeLoad(fs.readFileSync(path.join(__dirname, '../custom/strings.yaml')), 'utf8')
+    config = {...config, ...customConfig}
   }
 
-  return baseConfig
+  return config
 }
 
 exports.config = getStringConfig()
