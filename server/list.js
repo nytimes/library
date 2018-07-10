@@ -78,63 +78,106 @@ function updateTree(cb) {
   })
 }
 
-let all = []
+// function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive, parentId, name} = {}, cb) {
+//   console.log('\nENTERING FETCH', name)
+//   const options = {
+//     // folderId: teamDriveId,
+//     q: parentId ? `'${parentId}' in parents` : `'${teamDriveId}' in parents`,
+//     // corpora: 'domain',
+//     // supportsTeamDrives: true,
+//     // includeTeamDriveItems: false,
+//     // fields: '*', // setting fields to '*' returns all fields but ignores pageSize
+//     fields: 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)',
+//     // pageSize: 1000 // this value does not seem to be doing anything
+//   }
+
+//   if (pageToken) {
+//     options.pageToken = pageToken
+//   }
+
+//   // log.debug(`searching for files > ${listSoFar.length}`)
+
+//   drive.files.list(options, (err, {data}) => {
+//     if (err) return cb(err)
+
+//     // don't pull these out in param because explicit null/undefined is passed
+//     const {files, nextPageToken} = data || {}
+//     console.log('\nFound files', files.map(o => o.name))
+//     const combined = listSoFar.concat(files)
+//     all.push(...files)
+
+//     if (nextPageToken) {
+//       return fetchAllFiles({
+//         nextPageToken,
+//         listSoFar: combined,
+//         drive
+//       }, cb)
+//     }
+
+//     for (var i = 0; i < files.length; i++) {
+//       const item = files[i]
+//       console.log('\nIN FOR LOOP', item.name)
+
+//       if (item.mimeType === 'application/vnd.google-apps.folder') {
+//         console.log('FOUND A FOLDER', item.name)
+//         fetchAllFiles({
+//           parentId: item.id,
+//           listSoFar: combined,
+//           drive,
+//           name: item.name
+//         }, cb)
+//       } 
+//     }
+
+//     console.log('all', all.map(o => o.name))
+
+//     cb(null, all)
+//   })
+// }
 
 
-function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive, parentId, name} = {}, cb) {
-  console.log('\nENTERING FETCH', name)
+async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive} = {}, cb) {
+  var result = []
+  var queue = []
+
   const options = {
-    // folderId: teamDriveId,
-    q: parentId ? `'${parentId}' in parents` : `'${teamDriveId}' in parents`,
-    // corpora: 'domain',
-    // supportsTeamDrives: true,
-    // includeTeamDriveItems: false,
-    // fields: '*', // setting fields to '*' returns all fields but ignores pageSize
+    q: `'${teamDriveId}' in parents`,
     fields: 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)',
-    // pageSize: 1000 // this value does not seem to be doing anything
   }
 
   if (pageToken) {
     options.pageToken = pageToken
   }
 
-  // log.debug(`searching for files > ${listSoFar.length}`)
+  log.debug(`searching for files > ${listSoFar.length}`)
 
-  drive.files.list(options, (err, {data}) => {
-    if (err) return cb(err)
+  let {files, nextPageToken} = await fetchFromDrive(drive, options, cb)
 
-    // don't pull these out in param because explicit null/undefined is passed
-    const {files, nextPageToken} = data || {}
-    console.log('\nFound files', files.map(o => o.name))
-    const combined = listSoFar.concat(files)
-    all.push(...files)
+  queue = queue.concat(files)
 
-    if (nextPageToken) {
-      return fetchAllFiles({
-        nextPageToken,
-        listSoFar: combined,
-        drive
+  while (queue.length > 0) {
+    let node = queue.shift()
+    result.push(node)
+
+    if (node.mimeType === 'application/vnd.google-apps.folder') {
+      let {files, nextPageToken} = await fetchFromDrive(drive, {
+        ...options,
+        q: `'${node.id}' in parents`
       }, cb)
+
+      queue.push(...files)
     }
+  }
 
-    for (var i = 0; i < files.length; i++) {
-      const item = files[i]
-      console.log('\nIN FOR LOOP', item.name)
+  cb(null, result)
+}
 
-      if (item.mimeType === 'application/vnd.google-apps.folder') {
-        console.log('FOUND A FOLDER', item.name)
-        fetchAllFiles({
-          parentId: item.id,
-          listSoFar: combined,
-          drive,
-          name: item.name
-        }, cb)
-      } 
-    }
-
-    console.log('all', all.map(o => o.name))
-
-    cb(null, all)
+function fetchFromDrive(drive, options, cb) {
+  return new Promise(resolve => {
+    drive.files.list(options, (err, {data}) => {
+      if (err) cb(err)
+      resolve(data)
+    })
   })
 }
 
