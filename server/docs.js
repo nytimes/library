@@ -33,9 +33,8 @@ exports.slugify = (text = '') => {
 }
 
 exports.fetchDoc = ({id, resourceType, req}, cb) => {
-  const useBeta = process.env.BETA_API === 'true' || Object.keys(req.query).includes('beta')
-  if (useBeta) log.debug('Using beta formatter')
-  const formatter = useBeta ? formatterV4 : formatterV3
+  if (req.useBeta) log.debug('Using beta formatter')
+  const formatter = req.useBeta ? formatterV4 : formatterV3
 
   cb = inflight(id, cb)
   if (!cb) return
@@ -45,7 +44,7 @@ exports.fetchDoc = ({id, resourceType, req}, cb) => {
       return cb(err)
     }
 
-    fetch({id, resourceType}, auth, (err, html, originalRevision) => {
+    fetch({id, resourceType, req}, auth, (err, html, originalRevision) => {
       if (err) return cb(err)
       html = formatter.getProcessedHtml(html)
       const sections = getSections(html)
@@ -83,7 +82,7 @@ exports.fetchByline = (html, creatorOfDoc) => {
   }
 }
 
-function fetch({id, resourceType}, authClient, cb) {
+function fetch({id, resourceType, req}, authClient, cb) {
   const drive = google.drive({version: 'v3', auth: authClient})
   async.parallel([
     (cb) => {
@@ -99,7 +98,7 @@ function fetch({id, resourceType}, authClient, cb) {
         return fetchHTML(drive, id, cb)
       }
 
-      if (process.env.BETA_API === 'true') {
+      if (req.useBeta) {
         google.discoverAPI(`***REMOVED***${process.env.API_KEY}`)
           .then((docs) => {
             docs.documents.get({

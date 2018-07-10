@@ -55,8 +55,7 @@ exports.middleware = (req, res, next) => {
 
   // otherwise consult cache for stored html
   cache.get(req.path, (err, data) => {
-    const useBeta = process.env.BETA_API === 'true' || Object.keys(req.query).includes('beta')
-    if (useBeta) {
+    if (req.useBeta) {
       log.info('Skipping cache for beta API')
       return next()
     }
