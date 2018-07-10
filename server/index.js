@@ -49,8 +49,6 @@ app.get('/view-on-site/:docId', (req, res, next) => {
 app.use(readingHistory.middleware)
 
 app.use((req, res, next) => {
-  delete require.cache[require.resolve('./formatter')]
-
   res.set('Cache-Control', 'no-cache')
   next()
 })

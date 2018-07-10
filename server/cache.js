@@ -82,8 +82,6 @@ exports.middleware = (req, res, next) => {
 }
 
 exports.add = (id, newModified, path, html, cb = () => {}) => {
-  // don't cache if using beta
-
   if (!newModified) return cb(new Error('Refusing to store new item without modified time.'))
 
   cache.get(path, (err, data) => {

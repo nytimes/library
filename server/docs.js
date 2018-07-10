@@ -110,6 +110,7 @@ function fetch({id, resourceType, req}, authClient, cb) {
       } else {
         drive.files.export({
           fileId: id,
+          // text/html exports are not suupported for slideshows
           mimeType: resourceType === 'presentation' ? 'text/plain' : 'text/html'
         }, (err, {data}) => cb(err, data)) // this prevents receiving an array (?)
       }
