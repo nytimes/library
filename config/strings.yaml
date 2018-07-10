@@ -1,0 +1,28 @@
+# Name of the app
+title: Library App
+name: Lib
+pretty_name: Team Library
+organization: Your Organization
+icon: "https://***REMOVED***"
+tagline: One place for your organization's documents.
+search_placeholder: Search...
+help_text: Questions? Contact your organization's administrators.
+view_all_docs_button: View All
+link_to_faq: FAQs
+
+# Error Pages
+error_403:
+  title: Operation Not Permitted
+  heading: Not Authorized
+  message: <p>Check the request and try again. For assistance, contact #newstools.</p><p>Perhaps you'd like to search for something instead?</p>
+error_404:
+  title: Page Not Found
+  heading: Whoops, that's a 404.
+  message: Perhaps try to search for something else instead?
+error_500:
+  title: Server Error
+  heading: Uh oh, that's a 500.
+  message: Perhaps try to search for something else instead?
+
+kicker: View documents in #[section] 
+move_file_prompt: Choose a folder to move
