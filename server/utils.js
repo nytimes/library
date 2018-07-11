@@ -49,25 +49,25 @@ exports.getUserInfo = (req) => {
   }
 }
 
+const config = getConfig()
 exports.stringTemplate = (configPath, ...args) => {
-  const config = getStringConfig()
-  const configString = _.get(config, configPath)
-  const objType = typeof configString
+  const stringConfig = _.get(config, configPath)
+  const configType = typeof stringConfig
 
-  if (!configString) {
+  if (!stringConfig) {
     log.warn(`${configPath} not found in strings.yml`)
-  } else if (objType === 'string') {
-    return configString
-  } else if (objType === 'function') {
-    return configString(...args)
+  } else if (configType === 'string') {
+    return stringConfig
+  } else if (configType === 'function') {
+    return stringConfig(...args)
   } else {
-    log.warn(`${objType} is not supported`)
+    log.warn(`${configType} is not supported`)
   }
 
   return ''
 }
 
-const getStringConfig = () => {
+const getConfig = () => {
   const defaultExists = fs.existsSync(path.join(__dirname, '../config/strings.yaml')) 
   const customExists = fs.existsSync(path.join(__dirname, '../custom/strings.yaml'))
 
@@ -84,5 +84,3 @@ const getStringConfig = () => {
 
   return config
 }
-
-exports.config = getStringConfig()
