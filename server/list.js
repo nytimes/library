@@ -62,7 +62,12 @@ function updateTree(cb) {
     }
 
     const drive = google.drive({version: 'v3', auth: authClient})
-    const fetchAllFiles = process.env.DRIVE_TYPE === 'team' ? fetchAllFromTeam : fetchAllFromShared
+    const {DRIVE_TYPE: driveType} = process.env
+
+    const fetchAllFiles = driveType === 'team' ? fetchAllFromTeam : 
+                          driveType === 'shared' ? fetchAllFromShared : 
+                          logger.error('Must specify drive type')
+
     fetchAllFiles({drive}, (err, files) => {
       if (err) {
         return cb(err)
