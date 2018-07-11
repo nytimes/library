@@ -4,7 +4,6 @@ const path = require('path')
 const express = require('express')
 const async = require('async')
 
-const middleware = require('./middleware')
 const {middleware: cache, purge} = require('./cache')
 const userInfo = require('./routes/userInfo')
 const pages = require('./routes/pages')
@@ -12,6 +11,7 @@ const categories = require('./routes/categories')
 const readingHistory = require('./routes/readingHistory')
 const errorPages = require('./routes/errors')
 const {getMeta, getAllRoutes} = require('./list')
+const {preloadMiddleware, postloadMiddleware} = require('../custom/middleware')
 
 const app = express()
 app.set('view engine', 'ejs')
@@ -20,6 +20,8 @@ app.set('views', path.join(__dirname, '../layouts'))
 app.get('/healthcheck', (req, res) => {
   res.send('OK')
 })
+
+preloadMiddleware(app)
 
 app.use(userInfo)
 
@@ -67,12 +69,10 @@ app.use(cache)
 // category pages will be cache busted when their last updated timestamp changes
 app.use(categories)
 
-// any middlewares included in the server/middleware folder will be used
-middleware.init(app)
-
 // error handler for rendering the 404 and 500 pages
 app.use(errorPages)
 
+postloadMiddleware(app)
 app.listen(process.env.PORT || 3000)
 
 module.exports = app
