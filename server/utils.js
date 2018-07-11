@@ -51,7 +51,6 @@ exports.requireWithFallback = (attemptPath, fallbackPath) => {
   const callingPath = callFile.substring(0, callFile.lastIndexOf('/'))
 
   try {
-    console.log(path.join(callingPath, attemptPath))
     return require(path.join(callingPath, attemptPath))
   } catch (e) {
     return require(path.join(callingPath, fallbackPath))
