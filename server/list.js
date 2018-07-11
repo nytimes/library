@@ -78,63 +78,6 @@ function updateTree(cb) {
   })
 }
 
-// function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive, parentId, name} = {}, cb) {
-//   console.log('\nENTERING FETCH', name)
-//   const options = {
-//     // folderId: teamDriveId,
-//     q: parentId ? `'${parentId}' in parents` : `'${teamDriveId}' in parents`,
-//     // corpora: 'domain',
-//     // supportsTeamDrives: true,
-//     // includeTeamDriveItems: false,
-//     // fields: '*', // setting fields to '*' returns all fields but ignores pageSize
-//     fields: 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)',
-//     // pageSize: 1000 // this value does not seem to be doing anything
-//   }
-
-//   if (pageToken) {
-//     options.pageToken = pageToken
-//   }
-
-//   // log.debug(`searching for files > ${listSoFar.length}`)
-
-//   drive.files.list(options, (err, {data}) => {
-//     if (err) return cb(err)
-
-//     // don't pull these out in param because explicit null/undefined is passed
-//     const {files, nextPageToken} = data || {}
-//     console.log('\nFound files', files.map(o => o.name))
-//     const combined = listSoFar.concat(files)
-//     all.push(...files)
-
-//     if (nextPageToken) {
-//       return fetchAllFiles({
-//         nextPageToken,
-//         listSoFar: combined,
-//         drive
-//       }, cb)
-//     }
-
-//     for (var i = 0; i < files.length; i++) {
-//       const item = files[i]
-//       console.log('\nIN FOR LOOP', item.name)
-
-//       if (item.mimeType === 'application/vnd.google-apps.folder') {
-//         console.log('FOUND A FOLDER', item.name)
-//         fetchAllFiles({
-//           parentId: item.id,
-//           listSoFar: combined,
-//           drive,
-//           name: item.name
-//         }, cb)
-//       } 
-//     }
-
-//     console.log('all', all.map(o => o.name))
-
-//     cb(null, all)
-//   })
-// }
-
 async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive, parentIds = [teamDriveId]} = {}, cb) {
   const options = {
     q: createQueryString(parentIds),
@@ -183,7 +126,6 @@ function fetchFromDrive(drive, options, cb) {
 function createQueryString(parentIds) {
   return parentIds.map(id => `'${id}' in parents`).join(' or ')
 }
-
 
 function produceTree(files, firstParent) {
   // maybe group into folders first?
