@@ -7,7 +7,7 @@ const move = require('../move')
 const router = express.Router()
 
 const {getTree, getMeta, getTagged} = require('../list')
-const {getTemplates, sortDocs, config} = require('../utils')
+const {getTemplates, sortDocs, config, stringTemplate} = require('../utils')
 
 router.get('/', handlePage)
 router.get('/:page', handlePage)
@@ -38,7 +38,7 @@ function handlePage(req, res, next) {
         if (err) return next(err)
         const {prettyName, parents} = getMeta(id)
 
-        res.render(template, {prettyName, folders, id, parents, config})
+        res.render(template, {prettyName, folders, id, parents, config, stringTemplate})
       })
     }
 

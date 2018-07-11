@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
   <% const {title, prompt} = config.moveFile %>
-  <%- include('../partials/head', {title: title(locals.prettyName)}) %>
+  <%- include('../partials/head', {title: stringTemplate('moveFile.title', locals.prettyName)}) %>
   <body>
-    <%- include('../partials/header', {parentLinks: [], title: title(locals.prettyName) }) %>
+    <%- include('../partials/header', {parentLinks: [], title: stringTemplate('moveFile.title', locals.prettyName, 'hi') }) %>
 
     <div class="g-upper-body">
     <%- include('../partials/nav') %>

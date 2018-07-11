@@ -3,6 +3,9 @@ const fs = require('fs')
 const path = require('path')
 const md5 = require('md5')
 const yaml = require('js-yaml')
+const _ = require('lodash')
+const log = require('./logger')
+const merge = require('deepmerge')
 
 const layoutsDir = path.join(__dirname, '../layouts')
 exports.getTemplates = (subfolder) => {
@@ -46,6 +49,24 @@ exports.getUserInfo = (req) => {
   }
 }
 
+exports.stringTemplate = (configPath, ...args) => {
+  const config = getStringConfig()
+  const configString = _.get(config, configPath)
+  const objType = typeof configString
+
+  if (!configString) {
+    log.warn(`${configPath} not found in strings.yml`)
+  } else if (objType === 'string') {
+    return configString
+  } else if (objType === 'function') {
+    return configString(...args)
+  } else {
+    log.warn(`${objType} is not supported`)
+  }
+
+  return ''
+}
+
 const getStringConfig = () => {
   const defaultExists = fs.existsSync(path.join(__dirname, '../config/strings.yaml')) 
   const customExists = fs.existsSync(path.join(__dirname, '../custom/strings.yaml'))
@@ -53,13 +74,12 @@ const getStringConfig = () => {
   var config = {}
 
   if (defaultExists) {
-    const baseConfig = yaml.load(fs.readFileSync(path.join(__dirname, '../config/strings.yaml')), 'utf8')
-    config = Object.assign({}, baseConfig)
+    config = yaml.load(fs.readFileSync(path.join(__dirname, '../config/strings.yaml')), 'utf8')
   }
 
   if (customExists) {
     const customConfig = yaml.load(fs.readFileSync(path.join(__dirname, '../custom/strings.yaml')), 'utf8')
-    config = Object.assign({}, config, customConfig)
+    config = merge(config, customConfig)
   }
 
   return config
