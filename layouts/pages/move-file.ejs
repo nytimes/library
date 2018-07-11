@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html>
-  <%- include('../partials/head', {title: config.moveFilePage(locals.prettyName)}) %>
+  <% const {title, prompt} = config.moveFile %>
+  <%- include('../partials/head', {title: title(locals.prettyName)}) %>
   <body>
-    <%- include('../partials/header', {parentLinks: [], title: config.moveFilePage(locals.prettyName) }) %>
+    <%- include('../partials/header', {parentLinks: [], title: title(locals.prettyName) }) %>
 
     <div class="g-upper-body">
     <%- include('../partials/nav') %>
     </div>
     <div class="g-body">
       <div class="g-main-content" id="move-file-page">
-        <h2><%- config.moveFilePrompt(locals.prettyName) %></h2>
+        <h2><%- prompt(locals.prettyName) %></h2>
         <%- include('../partials/folderList', {folders, id, parents}) %>
       </div>
       <%- include('../partials/footer', { pageType: 'search' }) %>

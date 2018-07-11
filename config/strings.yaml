@@ -1,16 +1,15 @@
-# Name of the app
+# base config
 title: Library App
 name: Lib
 pretty_name: Team Library
 organization: Your Organization
-icon: "/assets/images/icon-logo.png"
-tagline: One place for your organization's documents.
+icon: /assets/images/icon-logo.png
 search_placeholder: Search...
 help_text: Questions? Contact your organization's administrators.
-view_all_docs_button: View All
 link_to_faq: FAQs
 
-# Error Pages
+
+# errors
 error_403:
   title: Operation Not Permitted
   heading: Not Authorized
@@ -24,6 +23,23 @@ error_500:
   heading: Uh oh, that's a 500.
   message: Perhaps try to search for something else instead?
 
-# kicker: "(title) => "View in", title"
-moveFilePage: !!js/function (title) => `Move ${title}`
-moveFilePrompt: !!js/function (title) => `Choose a folder to move '${title}' to`
+# pages/categories, pages/index
+tagline: One place for your organization's documents.
+viewAllButton: View All
+faqLink: Get Started
+
+# pages/move-file
+moveFile:
+  title: !!js/function (title) => `Move ${title}`
+  prompt: !!js/function (title) => `Choose a folder to move '${title}' to`
+
+# pages/search
+search:
+  resultsTitle: !!js/function (query) => `Search results for ${query}`
+  resultsKicker: !!js/function (query) => `Showing results for '${query}':`
+  resultLabel:
+    folder: !!js/function (path, folder) => `Filed under <a class="folder" href=${path}><span>${folder}</span></a>`
+    person: !!js/function (lastUser) => `Last edited by <span class='author'>${lastUser}`
+  noResults:
+    kicker: !!js/function (query) => `There are no results for '${query}'`
+    suggestion: 'To request a new page, email us at <a href="mailto:***REMOVED***">***REMOVED***</a>, or find us on slack in <a href="***REMOVED***/library">#library</a>.'

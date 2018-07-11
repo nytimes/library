@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+  <% const {tagline, faqLink, viewAllButton} = config %>
   <%- include('../partials/head') %>
   <body>
 
@@ -13,7 +14,7 @@
       <div class="main-item">
         <%- include('../partials/branding', {context: 'home'}) %>
         <div class="tagline">
-          <p><%= config.tagline %> <a href="/faq">Get started.</a></p>
+          <p><%= tagline %> <a href="/faq"><%= faqLink %></a></p>
         </div>
         <%- include('../partials/search', {style: 'homepage', focus: 'autofocus'}) %>
 
@@ -50,7 +51,7 @@
                   <a href="<%= doc.path %>"><%= doc.prettyName %></a>
                 </li>
               <% }) %>
-              <li><a class="button btn-homepage" href="/categories"><%= config.view_all_docs_button %></a></li>
+              <li><a class="button btn-homepage" href="/categories"><%= viewAllButton %></a></li>
             </ul>
           </div>
         </div>

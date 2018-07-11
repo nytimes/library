@@ -1,34 +1,34 @@
 <!DOCTYPE html>
 <html>
-  <%- include('../partials/head', {title: `Search Results for ${locals.q}`}) %>
+  <% const {resultsTitle, resultsKicker, resultLabel, noResults} = config.search %>
+  <%- include('../partials/head', {title: resultsTitle(locals.q)}) %>
   <body>
-    <%- include('../partials/header', {parentLinks: [], title: `Results for ${locals.q}`}) %>
+    <%- include('../partials/header', {parentLinks: [], title: resultsTitle(locals.q)}) %>
 
     <%- include('../partials/nav') %>
 
     <div class="g-body">
       <div class="g-main-content" id="g-search-page">
         <% if (locals.results && results.length) { %>
-          <h3 class="search-kicker">Showing results for '<%= locals.q %>':</h3>
+          <h3 class="search-kicker"><%- resultsKicker(locals.q) %></h3>
           <% results.forEach((res) => { %>
           <div class="search-result">
             <h3><a href="<%= res.path %>"><%= res.prettyName %></a></h3>
             <p>
               <% if (res.folder) { %>
-              Filed under
-              <a class="folder" href="<%= res.folder.path %>"><span><%= res.folder.prettyName || 'Home' %></span></a>&nbsp;
+                <% let folderName = res.folder.prettyName ? res.folder.prettyName : 'Home' %>
+                <%- resultLabel.folder(res.folder.path, folderName)%>&nbsp;
               <% } %>
-              Last edited
-                <% if (res.lastModifyingUser) { %>
-                by <span class="author"><%= res.lastModifyingUser.displayName %></span>
-                <% } %>
-                <%= res.lastUpdated %>
+              <% if (res.lastModifyingUser) { %>
+                <%- resultLabel.person(res.lastModifyingUser.displayName)%>
+              <% } %>
+              <%= res.lastUpdated %>
             </p>
           </div>
           <% }) %>
         <% }  else { %>
-          <h3 class="search-kicker">There are no results for '<%= locals.q %>'</h3>
-          <p>To request a new page, email us at <a href="mailto:***REMOVED***">***REMOVED***</a>, or find us on slack in <a href="***REMOVED***/library">#library</a>.</p>
+          <h3 class="search-kicker"><%- noResults.kicker(locals.q) %></h3>
+          <p><%- noResults.suggestion %></p>
         <% } %>
       </div>
 
