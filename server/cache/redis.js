@@ -3,8 +3,10 @@
 const cacheManager = require('cache-manager')
 const redisStore = require('cache-manager-ioredis')
 const log = require('../logger')
+const {requireWithFallback} = require('../utils')
 
 // Provides get, set methods for a cache
+const store = requireWithFallback('cache/store')
 
 module.exports = process.env.REDIS_URI ? cacheManager.caching({
   store: redisStore,
@@ -14,7 +16,7 @@ module.exports = process.env.REDIS_URI ? cacheManager.caching({
   keyPrefix: 'nyt-library',
   db: 0,
   ttl: 0 // default ttl is infinite
-}) : cacheManager.caching({ store: 'memory' })
+}) : store
 
   // if we are using a redis instance, listen for errors
 if (process.env.REDIS_URI) {

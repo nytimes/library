@@ -1,8 +1,7 @@
 'use strict'
 const fs = require('fs')
-const md5 = require('md5')
-const caller = require('caller')
 const path = require('path')
+const md5 = require('md5')
 
 const layoutsDir = path.join(__dirname, '../layouts')
 exports.getTemplates = (subfolder) => {
@@ -46,13 +45,13 @@ exports.getUserInfo = (req) => {
   }
 }
 
-exports.requireWithFallback = (attemptPath, fallbackPath) => {
-  const callFile = caller()
-  const callingPath = callFile.substring(0, callFile.lastIndexOf('/'))
-
+// attempts to require from attemptPath. If file isn't present, looks for a
+// file of the same name in the server dir
+exports.requireWithFallback = (attemptPath) => {
+  const baseDir = path.join(__dirname, '..')
   try {
-    return require(path.join(callingPath, attemptPath))
+    return require(path.join(baseDir, 'custom', attemptPath))
   } catch (e) {
-    return require(path.join(callingPath, fallbackPath))
+    return require(path.join(baseDir, 'server', attemptPath))
   }
 }
