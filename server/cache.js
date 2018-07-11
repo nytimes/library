@@ -35,6 +35,11 @@ exports.middleware = (req, res, next) => {
 
   // otherwise consult cache for stored html
   cache.get(req.path, (err, data) => {
+    if (req.useBeta) {
+      log.info('Skipping cache for beta API')
+      return next()
+    }
+
     if (err) {
       log.warn(`Failed retrieving cache for ${req.path}`, err)
       return next() // silently proceed in the stack
