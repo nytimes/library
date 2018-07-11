@@ -1,7 +1,8 @@
 'use strict'
 const fs = require('fs')
-const path = require('path')
 const md5 = require('md5')
+const caller = require('caller')
+const path = require('path')
 
 const layoutsDir = path.join(__dirname, '../layouts')
 exports.getTemplates = (subfolder) => {
@@ -42,5 +43,18 @@ exports.getUserInfo = (req) => {
     email: req.headers['auth.verified_email'],
     userId: req.headers['auth.verified_sub'],
     analyticsUserId: md5(req.headers['auth.verified_sub'] + 'library')
+  }
+}
+
+exports.requireWithFallback = (attemptPath, fallbackPath) => {
+  const callFile = caller()
+  const callingPath = callFile.substring(0, callFile.lastIndexOf('/'))
+
+  try {
+    console.log(path.join(callingPath, attemptPath));
+    return require(path.join(callingPath, attemptPath))
+  } catch (e) {
+    console.log('falling back');
+    return require(path.join(callingPath, fallbackPath))
   }
 }

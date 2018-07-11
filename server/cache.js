@@ -3,10 +3,10 @@
 const async = require('async')
 const moment = require('moment')
 
-const cache = require('./cache/redis')
-
 const log = require('./logger')
-const {getUserInfo} = require('./utils')
+const {requireWithFallback, getUserInfo} = require('./utils')
+
+const cache = requireWithFallback('../custom/cache', './cache/redis')
 
 // delay caching for 1 hour by default after editing, with env var override
 const noCacheDelay = parseInt(process.env.EDIT_CACHE_DELAY, 10) || 60 * 60
