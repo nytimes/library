@@ -136,7 +136,6 @@ function updateTree(cb) {
 // }
 
 async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive, parentIds = [teamDriveId]} = {}, cb) {
-
   const options = {
     q: createQueryString(parentIds),
     fields: 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)'
@@ -146,18 +145,11 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive, p
     options.pageToken = pageToken
   }
 
-  console.log('About to fetchFromDrive', options.q)
-
   let {files, nextPageToken} = await fetchFromDrive(drive, options, cb)
-
-  console.log('Got files', files.map(f => f.name))
 
   const combined = listSoFar.concat(files)
 
-  console.log('Combined so far', combined.map(c => c.name))
-
   if (nextPageToken) {
-    console.log('Getting next page')
     return fetchAllFiles({
       nextPageToken,
       listSoFar: combined,
@@ -168,9 +160,7 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive, p
 
   let folders = files.filter(item => item.mimeType === 'application/vnd.google-apps.folder')
 
-
   if (folders.length > 0) {
-    console.log('Found some folders', folders.map(folder=> folder.name))
     return fetchAllFiles({
       listSoFar: combined,
       drive,
@@ -178,51 +168,8 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive, p
     }, cb)
   }
 
-  console.log('All!!', combined.map(o=> o.name))
-
-  console.log('callback', cb)
   cb(null, combined)
 }
-
-
-// async function fetchAllFiles({drive, parentId = [teamDriveId]} = {}, cb) {
-//   var result = []
-//   var queue = []
-
-//   const options = {
-//     q: createQueryString(parentId),
-//     fields: 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)',
-//   }
-
-//   let {files, nextPageToken} = await fetchFromDrive(drive, options, cb)
-
-//   queue = queue.concat(files)
-
-//   while (nextPageToken) {
-//     let {files, nextPageToken} = await fetchFromDrive(drive, {
-//       ...options,
-//       nextPageToken
-//     }, cb)
-
-//     queue.concat(files)
-//   }
-
-//   while (queue.length > 0) {
-//     let node = queue.shift()
-//     result.push(node)
-
-//     if (node.mimeType === 'application/vnd.google-apps.folder') {
-//       let {files, nextPageToken} = await fetchFromDrive(drive, {
-//         ...options,
-//         q: `'${node.id}' in parents`
-//       }, cb)
-
-//       queue = queue.concat(...files)
-//     }
-//   }
-
-//   cb(null, result)
-// }
 
 function fetchFromDrive(drive, options, cb) {
   return new Promise(resolve => {
