@@ -135,45 +135,94 @@ function updateTree(cb) {
 //   })
 // }
 
-
-async function fetchAllFiles({drive}, cb) {
-  var result = []
-  var queue = []
+async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive, parentIds = [teamDriveId]} = {}, cb) {
 
   const options = {
-    q: `'${teamDriveId}' in parents`,
-    fields: 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)',
+    q: createQueryString(parentIds),
+    fields: 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)'
   }
+
+  if (pageToken) {
+    options.pageToken = pageToken
+  }
+
+  console.log('About to fetchFromDrive', options.q)
 
   let {files, nextPageToken} = await fetchFromDrive(drive, options, cb)
 
-  queue = queue.concat(files)
+  console.log('Got files', files.map(f => f.name))
 
-  while (nextPageToken) {
-    let {files, nextPageToken} = await fetchFromDrive(drive, {
-      ...options,
-      nextPageToken
+  const combined = listSoFar.concat(files)
+
+  console.log('Combined so far', combined.map(c => c.name))
+
+  if (nextPageToken) {
+    console.log('Getting next page')
+    return fetchAllFiles({
+      nextPageToken,
+      listSoFar: combined,
+      parentIds,
+      drive
     }, cb)
-
-    queue.concat(files)
   }
 
-  while (queue.length > 0) {
-    let node = queue.shift()
-    result.push(node)
+  let folders = files.filter(item => item.mimeType === 'application/vnd.google-apps.folder')
 
-    if (node.mimeType === 'application/vnd.google-apps.folder') {
-      let {files, nextPageToken} = await fetchFromDrive(drive, {
-        ...options,
-        q: `'${node.id}' in parents`
-      }, cb)
 
-      queue = queue.concat(...files)
-    }
+  if (folders.length > 0) {
+    console.log('Found some folders', folders.map(folder=> folder.name))
+    return fetchAllFiles({
+      listSoFar: combined,
+      drive,
+      parentIds: folders.map(folder => folder.id)
+    }, cb)
   }
 
-  cb(null, result)
+  console.log('All!!', combined.map(o=> o.name))
+
+  console.log('callback', cb)
+  cb(null, combined)
 }
+
+
+// async function fetchAllFiles({drive, parentId = [teamDriveId]} = {}, cb) {
+//   var result = []
+//   var queue = []
+
+//   const options = {
+//     q: createQueryString(parentId),
+//     fields: 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)',
+//   }
+
+//   let {files, nextPageToken} = await fetchFromDrive(drive, options, cb)
+
+//   queue = queue.concat(files)
+
+//   while (nextPageToken) {
+//     let {files, nextPageToken} = await fetchFromDrive(drive, {
+//       ...options,
+//       nextPageToken
+//     }, cb)
+
+//     queue.concat(files)
+//   }
+
+//   while (queue.length > 0) {
+//     let node = queue.shift()
+//     result.push(node)
+
+//     if (node.mimeType === 'application/vnd.google-apps.folder') {
+//       let {files, nextPageToken} = await fetchFromDrive(drive, {
+//         ...options,
+//         q: `'${node.id}' in parents`
+//       }, cb)
+
+//       queue = queue.concat(...files)
+//     }
+//   }
+
+//   cb(null, result)
+// }
 
 function fetchFromDrive(drive, options, cb) {
   return new Promise(resolve => {
@@ -182,6 +231,10 @@ function fetchFromDrive(drive, options, cb) {
       resolve(data)
     })
   })
+}
+
+function createQueryString(parentIds) {
+  return parentIds.map(id => `'${id}' in parents`).join(' or ')
 }
 
 
