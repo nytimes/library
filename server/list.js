@@ -157,9 +157,7 @@ function fetchFromDrive(drive, options, cb) {
   })
 }
 
-function createQueryString(parentIds) {
-  return parentIds.map(id => `'${id}' in parents`).join(' or ')
-}
+const createQueryString = parentIds => parentIds.map(id => `'${id}' in parents`).join(' or ')
 
 function produceTree(files, firstParent) {
   // maybe group into folders first?
