@@ -1,7 +1,6 @@
 # base config
 title: Library App
-pretty_name: Team Library
-search_placeholder: Search...
+prettyName: Team Library
 
 #partials/branding, partials/head
 name: Lib
@@ -19,15 +18,15 @@ footerButtons:
   newDocLink: !!js/function (id) => `https://docs.google.com/a/nytimes.com/document/create?usp=drive_web&folder=${id}`
 
 # errors
-error_403:
+error403:
   title: Operation Not Permitted
   heading: Not Authorized
   message: "<p>Check the request and try again. For assistance, contact #newstools.</p><p>Perhaps you'd like to search for something instead?</p>"
-error_404:
+error404:
   title: Page Not Found
   heading: Whoops, that's a 404.
   message: Perhaps try to search for something else instead?
-error_500:
+error500:
   title: Server Error
   heading: Uh oh, that's a 500.
   message: Perhaps try to search for something else instead?
