@@ -3,7 +3,7 @@ title: Library App
 pretty_name: Team Library
 search_placeholder: Search...
 
-#partials/branding
+#partials/branding, partials/head
 name: Lib
 organization: Your Organization
 icon: /assets/images/icon-logo.png
@@ -32,7 +32,7 @@ error_500:
   heading: Uh oh, that's a 500.
   message: Perhaps try to search for something else instead?
 
-# pages/categories, pages/index
+# pages/categories, pages/index, partials/search
 tagline: One place for your organization's documents.
 viewAllButton: View All
 faqLink: Get Started
@@ -42,8 +42,9 @@ moveFile:
   title: !!js/function (title) => `Move ${title}`
   prompt: !!js/function (title) => `Choose a folder to move '${title}' to`
 
-# pages/search
+# pages/search, partials/search
 search:
+  placeholder: Search...
   resultsTitle: !!js/function (query) => `Search results for ${query}`
   resultsKicker: !!js/function (query) => `Showing results for '${query}':`
   resultLabel:
@@ -52,3 +53,9 @@ search:
   noResults:
     kicker: !!js/function (query) => `There are no results for '${query}'`
     suggestion: 'To request a new page, email us at <a href="mailto:***REMOVED***">***REMOVED***</a>, or find us on slack in <a href="***REMOVED***/library">#library</a>.'
+
+# partials/sectionList
+sectionHeading: "Table of Contents:"
+
+#partials/siblingList
+sibingHeading: Related Docs
