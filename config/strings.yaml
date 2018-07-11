@@ -1,13 +1,22 @@
 # base config
 title: Library App
-name: Lib
 pretty_name: Team Library
+search_placeholder: Search...
+
+#partials/branding
+name: Lib
 organization: Your Organization
 icon: /assets/images/icon-logo.png
-search_placeholder: Search...
-help_text: Questions? Contact your organization's administrators.
-link_to_faq: FAQs
 
+# partials/footer
+helpText: Questions? Contact your organization's administrators.
+defaultEmail: user@your_organization.com
+footerButtons:
+  edit: Edit This Page
+  move: Move This Page
+  create: Create New Page
+  viewFolder: View Folder
+  newDocLink: !!js/function (id) => `https://docs.google.com/a/nytimes.com/document/create?usp=drive_web&folder=${id}`
 
 # errors
 error_403:
