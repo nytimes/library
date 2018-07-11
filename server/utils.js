@@ -53,12 +53,12 @@ const getStringConfig = () => {
   var config = {}
 
   if (defaultExists) {
-    const baseConfig = yaml.safeLoad(fs.readFileSync(path.join(__dirname, '../config/strings.yaml')), 'utf8')
+    const baseConfig = yaml.load(fs.readFileSync(path.join(__dirname, '../config/strings.yaml')), 'utf8')
     config = {...baseConfig}
   }
 
   if (customExists) {
-    const customConfig = yaml.safeLoad(fs.readFileSync(path.join(__dirname, '../custom/strings.yaml')), 'utf8')
+    const customConfig = yaml.load(fs.readFileSync(path.join(__dirname, '../custom/strings.yaml')), 'utf8')
     config = {...config, ...customConfig}
   }
 

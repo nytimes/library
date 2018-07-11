@@ -1,20 +1,21 @@
-#### Uncomment to use NYT-specific wording
+# #### Uncomment to use NYT-specific wording
 
-name: Library
-icon: "/assets/images/nyt-T-logo.png"
-tagline: A collection of tools and tips for creating great Times journalism.
-search_placeholder: What are you looking for?
+# name: Library
+# icon: "/assets/images/nyt-T-logo.png"
+# tagline: A collection of tools and tips for creating great Times journalism.
+# search_placeholder: What are you looking for?
 help_text: For help contributing or to report a problem, email <a href="mailto:***REMOVED***">***REMOVED***</a> or leave a message in the <a href="***REMOVED***/library">#library</a> slack channel.
+view_all_docs_button: View All
 
-error_403:
-  title: Operation Not Permitted
-  heading: Not Authorized
-  message: <p>Check the request and try again. For assistance, contact #newstools.</p><p>Perhaps you'd like to search for something instead?</p>
-error_404:
-  title: Page Not Found
-  heading: Whoops, that's a 404.
-  message: Perhaps try to search for something else instead?
-error_500:
-  title: Server Error
-  heading: Uh oh, that's a 500.
-  message: Perhaps try to search for something else instead?
+# error_403:
+#   title: Operation Not Permitted
+#   heading: Not Authorized
+#   message: <p>Check the request and try again. For assistance, contact #newstools.</p><p>Perhaps you'd like to search for something instead?</p>
+# error_404:
+#   title: Page Not Found
+#   heading: Whoops, that's a 404.
+#   message: Perhaps try to search for something else instead?
+# error_500:
+#   title: Server Error
+#   heading: Uh oh, that's a 500.
+#   message: Perhaps try to search for something else instead?
