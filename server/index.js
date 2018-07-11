@@ -11,7 +11,7 @@ const categories = require('./routes/categories')
 const readingHistory = require('./routes/readingHistory')
 const errorPages = require('./routes/errors')
 const {getMeta, getAllRoutes} = require('./list')
-const {preloadMiddleware, postloadMiddleware} = require('../custom/middleware')
+const {preloadMiddleware, postloadMiddleware} = require('./utils')
 
 const app = express()
 app.set('view engine', 'ejs')

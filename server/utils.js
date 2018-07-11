@@ -2,6 +2,7 @@
 const fs = require('fs')
 const path = require('path')
 const md5 = require('md5')
+const log = require('./logger')
 
 const layoutsDir = path.join(__dirname, '../layouts')
 exports.getTemplates = (subfolder) => {
@@ -54,4 +55,23 @@ exports.requireWithFallback = (attemptPath) => {
   } catch (e) {
     return require(path.join(baseDir, 'server', attemptPath))
   }
+}
+
+const middlewarePath = path.join(__dirname, '../custom/middleware')
+function loadMiddleware(app, middlewares) {
+  middlewares.forEach((item) => {
+    const requirement = require(path.join(__dirname, `../custom/middleware/${item}`))
+    log.info(`Requiring ${item} middleware`)
+    app.use(requirement)
+  })
+}
+
+exports.preloadMiddleware = (app) => {
+  const middlewares = fs.readdirSync(middlewarePath).filter((item) => !item.includes('index') && item.includes('preload'))
+  loadMiddleware(app, middlewares)
+}
+
+exports.postloadMiddleware = (app) => {
+  const middlewares = fs.readdirSync(middlewarePath).filter((item) => !item.includes('index') && !item.includes('preload'))
+  loadMiddleware(app, middlewares)
 }
