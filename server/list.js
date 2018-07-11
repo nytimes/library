@@ -63,7 +63,6 @@ function updateTree(cb) {
 
     const drive = google.drive({version: 'v3', auth: authClient})
     const fetchAllFiles = process.env.DRIVE_TYPE === 'team' ? fetchAllFromTeam : fetchAllFromShared
-
     fetchAllFiles({drive}, (err, files) => {
       if (err) {
         return cb(err)
@@ -82,7 +81,7 @@ function updateTree(cb) {
 
 async function fetchAllFromTeam({nextPageToken: pageToken, listSoFar = [], drive} = {}, cb) {
   const options = {
-    driveId,
+    teamDriveId: driveId,
     q: 'trashed = false',
     corpora: 'teamDrive',
     supportsTeamDrives: true,
@@ -121,6 +120,8 @@ async function fetchAllFromShared({nextPageToken: pageToken, listSoFar = [], par
   if (pageToken) {
     options.pageToken = pageToken
   }
+
+  log.debug(`searching for files > ${listSoFar.length}`)
 
   const {files, nextPageToken} = await fetchFromDrive(drive, options, cb)
   const combined = listSoFar.concat(files)
