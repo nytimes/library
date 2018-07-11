@@ -1,11 +1,10 @@
-# base config
-title: Library App
-prettyName: Team Library
 
-#partials/branding, partials/head
+# base config in partials/branding, partials/head
 name: Lib
 organization: Your Organization
 icon: /assets/images/icon-logo.png
+title: Library App
+prettyName: Team Library
 
 # partials/footer
 helpText: Questions? Contact your organization's administrators.
@@ -15,21 +14,7 @@ footerButtons:
   move: Move This Page
   create: Create New Page
   viewFolder: View Folder
-  newDocLink: !!js/function (id) => `https://docs.google.com/a/nytimes.com/document/create?usp=drive_web&folder=${id}`
-
-# errors
-error403:
-  title: Operation Not Permitted
-  heading: Not Authorized
-  message: "<p>Check the request and try again. For assistance, contact #newstools.</p><p>Perhaps you'd like to search for something instead?</p>"
-error404:
-  title: Page Not Found
-  heading: Whoops, that's a 404.
-  message: Perhaps try to search for something else instead?
-error500:
-  title: Server Error
-  heading: Uh oh, that's a 500.
-  message: Perhaps try to search for something else instead?
+  newDocLink: !!js/function (id) => `https://docs.google.com/document/create?usp=drive_web&folder=${id}`
 
 # pages/categories, pages/index, partials/search
 tagline: One place for your organization's documents.
@@ -51,10 +36,24 @@ search:
     person: !!js/function (lastUser) => `Last edited by <span class='author'>${lastUser}`
   noResults:
     kicker: !!js/function (query) => `There are no results for '${query}'`
-    suggestion: 'To request a new page, email us at <a href="mailto:***REMOVED***">***REMOVED***</a>, or find us on slack in <a href="***REMOVED***/library">#library</a>.'
+    suggestion: To request a new page, contact your administrators.
 
 # partials/sectionList
 sectionHeading: "Table of Contents:"
 
 #partials/siblingList
 sibingHeading: Related Docs
+
+# errors
+error403:
+  title: Operation Not Permitted
+  heading: Not Authorized
+  message: "<p>Check the request and try again. For assistance, contact #newstools.</p><p>Perhaps you'd like to search for something instead?</p>"
+error404:
+  title: Page Not Found
+  heading: Whoops, that's a 404.
+  message: Perhaps try to search for something else instead?
+error500:
+  title: Server Error
+  heading: Uh oh, that's a 500.
+  message: Perhaps try to search for something else instead?
