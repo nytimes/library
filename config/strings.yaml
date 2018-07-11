@@ -1,3 +1,5 @@
+### Default String Configuration
+### Add custom strings in custom/strings.yaml
 
 # base config in partials/branding, partials/head
 name: Lib
