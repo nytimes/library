@@ -21,6 +21,11 @@ app.get('/healthcheck', (req, res) => {
   res.send('OK')
 })
 
+app.use((req, res, next) => {
+  req.useBeta = process.env.BETA_API === 'true' || Object.keys(req.query).includes('beta')
+  next()
+})
+
 app.use(userInfo)
 
 // serve all files in the public folder
@@ -42,7 +47,8 @@ app.get('/view-on-site/:docId', (req, res, next) => {
 
 // main pages
 app.use(readingHistory.middleware)
-// don't allow using cache for normal pages
+
+// don't cache pages client-side to ensure browser always gets latest revision
 app.use((req, res, next) => {
   res.set('Cache-Control', 'no-cache')
   next()
