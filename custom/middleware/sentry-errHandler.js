@@ -4,10 +4,10 @@ function initSentry() {
   const raven = require('raven')
 
   raven.config(process.env.SENTRY_DSN).install()
-  return raven.requestHandler()
+  return raven.errorHandler()
 }
 
 // error functions are special. They have to be attached directly to the app.
-module.exports = process.env.SENTRY_DSN
+exports.preload = process.env.SENTRY_DSN
   ? initSentry()
   : (res, req, next) => next() // empty airbrake code

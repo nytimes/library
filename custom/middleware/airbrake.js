@@ -19,6 +19,6 @@ function initAirbrake() {
 }
 
 // error functions are special. They have to be attached directly to the app.
-module.exports = process.env.AIRBRAKE_PROJECT_ID
+exports.postload = process.env.AIRBRAKE_PROJECT_ID
   ? initAirbrake().expressHandler()
   : (res, req, next) => next() // empty airbrake code
