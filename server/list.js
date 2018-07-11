@@ -10,7 +10,7 @@ const {getAuth} = require('./auth')
 const {isSupported} = require('./utils')
 const {cleanName, slugify} = require('./docs')
 
-const teamDriveId = '***REMOVED***'
+const driveId = process.env.DRIVE_ID
 let currentTree = null // current route data by slug
 let docsInfo = {} // doc info by id
 let tags = {} // tags to doc id
@@ -62,11 +62,13 @@ function updateTree(cb) {
     }
 
     const drive = google.drive({version: 'v3', auth: authClient})
+    const fetchAllFiles = process.env.DRIVE_TYPE === 'team' ? fetchAllFromTeam : fetchAllFromShared
+
     fetchAllFiles({drive}, (err, files) => {
       if (err) {
         return cb(err)
       }
-      currentTree = produceTree(files, teamDriveId)
+      currentTree = produceTree(files, driveId)
       const count = Object.values(docsInfo)
         .filter((f) => f.resourceType !== 'folder')
         .length
@@ -78,7 +80,39 @@ function updateTree(cb) {
   })
 }
 
-async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive, parentIds = [teamDriveId]} = {}, cb) {
+async function fetchAllFromTeam({nextPageToken: pageToken, listSoFar = [], drive} = {}, cb) {
+  const options = {
+    driveId,
+    q: 'trashed = false',
+    corpora: 'teamDrive',
+    supportsTeamDrives: true,
+    includeTeamDriveItems: true,
+    // fields: '*', // setting fields to '*' returns all fields but ignores pageSize
+    fields: 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)',
+    pageSize: 1000 // this value does not seem to be doing anything
+  }
+
+  if (pageToken) {
+    options.pageToken = pageToken
+  }
+
+  log.debug(`searching for files > ${listSoFar.length}`)
+
+  const {files, nextPageToken} = await fetchFromDrive(drive, options, cb)
+  const combined = listSoFar.concat(files)
+
+  if (nextPageToken) {
+    return fetchAllFromTeam({
+      nextPageToken,
+      listSoFar: combined,
+      drive
+    }, cb)
+  }
+
+  cb(null, combined)
+}
+
+async function fetchAllFromShared({nextPageToken: pageToken, listSoFar = [], parentIds = [driveId], drive} = {}, cb) {
   const options = {
     q: createQueryString(parentIds),
     fields: 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)'
@@ -88,12 +122,11 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive, p
     options.pageToken = pageToken
   }
 
-  let {files, nextPageToken} = await fetchFromDrive(drive, options, cb)
-
+  const {files, nextPageToken} = await fetchFromDrive(drive, options, cb)
   const combined = listSoFar.concat(files)
 
   if (nextPageToken) {
-    return fetchAllFiles({
+    return fetchAllFromShared({
       nextPageToken,
       listSoFar: combined,
       parentIds,
@@ -101,10 +134,10 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive, p
     }, cb)
   }
 
-  let folders = files.filter(item => item.mimeType === 'application/vnd.google-apps.folder')
+  const folders = files.filter(item => item.mimeType === 'application/vnd.google-apps.folder')
 
   if (folders.length > 0) {
-    return fetchAllFiles({
+    return fetchAllFromShared({
       listSoFar: combined,
       drive,
       parentIds: folders.map(folder => folder.id)
@@ -148,7 +181,7 @@ function produceTree(files, firstParent) {
       resourceType: cleanResourceType(resource.mimeType),
       sort: determineSort(name),
       slug,
-      isTrashCan: slug === 'trash' && parents.includes(teamDriveId)
+      isTrashCan: slug === 'trash' && parents.includes(driveId)
     })
 
     // add the id of this item to a list of tags
@@ -231,7 +264,7 @@ function addPaths(byId) {
   function derivePathInfo(item) {
     const {parents, slug, webViewLink: drivePath, isHome, resourceType} = item || {}
     const parentId = parents[0]
-    const hasParent = parentId && parentId !== teamDriveId
+    const hasParent = parentId && parentId !== driveId
     const parent = byId[parentId]
     const renderInLibrary = isSupported(resourceType)
 
