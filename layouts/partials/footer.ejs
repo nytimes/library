@@ -10,7 +10,7 @@
   <a class="button btn-footer move-file-button" href="/move-file?id=<%- id %>"><%- template('footer.buttons.move') %></a>
   <% } %>
   <% if (locals.parentId) { %>
-  <a class="button btn-footer" href=<%- template('footer.buttons.newDocLink') %> target="_blank"><%- template('footer.buttons.create') %></a>
+  <a class="button btn-footer" href=<%- template('footer.buttons.newDocLink', locals.parentId) %> target="_blank"><%- template('footer.buttons.create') %></a>
   <a class="button btn-footer" href="https://drive.google.com/drive/u/0/folders/<%- parentId %>" target="_blank"><%- template('footer.buttons.viewFolder') %></a>
   <% } %>
 

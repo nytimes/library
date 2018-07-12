@@ -13,8 +13,8 @@ landing:
 footer:
   helpText: For help contributing or to report a problem, email <a href="mailto:***REMOVED***">***REMOVED***</a> or leave a message in the <a href="***REMOVED***/library">#library</a> slack channel.
   defaultEmail: test.user@nytimes.com
-  buttons:
-    newDocLink: !!js/function (id) => `https://docs.google.com/a/nytimes.com/document/create?usp=drive_web&folder=${id}`
+  # buttons:
+    # newDocLink: !!js/function (id) => `https://docs.google.com/a/nytimes.com/document/create?usp=drive_web&folder=${id}`
 
 search:
   placeholder: "What are you looking for?"
@@ -24,6 +24,6 @@ search:
 
 # errors
 error:
-  _403:
+  403:
     message: "<p>Check the request and try again. For assistance, contact #newstools.</p><p>Perhaps you'd like to search for something instead?</p>"
 
