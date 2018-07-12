@@ -14,7 +14,7 @@ branding:
 landing:
   tagline: One place for your organization's documents.
   viewAll: View All
-  quickLink: Get Started
+  quickLink: Get Started.
 
 # partials/footer
 footer:
