@@ -3,6 +3,7 @@
 const inflight = require('inflight')
 const {google} = require('googleapis')
 const path = require('path')
+const {promisify} = require('util')
 
 const cache = require('./cache')
 const log = require('./logger')
@@ -62,11 +63,11 @@ function updateTree(cb) {
     }
 
     const drive = google.drive({version: 'v3', auth: authClient})
-    const {DRIVE_TYPE: driveType} = process.env
+    // const {DRIVE_TYPE: driveType} = process.env
 
-    const fetchAllFiles = driveType === 'team' ? fetchAllFromTeam : 
-                          driveType === 'shared' ? fetchAllFromShared : 
-                          logger.error('Must specify drive type')
+    // const fetchAllFiles = driveType === 'team' ? fetchAllFromTeam : 
+    //                       driveType === 'shared' ? fetchAllFromShared : 
+    //                       logger.error('Must specify drive type')
 
     fetchAllFiles({drive}, (err, files) => {
       if (err) {
@@ -84,85 +85,142 @@ function updateTree(cb) {
   })
 }
 
-async function fetchAllFromTeam({nextPageToken: pageToken, listSoFar = [], drive} = {}, cb) {
-  const options = {
-    teamDriveId: driveId,
+function getOptions(driveType, id) {
+  const createQueryString = id => id.map(id => `'${id}' in parents`).join(' or ')
+
+  if (driveType === 'shared') {
+    return {
+      q: createQueryString(id),
+      fields: 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)'
+    }
+  } 
+  
+  return {
+    teamDriveId: id,
     q: 'trashed = false',
     corpora: 'teamDrive',
     supportsTeamDrives: true,
     includeTeamDriveItems: true,
     // fields: '*', // setting fields to '*' returns all fields but ignores pageSize
     fields: 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)',
-    pageSize: 1000 // this value does not seem to be doing anything
+    pageSize: 1000
   }
+}
+
+async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentIds = [driveId], drive} = {}, cb) {
+  const {DRIVE_TYPE: driveType} = process.env
+  const options = getOptions(driveType, parentIds)
 
   if (pageToken) {
     options.pageToken = pageToken
   }
 
   log.debug(`searching for files > ${listSoFar.length}`)
-
-  const {files, nextPageToken} = await fetchFromDrive(drive, options, cb)
+  
+  const fetchFromDrive = promisify(drive.files.list).bind(drive.files)
+  const {data} = await fetchFromDrive(options)
+    .catch(err => log.error(err))
+  
+  const {files, nextPageToken} = data
   const combined = listSoFar.concat(files)
 
   if (nextPageToken) {
-    return fetchAllFromTeam({
+    return fetchAllFiles({
       nextPageToken,
       listSoFar: combined,
       drive
     }, cb)
   }
 
-  cb(null, combined)
-}
+  if (driveType === 'shared') {
+    const folders = files.filter(item => item.mimeType === 'application/vnd.google-apps.folder')
 
-async function fetchAllFromShared({nextPageToken: pageToken, listSoFar = [], parentIds = [driveId], drive} = {}, cb) {
-  const options = {
-    q: createQueryString(parentIds),
-    fields: 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)'
-  }
-
-  if (pageToken) {
-    options.pageToken = pageToken
-  }
-
-  log.debug(`searching for files > ${listSoFar.length}`)
-
-  const {files, nextPageToken} = await fetchFromDrive(drive, options, cb)
-  const combined = listSoFar.concat(files)
-
-  if (nextPageToken) {
-    return fetchAllFromShared({
-      nextPageToken,
-      listSoFar: combined,
-      parentIds,
-      drive
-    }, cb)
-  }
-
-  const folders = files.filter(item => item.mimeType === 'application/vnd.google-apps.folder')
-
-  if (folders.length > 0) {
-    return fetchAllFromShared({
-      listSoFar: combined,
-      drive,
-      parentIds: folders.map(folder => folder.id)
-    }, cb)
+    if (folders.length > 0) {
+      return fetchAllFiles({
+        listSoFar: combined,
+        drive,
+        parentIds: folders.map(folder => folder.id)
+      }, cb)
+    }
   }
 
   cb(null, combined)
 }
 
-function fetchFromDrive(drive, options, cb) {
-  return new Promise(resolve => {
-    drive.files.list(options, (err, {data}) => {
-      if (err) cb(err)
-      resolve(data)
-    })
-  })
-}
+// async function fetchAllFromTeam({nextPageToken: pageToken, listSoFar = [], drive} = {}, cb) {
+//   const options = getOptions('team')
 
-const createQueryString = parentIds => parentIds.map(id => `'${id}' in parents`).join(' or ')
+//   if (pageToken) {
+//     options.pageToken = pageToken
+//   }
+
+//   log.debug(`searching for files > ${listSoFar.length}`)
+
+//   const {files, nextPageToken} = await fetchFromDrive(drive, options, cb)
+//   const combined = listSoFar.concat(files)
+
+//   if (nextPageToken) {
+//     return fetchAllFromTeam({
+//       nextPageToken,
+//       listSoFar: combined,
+//       drive
+//     }, cb)
+//   }
+
+//   cb(null, combined)
+// }
+
+// async function fetchAllFromShared({nextPageToken: pageToken, listSoFar = [], parentIds = [driveId], drive} = {}, cb) {
+//   const options = getOptions('shared', parentIds)
+
+//   if (pageToken) {
+//     options.pageToken = pageToken
+//   }
+
+//   log.debug(`searching for files > ${listSoFar.length}`)
+
+//   const fetchFromDrive = promisify(drive.files.list).bind(drive.files)
+
+//   const {files, nextPageToken} = await fetchFromDrive(options)
+//     .catch(err => log.error(err))
+  
+//   fetchFromDrive(options).then((data) => console.log(data)).catch(err => console.log(err))
+  
+//   const combined = listSoFar.concat(files)
+
+//   if (nextPageToken) {
+//     return fetchAllFromShared({
+//       nextPageToken,
+//       listSoFar: combined,
+//       parentIds,
+//       drive
+//     }, cb)
+//   }
+
+//   const folders = files.filter(item => item.mimeType === 'application/vnd.google-apps.folder')
+
+//   // use promise.all
+//   if (folders.length > 0) {
+//     return fetchAllFromShared({
+//       listSoFar: combined,
+//       drive,
+//       parentIds: folders.map(folder => folder.id)
+//     }, cb)
+//   }
+
+//   cb(null, combined)
+// }
+
+// function fetchFromDrive(drive, options, cb) {
+//   return new Promise(resolve => {
+//     drive.files.list(options, (err, {data}) => {
+//       if (err) cb(err)
+//       resolve(data)
+//     })
+//   })
+// }
+
+
 
 function produceTree(files, firstParent) {
   // maybe group into folders first?
