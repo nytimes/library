@@ -58,11 +58,11 @@ exports.requireWithFallback = (attemptPath) => {
 
 // Get list of middleware in a directory
 const middlewares = fs.readdirSync(path.join(__dirname, '../custom/middleware'))
-const reqPath = (item) => path.join(__dirname, `../custom/middleware/${item}`)
 
 // create object with preload and postload middleware functions
 exports.allMiddleware = middlewares.reduce((middleware, item) => {
-  const requirement = require(reqPath(item))
+  const reqPath = path.join(__dirname, `../custom/middleware/${item}`)
+  const requirement = require(reqPath)
   if (requirement.preload) middleware.preload.push(requirement.preload)
   if (requirement.postload) middleware.postload.push(requirement.postload)
 
