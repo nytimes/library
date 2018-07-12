@@ -40,6 +40,8 @@ search:
 
 # categories/default
 file:
+  childrenList:
+    kicker: !!js/function (title) => `Pages in ${title}`
   # partials/sectionList
   sectionList:
     heading: "Table of Contents:"
@@ -51,7 +53,7 @@ file:
 moveFile:
   title: !!js/function (title) => `Move ${title}`
   prompt: !!js/function (title) => `Choose a folder to move '${title}' to`
-  
+
 # errors
 error:
   _403:

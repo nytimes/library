@@ -21,7 +21,7 @@
         <% } %>
 
         <% if (locals.children && children.length) { %>
-        <%- include('../partials/childrenList', {children, kicker: ""}) %>
+        <%- include('../partials/childrenList', {children, kicker: stringTemplate('file.childrenList.kicker', title)}) %>
         <% } %>
       </div>
 
