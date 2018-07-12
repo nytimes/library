@@ -6,6 +6,7 @@ branding:
   name: Library
   prettyName: Team Library
   org: Your Organization
+  # orgDomain: 
   icon: /assets/images/icon-logo.png
   favicon: /assets/images/icon-logo.png
 

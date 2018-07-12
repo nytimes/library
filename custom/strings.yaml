@@ -3,6 +3,7 @@
 branding:
   name: Library
   org: The New York Times
+  orgDomain: nytimes.com
   icon: /assets/images/nyt-T-logo.png
   prettyName: NYT Library
   favicon: /assets/images/nytlibrary.ico
