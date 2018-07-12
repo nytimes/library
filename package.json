@@ -9,7 +9,6 @@
     "assert": "^1.4.1",
     "async": "^2.4.1",
     "cache-manager": "^2.4.0",
-    "cache-manager-ioredis": "^1.0.1",
     "chai": "^4.0.2",
     "cheerio": "^1.0.0-rc.1",
     "ejs": "^2.5.6",
@@ -30,6 +29,7 @@
     "xlsx": "^0.11.0"
   },
   "optionalDependencies": {
+    "cache-manager-ioredis": "^1.0.1",
     "raven": "^2.6.3"
   },
   "devDependencies": {
