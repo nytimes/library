@@ -1,27 +1,28 @@
 ### NYT String Configuration
 
-name: Library
-organization: The New York Times
-icon: /assets/images/nyt-T-logo.png
-title: NYT Library
-prettyName: NYT Library
+branding:
+  name: Library
+  org: The New York Times
+  icon: /assets/images/nyt-T-logo.png
+  prettyName: NYT Library
 
-# partials/footer
-helpText: For help contributing or to report a problem, email <a href="mailto:***REMOVED***">***REMOVED***</a> or leave a message in the <a href="***REMOVED***/library">#library</a> slack channel.
-defaultEmail: test.user@nytimes.com
-footerButtons:
-  newDocLink: !!js/function (id) => `https://docs.google.com/a/nytimes.com/document/create?usp=drive_web&folder=${id}`
+landing:
+  tagline: A collection of tools and tips for creating great Times journalism.
 
-# pages/categories, pages/index, partials/search
-tagline: A collection of tools and tips for creating great Times journalism.
+footer:
+  helpText: For help contributing or to report a problem, email <a href="mailto:***REMOVED***">***REMOVED***</a> or leave a message in the <a href="***REMOVED***/library">#library</a> slack channel.
+  defaultEmail: test.user@nytimes.com
+  buttons:
+    newDocLink: !!js/function (id) => `https://docs.google.com/a/nytimes.com/document/create?usp=drive_web&folder=${id}`
 
-# pages/search, partials/search
 search:
   placeholder: What are you looking for?
-  noResults:
-    suggestion: 'To request a new page, email us at <a href="mailto:***REMOVED***">***REMOVED***</a>, or find us on slack in <a href="***REMOVED***/library">#library</a>.'
+  results:
+    none:
+      suggestion: 'To request a new page, email us at <a href="mailto:***REMOVED***">***REMOVED***</a>, or find us on slack in <a href="***REMOVED***/library">#library</a>.'
 
 # errors
-error403:
-  message: "<p>Check the request and try again. For assistance, contact #newstools.</p><p>Perhaps you'd like to search for something instead?</p>"
+error:
+  _403:
+    message: "<p>Check the request and try again. For assistance, contact #newstools.</p><p>Perhaps you'd like to search for something instead?</p>"
 

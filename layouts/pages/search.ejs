@@ -16,18 +16,18 @@
             <p>
               <% if (res.folder) { %>
                 <% let folderName = res.folder.prettyName ? res.folder.prettyName : 'Home' %>
-                <%- stringTemplate('results.label.folder', res.folder.path, folderName)%>&nbsp;
+                <%- stringTemplate('search.results.label.folder', res.folder.path, folderName)%>&nbsp;
               <% } %>
               <% if (res.lastModifyingUser) { %>
-                <%- stringTemplate('results.label.person', res.lastModifyingUser.displayName) %>
+                <%- stringTemplate('search.results.label.person', res.lastModifyingUser.displayName) %>
               <% } %>
               <%= res.lastUpdated %>
             </p>
           </div>
           <% }) %>
         <% }  else { %>
-          <h3 class="search-kicker"><%- stringTemplate('results.none.kicker', locals.q) %></h3>
-          <p><%- stringTemplate('results.none.suggestion') %></p>
+          <h3 class="search-kicker"><%- stringTemplate('search.results.none.kicker', locals.q) %></h3>
+          <p><%- stringTemplate('search.results.none.suggestion') %></p>
         <% } %>
       </div>
 

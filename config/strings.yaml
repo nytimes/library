@@ -25,6 +25,7 @@ footer:
     viewFolder: View Folder
     newDocLink: !!js/function (id) => `https://docs.google.com/document/create?usp=drive_web&folder=${id}`
 
+# pages/search, partials/search
 search:
   placeholder: Search...
   results:
@@ -37,21 +38,20 @@ search:
       kicker: !!js/function (query) => `There are no results for '${query}'`
       suggestion: To request a new page, contact your administrators.
 
+# categories/default
+file:
+  # partials/sectionList
+  sectionList:
+    heading: "Table of Contents:"
+  #partials/siblingList
+  siblingList:
+    heading: Related Docs
+
 # pages/move-file
 moveFile:
   title: !!js/function (title) => `Move ${title}`
   prompt: !!js/function (title) => `Choose a folder to move '${title}' to`
-
-# pages/search, partials/search
-
-# partials/sectionList
-section:
-  heading: "Table of Contents:"
-
-#partials/siblingList
-sibing:
-  heading: Related Docs
-
+  
 # errors
 error:
   _403:
