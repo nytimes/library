@@ -6,15 +6,16 @@
     <% }) %>
   <% } %>
   <% if (locals.editLink) { %>
-  <a class="button btn-footer" href="<%- editLink %>" id="edit-button" target="_blank">Edit This Page</a>
-  <a class="button btn-footer move-file-button" href="/move-file?id=<%- id %>">Move This Page</a>
+    <a class="button btn-footer" href="<%- editLink %>" id="edit-button" target="_blank"><%- template('footer.buttons.edit') %></a>
+    <a class="button btn-footer move-file-button" href="/move-file?id=<%- id %>"><%- template('footer.buttons.move') %></a>
   <% } %>
   <% if (locals.parentId) { %>
-  <a class="button btn-footer" href="https://docs.google.com/a/nytimes.com/document/create?usp=drive_web&folder=<%- parentId %>" target="_blank">Create New Page</a>
-  <a class="button btn-footer" href="https://drive.google.com/drive/u/0/folders/<%- parentId %>" target="_blank">View Folder</a>
+    <% const domain = template('branding.orgDomain') ? `/a/${template('branding.orgDomain')}` : '' %>
+    <a class="button btn-footer" href="https://docs.google.com<%= domain %>/document/create?usp=drive_web&folder=<%- parentId %>" %> target="_blank"><%- template('footer.buttons.create') %></a>
+    <a class="button btn-footer" href="https://drive.google.com/drive/u/0/folders/<%- parentId %>" target="_blank"><%- template('footer.buttons.viewFolder') %></a>
   <% } %>
 
-  <p class="help-text">For help contributing or to report a problem, email <a href="mailto:***REMOVED***">***REMOVED***</a> or leave a message in the <a href="***REMOVED***/library">#library</a> slack channel.</p>
+  <p class="help-text"><%- template('footer.helpText') %></p>
 </div>
 <script>
   // Google Analytics tracking
@@ -53,7 +54,7 @@
   });
 
   function renderUserInfo(data) {
-    var username = data.email || 'nyt.user@nytimes.com';
+    var username = data.email || template('footer.defaultEmail');
     $('.user-fullname').text(username);
 
     var initials = username.split('@')[0].split('.').map(function(name) {
