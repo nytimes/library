@@ -1,6 +1,7 @@
 'use strict'
 
 const log = require('../logger')
+const {stringTemplate} = require('../utils')
 
 // generic error handler to return error pages to user
 module.exports = (err, req, res, next) => {
@@ -11,5 +12,5 @@ module.exports = (err, req, res, next) => {
 
   const code = messages[err.message] || 500
   log.error(`Serving an error page for ${req.url}`, err)
-  res.status(code).render(`errors/${code}`, {err})
+  res.status(code).render(`errors/${code}`, {err, template: stringTemplate})
 }

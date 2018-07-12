@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
-  <%- include('../partials/head', {title: 'View All Docs'}) %>
+  <%- include('../partials/head', {title: template('landing.viewAll')}) %>
   <body>
-    <%- include('../partials/header', {parentLinks: [], title: 'View All Docs'}) %>
+    <%- include('../partials/header', {parentLinks: [], title: template('landing.viewAll')}) %>
 
     <div class="g-upper-body">
     <%- include('../partials/nav') %>
