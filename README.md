@@ -19,7 +19,7 @@ cp ~***REMOVED*** nyt-library/server/.auth.json
 
 Install dependencies:
 ```
-cd nyt-library && yarn install
+cd nyt-library && yarn install --ignore-optional
 ```
 
 Add the .env file into the root directory (get this from someone else) or as a start, just do:
@@ -38,6 +38,8 @@ http://localhost.nytimes.com:3000/
 
 http://localhost.nytimes.com:3000/graphics/how-to-make-promos
 
+## Customization
+See the [customization readme](https://github.com/newsdev/nyt-library/blob/master/custom/README.md) for information on how to add custom functionality and styling to Library.
 
 ### Tests
 

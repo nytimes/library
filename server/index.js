@@ -9,13 +9,18 @@ const userInfo = require('./routes/userInfo')
 const pages = require('./routes/pages')
 const categories = require('./routes/categories')
 const readingHistory = require('./routes/readingHistory')
-const {airbrake, errorPages} = require('./routes/errors')
-
+const errorPages = require('./routes/errors')
 const {getMeta, getAllRoutes} = require('./list')
+const {allMiddleware} = require('./utils')
 
 const app = express()
+
+const {preload, postload} = allMiddleware
+
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, '../layouts'))
+
+preload.forEach((middleware) => app.use(middleware))
 
 app.get('/healthcheck', (req, res) => {
   res.send('OK')
@@ -69,15 +74,14 @@ app.get('/cache-purge-everything', (req, res, next) => {
 
 app.use(pages)
 app.use(cache)
+
 // category pages will be cache busted when their last updated timestamp changes
 app.use(categories)
 
-// errors are special, they must be attached individually
-// airbrake fallback and notifier for routes issues
-app.use(airbrake)
-// error handler for rendering the 404 and 500 pages
-app.use(errorPages)
+postload.forEach((middleware) => app.use(middleware))
 
+// error handler for rendering the 404 and 500 pages, must go last
+app.use(errorPages)
 app.listen(process.env.PORT || 3000)
 
 module.exports = app
