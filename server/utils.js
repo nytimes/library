@@ -63,10 +63,14 @@ const middlewares = fs.readdirSync(path.join(__dirname, '../custom/middleware'))
 exports.allMiddleware = middlewares.reduce((middleware, item) => {
   const reqPath = path.join(__dirname, `../custom/middleware/${item}`)
   const requirement = require(reqPath)
-  if (requirement.preload) middleware.preload.push(requirement.preload)
-  if (requirement.postload) middleware.postload.push(requirement.postload)
-
-  return middleware
+  return {
+    preload: requirement.preload
+      ? middleware.preload.concat(requirement.preload)
+      : requirement.preload,
+    postload: requirement.postload
+      ? middleware.postload.concat(requirement.postload)
+      : requirement.postload
+  }
 }, {
   preload: [], postload: []
 })
