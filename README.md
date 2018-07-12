@@ -38,10 +38,8 @@ http://localhost.nytimes.com:3000/
 
 http://localhost.nytimes.com:3000/graphics/how-to-make-promos
 
-### Included Middleware
-Middleware included in `server/middleware` will be automatically included. These
-files are meant to fail gracefully if the libraries they depend on are not
-included.
+## Customization
+See the [customization readme](https://github.com/newsdev/nyt-library/blob/master/custom/README.md) for information on how to add custom functionality and styling to Library.
 
 **Airbrake**
 `npm i airbrake`, and set the `AIRBRAKE_PROJECT_ID` and `AIRBRAKE_API_KEY` env
