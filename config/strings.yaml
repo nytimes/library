@@ -1,0 +1,71 @@
+### Default String Configuration
+### Add custom strings in custom/strings.yaml
+
+# base config in partials/branding, partials/head
+branding:
+  name: Library
+  prettyName: Team Library
+  org: Your Organization
+  # orgDomain: 
+  icon: /assets/images/icon-logo.png
+  favicon: /assets/images/icon-logo.png
+
+# pages/categories, pages/index, partials/search
+landing:
+  tagline: One place for your organization's documents.
+  viewAll: View All
+  quickLink: Get Started.
+
+# partials/footer
+footer:
+  helpText: Questions? Contact your organization's administrators.
+  defaultEmail: user@your_organization.com
+  buttons:
+    edit: Edit This Page
+    move: Move This Page
+    create: Create New Page
+    viewFolder: View Folder
+
+# pages/search, partials/search
+search:
+  placeholder: Search...
+  results:
+    title: !!js/function (query) => `Search results for ${query}`
+    kicker: !!js/function (query) => `Showing results for '${query}':`
+    label:
+      folder: !!js/function (path, folder) => `Filed under <a class="folder" href=${path}><span>${folder}</span></a>`
+      person: !!js/function (lastUser) => `Last edited by <span class='author'>${lastUser}`
+    none:
+      kicker: !!js/function (query) => `There are no results for '${query}'`
+      suggestion: To request a new page, contact your administrators.
+
+# categories/default
+file:
+  childrenList:
+    kicker: !!js/function (title) => `Pages in ${title}`
+  # partials/sectionList
+  sectionList:
+    heading: "Table of Contents:"
+  #partials/siblingList
+  siblingList:
+    heading: Related Docs
+
+# pages/move-file
+moveFile:
+  title: !!js/function (title) => `Move ${title}`
+  prompt: !!js/function (title) => `Choose a folder to move '${title}' to`
+
+# errors
+error:
+  403:
+    title: Operation Not Permitted
+    heading: Not Authorized
+    message: "<p>Check the request and try again. For assistance, contact #newstools.</p><p>Perhaps you'd like to search for something instead?</p>"
+  404:
+    title: Page Not Found
+    heading: Whoops, that's a 404.
+    message: Perhaps try to search for something else instead?
+  500:
+    title: Server Error
+    heading: Uh oh, that's a 500.
+    message: Perhaps try to search for something else instead?

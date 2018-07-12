@@ -9,6 +9,8 @@ const inflight = require('inflight')
 
 const {getAuth} = require('./auth')
 const log = require('./logger')
+const list = require('./list')
+const {stringTemplate} = require('./utils')
 
 const formatterV3 = require('./formatter')
 const formatterV4 = require('./formatter-beta')
@@ -49,7 +51,7 @@ exports.fetchDoc = ({id, resourceType, req}, cb) => {
       html = formatter.getProcessedHtml(html)
       const sections = getSections(html)
       // maybe we should pull out headers here
-      cb(err, {html, originalRevision, sections})
+      cb(err, {html, originalRevision, sections, template: stringTemplate})
     })
   })
 }
