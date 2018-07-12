@@ -10,8 +10,8 @@ function initSentry() {
 // error functions are special. They have to be attached directly to the app.
 exports.preload = process.env.SENTRY_DSN
   ? initSentry()
-  : (res, req, next) => next() // pass of no sentry env
+  : (res, req, next) => next() // pass if no sentry env variable
 
 exports.postload = process.env.SENTRY_DSN
   ? raven.errorHandler()
-  : (res, req, next) => next() // pass of no sentry env
+  : (res, req, next) => next() // pass if no sentry env variable

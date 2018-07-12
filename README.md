@@ -41,15 +41,6 @@ http://localhost.nytimes.com:3000/graphics/how-to-make-promos
 ## Customization
 See the [customization readme](https://github.com/newsdev/nyt-library/blob/master/custom/README.md) for information on how to add custom functionality and styling to Library.
 
-**Airbrake**
-`npm i airbrake`, and set the `AIRBRAKE_PROJECT_ID` and `AIRBRAKE_API_KEY` env
-variables.
-
-
-**Sentry**
-`npm i raven`, and set the `SENTRY_DSN` env variable.
-
-
 ### Tests
 
 You can run the unit tests (which exercise HTML parsing and eventually routing logic) with `npm test`.

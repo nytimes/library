@@ -11,8 +11,12 @@ functions. These functions must be valid middleware with params
 `preload` exports will be added to the beginning of the request cycle, while
 `postload`
 
+
+**Sentry**
+To use Sentry, run `npm i raven`, and set the `SENTRY_DSN` env variable.
+
+
 ## Custom Cache Client
-<!--  FIXME THIS GOING TO BE WRONG -->
 Cache by default is in-memory. If you provide the env variables
 `REDIS_URI` and `REDIS_PASS` to appropriate values, redis will be used.
 

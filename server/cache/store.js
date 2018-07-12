@@ -1,3 +1,5 @@
+'use strict'
+
 const cacheManager = require('cache-manager')
 
 // Default in-memory cache
