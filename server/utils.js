@@ -60,12 +60,13 @@ exports.requireWithFallback = (attemptPath) => {
 const middlewares = fs.readdirSync(path.join(__dirname, '../custom/middleware'))
 const reqPath = (item) => path.join(__dirname, `../custom/middleware/${item}`)
 
-//
-exports.fetchMiddleware = () => {
-  return {
-    preload: middlewares.map((item) => require(reqPath(item)).preload)
-                        .filter((item) => item), // remove undefined
-    postload: middlewares.map((item) => require(reqPath(item)).postload)
-                         .filter((item) => item) // remove undefined
-  }
-}
+// create object with preload and postload middleware functions
+exports.allMiddleware = middlewares.reduce((middleware, item) => {
+  const requirement = require(reqPath(item))
+  if (requirement.preload) middleware.preload.push(requirement.preload)
+  if (requirement.postload) middleware.postload.push(requirement.postload)
+
+  return middleware
+}, {
+  preload: [], postload: []
+})

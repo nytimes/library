@@ -11,11 +11,11 @@ const categories = require('./routes/categories')
 const readingHistory = require('./routes/readingHistory')
 const errorPages = require('./routes/errors')
 const {getMeta, getAllRoutes} = require('./list')
-const {fetchMiddleware} = require('./utils')
+const {allMiddleware} = require('./utils')
 
 const app = express()
 
-const {preload, postload} = fetchMiddleware()
+const {preload, postload} = allMiddleware
 
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, '../layouts'))
