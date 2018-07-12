@@ -69,6 +69,7 @@ async function updateTree(cb) {
     .catch(err => cb(err))
 
   currentTree = produceTree(files, driveId)
+
   const count = Object.values(docsInfo)
     .filter((f) => f.resourceType !== 'folder')
     .length
