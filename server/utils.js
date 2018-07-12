@@ -66,26 +66,21 @@ exports.requireWithFallback = (attemptPath) => {
 const middlewares = fs.readdirSync(path.join(__dirname, '../custom/middleware'))
 
 // create object with preload and postload middleware functions
-exports.allMiddleware = middlewares.reduce((middleware, item) => {
-  const reqPath = path.join(__dirname, `../custom/middleware/${item}`)
-  const requirement = require(reqPath)
+exports.allMiddleware = middlewares.reduce((m, item) => {
+  const {preload, postload} = require(path.join(__dirname, `../custom/middleware/${item}`))
   return {
-    preload: requirement.preload
-      ? middleware.preload.concat(requirement.preload)
-      : requirement.preload,
-    postload: requirement.postload
-      ? middleware.postload.concat(requirement.postload)
-      : requirement.postload
+    preload: preload ? m.preload.concat(preload) : preload,
+    postload: postload ? m.postload.concat(postload) : postload
   }
 }, {
   preload: [], postload: []
 })
 
 function getConfig() {
-  const defaultExists = fs.existsSync(path.join(__dirname, '../config/strings.yaml')) 
+  const defaultExists = fs.existsSync(path.join(__dirname, '../config/strings.yaml'))
   const customExists = fs.existsSync(path.join(__dirname, '../custom/strings.yaml'))
 
-  var config = {}
+  let config = {}
 
   if (defaultExists) {
     config = yaml.load(fs.readFileSync(path.join(__dirname, '../config/strings.yaml')), 'utf8') || {}
