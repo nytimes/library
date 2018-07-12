@@ -2,7 +2,6 @@
 const fs = require('fs')
 const path = require('path')
 const md5 = require('md5')
-const log = require('./logger')
 
 const layoutsDir = path.join(__dirname, '../layouts')
 exports.getTemplates = (subfolder) => {

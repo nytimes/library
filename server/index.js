@@ -14,15 +14,17 @@ const {getMeta, getAllRoutes} = require('./list')
 const {fetchMiddleware} = require('./utils')
 
 const app = express()
+
+const {preload, postload} = fetchMiddleware()
+
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, '../layouts'))
+
+preload.forEach((middleware) => app.use(middleware))
 
 app.get('/healthcheck', (req, res) => {
   res.send('OK')
 })
-
-const {preload, postload} = fetchMiddleware()
-preload.forEach((middleware) => app.use(middleware))
 
 app.use((req, res, next) => {
   req.useBeta = process.env.BETA_API === 'true' || Object.keys(req.query).includes('beta')
@@ -76,10 +78,10 @@ app.use(cache)
 // category pages will be cache busted when their last updated timestamp changes
 app.use(categories)
 
-// error handler for rendering the 404 and 500 pages
-app.use(errorPages)
-
 postload.forEach((middleware) => app.use(middleware))
+
+// error handler for rendering the 404 and 500 pages, must go last
+app.use(errorPages)
 app.listen(process.env.PORT || 3000)
 
 module.exports = app
