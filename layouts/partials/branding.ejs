@@ -2,13 +2,13 @@
   <h2 class="branding-heading">
     <% const shouldLink = locals.context !== 'home' %>
     <% if (shouldLink) { %><a id="branding-heading-link" href="/"><% } %>
-      <span class="visually-hidden"><%= config.organization %></span>
-      <img src=<%= config.icon %> class="logo" alt=<%= config.organization %>>
+      <span class="visually-hidden"><%- stringTemplate('branding.org') %></span>
+      <img src=<%- stringTemplate('branding.icon') %> class="logo" alt=<%- stringTemplate('branding.org') %>>
     <% if (shouldLink) { %></a><% } %>
   </h2>
   <h3 class="branding-label">
     <% if (shouldLink) { %><a class="content-link" href="/"><% } %>
-      <%= config.name %>
+      <%- stringTemplate('branding.name') %>
     <% if (shouldLink) { %></a><% } %>
   </h3>
 </div>

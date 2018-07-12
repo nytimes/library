@@ -1,14 +1,15 @@
 <div class="search-topper">
   <form method="GET" action="/search" class="search-container">
+    <% const placeholder = stringTemplate('search.placeholder')%>
     <% const focus = locals.focus || '' %>
-    <% const msgOnFocus = config.search_placeholder || '' %>
-    <input <%= focus %> id="search-box" type="text" name="q" value="<%= locals.q %>" placeholder=<%= config.search_placeholder %> onfocus="this.placeholder = '<%= msgOnFocus %>'" onblur="this.placeholder = <%= config.search_placeholder %>"/>
+    <% const msgOnFocus = placeholder || '' %>
+    <input <%= focus %> id="search-box" type="text" name="q" value="<%= locals.q %>" placeholder=<%- placeholder %> onfocus="this.placeholder = '<%= msgOnFocus %>'" onblur="this.placeholder = <%= placeholder %>"/>
     <button class="icon"><i class="fa fa-search"></i></button>
   </form>
 
   <% const style = locals.style || 'plaintext' %>
   <div class="additional-menus <%= style %>"">
-    <a href="/categories"><button type="button" class="button btn-<%= style %>"><%= config.view_all_docs_button %></button></a>
+    <a href="/categories"><button type="button" class="button btn-<%= style %>"><%- stringTemplate('landing.viewAll') %></button></a>
     <%# <a href="#"><button type="button" class="btn-plaintext">Onboarding Guide</button></a>%>
   </div>
 

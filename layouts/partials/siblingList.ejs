@@ -1,5 +1,5 @@
 <ul class="sibling">
-  <div class="sibling-kicker">config.siblingHeading</div>
+  <div class="sibling-kicker"><%- stringTemplate('sibling.heading') %></div>
   <% siblings.forEach((link) => { %>
     <% const type = link.nodeType === 'branch' ? 'folder' : 'file' %>
     <li class="type-<%= type %>">

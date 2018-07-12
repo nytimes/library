@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-  <% const {tagline, faqLink, viewAllButton} = config %>
   <%- include('../partials/head') %>
   <body>
 
@@ -14,7 +13,7 @@
       <div class="main-item">
         <%- include('../partials/branding', {context: 'home'}) %>
         <div class="tagline">
-          <p><%= tagline %> <a href="/faq"><%= faqLink %></a></p>
+          <p><%- stringTemplate('landing.tagline') %> <a href="/faq"><%- stringTemplate('landing.quickLink') %></a></p>
         </div>
         <%- include('../partials/search', {style: 'homepage', focus: 'autofocus'}) %>
 
@@ -51,7 +50,7 @@
                   <a href="<%= doc.path %>"><%= doc.prettyName %></a>
                 </li>
               <% }) %>
-              <li><a class="button btn-homepage" href="/categories"><%= viewAllButton %></a></li>
+              <li><a class="button btn-homepage" href="/categories"><%- stringTemplate('landing.viewAll') %></a></li>
             </ul>
           </div>
         </div>

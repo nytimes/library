@@ -2,7 +2,7 @@
 
 const airbrake = require('airbrake')
 const log = require('../logger')
-const {config} = require('../utils')
+const {stringTemplate} = require('../utils')
 
 // error functions are special. They have to be attached directly to the app.
 exports.airbrake = process.env.AIRBRAKE_PROJECT_ID
@@ -17,7 +17,7 @@ exports.errorPages = (err, req, res, next) => {
 
   const code = messages[err.message] || 500
   log.error(`Serving an error page for ${req.url}`, err)
-  res.status(code).render(`errors/${code}`, {err, config})
+  res.status(code).render(`errors/${code}`, {err, stringTemplate})
 }
 
 function initAirbrake() {

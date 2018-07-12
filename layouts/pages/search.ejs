@@ -1,34 +1,33 @@
 <!DOCTYPE html>
 <html>
-  <% const {resultsTitle, resultsKicker, resultLabel, noResults} = config.search %>
-  <%- include('../partials/head', {title: resultsTitle(locals.q)}) %>
+  <%- include('../partials/head', {title: stringTemplate('search.results.title', locals.q)}) %>
   <body>
-    <%- include('../partials/header', {parentLinks: [], title: resultsTitle(locals.q)}) %>
+    <%- include('../partials/header', {parentLinks: [], title: stringTemplate('search.results.title', locals.q)}) %>
 
     <%- include('../partials/nav') %>
 
     <div class="g-body">
       <div class="g-main-content" id="g-search-page">
         <% if (locals.results && results.length) { %>
-          <h3 class="search-kicker"><%- resultsKicker(locals.q) %></h3>
+          <h3 class="search-kicker"><%- stringTemplate('search.results.kicker', locals.q) %></h3>
           <% results.forEach((res) => { %>
           <div class="search-result">
             <h3><a href="<%= res.path %>"><%= res.prettyName %></a></h3>
             <p>
               <% if (res.folder) { %>
                 <% let folderName = res.folder.prettyName ? res.folder.prettyName : 'Home' %>
-                <%- resultLabel.folder(res.folder.path, folderName)%>&nbsp;
+                <%- stringTemplate('results.label.folder', res.folder.path, folderName)%>&nbsp;
               <% } %>
               <% if (res.lastModifyingUser) { %>
-                <%- resultLabel.person(res.lastModifyingUser.displayName)%>
+                <%- stringTemplate('results.label.person', res.lastModifyingUser.displayName) %>
               <% } %>
               <%= res.lastUpdated %>
             </p>
           </div>
           <% }) %>
         <% }  else { %>
-          <h3 class="search-kicker"><%- noResults.kicker(locals.q) %></h3>
-          <p><%- noResults.suggestion %></p>
+          <h3 class="search-kicker"><%- stringTemplate('results.none.kicker', locals.q) %></h3>
+          <p><%- stringTemplate('results.none.suggestion') %></p>
         <% } %>
       </div>
 

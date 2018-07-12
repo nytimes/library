@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-  <% const {title, prompt} = config.moveFile %>
   <%- include('../partials/head', {title: stringTemplate('moveFile.title', locals.prettyName)}) %>
   <body>
     <%- include('../partials/header', {parentLinks: [], title: stringTemplate('moveFile.title', locals.prettyName) }) %>
@@ -10,7 +9,7 @@
     </div>
     <div class="g-body">
       <div class="g-main-content" id="move-file-page">
-        <h2><%- prompt(locals.prettyName) %></h2>
+        <h2><%- stringTemplate('moveFile.prompt', locals.prettyName) %></h2>
         <%- include('../partials/folderList', {folders, id, parents}) %>
       </div>
       <%- include('../partials/footer', { pageType: 'search' }) %>

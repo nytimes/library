@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html>
-  <% const {title, heading, message} = config.error404 %>
-  <%- include('../partials/head', {title}) %>
+  <%- include('../partials/head', {title: stringTemplate('error._404.title')}) %>
   <body>
-    <%- include('../partials/header', {title, parentLinks: []}) %>
+    <%- include('../partials/header', {title: stringTemplate('error._404.title'), parentLinks: []}) %>
     <div id="main-search-page">
       <div class="main-item">
         <div class="tagline">
-          <h1><%= heading %></h1>
-          <p><%- message %></p>
+          <h1><%- stringTemplate('error._404.heading') %></h1>
+          <p><%- stringTemplate('error._404.message') %></p>
         </div>
         <%- include('../partials/search', {style: 'homepage'}) %>
       </div>

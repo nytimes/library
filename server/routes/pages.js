@@ -7,7 +7,7 @@ const move = require('../move')
 const router = express.Router()
 
 const {getTree, getMeta, getTagged} = require('../list')
-const {getTemplates, sortDocs, config, stringTemplate} = require('../utils')
+const {getTemplates, sortDocs, stringTemplate} = require('../utils')
 
 router.get('/', handlePage)
 router.get('/:page', handlePage)
@@ -28,7 +28,7 @@ function handlePage(req, res, next) {
   if (page === 'search' && q) {
     return search.run(q, (err, results) => {
       if (err) return next(err)
-      res.render(template, {q, results, config})
+      res.render(template, {q, results, stringTemplate})
     })
   }
 
@@ -38,7 +38,7 @@ function handlePage(req, res, next) {
         if (err) return next(err)
         const {prettyName, parents} = getMeta(id)
 
-        res.render(template, {prettyName, folders, id, parents, config, stringTemplate})
+        res.render(template, {prettyName, folders, id, parents, stringTemplate})
       })
     }
 
@@ -54,11 +54,11 @@ function handlePage(req, res, next) {
     return getTree((err, tree) => {
       if (err) return next(err)
       const categories = buildDisplayCategories(tree)
-      res.render(template, {...categories, config})
+      res.render(template, {...categories, stringTemplate})
     })
   }
 
-  res.render(template, {config})
+  res.render(template, {stringTemplate})
 }
 
 function buildDisplayCategories(tree) {

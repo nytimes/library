@@ -6,7 +6,7 @@ const log = require('./logger')
 const {getTree, getMeta} = require('./list')
 const cache = require('./cache')
 const {getAuth} = require('./auth')
-const {sortDocs, config} = require('./utils')
+const {sortDocs, stringTemplate} = require('./utils')
 
 const teamDriveId = '***REMOVED***'
 
@@ -19,7 +19,7 @@ exports.getFolders = (id, cb) => {
     const extended = extendTree(data)
     const folders = Object.assign({}, selectFolders(extended), {
       // The drive doesn't have the same props as other folders
-      prettyName: config.prettyName,
+      prettyName: stringTemplate('prettyName'),
       isTrashCan: false
     })
     return cb(null, [folders])

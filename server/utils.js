@@ -49,24 +49,6 @@ exports.getUserInfo = (req) => {
   }
 }
 
-const config = getConfig()
-exports.stringTemplate = (configPath, ...args) => {
-  const stringConfig = _.get(config, configPath)
-  const configType = typeof stringConfig
-
-  if (!stringConfig) {
-    log.warn(`${configPath} not found in strings.yml`)
-  } else if (configType === 'string') {
-    return stringConfig
-  } else if (configType === 'function') {
-    return stringConfig(...args)
-  } else {
-    log.warn(`${configType} is not supported`)
-  }
-
-  return ''
-}
-
 const getConfig = () => {
   const defaultExists = fs.existsSync(path.join(__dirname, '../config/strings.yaml')) 
   const customExists = fs.existsSync(path.join(__dirname, '../custom/strings.yaml'))
@@ -84,3 +66,23 @@ const getConfig = () => {
 
   return config
 }
+
+exports.config = getConfig()
+exports.stringTemplate = (configPath, ...args) => {
+  const config = getConfig()
+  const stringConfig = _.get(config, configPath)
+  const configType = typeof stringConfig
+
+  if (!stringConfig) {
+    log.warn(`${configPath} not found in strings.yml`)
+  } else if (configType === 'string') {
+    return stringConfig
+  } else if (configType === 'function') {
+    return stringConfig(...args)
+  } else {
+    log.warn(`${configType} is not supported`)
+  }
+
+  return ''
+}
+
