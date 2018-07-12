@@ -15,8 +15,7 @@
             <h3><a href="<%= res.path %>"><%= res.prettyName %></a></h3>
             <p>
               <% if (res.folder) { %>
-                <% let folderName = res.folder.prettyName ? res.folder.prettyName : 'Home' %>
-                <%- template('search.results.label.folder', res.folder.path, folderName)%>&nbsp;
+                <%- template('search.results.label.folder', res.folder.path, res.folder.prettyName || 'Home')%>&nbsp;
               <% } %>
               <% if (res.lastModifyingUser) { %>
                 <%- template('search.results.label.person', res.lastModifyingUser.displayName) %>
