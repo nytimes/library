@@ -7,6 +7,7 @@ branding:
   prettyName: Team Library
   org: Your Organization
   icon: /assets/images/icon-logo.png
+  favicon: /assets/images/icon-logo.png
 
 # pages/categories, pages/index, partials/search
 landing:
