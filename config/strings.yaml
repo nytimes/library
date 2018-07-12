@@ -25,7 +25,6 @@ footer:
     move: Move This Page
     create: Create New Page
     viewFolder: View Folder
-    newDocLink: !!js/function (id) => `https://docs.google.com/document/create?usp=drive_web&folder=${id}`
 
 # pages/search, partials/search
 search:
