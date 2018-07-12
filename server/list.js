@@ -97,7 +97,7 @@ function getOptions(driveType, id) {
     includeTeamDriveItems: true,
     // fields: '*', // setting fields to '*' returns all fields but ignores pageSize
     fields: 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)',
-    pageSize: 1000
+    pageSize: 1000 // this value does not seem to be doing anything
   }
 }
 
