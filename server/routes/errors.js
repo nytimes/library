@@ -17,7 +17,7 @@ exports.errorPages = (err, req, res, next) => {
 
   const code = messages[err.message] || 500
   log.error(`Serving an error page for ${req.url}`, err)
-  res.status(code).render(`errors/${code}`, {err, stringTemplate})
+  res.status(code).render(`errors/${code}`, {err, template: stringTemplate})
 }
 
 function initAirbrake() {

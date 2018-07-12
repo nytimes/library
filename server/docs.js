@@ -51,7 +51,7 @@ exports.fetchDoc = ({id, resourceType, req}, cb) => {
       html = formatter.getProcessedHtml(html)
       const sections = getSections(html)
       // maybe we should pull out headers here
-      cb(err, {html, originalRevision, sections, stringTemplate})
+      cb(err, {html, originalRevision, sections, template: stringTemplate})
     })
   })
 }

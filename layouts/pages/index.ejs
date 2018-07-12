@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-  <%- include('../partials/head', {title: stringTemplate('branding.prettyName')}) %>
+  <%- include('../partials/head', {title: template('branding.prettyName')}) %>
   <body>
 
     <header id="masthead" class="masthead" role="banner">
@@ -13,9 +13,9 @@
       <div class="main-item">
         <%- include('../partials/branding', {context: 'home'}) %>
         <div class="tagline">
-          <p><%- stringTemplate('landing.tagline') %> <a href="/faq"><%- stringTemplate('landing.quickLink') %></a></p>
+          <p><%- template('landing.tagline') %> <a href="/faq"><%- template('landing.quickLink') %></a></p>
         </div>
-        <%- include('../partials/search', {style: 'homepage', focus: 'autofocus', msgOnFocus: stringTemplate('search.placeholder')}) %>
+        <%- include('../partials/search', {style: 'homepage', focus: 'autofocus', msgOnFocus: template('search.placeholder')}) %>
 
         <div class="featured-cat">
           <div class="teams-cat-container">
@@ -50,7 +50,7 @@
                   <a href="<%= doc.path %>"><%= doc.prettyName %></a>
                 </li>
               <% }) %>
-              <li><a class="button btn-homepage" href="/categories"><%- stringTemplate('landing.viewAll') %></a></li>
+              <li><a class="button btn-homepage" href="/categories"><%- template('landing.viewAll') %></a></li>
             </ul>
           </div>
         </div>

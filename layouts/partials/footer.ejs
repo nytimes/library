@@ -6,15 +6,15 @@
     <% }) %>
   <% } %>
   <% if (locals.editLink) { %>
-  <a class="button btn-footer" href="<%- editLink %>" id="edit-button" target="_blank"><%- stringTemplate('footer.buttons.edit') %></a>
-  <a class="button btn-footer move-file-button" href="/move-file?id=<%- id %>"><%- stringTemplate('footer.buttons.move') %></a>
+  <a class="button btn-footer" href="<%- editLink %>" id="edit-button" target="_blank"><%- template('footer.buttons.edit') %></a>
+  <a class="button btn-footer move-file-button" href="/move-file?id=<%- id %>"><%- template('footer.buttons.move') %></a>
   <% } %>
   <% if (locals.parentId) { %>
-  <a class="button btn-footer" href=<%- stringTemplate('footer.buttons.newDocLink') %> target="_blank"><%- stringTemplate('footer.buttons.create') %></a>
-  <a class="button btn-footer" href="https://drive.google.com/drive/u/0/folders/<%- parentId %>" target="_blank"><%- stringTemplate('footer.buttons.viewFolder') %></a>
+  <a class="button btn-footer" href=<%- template('footer.buttons.newDocLink') %> target="_blank"><%- template('footer.buttons.create') %></a>
+  <a class="button btn-footer" href="https://drive.google.com/drive/u/0/folders/<%- parentId %>" target="_blank"><%- template('footer.buttons.viewFolder') %></a>
   <% } %>
 
-  <p class="help-text"><%- stringTemplate('footer.helpText') %></p>
+  <p class="help-text"><%- template('footer.helpText') %></p>
 </div>
 <script>
   // Google Analytics tracking
@@ -53,7 +53,7 @@
   });
 
   function renderUserInfo(data) {
-    var username = data.email || stringTemplate('footer.defaultEmail');
+    var username = data.email || template('footer.defaultEmail');
     $('.user-fullname').text(username);
 
     var initials = username.split('@')[0].split('.').map(function(name) {

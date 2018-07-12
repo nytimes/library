@@ -57,15 +57,15 @@ moveFile:
 
 # errors
 error:
-  _403:
+  403:
     title: Operation Not Permitted
     heading: Not Authorized
     message: "<p>Check the request and try again. For assistance, contact #newstools.</p><p>Perhaps you'd like to search for something instead?</p>"
-  _404:
+  404:
     title: Page Not Found
     heading: Whoops, that's a 404.
     message: Perhaps try to search for something else instead?
-  _500:
+  500:
     title: Server Error
     heading: Uh oh, that's a 500.
     message: Perhaps try to search for something else instead?

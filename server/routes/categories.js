@@ -48,7 +48,7 @@ function handleCategory(req, res, next) {
       createdAt: moment(meta.createdTime).fromNow(),
       editLink: mimeType === 'text/html' ? meta.folder.webViewLink : meta.webViewLink,
       id,
-      stringTemplate
+      template: stringTemplate
     })
 
     // if this is a folder, just render from the generic data
