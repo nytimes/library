@@ -5,6 +5,7 @@ branding:
   org: The New York Times
   icon: /assets/images/nyt-T-logo.png
   prettyName: NYT Library
+  favicon: /assets/images/nytlibrary.ico
 
 landing:
   tagline: A collection of tools and tips for creating great Times journalism.
