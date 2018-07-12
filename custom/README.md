@@ -1,4 +1,4 @@
-# Customizing Library 
+# Customizing Library
 
 Eventually this will be a nice guide but for now it's going to be my scratchpad!
 
