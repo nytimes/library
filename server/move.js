@@ -19,7 +19,7 @@ exports.getFolders = (id, cb) => {
     const extended = extendTree(data)
     const folders = Object.assign({}, selectFolders(extended), {
       // The drive doesn't have the same props as other folders
-      prettyName: stringTemplate('prettyName'),
+      prettyName: stringTemplate('branding.prettyName'),
       isTrashCan: false
     })
     return cb(null, [folders])

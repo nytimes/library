@@ -3,7 +3,7 @@ const fs = require('fs')
 const path = require('path')
 const md5 = require('md5')
 const yaml = require('js-yaml')
-const _ = require('lodash')
+const {get: deepProp} = require('lodash')
 const log = require('./logger')
 const merge = require('deepmerge')
 
@@ -71,11 +71,11 @@ function getConfig() {
 
 exports.stringTemplate = (configPath, ...args) => {
   const config = getConfig()
-  const stringConfig = _.get(config, configPath)
+  const stringConfig = deepProp(config, configPath)
   const configType = typeof stringConfig
 
   if (!stringConfig) {
-    log.warn(`${configPath} not found in strings.yml`)
+    log.warn(`${configPath} not found in strings.yaml`)
   } else if (configType === 'string') {
     return stringConfig
   } else if (configType === 'function') {

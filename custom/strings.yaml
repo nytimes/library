@@ -17,7 +17,7 @@ footer:
     newDocLink: !!js/function (id) => `https://docs.google.com/a/nytimes.com/document/create?usp=drive_web&folder=${id}`
 
 search:
-  placeholder: What are you looking for?
+  placeholder: "What are you looking for?"
   results:
     none:
       suggestion: 'To request a new page, email us at <a href="mailto:***REMOVED***">***REMOVED***</a>, or find us on slack in <a href="***REMOVED***/library">#library</a>.'
