@@ -11,7 +11,7 @@ const categories = require('./routes/categories')
 const readingHistory = require('./routes/readingHistory')
 const errorPages = require('./routes/errors')
 const {getMeta, getAllRoutes} = require('./list')
-const {preloadMiddleware, postloadMiddleware} = require('./utils')
+const {fetchMiddleware} = require('./utils')
 
 const app = express()
 app.set('view engine', 'ejs')
@@ -21,7 +21,8 @@ app.get('/healthcheck', (req, res) => {
   res.send('OK')
 })
 
-preloadMiddleware(app)
+const {preload, postload} = fetchMiddleware()
+preload.forEach((middleware) => app.use(middleware))
 
 app.use((req, res, next) => {
   req.useBeta = process.env.BETA_API === 'true' || Object.keys(req.query).includes('beta')
@@ -78,7 +79,7 @@ app.use(categories)
 // error handler for rendering the 404 and 500 pages
 app.use(errorPages)
 
-postloadMiddleware(app)
+postload.forEach((middleware) => app.use(middleware))
 app.listen(process.env.PORT || 3000)
 
 module.exports = app

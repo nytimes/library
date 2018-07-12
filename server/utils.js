@@ -57,18 +57,16 @@ exports.requireWithFallback = (attemptPath) => {
   }
 }
 
-const middlewarePath = path.join(__dirname, '../custom/middleware')
-const middlewares = fs.readdirSync(middlewarePath)
+// Get list of middleware in a directory
+const middlewares = fs.readdirSync(path.join(__dirname, '../custom/middleware'))
+const reqPath = (item) => path.join(__dirname, `../custom/middleware/${item}`)
 
-function loadMiddleware(app, exportName) {
-  middlewares.forEach((item) => {
-    const requirement = require(path.join(__dirname, `../custom/middleware/${item}`))
-    if (requirement[exportName]) {
-      log.info(`Requiring ${item} middleware as ${exportName}`)
-      app.use(requirement[exportName])
-    }
-  })
+//
+exports.fetchMiddleware = () => {
+  return {
+    preload: middlewares.map((item) => require(reqPath(item)).preload)
+                        .filter((item) => item), // remove undefined
+    postload: middlewares.map((item) => require(reqPath(item)).postload)
+                         .filter((item) => item) // remove undefined
+  }
 }
-
-exports.preloadMiddleware = (app) => loadMiddleware(app, 'preload')
-exports.postloadMiddleware = (app) => loadMiddleware(app, 'postload')
