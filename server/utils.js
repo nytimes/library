@@ -7,6 +7,8 @@ const _ = require('lodash')
 const log = require('./logger')
 const merge = require('deepmerge')
 
+const config = getConfig()
+
 const layoutsDir = path.join(__dirname, '../layouts')
 exports.getTemplates = (subfolder) => {
   return (fs.readdirSync(path.join(layoutsDir, subfolder)) || [])
@@ -36,7 +38,7 @@ exports.getUserInfo = (req) => {
   // In development, use stub data
   if (process.env.NODE_ENV === 'development') {
     return {
-      email: process.env.TEST_EMAIL || 'test.user@nytimes.com',
+      email: process.env.TEST_EMAIL || config.footer.defaultEmail,
       userId: '10',
       analyticsUserId: md5('10library')
     }
@@ -49,25 +51,24 @@ exports.getUserInfo = (req) => {
   }
 }
 
-const getConfig = () => {
+function getConfig() {
   const defaultExists = fs.existsSync(path.join(__dirname, '../config/strings.yaml')) 
   const customExists = fs.existsSync(path.join(__dirname, '../custom/strings.yaml'))
 
   var config = {}
 
   if (defaultExists) {
-    config = yaml.load(fs.readFileSync(path.join(__dirname, '../config/strings.yaml')), 'utf8')
+    config = yaml.load(fs.readFileSync(path.join(__dirname, '../config/strings.yaml')), 'utf8') || {}
   }
 
   if (customExists) {
-    const customConfig = yaml.load(fs.readFileSync(path.join(__dirname, '../custom/strings.yaml')), 'utf8')
+    const customConfig = yaml.load(fs.readFileSync(path.join(__dirname, '../custom/strings.yaml')), 'utf8') || {}
     config = merge(config, customConfig)
   }
 
   return config
 }
 
-exports.config = getConfig()
 exports.stringTemplate = (configPath, ...args) => {
   const config = getConfig()
   const stringConfig = _.get(config, configPath)
