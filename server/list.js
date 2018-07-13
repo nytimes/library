@@ -21,12 +21,12 @@ let docsInfo = {} // doc info by id
 let tags = {} // tags to doc id
 let driveBranches = {} // map of id to nodes
 
-exports.getTree = (cb) => {
+exports.getTree = () => {
   if (currentTree) {
-    return cb(null, currentTree)
+    return {tree: currentTree}
   }
 
-  updateTree(cb)
+  return updateTree()
 }
 
 // exposes docs metadata
@@ -57,15 +57,15 @@ exports.getAllRoutes = () => {
 const treeUpdateDelay = parseInt(process.env.LIST_UPDATE_DELAY || 15, 10) * 1000
 startTreeRefresh(treeUpdateDelay)
 
-async function updateTree(cb) {
+async function updateTree() {
   return inflight('tree', async () => {
     const auth = promisify(getAuth)
     const authClient = await auth()
-      .catch(err => cb(err))
+      .catch(err => err)
 
     const drive = google.drive({version: 'v3', auth: authClient})
     const files = await fetchAllFiles({drive})
-      .catch(err => cb(err))
+      .catch(err => err)
 
     currentTree = produceTree(files, driveId)
 
@@ -139,6 +139,7 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentId
   if (driveType !== 'shared') return combined
   
   // Continue searching if shared folder, since API only returns contents of the immediate parent folder
+  // Find folders that have not yet been searched
   const folders = filter(combined, (item => 
     item.mimeType === 'application/vnd.google-apps.folder' && !item.searched))
 

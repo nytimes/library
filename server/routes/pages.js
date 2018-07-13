@@ -52,17 +52,11 @@ async function handlePage(req, res, next) {
 
   if (page === 'categories' || page === 'index') {
 
-    // const {err, tree} = await getTree()
+    const {err, tree} = await getTree()
 
-    // if (err) return next(err)
-    // const categories = buildDisplayCategories(tree)
-    // res.render(template, categories)
-
-    return getTree((err, tree) => {
-      if (err) return next(err)
-      const categories = buildDisplayCategories(tree)
-      res.render(template, categories)
-    })
+    if (err) return next(err)
+    const categories = buildDisplayCategories(tree)
+    res.render(template, categories)
   }
 
   res.render(template)
