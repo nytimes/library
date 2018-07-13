@@ -5,6 +5,7 @@ const inflight = require('promise-inflight')
 const {google} = require('googleapis')
 const path = require('path')
 const {promisify} = require('util')
+const {filter} = require('lodash')
 
 const cache = require('./cache')
 const log = require('./logger')
@@ -107,13 +108,25 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentId
 
   log.debug(`searching for files > ${listSoFar.length}`)
   
+  // Gets files in single folder (shared) or files listed in single page of response (team)
   const fetchFromDrive = promisify(drive.files.list).bind(drive.files)
   const {data} = await fetchFromDrive(options)
     .catch(err => log.error(err))
   
   const {files, nextPageToken} = data
-  const combined = listSoFar.concat(files)
+  let combined = listSoFar.concat(files)
 
+  // For shared drives, keep track of which folders have been searched
+  if (driveType === 'shared') {
+    combined = combined.map(file => {
+      if (parentIds.includes(file.id)) {
+        return Object.assign({}, file, {searched: true})
+      }
+      return file
+    })
+  }
+
+  // If there is more data the API has not returned for the query, the request needs to continue
   if (nextPageToken) {
     return fetchAllFiles({
       nextPageToken,
@@ -122,16 +135,19 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentId
     })
   }
 
-  if (driveType === 'shared') {
-    const folders = files.filter(item => item.mimeType === 'application/vnd.google-apps.folder')
+  // If there are no more pages and this is not a shared folder, return completed list
+  if (driveType !== 'shared') return combined
+  
+  // Continue searching if shared folder, since API only returns contents of the immediate parent folder
+  const folders = filter(combined, (item => 
+    item.mimeType === 'application/vnd.google-apps.folder' && !item.searched))
 
-    if (folders.length > 0) {
-      return fetchAllFiles({
-        listSoFar: combined,
-        drive,
-        parentIds: folders.map(folder => folder.id)
-      })
-    }
+  if (folders.length > 0) {
+    return fetchAllFiles({
+      listSoFar: combined,
+      drive,
+      parentIds: folders.map(folder => folder.id)
+    })
   }
 
   return combined
