@@ -7,7 +7,7 @@ const move = require('../move')
 const router = express.Router()
 
 const {getTree, getMeta, getTagged} = require('../list')
-const {getTemplates, sortDocs} = require('../utils')
+const {getTemplates, sortDocs, stringTemplate} = require('../utils')
 
 router.get('/', handlePage)
 router.get('/:page', handlePage)
@@ -52,11 +52,11 @@ async function handlePage(req, res, next) {
 
   if (page === 'categories' || page === 'index') {
 
-    const {err, tree} = await getTree()
-
-    if (err) return next(err)
-    const categories = buildDisplayCategories(tree)
-    res.render(template, categories)
+    return getTree((err, tree) => {
+      if (err) return next(err)
+      const categories = buildDisplayCategories(tree)
+      res.render(template, {...categories, template: stringTemplate})
+    })
   }
 
   res.render(template)
