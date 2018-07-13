@@ -57,7 +57,6 @@ const treeUpdateDelay = parseInt(process.env.LIST_UPDATE_DELAY || 15, 10) * 1000
 startTreeRefresh(treeUpdateDelay)
 
 async function updateTree(cb) {
-  console.log('cb', cb)
   return inflight('tree', async () => {
     const auth = promisify(getAuth)
     const authClient = await auth()
@@ -78,12 +77,12 @@ async function updateTree(cb) {
 }
 
 function getOptions(driveType, id) {
-  const createQueryString = id => id.map(id => `'${id}' in parents`).join(' or ')
+  const fields = 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)'
 
   if (driveType === 'shared') {
     return {
-      q: createQueryString(id),
-      fields: 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)'
+      q: id.map(id => `'${id}' in parents`).join(' or '),
+      fields
     }
   } 
   
@@ -94,8 +93,8 @@ function getOptions(driveType, id) {
     supportsTeamDrives: true,
     includeTeamDriveItems: true,
     // fields: '*', // setting fields to '*' returns all fields but ignores pageSize
-    fields: 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)',
-    pageSize: 1000 // this value does not seem to be doing anything
+    pageSize: 1000, // this value does not seem to be doing anything
+    fields
   }
 }
 
