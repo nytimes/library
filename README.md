@@ -1,4 +1,4 @@
-NYT Library
+NYT Library [![CircleCI](https://circleci.com/gh/newsdev/nyt-library/tree/master.svg?style=svg&circle-***REMOVED***)](https://circleci.com/gh/newsdev/nyt-library/tree/master)
 ========
 
 A collaborative newsroom documentation site, powered by Google Docs.

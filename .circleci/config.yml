@@ -37,3 +37,9 @@ jobs:
 
       # run tests!
       - run: npm run test
+
+      # create coverage artifact
+      - run: npm run test:cover
+
+      - store_artifacts:
+          path: ./coverage/

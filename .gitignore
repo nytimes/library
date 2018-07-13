@@ -4,3 +4,5 @@ npm-debug.log
 .auth.json
 .env
 dump.rdb
+coverage
+.nyc_output
