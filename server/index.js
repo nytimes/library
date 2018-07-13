@@ -3,6 +3,10 @@ const path = require('path')
 
 const express = require('express')
 const async = require('async')
+const passport = require('passport')
+const bodyParser = require('body-parser')
+const session = require('express-session')
+const {Strategy} = require('passport-google-oauth2')
 
 const {middleware: cache, purge} = require('./cache')
 const userInfo = require('./routes/userInfo')
@@ -20,6 +24,39 @@ const {preload, postload} = allMiddleware
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, '../layouts'))
 
+// Auth
+passport.use(new Strategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: '/auth/redirect',
+  passReqToCallback: true
+}, (request, accessToken, refreshToken, profile, done) => {
+
+  return done(null, profile)
+}))
+
+passport.serializeUser((user, done) => done(null, user))
+passport.deserializeUser((obj, done) => done(null, obj))
+
+
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: true,
+  saveUninitialized: true,
+}))
+app.use(passport.initialize())
+app.use(passport.session())
+
+const getUser = (req) => {
+  try {
+    return req.session.passport.user
+  } catch (e) {
+    console.log('User does not exist');
+    return false
+  }
+}
+
+
 preload.forEach((middleware) => app.use(middleware))
 
 app.get('/healthcheck', (req, res) => {
@@ -35,6 +72,34 @@ app.use(userInfo)
 
 // serve all files in the public folder
 app.use('/assets', express.static(path.join(__dirname, '../public')))
+
+app.get('/login', passport.authenticate('google', {
+  scope: [
+    'https://www.googleapis.com/auth/plus.profile.emails.read'
+  ]
+}))
+
+// use the badcom callback path for ease of setup
+app.get('/auth/redirect',
+  passport.authenticate('google', { failureRedirect: '/login', successRedirect: '/' })
+);
+
+app.use((req, res, next) => {
+  let authenticated = req.isAuthenticated()
+  if (authenticated) {
+    try {
+      authenticated = /@nytimes\.com$/.test(getUser(req).email)
+    } catch (e) {
+      console.log('User does not have an nytimes.com email address')
+    }
+    if (authenticated) {
+      console.log(authenticated);
+      return next()
+    }
+  }
+  console.log('User not authenticated');
+  res.redirect('/login');
+})
 
 // strip trailing slashes from URLs
 app.get(/(.+)\/$/, (req, res, next) => {
