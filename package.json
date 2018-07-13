@@ -27,7 +27,6 @@
     "supertest": "^3.0.0",
     "supertest-as-promised": "^4.0.2",
     "unescape": "^1.0.1",
-    "util": "^0.11.0",
     "winston": "^2.4.0",
     "xlsx": "^0.11.0"
   },
