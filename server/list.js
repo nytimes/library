@@ -341,15 +341,15 @@ function cleanResourceType(mimeType) {
   return match[1]
 }
 
-function startTreeRefresh(interval) {
+async function startTreeRefresh(interval) {
   log.debug('updating tree...')
-  updateTree((err) => {
-    if (err) {
-      log.warn('failed updating tree', err)
-    } else {
-      log.debug('tree updated.')
-    }
+  
+  try {
+    await updateTree()
+    log.debug('tree updated.')
+  } catch (err) {
+    log.warn('failed updating tree', err)
+  }
 
-    setTimeout(() => { startTreeRefresh(interval) }, interval)
-  })
+  setTimeout(() => { startTreeRefresh(interval) }, interval)
 }
