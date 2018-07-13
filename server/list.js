@@ -1,11 +1,9 @@
 'use strict'
 
-// const inflight = require('inflight')
 const inflight = require('promise-inflight')
 const {google} = require('googleapis')
 const path = require('path')
 const {promisify} = require('util')
-const {filter} = require('lodash')
 
 const cache = require('./cache')
 const log = require('./logger')
@@ -21,12 +19,14 @@ let docsInfo = {} // doc info by id
 let tags = {} // tags to doc id
 let driveBranches = {} // map of id to nodes
 
-exports.getTree = () => {
+exports.getTree = (cb) => {
   if (currentTree) {
-    return {tree: currentTree}
+    return cb(null, currentTree)
   }
 
-  return updateTree()
+  updateTree()
+    .then(tree => cb(null, tree))
+    .catch(cb)
 }
 
 // exposes docs metadata
@@ -61,11 +61,9 @@ async function updateTree() {
   return inflight('tree', async () => {
     const auth = promisify(getAuth)
     const authClient = await auth()
-      .catch(err => err)
 
     const drive = google.drive({version: 'v3', auth: authClient})
     const files = await fetchAllFiles({drive})
-      .catch(err => err)
 
     currentTree = produceTree(files, driveId)
 
@@ -140,8 +138,8 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentId
   
   // Continue searching if shared folder, since API only returns contents of the immediate parent folder
   // Find folders that have not yet been searched
-  const folders = filter(combined, (item => 
-    item.mimeType === 'application/vnd.google-apps.folder' && !item.searched))
+  const folders = combined.filter(item => 
+    item.mimeType === 'application/vnd.google-apps.folder' && !item.searched)
 
   if (folders.length > 0) {
     return fetchAllFiles({
