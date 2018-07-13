@@ -57,15 +57,15 @@ exports.getAllRoutes = () => {
 const treeUpdateDelay = parseInt(process.env.LIST_UPDATE_DELAY || 15, 10) * 1000
 startTreeRefresh(treeUpdateDelay)
 
-async function updateTree(cb) {
+async function updateTree() {
   return inflight('tree', async () => {
     const auth = promisify(getAuth)
     const authClient = await auth()
-      .catch(err => cb(err))
+      .catch(err => err)
 
     const drive = google.drive({version: 'v3', auth: authClient})
     const files = await fetchAllFiles({drive})
-      .catch(err => cb(err))
+      .catch(err => err)
 
     currentTree = produceTree(files, driveId)
 
@@ -340,15 +340,15 @@ function cleanResourceType(mimeType) {
   return match[1]
 }
 
-function startTreeRefresh(interval) {
+async function startTreeRefresh(interval) {
   log.debug('updating tree...')
-  updateTree((err) => {
-    if (err) {
-      log.warn('failed updating tree', err)
-    } else {
-      log.debug('tree updated.')
-    }
+  
+  try {
+    await updateTree()
+    log.debug('tree updated.')
+  } catch (err) {
+    log.warn('failed updating tree', err)
+  }
 
-    setTimeout(() => { startTreeRefresh(interval) }, interval)
-  })
+  setTimeout(() => { startTreeRefresh(interval) }, interval)
 }
