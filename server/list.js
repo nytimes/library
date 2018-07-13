@@ -113,17 +113,7 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentId
   const {data} = await fetchFromDrive(options)
   
   const {files, nextPageToken} = data
-  let combined = listSoFar.concat(files)
-
-  // For shared drives, keep track of which folders have been searched
-  if (driveType === 'shared') {
-    combined = combined.map(file => {
-      if (parentIds.includes(file.id)) {
-        return Object.assign({}, file, {searched: true})
-      }
-      return file
-    })
-  }
+  const combined = listSoFar.concat(files)
 
   // If there is more data the API has not returned for the query, the request needs to continue
   if (nextPageToken) {
@@ -140,7 +130,7 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentId
   // Continue searching if shared folder, since API only returns contents of the immediate parent folder
   // Find folders that have not yet been searched
   const folders = combined.filter(item => 
-    item.mimeType === 'application/vnd.google-apps.folder' && !item.searched)
+    item.mimeType === 'application/vnd.google-apps.folder' && parentIds.includes(item.parents[0]))
 
   if (folders.length > 0) {
     return fetchAllFiles({
