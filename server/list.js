@@ -1,6 +1,7 @@
 'use strict'
 
-const inflight = require('inflight')
+// const inflight = require('inflight')
+const inflight = require('promise-inflight')
 const {google} = require('googleapis')
 const path = require('path')
 const {promisify} = require('util')
@@ -56,27 +57,24 @@ const treeUpdateDelay = parseInt(process.env.LIST_UPDATE_DELAY || 15, 10) * 1000
 startTreeRefresh(treeUpdateDelay)
 
 async function updateTree(cb) {
-  cb = inflight('tree', cb)
-  // guard against calling while already in progress
-  if (!cb) return
-  // fetch all files in drive and produce routes data
-  const auth = promisify(getAuth)
-  const authClient = await auth()
-    .catch(err => cb(err))
+  console.log('cb', cb)
+  return inflight('tree', async () => {
+    const auth = promisify(getAuth)
+    const authClient = await auth()
+      .catch(err => cb(err))
 
-  const drive = google.drive({version: 'v3', auth: authClient})
-  const files = await fetchAllFiles({drive})
-    .catch(err => cb(err))
+    const drive = google.drive({version: 'v3', auth: authClient})
+    const files = await fetchAllFiles({drive})
+      .catch(err => cb(err))
 
-  currentTree = produceTree(files, driveId)
+    currentTree = produceTree(files, driveId)
 
-  const count = Object.values(docsInfo)
-    .filter((f) => f.resourceType !== 'folder')
-    .length
+    const count = Object.values(docsInfo)
+      .filter((f) => f.resourceType !== 'folder')
+      .length
 
-  log.debug(`Current file count in drive: ${count}`)
-
-  cb(null, currentTree)
+    log.debug(`Current file count in drive: ${count}`)    
+  })
 }
 
 function getOptions(driveType, id) {
