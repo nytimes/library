@@ -28,7 +28,7 @@ async function handlePage(req, res, next) {
   if (page === 'search' && q) {
     return search.run(q, (err, results) => {
       if (err) return next(err)
-      res.render(template, {q, results})
+      res.render(template, {q, results, template: stringTemplate})
     })
   }
 
@@ -38,7 +38,7 @@ async function handlePage(req, res, next) {
         if (err) return next(err)
         const {prettyName, parents} = getMeta(id)
 
-        res.render(template, {prettyName, folders, id, parents})
+        res.render(template, {prettyName, folders, id, parents, template: stringTemplate})
       })
     }
 
@@ -59,7 +59,7 @@ async function handlePage(req, res, next) {
     })
   }
 
-  res.render(template)
+  res.render(template, {template: stringTemplate})
 }
 
 function buildDisplayCategories(tree) {

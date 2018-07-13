@@ -2,13 +2,13 @@
   <h2 class="branding-heading">
     <% const shouldLink = locals.context !== 'home' %>
     <% if (shouldLink) { %><a id="branding-heading-link" href="/"><% } %>
-      <span class="visually-hidden">The New York Times</span>
-      <img src="/assets/images/nyt-T-logo.png" class="nyt-logo" alt="The New York Times">
+      <span class="visually-hidden"><%- template('branding.org') %></span>
+      <img src=<%- template('branding.icon') %> class="logo" alt=<%- template('branding.org') %>>
     <% if (shouldLink) { %></a><% } %>
   </h2>
   <h3 class="branding-label">
     <% if (shouldLink) { %><a class="content-link" href="/"><% } %>
-      Library
+      <%- template('branding.name') %>
     <% if (shouldLink) { %></a><% } %>
   </h3>
 </div>

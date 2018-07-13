@@ -9,7 +9,7 @@ const cache = require('../cache')
 const log = require('../logger')
 const {getTree, getMeta} = require('../list')
 const {fetchDoc, cleanName, fetchByline} = require('../docs')
-const {getTemplates, sortDocs} = require('../utils')
+const {getTemplates, sortDocs, stringTemplate} = require('../utils')
 
 router.get('*', handleCategory)
 module.exports = router
