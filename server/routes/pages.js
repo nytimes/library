@@ -51,7 +51,6 @@ function handlePage(req, res, next) {
   }
 
   if (page === 'categories' || page === 'index') {
-
     return getTree((err, tree) => {
       if (err) return next(err)
       const categories = buildDisplayCategories(tree)
