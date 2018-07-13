@@ -71,7 +71,9 @@ async function updateTree() {
       .filter((f) => f.resourceType !== 'folder')
       .length
 
-    log.debug(`Current file count in drive: ${count}`)    
+    log.debug(`Current file count in drive: ${count}`)
+
+    return currentTree
   })
 }
 
@@ -109,7 +111,6 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentId
   // Gets files in single folder (shared) or files listed in single page of response (team)
   const fetchFromDrive = promisify(drive.files.list).bind(drive.files)
   const {data} = await fetchFromDrive(options)
-    .catch(err => log.error(err))
   
   const {files, nextPageToken} = data
   let combined = listSoFar.concat(files)
