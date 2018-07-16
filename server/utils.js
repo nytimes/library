@@ -36,18 +36,20 @@ exports.sortDocs = (a, b) => {
 
 exports.getUserInfo = (req) => {
   // In development, use stub data
-  if (process.env.NODE_ENV === 'development') {
-    return {
-      email: process.env.TEST_EMAIL || config.footer.defaultEmail,
-      userId: '10',
-      analyticsUserId: md5('10library')
-    }
-  }
-
+  // if (process.env.NODE_ENV === 'development') {
+  //   return {
+  //     email: process.env.TEST_EMAIL || config.footer.defaultEmail,
+  //     userId: '10',
+  //     analyticsUserId: md5('10library')
+  //   }
+  // }
+  console.log('*****');
+  console.log(req.session.passport.user);
   return {
-    email: req.headers['auth.verified_email'],
-    userId: req.headers['auth.verified_sub'],
-    analyticsUserId: md5(req.headers['auth.verified_sub'] + 'library')
+    email: req.session.passport.user.emails[0].value,
+    photo: req.session.passport.user.photos[0].value,
+    userId: req.session.passport.user.id,
+    analyticsUserId: md5(req.session.passport.user.id + 'library')
   }
 }
 

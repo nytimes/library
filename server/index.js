@@ -75,7 +75,8 @@ app.use('/assets', express.static(path.join(__dirname, '../public')))
 
 app.get('/login', passport.authenticate('google', {
   scope: [
-    'https://www.googleapis.com/auth/plus.profile.emails.read'
+    'https://www.googleapis.com/auth/plus.profile.emails.read',
+    'https://www.googleapis.com/auth/userinfo.profile'
   ]
 }))
 
@@ -87,18 +88,21 @@ app.get('/auth/redirect',
 app.use((req, res, next) => {
   let authenticated = req.isAuthenticated()
   if (authenticated) {
+    const domains = process.env.APPROVED_DOMAINS.split(/,\s?/g)
+    console.log('APROVED DOMAINS', domains)
     try {
-      authenticated = /@nytimes\.com$/.test(getUser(req).email)
+      authenticated = domains.includes(getUser(req)._json.domain)
     } catch (e) {
-      console.log('User does not have an nytimes.com email address')
+      res.send(403)
+      console.log('User does not have an approved email address')
     }
     if (authenticated) {
-      console.log(authenticated);
+      console.log(authenticated)
       return next()
     }
   }
-  console.log('User not authenticated');
-  res.redirect('/login');
+  console.log('User not authenticated')
+  res.redirect('/login')
 })
 
 // strip trailing slashes from URLs
