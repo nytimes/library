@@ -24,6 +24,7 @@
     "node-sass": "^4.9.2",
     "nodemon": "^1.17.5",
     "pretty": "^2.0.0",
+    "promise-inflight": "^1.0.1",
     "slugify": "^1.2.1",
     "supertest": "^3.0.0",
     "supertest-as-promised": "^4.0.2",
