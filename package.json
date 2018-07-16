@@ -14,6 +14,7 @@
     "deepmerge": "^2.1.1",
     "ejs": "^2.5.6",
     "express": "^4.16.3",
+    "google-auth-library": "^1.6.1",
     "googleapis": "^32.0.0",
     "inflight": "^1.0.6",
     "js-yaml": "^3.12.0",
