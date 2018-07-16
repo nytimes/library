@@ -7,6 +7,7 @@ const {get: deepProp} = require('lodash')
 const merge = require('deepmerge')
 
 const log = require('./logger')
+const config = getConfig()
 
 const layoutsDir = path.join(__dirname, '../layouts')
 exports.getTemplates = (subfolder) => {
@@ -37,7 +38,7 @@ exports.getUserInfo = (req) => {
   // In development, use stub data
   if (!['staging', 'production'].includes(process.env.NODE_ENV)) {
     return {
-      email: process.env.TEST_EMAIL || getConfig().footer.defaultEmail,
+      email: process.env.TEST_EMAIL || config.footer.defaultEmail,
       userId: '10',
       analyticsUserId: md5('10library')
     }
