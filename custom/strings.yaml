@@ -1,28 +1,28 @@
-## NYT String Configuration
+# ## NYT String Configuration
 
-branding:
-  name: Library
-  org: The New York Times
-  orgDomain: nytimes.com
-  icon: /assets/images/nyt-T-logo.png
-  prettyName: NYT Library
-  favicon: /assets/images/nytlibrary.ico
+# branding:
+#   name: Library
+#   org: The New York Times
+#   orgDomain: nytimes.com
+#   icon: /assets/images/nyt-T-logo.png
+#   prettyName: NYT Library
+#   favicon: /assets/images/nytlibrary.ico
 
-landing:
-  tagline: A collection of tools and tips for creating great Times journalism.
+# landing:
+#   tagline: A collection of tools and tips for creating great Times journalism.
 
-footer:
-  helpText: For help contributing or to report a problem, email <a href="mailto:***REMOVED***">***REMOVED***</a> or leave a message in the <a href="***REMOVED***/library">#library</a> slack channel.
-  defaultEmail: test.user@nytimes.com
+# footer:
+#   helpText: For help contributing or to report a problem, email <a href="mailto:***REMOVED***">***REMOVED***</a> or leave a message in the <a href="***REMOVED***/library">#library</a> slack channel.
+#   defaultEmail: test.user@nytimes.com
 
-search:
-  placeholder: "What are you looking for?"
-  results:
-    none:
-      suggestion: 'To request a new page, email us at <a href="mailto:***REMOVED***">***REMOVED***</a>, or find us on slack in <a href="***REMOVED***/library">#library</a>.'
+# search:
+#   placeholder: "What are you looking for?"
+#   results:
+#     none:
+#       suggestion: 'To request a new page, email us at <a href="mailto:***REMOVED***">***REMOVED***</a>, or find us on slack in <a href="***REMOVED***/library">#library</a>.'
 
-# errors
-error:
-  403:
-    message: "<p>Check the request and try again. For assistance, contact #newstools.</p><p>Perhaps you'd like to search for something instead?</p>"
+# # errors
+# error:
+#   403:
+#     message: "<p>Check the request and try again. For assistance, contact #newstools.</p><p>Perhaps you'd like to search for something instead?</p>"
 
