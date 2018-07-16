@@ -4,7 +4,6 @@ const path = require('path')
 const express = require('express')
 const async = require('async')
 const passport = require('passport')
-const bodyParser = require('body-parser')
 const session = require('express-session')
 const {Strategy} = require('passport-google-oauth2')
 
@@ -30,32 +29,19 @@ passport.use(new Strategy({
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: '/auth/redirect',
   passReqToCallback: true
-}, (request, accessToken, refreshToken, profile, done) => {
-
-  return done(null, profile)
-}))
+}, (request, accessToken, refreshToken, profile, done) => done(null, profile)))
 
 passport.serializeUser((user, done) => done(null, user))
 passport.deserializeUser((obj, done) => done(null, obj))
 
-
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: true,
-  saveUninitialized: true,
+  saveUninitialized: true
 }))
+
 app.use(passport.initialize())
 app.use(passport.session())
-
-const getUser = (req) => {
-  try {
-    return req.session.passport.user
-  } catch (e) {
-    console.log('User does not exist');
-    return false
-  }
-}
-
 
 preload.forEach((middleware) => app.use(middleware))
 
@@ -80,21 +66,25 @@ app.get('/login', passport.authenticate('google', {
   ]
 }))
 
+app.get('/logout', (req, res) => {
+  req.logout()
+  res.redirect('/')
+})
+
 // use the badcom callback path for ease of setup
 app.get('/auth/redirect',
   passport.authenticate('google', { failureRedirect: '/login', successRedirect: '/' })
-);
+)
 
 app.use((req, res, next) => {
   let authenticated = req.isAuthenticated()
   if (authenticated) {
     const domains = process.env.APPROVED_DOMAINS.split(/,\s?/g)
-    console.log('APROVED DOMAINS', domains)
     try {
-      authenticated = domains.includes(getUser(req)._json.domain)
+      authenticated = domains.includes(req.session.passport.user._json.domain)
     } catch (e) {
-      res.send(403)
       console.log('User does not have an approved email address')
+      res.statusCode = 403
     }
     if (authenticated) {
       console.log(authenticated)
