@@ -87,7 +87,6 @@ app.use((req, res, next) => {
       res.statusCode = 403
     }
     if (authenticated) {
-      console.log(authenticated)
       return next()
     }
   }

@@ -7,8 +7,6 @@ const {get: deepProp} = require('lodash')
 const log = require('./logger')
 const merge = require('deepmerge')
 
-const config = getConfig()
-
 const layoutsDir = path.join(__dirname, '../layouts')
 exports.getTemplates = (subfolder) => {
   return (fs.readdirSync(path.join(layoutsDir, subfolder)) || [])
@@ -43,8 +41,6 @@ exports.getUserInfo = (req) => {
   //     analyticsUserId: md5('10library')
   //   }
   // }
-  console.log('*****');
-  console.log(req.session.passport.user);
   return {
     email: req.session.passport.user.emails[0].value,
     photo: req.session.passport.user.photos[0].value,
