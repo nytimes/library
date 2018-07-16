@@ -3,9 +3,6 @@ const path = require('path')
 
 const express = require('express')
 const async = require('async')
-const passport = require('passport')
-const session = require('express-session')
-const {Strategy} = require('passport-google-oauth2')
 
 const {middleware: cache, purge} = require('./cache')
 const userInfo = require('./routes/userInfo')
@@ -14,7 +11,8 @@ const categories = require('./routes/categories')
 const readingHistory = require('./routes/readingHistory')
 const errorPages = require('./routes/errors')
 const {getMeta, getAllRoutes} = require('./list')
-const {allMiddleware} = require('./utils')
+const {allMiddleware, requireWithFallback} = require('./utils')
+const userAuth = requireWithFallback('userAuth')
 
 const app = express()
 
@@ -23,25 +21,7 @@ const {preload, postload} = allMiddleware
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, '../layouts'))
 
-// Auth
-passport.use(new Strategy({
-  clientID: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: '/auth/redirect',
-  passReqToCallback: true
-}, (request, accessToken, refreshToken, profile, done) => done(null, profile)))
-
-passport.serializeUser((user, done) => done(null, user))
-passport.deserializeUser((obj, done) => done(null, obj))
-
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: true,
-  saveUninitialized: true
-}))
-
-app.use(passport.initialize())
-app.use(passport.session())
+app.use(userAuth)
 
 preload.forEach((middleware) => app.use(middleware))
 
@@ -58,41 +38,6 @@ app.use(userInfo)
 
 // serve all files in the public folder
 app.use('/assets', express.static(path.join(__dirname, '../public')))
-
-app.get('/login', passport.authenticate('google', {
-  scope: [
-    'https://www.googleapis.com/auth/plus.profile.emails.read',
-    'https://www.googleapis.com/auth/userinfo.profile'
-  ]
-}))
-
-app.get('/logout', (req, res) => {
-  req.logout()
-  res.redirect('/')
-})
-
-// use the badcom callback path for ease of setup
-app.get('/auth/redirect',
-  passport.authenticate('google', { failureRedirect: '/login', successRedirect: '/' })
-)
-
-app.use((req, res, next) => {
-  let authenticated = req.isAuthenticated()
-  if (authenticated) {
-    const domains = process.env.APPROVED_DOMAINS.split(/,\s?/g)
-    try {
-      authenticated = domains.includes(req.session.passport.user._json.domain)
-    } catch (e) {
-      console.log('User does not have an approved email address')
-      res.statusCode = 403
-    }
-    if (authenticated) {
-      return next()
-    }
-  }
-  console.log('User not authenticated')
-  res.redirect('/login')
-})
 
 // strip trailing slashes from URLs
 app.get(/(.+)\/$/, (req, res, next) => {
