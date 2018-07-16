@@ -67,5 +67,8 @@
   "bugs": {
     "url": "https://github.com/newsdev/nyt-docs/issues"
   },
+  "engines": {
+    "node": "8.11.3"
+  },
   "homepage": "https://github.com/newsdev/nyt-docs#readme"
 }
