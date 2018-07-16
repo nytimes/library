@@ -60,7 +60,7 @@
     "debug": "node -r dotenv/config --inspect --debug-brk server/index.js",
     "watch": "concurrently \"nodemon -r dotenv/config -e js,ejs server/index.js\" \"node-sass -w styles/style.scss public/css/style.css\"",
     "test": "NODE_ENV=test mocha test/unit --recursive",
-    "test:cover": "nyc --reporter=html --reporter=text mocha test/unit --recursive"
+    "test:cover": "NODE_ENV=test nyc --reporter=html --reporter=text mocha test/unit --recursive"
   },
   "repository": {
     "type": "git",

@@ -4,8 +4,9 @@ const path = require('path')
 const md5 = require('md5')
 const yaml = require('js-yaml')
 const {get: deepProp} = require('lodash')
-const log = require('./logger')
 const merge = require('deepmerge')
+
+const log = require('./logger')
 
 const layoutsDir = path.join(__dirname, '../layouts')
 exports.getTemplates = (subfolder) => {
@@ -34,13 +35,13 @@ exports.sortDocs = (a, b) => {
 
 exports.getUserInfo = (req) => {
   // In development, use stub data
-  // if (process.env.NODE_ENV === 'development') {
-  //   return {
-  //     email: process.env.TEST_EMAIL || config.footer.defaultEmail,
-  //     userId: '10',
-  //     analyticsUserId: md5('10library')
-  //   }
-  // }
+  if (!['staging', 'production'].includes(process.env.NODE_ENV)) {
+    return {
+      email: process.env.TEST_EMAIL || getConfig().footer.defaultEmail,
+      userId: '10',
+      analyticsUserId: md5('10library')
+    }
+  }
   return {
     email: req.session.passport.user.emails[0].value,
     photo: req.session.passport.user.photos[0].value,

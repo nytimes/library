@@ -28,7 +28,6 @@ exports.middleware = (req, res, next) => {
         log.warn(`Cache purge failed for ${req.path}`, err)
         return next(err)
       }
-
       res.end('OK')
     })
   }
