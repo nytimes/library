@@ -1,8 +1,9 @@
 'use strict'
 
-const inflight = require('inflight')
+const inflight = require('promise-inflight')
 const {google} = require('googleapis')
 const path = require('path')
+const {promisify} = require('util')
 
 const cache = require('./cache')
 const log = require('./logger')
@@ -10,17 +11,22 @@ const {getAuth} = require('./auth')
 const {isSupported} = require('./utils')
 const {cleanName, slugify} = require('./docs')
 
-const teamDriveId = '***REMOVED***'
+const driveType = process.env.DRIVE_TYPE
+const driveId = process.env.DRIVE_ID
+
 let currentTree = null // current route data by slug
 let docsInfo = {} // doc info by id
 let tags = {} // tags to doc id
 let driveBranches = {} // map of id to nodes
+
 exports.getTree = (cb) => {
   if (currentTree) {
     return cb(null, currentTree)
   }
 
-  updateTree(cb)
+  updateTree()
+    .then(tree => cb(null, tree))
+    .catch(cb)
 }
 
 // exposes docs metadata
@@ -51,66 +57,90 @@ exports.getAllRoutes = () => {
 const treeUpdateDelay = parseInt(process.env.LIST_UPDATE_DELAY || 15, 10) * 1000
 startTreeRefresh(treeUpdateDelay)
 
-function updateTree(cb) {
-  cb = inflight('tree', cb)
-  // guard against calling while already in progress
-  if (!cb) return
-  // fetch all files in drive and produce routes data
-  getAuth((err, authClient) => {
-    if (err) {
-      return cb(err)
-    }
+async function updateTree() {
+  return inflight('tree', async () => {
+    const auth = promisify(getAuth)
+    const authClient = await auth()
 
     const drive = google.drive({version: 'v3', auth: authClient})
-    fetchAllFiles({drive}, (err, files) => {
-      if (err) {
-        return cb(err)
-      }
-      currentTree = produceTree(files, teamDriveId)
-      const count = Object.values(docsInfo)
-        .filter((f) => f.resourceType !== 'folder')
-        .length
+    const files = await fetchAllFiles({drive})
 
-      log.debug(`Current file count in drive: ${count}`)
+    currentTree = produceTree(files, driveId)
 
-      cb(null, currentTree)
-    })
+    const count = Object.values(docsInfo)
+      .filter((f) => f.resourceType !== 'folder')
+      .length
+
+    log.debug(`Current file count in drive: ${count}`)
+
+    return currentTree
   })
 }
 
-function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], drive} = {}, cb) {
-  const options = {
-    teamDriveId,
+function getOptions(driveType, id) {
+  const fields = 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)'
+
+  if (driveType === 'shared') {
+    return {
+      q: id.map(id => `'${id}' in parents`).join(' or '),
+      fields
+    }
+  } 
+  
+  return {
+    teamDriveId: id,
     q: 'trashed = false',
     corpora: 'teamDrive',
     supportsTeamDrives: true,
     includeTeamDriveItems: true,
     // fields: '*', // setting fields to '*' returns all fields but ignores pageSize
-    fields: 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)',
-    pageSize: 1000 // this value does not seem to be doing anything
+    pageSize: 1000, // this value does not seem to be doing anything
+    fields
   }
+}
+
+async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentIds = [driveId], drive} = {}) {
+  const options = getOptions(driveType, parentIds)
 
   if (pageToken) {
     options.pageToken = pageToken
   }
 
   log.debug(`searching for files > ${listSoFar.length}`)
-  drive.files.list(options, (err, {data}) => {
-    if (err) return cb(err)
+  
+  // Gets files in single folder (shared) or files listed in single page of response (team)
+  const fetchFromDrive = promisify(drive.files.list).bind(drive.files)
+  const {data} = await fetchFromDrive(options)
+  
+  const {files, nextPageToken} = data
+  const combined = listSoFar.concat(files)
 
-    // don't pull these out in param because explicit null/undefined is passed
-    const {files, nextPageToken} = data || {}
-    const combined = listSoFar.concat(files)
-    if (nextPageToken) {
-      return fetchAllFiles({
-        nextPageToken,
-        listSoFar: combined,
-        drive
-      }, cb)
-    }
+  // If there is more data the API has not returned for the query, the request needs to continue
+  if (nextPageToken) {
+    return fetchAllFiles({
+      nextPageToken,
+      listSoFar: combined,
+      drive
+    })
+  }
 
-    cb(null, combined)
-  })
+  // If there are no more pages and this is not a shared folder, return completed list
+  if (driveType !== 'shared') return combined
+  
+  // Continue searching if shared folder, since API only returns contents of the immediate parent folder
+  // Find folders that have not yet been searched
+  const folders = combined.filter(item => 
+    item.mimeType === 'application/vnd.google-apps.folder' && parentIds.includes(item.parents[0]))
+
+  if (folders.length > 0) {
+    return fetchAllFiles({
+      listSoFar: combined,
+      drive,
+      parentIds: folders.map(folder => folder.id)
+    })
+  }
+
+  return combined
 }
 
 function produceTree(files, firstParent) {
@@ -134,7 +164,7 @@ function produceTree(files, firstParent) {
       resourceType: cleanResourceType(resource.mimeType),
       sort: determineSort(name),
       slug,
-      isTrashCan: slug === 'trash' && parents.includes(teamDriveId)
+      isTrashCan: slug === 'trash' && parents.includes(driveId)
     })
 
     // add the id of this item to a list of tags
@@ -217,7 +247,7 @@ function addPaths(byId) {
   function derivePathInfo(item) {
     const {parents, slug, webViewLink: drivePath, isHome, resourceType} = item || {}
     const parentId = parents[0]
-    const hasParent = parentId && parentId !== teamDriveId
+    const hasParent = parentId && parentId !== driveId
     const parent = byId[parentId]
     const renderInLibrary = isSupported(resourceType)
 
@@ -300,15 +330,15 @@ function cleanResourceType(mimeType) {
   return match[1]
 }
 
-function startTreeRefresh(interval) {
+async function startTreeRefresh(interval) {
   log.debug('updating tree...')
-  updateTree((err) => {
-    if (err) {
-      log.warn('failed updating tree', err)
-    } else {
-      log.debug('tree updated.')
-    }
+  
+  try {
+    await updateTree()
+    log.debug('tree updated.')
+  } catch (err) {
+    log.warn('failed updating tree', err)
+  }
 
-    setTimeout(() => { startTreeRefresh(interval) }, interval)
-  })
+  setTimeout(() => { startTreeRefresh(interval) }, interval)
 }

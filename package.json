@@ -29,6 +29,7 @@
     "passport-google-oauth20": "^1.0.0",
     "pretty": "^2.0.0",
     "session-file-store": "^1.2.0",
+    "promise-inflight": "^1.0.1",
     "slugify": "^1.2.1",
     "supertest": "^3.0.0",
     "supertest-as-promised": "^4.0.2",
