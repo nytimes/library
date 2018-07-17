@@ -2,9 +2,10 @@
 
 const path = require('path')
 
-const inflight = require('inflight')
+const inflight = require('promise-inflight')
 const {google} = require('googleapis')
-const {auth: herokuAuth} = require('google-auth-library')
+const {auth: nodeAuth} = require('google-auth-library')
+const {promisify} = require('util')
 
 const log = require('./logger')
 
@@ -43,30 +44,25 @@ async function setAuthClient(cb) {
     'https://www.googleapis.com/auth/datastore'
   ]
 
-  cb = inflight('auth', cb)
-  // guard against calling while already in progress
-  if (!cb) return
+  return inflight('auth', async () => {
+    if (process.env.HEROKU) {
+      authClient = nodeAuth.fromJSON(keys);
+      authClient.scopes = scopes
 
-  if (process.env.HEROKU) {
-    authClient = herokuAuth.fromJSON(keys);
-    authClient.scopes = scopes
-    await authClient.authorize()
+      await authClient.authorize()
 
-  } else {
-    google.auth.getApplicationDefault((err, client) => {
-      if (err) {
-        return cb(err)
-      }
+    } else {
+      const getGoogleAuth = promisify(google.auth.getApplicationDefault).bind(google.auth)
+      const client = await getGoogleAuth()
 
       authClient = client
       if (authClient.createScopedRequired && authClient.createScopedRequired()) {
         authClient = authClient.createScoped(scopes)
       }
-
       google.options({auth: authClient})
-      log.info('Google API auth successfully retrieved.')
-    })
-  }
+    }
 
-  cb(null, authClient)
+    log.info('Google API auth successfully retrieved.')
+    cb(null, authClient)
+  })
 }
