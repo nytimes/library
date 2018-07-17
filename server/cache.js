@@ -4,7 +4,7 @@ const async = require('async')
 const moment = require('moment')
 
 const log = require('./logger')
-const {getUserInfo, requireWithFallback} = require('./utils')
+const {requireWithFallback} = require('./utils')
 
 const cache = requireWithFallback('cache/store')
 
@@ -17,7 +17,7 @@ exports.middleware = (req, res, next) => {
   // handle the purge request if purge or edit params are present
   const {purge, edit, ignore} = req.query
   if (purge || edit) {
-    const {email} = edit ? getUserInfo(req) : {}
+    const {email} = edit ? req.userInfo : {}
     const overrides = ignore ? ignore.split(',') : null
     return purgeCache({
       url: req.path,

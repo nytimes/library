@@ -1,13 +1,11 @@
 'use strict'
 const fs = require('fs')
 const path = require('path')
-const md5 = require('md5')
 const yaml = require('js-yaml')
 const {get: deepProp} = require('lodash')
 const merge = require('deepmerge')
 
 const log = require('./logger')
-const config = getConfig()
 
 const layoutsDir = path.join(__dirname, '../layouts')
 exports.getTemplates = (subfolder) => {
@@ -34,22 +32,22 @@ exports.sortDocs = (a, b) => {
   return b.resourceType === 'folder' ? 1 : -1
 }
 
-exports.getUserInfo = (req) => {
-  // In development, use stub data
-  if (!['staging', 'production'].includes(process.env.NODE_ENV)) {
-    return {
-      email: process.env.TEST_EMAIL || config.footer.defaultEmail,
-      userId: '10',
-      analyticsUserId: md5('10library')
-    }
-  }
-  return {
-    email: req.session.passport.user.emails[0].value,
-    photo: req.session.passport.user.photos[0].value,
-    userId: req.session.passport.user.id,
-    analyticsUserId: md5(req.session.passport.user.id + 'library')
-  }
-}
+// exports.getUserInfo = (req) => {
+//   // In development, use stub data
+//   if (!['staging', 'production'].includes(process.env.NODE_ENV)) {
+//     return {
+//       email: process.env.TEST_EMAIL || config.footer.defaultEmail,
+//       userId: '10',
+//       analyticsUserId: md5('10library')
+//     }
+//   }
+//   return {
+//     email: req.session.passport.user.emails[0].value,
+//     photo: req.session.passport.user.photos[0].value,
+//     userId: req.session.passport.user.id,
+//     analyticsUserId: md5(req.session.passport.user.id + 'library')
+//   }
+// }
 
 // attempts to require from attemptPath. If file isn't present, looks for a
 // file of the same name in the server dir
@@ -76,7 +74,7 @@ exports.allMiddleware = middlewares.reduce((m, item) => {
   preload: [], postload: []
 })
 
-function getConfig() {
+exports.getConfig = () => {
   const defaultExists = fs.existsSync(path.join(__dirname, '../config/strings.yaml'))
   const customExists = fs.existsSync(path.join(__dirname, '../custom/strings.yaml'))
 
@@ -95,7 +93,7 @@ function getConfig() {
 }
 
 exports.stringTemplate = (configPath, ...args) => {
-  const config = getConfig()
+  const config = exports.getConfig()
   const stringConfig = deepProp(config, configPath)
   const configType = typeof stringConfig
 
