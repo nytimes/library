@@ -27,7 +27,7 @@ exports.run = (query, cb) => {
   })
 }
 
-function getOptions(driveType, id, query) {
+function getOptions(query) {
   const baseOptions = {
     q: `fullText contains ${JSON.stringify(query)} AND mimeType != 'application/vnd.google-apps.folder' AND trashed = false`,
     fields: '*'
@@ -38,16 +38,16 @@ function getOptions(driveType, id, query) {
   } 
   
   return {
-    teamDriveId: id,
+    ...baseOptions,
+    teamDriveId: driveId,
     corpora: 'teamDrive',
     supportsTeamDrives: true,
-    includeTeamDriveItems: true,
-    ...baseOptions
+    includeTeamDriveItems: true
   }
 }
 
 function fullSearch({drive, query, results = [], next}, cb) {
-  const options = getOptions(driveType, driveId, query)
+  const options = getOptions(query)
 
   drive.files.list(options, (err, {data: {files, nextPageToken: next}}) => {
     if (err) return cb(err)

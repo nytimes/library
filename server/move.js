@@ -8,7 +8,8 @@ const cache = require('./cache')
 const {getAuth} = require('./auth')
 const {sortDocs, stringTemplate} = require('./utils')
 
-const teamDriveId = '***REMOVED***'
+const driveType = process.env.DRIVE_TYPE
+const driveId = process.env.DRIVE_ID
 
 // return the folder html (or at least json object) that can be templated
 exports.getFolders = (id, cb) => {
@@ -26,6 +27,26 @@ exports.getFolders = (id, cb) => {
   })
 }
 
+function getOptions(fileId, destination, parents) {
+  const baseOptions = {
+    fileId,
+    addParents: [destination],
+    removeParents: parents,
+  }
+
+  if (driveType === 'shared') {
+    return baseOptions
+  }
+
+  return {
+    ...baseOptions,
+    corpora: 'teamDrive',
+    supportsTeamDrives: true,
+    includeTeamDriveItems: true,
+    teamDriveId: driveId
+  }
+}
+
 exports.moveFile = (id, destination, cb) => {
   const {parents, slug} = getMeta(id) || {}
   const {path: basePath} = getMeta(destination) || {}
@@ -36,15 +57,7 @@ exports.moveFile = (id, destination, cb) => {
     if (err) return cb(err)
 
     const drive = google.drive({version: 'v3', auth: authClient})
-    drive.files.update({
-      fileId: id,
-      addParents: [destination],
-      removeParents: parents,
-      corpora: 'teamDrive',
-      supportsTeamDrives: true,
-      includeTeamDriveItems: true,
-      teamDriveId
-    }, (err, result) => {
+    drive.files.update(getOptions(id, destination, parents), (err, result) => {
       if (err) return cb(err)
 
       const oldUrls = parents.map((id) => {
