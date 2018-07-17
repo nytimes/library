@@ -46,6 +46,7 @@ async function setAuthClient(cb) {
       authClient.scopes = scopes
 
       await authClient.authorize()
+      cb(null, authClient)
 
     } else {
       const getGoogleAuth = promisify(google.auth.getApplicationDefault).bind(google.auth)
@@ -56,9 +57,9 @@ async function setAuthClient(cb) {
         authClient = authClient.createScoped(scopes)
       }
       google.options({auth: authClient})
+      cb(null, authClient)
     }
 
     log.info('Google API auth successfully retrieved.')
-    cb(null, authClient)
   })
 }

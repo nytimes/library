@@ -13,10 +13,11 @@ exports.run = (query, cb) => {
     const drive = google.drive({version: 'v3', auth: authClient})
 
     fullSearch({drive, query}, (err, files) => {
+      console.log('seaching')
       if (err) {
         return cb(err)
       }
-
+      console.log(files)
       const fileMetas = files
         .map((file) => { return list.getMeta(file.id) || {} })
         .filter(({path, tags}) => (path || '').split('/')[1] !== 'trash' && !tags.includes('hidden'))
@@ -29,9 +30,9 @@ function fullSearch({drive, query, results = [], next}, cb) {
   const options = {
     teamDriveId,
     q: `fullText contains ${JSON.stringify(query)} AND mimeType != 'application/vnd.google-apps.folder' AND trashed = false`,
-    corpora: 'teamDrive',
-    supportsTeamDrives: true,
-    includeTeamDriveItems: true,
+    // corpora: 'teamDrive',
+    // supportsTeamDrives: true,
+    // includeTeamDriveItems: true,
     fields: '*'
   }
 
