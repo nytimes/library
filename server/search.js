@@ -3,7 +3,9 @@
 const {google} = require('googleapis')
 const {getAuth} = require('./auth')
 const list = require('./list')
-const teamDriveId = '***REMOVED***'
+
+const driveType = process.env.DRIVE_TYPE
+const driveId = process.env.DRIVE_ID
 
 exports.run = (query, cb) => {
   getAuth((err, authClient) => {
@@ -25,15 +27,27 @@ exports.run = (query, cb) => {
   })
 }
 
-function fullSearch({drive, query, results = [], next}, cb) {
-  const options = {
-    teamDriveId,
+function getOptions(driveType, id, query) {
+  const baseOptions = {
     q: `fullText contains ${JSON.stringify(query)} AND mimeType != 'application/vnd.google-apps.folder' AND trashed = false`,
+    fields: '*'
+  }
+
+  if (driveType === 'shared') {
+    return baseOptions
+  } 
+  
+  return {
+    teamDriveId: id,
     corpora: 'teamDrive',
     supportsTeamDrives: true,
     includeTeamDriveItems: true,
-    fields: '*'
+    ...baseOptions
   }
+}
+
+function fullSearch({drive, query, results = [], next}, cb) {
+  const options = getOptions(driveType, driveId, query)
 
   drive.files.list(options, (err, {data: {files, nextPageToken: next}}) => {
     if (err) return cb(err)
