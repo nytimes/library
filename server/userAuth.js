@@ -6,6 +6,7 @@ const session = require('express-session')
 const md5 = require('md5')
 const {Strategy} = require('passport-google-oauth2')
 
+const log = require('./logger')
 const config = require('./utils').getConfig()
 
 const router = express.Router()
@@ -51,22 +52,13 @@ router.get('/auth/redirect',
 )
 
 router.use((req, res, next) => {
-  if (process.env.NODE_ENV === 'development') next()
-  let authenticated = req.isAuthenticated()
-  if (authenticated) {
-    const domains = process.env.APPROVED_DOMAINS.split(/,\s?/g)
-    try {
-      authenticated = domains.includes(req.session.passport.user._json.domain)
-      setUserInfo(req)
-    } catch (e) {
-      console.log('User does not have an approved email address')
-      res.redirect('/login')
-    }
-    if (authenticated) {
-      return next()
-    }
+  const domains = process.env.APPROVED_DOMAINS.split(/,\s?/g)
+  const authenticated = req.isAuthenticated()
+  if (authenticated && domains.includes(req.session.passport.user._json.domain)) {
+    setUserInfo(req)
+    return next()
   }
-  console.log('User not authenticated')
+  log.info('User not authenticated')
   res.redirect('/login')
 })
 
