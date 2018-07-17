@@ -31,7 +31,9 @@ app.use((req, res, next) => {
   next()
 })
 
-// app.use(userInfo)
+if (!process.env.HEROKU) {
+  app.use(userInfo)
+}
 
 // serve all files in the public folder
 app.use('/assets', express.static(path.join(__dirname, '../public')))
