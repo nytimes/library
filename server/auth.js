@@ -48,7 +48,7 @@ async function setAuthClient(cb) {
   if (!cb) return
 
   if (process.env.HEROKU) {
-    authClient = auth.fromJSON(keys);
+    authClient = herokuAuth.fromJSON(keys);
     authClient.scopes = scopes
     await authClient.authorize()
 
