@@ -47,18 +47,20 @@ router.get('/logout', (req, res) => {
 })
 
 // use the badcom callback path for ease of setup
-router.get('/auth/redirect',
-  passport.authenticate('google', { failureRedirect: '/login', successRedirect: '/' })
-)
+router.get('/auth/redirect', passport.authenticate('google'), (req, res) => {
+  res.redirect(req.session.authRedirect || '/')
+})
 
 router.use((req, res, next) => {
+  const isDev = process.env.NODE_ENV === 'development'
   const domains = process.env.APPROVED_DOMAINS.split(/,\s?/g)
   const authenticated = req.isAuthenticated()
-  if (authenticated && domains.includes(req.session.passport.user._json.domain)) {
+  if (isDev || (authenticated && domains.includes(req.session.passport.user._json.domain))) {
     setUserInfo(req)
     return next()
   }
   log.info('User not authenticated')
+  req.session.authRedirect = req.path
   res.redirect('/login')
 })
 

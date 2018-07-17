@@ -21,8 +21,7 @@ const {preload, postload} = allMiddleware
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, '../layouts'))
 
-// skip login for dev work
-if (process.env.NODE_ENV !== 'development') app.use(userAuth)
+app.use(userAuth)
 
 preload.forEach((middleware) => app.use(middleware))
 
