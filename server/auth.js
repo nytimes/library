@@ -17,16 +17,6 @@ if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
   process.env.GOOGLE_APPLICATION_CREDENTIALS = path.join(__dirname, '.auth.json')
 } 
 
-// In Heroku environment, set GOOGLE_APPLICATION_CREDENTIALS as auth json object to be parsed
-if (process.env.HEROKU) {
-  const keysEnvVar = process.env.GOOGLE_APPLICATION_CREDENTIALS
-  if (!keysEnvVar) {
-    log.error('GOOGLE_APPLICATION_CREDENTIALS was not defined. Set the config var object in Heroku.')
-  }
-  const keys = JSON.parse(keysEnvVar)
-}
-
-
 // only public method, returns the authClient that can be used for making other requests
 exports.getAuth = (cb) => {
   if (authClient) {
@@ -45,7 +35,13 @@ async function setAuthClient(cb) {
   ]
 
   return inflight('auth', async () => {
+    // In Heroku environment, set GOOGLE_APPLICATION_CREDENTIALS as auth json object to be parsed
     if (process.env.HEROKU) {
+      const keysEnvVar = process.env.GOOGLE_APPLICATION_CREDENTIALS
+      if (!keysEnvVar) {
+        log.error('GOOGLE_APPLICATION_CREDENTIALS was not defined. Set the config var object in Heroku.')
+      }
+      const keys = JSON.parse(keysEnvVar)
       authClient = nodeAuth.fromJSON(keys);
       authClient.scopes = scopes
 
