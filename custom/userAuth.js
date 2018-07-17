@@ -5,12 +5,13 @@ const {verifyIapToken} = require('***REMOVED***')
 
 const router = express.Router()
 
-// router.use(() => verifyIapToken())
+router.use(verifyIapToken())
 
 router.use((req, res, next) => {
+  console.log('middleware2');
   if (process.env.NODE_ENV === 'development') {
     req.userInfo = {
-      email: process.env.TEST_EMAIL || 'testuser@nytimes.com',
+      email: process.env.TEST_EMAIL || '***REMOVED***',
       userId: '10',
       analyticsUserId: md5('10library')
     }
@@ -24,5 +25,6 @@ router.use((req, res, next) => {
   }
   next()
 })
+
 
 module.exports = router
