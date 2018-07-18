@@ -20,8 +20,6 @@ exports.run = (query, cb) => {
         return cb(err)
       }
 
-      console.log(files.map(n => n.name))
-      console.log(files.map((file) => { return list.getMeta(file.id) || {} }))
       const fileMetas = files
         .map((file) => { return list.getMeta(file.id) || {} })
         .filter(({path, tags}) => (path || '').split('/')[1] !== 'trash' && !tags.includes('hidden'))

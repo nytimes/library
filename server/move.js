@@ -34,12 +34,16 @@ exports.moveFile = (id, destination, cb) => {
   if (!parents) return cb(Error('Not found'))
 
   getAuth((err, authClient) => {
+    if (err) return cb(err)
+
+    const drive = google.drive({version: 'v3', auth: authClient})
+    
     const baseOptions = {
       fileId: id,
       addParents: [destination],
       removeParents: parents,
     }
-
+    
     const teamOptions = {
       teamDriveId: driveId,
       corpora: 'teamDrive',
@@ -48,9 +52,6 @@ exports.moveFile = (id, destination, cb) => {
       ...baseOptions
     }
 
-    if (err) return cb(err)
-
-    const drive = google.drive({version: 'v3', auth: authClient})
     const options = driveType === 'shared' ? baseOptions : teamOptions
 
     drive.files.update(options, (err, result) => {
