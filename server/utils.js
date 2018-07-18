@@ -36,7 +36,7 @@ exports.sortDocs = (a, b) => {
 
 exports.getUserInfo = (req) => {
   // In development, use stub data
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'development' || process.env.HEROKU) {
     return {
       email: process.env.TEST_EMAIL || config.footer.defaultEmail,
       userId: '10',
