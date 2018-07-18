@@ -9,13 +9,17 @@ const driveType = process.env.DRIVE_TYPE
 const driveId = process.env.DRIVE_ID
 
 exports.run = (query, cb) => {
-  getAuth((err, authClient) => {
+  getAuth(async (err, authClient) => {
     if (err) {
       return cb(err)
     }
     const drive = google.drive({version: 'v3', auth: authClient})
-
-    fullSearch({drive, query}, (err, files) => {
+    
+    if (driveType === 'shared') {
+      var folderIds = await getAllFolders({drive})
+    }
+    
+    fullSearch({drive, query, folderIds}, (err, files) => {
       if (err) {
         return cb(err)
       }
@@ -66,11 +70,11 @@ async function getAllFolders({nextPageToken: pageToken, drive, parentIds=[driveI
   return combined.map(folder => folder.id)
 }
 
-function getOptions(query, ids) {
+function getOptions(query, folderIds) {
   const fields = '*'
 
   if (driveType === 'shared') {
-    const parents = ids.map(id => `'${id}' in parents`).join(' or ')
+    const parents = folderIds.map(id => `'${id}' in parents`).join(' or ')
     return {
       q: `(${parents}) AND fullText contains ${JSON.stringify(query)} AND mimeType != 'application/vnd.google-apps.folder' AND trashed = false`,
       fields
@@ -87,17 +91,8 @@ function getOptions(query, ids) {
   }
 }
 
-async function fullSearch({drive, query, results = [], next}, cb) {
-  // If shared drive, first get ids of all folders to search through
-  if (driveType === 'shared') {
-    try {
-      var parentIds = await getAllFolders({drive})
-    } catch(err) {
-      log.error(err)
-    }
-  }
-
-  const options = getOptions(query, parentIds)
+async function fullSearch({drive, query, folderIds, results = [], next}, cb) {
+  const options = getOptions(query, folderIds)
 
   drive.files.list(options, (err, {data: {files, nextPageToken: next}}) => {
     if (err) return cb(err)
