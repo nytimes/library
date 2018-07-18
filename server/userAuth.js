@@ -20,6 +20,8 @@ passport.use(new Strategy({
   passReqToCallback: true
 }, (request, accessToken, refreshToken, profile, done) => done(null, profile)))
 
+// seralize/deseralization methods for extracting user information from the
+// session cookie and adding it to the req.passport object
 passport.serializeUser((user, done) => done(null, user))
 passport.deserializeUser((obj, done) => done(null, obj))
 
@@ -29,8 +31,6 @@ router.use(session({
   saveUninitialized: true
 }))
 
-// seralize/deseralization methods for extracting user information from the
-// session cookie and adding it to the req.passport object
 router.use(passport.initialize())
 router.use(passport.session())
 

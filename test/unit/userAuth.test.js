@@ -8,14 +8,14 @@ describe.only('Authentication', () => {
     process.env.GOOGLE_CLIENT_ID = '1234abcdefg'
     process.env.GOOGLE_CLIENT_SECRET = '1234abcdefg'
     app = require('../../server/index')
-  //   app.use((req, res, next) => {
-  //     req.user = {
-  //       emails: {value: 'test-user@test.com'},
-  //       userId: '10'
-  //     }
-  //     req.isAuthenticated = () => true
-  //     next()
-  //   })
+    app.use((req, res, next) => {
+      req.user = {
+        emails: {value: 'test-user@test.com'},
+        userId: '10'
+      }
+      req.isAuthenticated = () => true
+      next()
+    })
   })
 
 
@@ -26,8 +26,8 @@ describe.only('Authentication', () => {
       'analyticsUserId': 'b803c0f4c737779239234926e8f07cca'
     }
     request(app).get('/whoami.json')
-                // .expect('Content-Type', /json/)
-                // .expect(200)
+                .expect(200)
+                .expect('Content-Type', /json/)
                 .end((err, res) => {
                   if (err) return done(err)
                   console.log(JSON.stringify(res.body));
@@ -37,8 +37,8 @@ describe.only('Authentication', () => {
 
   it('GET /foo/bar should 403', (done) => {
     request(app).get('/foo/bar')
-                // .expect('Content-Type', /json/)
-                // .expect(403)
+                .expect(403)
+                .expect('Content-Type', /json/)
                 .end((err, res) => {
                   if (err) return done(err)
                   console.log(JSON.stringify(res));
