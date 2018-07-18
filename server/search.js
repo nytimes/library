@@ -20,22 +20,12 @@ exports.run = (query, cb) => {
     }
     
     const files = await fullSearch({drive, query, folderIds})
-    console.log('got files', files)
+
     const fileMetas = files
       .map((file) => { return list.getMeta(file.id) || {} })
       .filter(({path, tags}) => (path || '').split('/')[1] !== 'trash' && !tags.includes('hidden'))
+    
     cb(null, fileMetas)
-
-    // fullSearch({drive, query, folderIds}, (err, files) => {
-    //   if (err) {
-    //     return cb(err)
-    //   }
-
-    //   const fileMetas = files
-    //     .map((file) => { return list.getMeta(file.id) || {} })
-    //     .filter(({path, tags}) => (path || '').split('/')[1] !== 'trash' && !tags.includes('hidden'))
-    //   cb(null, fileMetas)
-    // })
   })
 }
 
