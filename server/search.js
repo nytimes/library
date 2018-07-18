@@ -20,6 +20,7 @@ exports.run = (query, cb) => {
     }
     
     const files = await fullSearch({drive, query, folderIds})
+      .catch(err => log.err(`Error when searching for ${query}, ${err}`))
 
     const fileMetas = files
       .map((file) => { return list.getMeta(file.id) || {} })
@@ -27,6 +28,26 @@ exports.run = (query, cb) => {
     
     cb(null, fileMetas)
   })
+}
+
+async function fullSearch({drive, query, folderIds, results = [], nextPageToken: pageToken}) {
+  const options = getOptions(query, folderIds)
+
+  if (pageToken) {
+    options.pageToken = pageToken
+  }
+
+  const listFiles = promisify(drive.files.list).bind(drive.files)
+  const {data} = await listFiles(options)
+
+  const {files, nextPageToken} = data
+  const total = results.concat(files)
+
+  if (nextPageToken) {
+    return fullSearch({drive, query, results: total, nextPageToken})
+  }
+
+  return total
 }
 
 // Grab all folders in directory to search through in shared drive
@@ -86,24 +107,4 @@ function getOptions(query, folderIds) {
     includeTeamDriveItems: true,
     fields
   }
-}
-
-async function fullSearch({drive, query, folderIds, results = [], nextPageToken: pageToken}) {
-  const options = getOptions(query, folderIds)
-
-  if (pageToken) {
-    options.pageToken = pageToken
-  }
-
-  const listFiles = promisify(drive.files.list).bind(drive.files)
-  const {data} = await listFiles(options)
-
-  const {files, nextPageToken} = data
-  const total = results.concat(files)
-
-  if (nextPageToken) {
-    return fullSearch({drive, query, results: total, nextPageToken})
-  }
-
-  return total
 }
