@@ -19,16 +19,23 @@ exports.run = (query, cb) => {
       var folderIds = await getAllFolders({drive})
     }
     
-    fullSearch({drive, query, folderIds}, (err, files) => {
-      if (err) {
-        return cb(err)
-      }
+    const files = await fullSearch({drive, query, folderIds})
+    console.log('got files', files)
+    const fileMetas = files
+      .map((file) => { return list.getMeta(file.id) || {} })
+      .filter(({path, tags}) => (path || '').split('/')[1] !== 'trash' && !tags.includes('hidden'))
+    cb(null, fileMetas)
 
-      const fileMetas = files
-        .map((file) => { return list.getMeta(file.id) || {} })
-        .filter(({path, tags}) => (path || '').split('/')[1] !== 'trash' && !tags.includes('hidden'))
-      cb(null, fileMetas)
-    })
+    // fullSearch({drive, query, folderIds}, (err, files) => {
+    //   if (err) {
+    //     return cb(err)
+    //   }
+
+    //   const fileMetas = files
+    //     .map((file) => { return list.getMeta(file.id) || {} })
+    //     .filter(({path, tags}) => (path || '').split('/')[1] !== 'trash' && !tags.includes('hidden'))
+    //   cb(null, fileMetas)
+    // })
   })
 }
 
@@ -91,18 +98,22 @@ function getOptions(query, folderIds) {
   }
 }
 
-async function fullSearch({drive, query, folderIds, results = [], next}, cb) {
+async function fullSearch({drive, query, folderIds, results = [], nextPageToken: pageToken}) {
   const options = getOptions(query, folderIds)
 
-  drive.files.list(options, (err, {data: {files, nextPageToken: next}}) => {
-    if (err) return cb(err)
+  if (pageToken) {
+    options.pageToken = pageToken
+  }
 
-    const total = results.concat(files)
-    // if there are more results, keep paging
-    if (next) {
-      return fullSearch({drive, query, results: total, next}, cb)
-    }
+  const listFiles = promisify(drive.files.list).bind(drive.files)
+  const {data} = await listFiles(options)
 
-    cb(null, total)
-  })
+  const {files, nextPageToken} = data
+  const total = results.concat(files)
+
+  if (nextPageToken) {
+    return fullSearch({drive, query, results: total, nextPageToken})
+  }
+
+  return total
 }
