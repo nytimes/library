@@ -32,27 +32,13 @@ exports.sortDocs = (a, b) => {
   return b.resourceType === 'folder' ? 1 : -1
 }
 
-// exports.getUserInfo = (req) => {
-//   // In development, use stub data
-//   if (!['staging', 'production'].includes(process.env.NODE_ENV)) {
-//     return {
-//       email: process.env.TEST_EMAIL || config.footer.defaultEmail,
-//       userId: '10',
-//       analyticsUserId: md5('10library')
-//     }
-//   }
-//   return {
-//     email: req.session.passport.user.emails[0].value,
-//     photo: req.session.passport.user.photos[0].value,
-//     userId: req.session.passport.user.id,
-//     analyticsUserId: md5(req.session.passport.user.id + 'library')
-//   }
-// }
-
 // attempts to require from attemptPath. If file isn't present, looks for a
 // file of the same name in the server dir
 exports.requireWithFallback = (attemptPath) => {
   const baseDir = path.join(__dirname, '..')
+  if (process.env.NODE_ENV === 'test') { // only test against prod paths
+    return require(path.join(baseDir, 'server', attemptPath))
+  }
   try {
     return require(path.join(baseDir, 'custom', attemptPath))
   } catch (e) {

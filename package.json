@@ -4,7 +4,7 @@
   "description": "Docs generated from files in google drive",
   "main": "index.js",
   "dependencies": {
-    "@google-cloud/datastore": "^1.0.6",
+    "@google-cloud/datastore": "^1.4.1",
     "***REMOVED***": ">=0.0.7",
     "assert": "^1.4.1",
     "async": "^2.4.1",
@@ -59,7 +59,7 @@
     "debug": "node -r dotenv/config --inspect --debug-brk server/index.js",
     "watch": "concurrently \"nodemon -r dotenv/config -e js,ejs server/index.js\" \"node-sass -w styles/style.scss public/css/style.css\"",
     "test": "NODE_ENV=test mocha test/unit --recursive",
-    "test:cover": "NODE_ENV=test nyc --reporter=html --reporter=text mocha test/unit --recursive"
+    "test:cover": "NODE_ENV=test nyc --all --reporter=html --reporter=text mocha test/unit --recursive"
   },
   "repository": {
     "type": "git",

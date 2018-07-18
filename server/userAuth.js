@@ -75,7 +75,6 @@ function setUserInfo(req) {
   }
   req.userInfo = {
     email: req.session.passport.user.emails[0].value,
-    photo: req.session.passport.user.photos[0].value,
     userId: req.session.passport.user.id,
     analyticsUserId: md5(req.session.passport.user.id + 'library')
   }
