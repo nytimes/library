@@ -28,6 +28,9 @@ preload.forEach((middleware) => app.use(middleware))
 app.get('/healthcheck', (req, res) => {
   res.send('OK')
 })
+app.use((err, req, res, next) => {
+  console.log('err:', err.stack);
+})
 
 app.use((req, res, next) => {
   req.useBeta = process.env.BETA_API === 'true' || Object.keys(req.query).includes('beta')
