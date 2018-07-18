@@ -11,7 +11,7 @@ if (!process.env.HEROKU) {
 
 // return userinfo as json
 router.get('/whoami.json', (req, res, next) => {
-res.json(getUserInfo(req))
+  res.json(getUserInfo(req))
 })
 
 module.exports = router
