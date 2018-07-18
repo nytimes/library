@@ -27,26 +27,6 @@ exports.getFolders = (id, cb) => {
   })
 }
 
-function getOptions(fileId, destination, parents) {
-  const baseOptions = {
-    fileId,
-    addParents: [destination],
-    removeParents: parents,
-  }
-
-  if (driveType === 'shared') {
-    return baseOptions
-  }
-
-  return {
-    ...baseOptions,
-    corpora: 'teamDrive',
-    supportsTeamDrives: true,
-    includeTeamDriveItems: true,
-    teamDriveId: driveId
-  }
-}
-
 exports.moveFile = (id, destination, cb) => {
   const {parents, slug} = getMeta(id) || {}
   const {path: basePath} = getMeta(destination) || {}
@@ -54,10 +34,26 @@ exports.moveFile = (id, destination, cb) => {
   if (!parents) return cb(Error('Not found'))
 
   getAuth((err, authClient) => {
+    const baseOptions = {
+      fileId: id,
+      addParents: [destination],
+      removeParents: parents,
+    }
+
+    const teamOptions = {
+      teamDriveId: driveId,
+      corpora: 'teamDrive',
+      supportsTeamDrives: true,
+      includeTeamDriveItems: true,
+      ...baseOptions
+    }
+
     if (err) return cb(err)
 
     const drive = google.drive({version: 'v3', auth: authClient})
-    drive.files.update(getOptions(id, destination, parents), (err, result) => {
+    const options = driveType === 'shared' ? baseOptions : teamOptions
+
+    drive.files.update(options, (err, result) => {
       if (err) return cb(err)
 
       const oldUrls = parents.map((id) => {
