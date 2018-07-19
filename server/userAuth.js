@@ -65,7 +65,6 @@ router.use((req, res, next) => {
 })
 
 function setUserInfo(req) {
-  if (req.userInfo) return
   if (process.env.NODE_ENV === 'development') {
     req.userInfo = {
       email: process.env.TEST_EMAIL || config.footer.defaultEmail,
@@ -74,7 +73,7 @@ function setUserInfo(req) {
     }
     return
   }
-  req.userInfo = {
+  req.userInfo = req.userInfo ? req.userInfo : {
     email: req.session.passport.user.emails[0].value,
     userId: req.session.passport.user.id,
     analyticsUserId: md5(req.session.passport.user.id + 'library')

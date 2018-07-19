@@ -1,17 +1,10 @@
 'use strict'
 
 const request = require('supertest')
-// const {google} = require('googleapis')
-// const GoogleStrategy = require('passport-google-oauth2')
 const {assert} = require('chai')
 const express = require('express')
-// const {f} = require('../utils')
+
 let app
-
-// const driveFixture = require('../fixtures/driveListing')
-// const {MockStrategy} = require('../utils/mockStrategy')
-
-
 
 describe('Authentication', () => {
   before(() => {
@@ -32,6 +25,7 @@ describe('Authentication', () => {
                   .expect(302) // expect user to be found
                   .end((err, res) => {
                     if (err) return done(err)
+                    assert(res.redirect)
                     assert.equal(res.text, 'Found. Redirecting to /login')
                     done()
                   })
@@ -42,6 +36,7 @@ describe('Authentication', () => {
                   .expect(302)
                   .end((err, res) => {
                     if (err) return done(err)
+                    assert(res.redirect)
                     assert.equal(res.text, 'Found. Redirecting to /login')
                     done()
                   })
@@ -81,6 +76,17 @@ describe('Authentication', () => {
                     assert.equal(whoami.email, 'test.user@test.com')
                     assert.equal(whoami.userId, '10')
                     assert.equal(whoami.analyticsUserId, 'asdfjkl123library')
+                    done()
+                  })
+    })
+
+    it('GET /logout should redirect to /', (done) => {
+      request(app).get('/logout')
+                  .expect(302) // expect user to be found
+                  .end((err, res) => {
+                    if (err) return done(err)
+                    assert(res.redirect)
+                    assert.equal(res.text, 'Found. Redirecting to /')
                     done()
                   })
     })
