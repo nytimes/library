@@ -4,7 +4,7 @@ const express = require('express')
 const passport = require('passport')
 const session = require('express-session')
 const md5 = require('md5')
-const {Strategy} = require('passport-google-oauth2')
+const GoogleStrategy = require('passport-google-oauth2')
 
 const log = require('./logger')
 const config = require('./utils').getConfig()
@@ -13,7 +13,7 @@ const router = express.Router()
 
 module.exports = router
 
-passport.use(new Strategy({
+passport.use(new GoogleStrategy.Strategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: '/auth/redirect',
@@ -65,6 +65,7 @@ router.use((req, res, next) => {
 })
 
 function setUserInfo(req) {
+  if (req.userInfo) return
   if (process.env.NODE_ENV === 'development') {
     req.userInfo = {
       email: process.env.TEST_EMAIL || config.footer.defaultEmail,
