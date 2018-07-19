@@ -16,7 +16,7 @@ module.exports = router
 
 const pages = getTemplates('pages')
 
-function handlePage(req, res, next) {
+async function handlePage(req, res, next) {
   const page = req.params.page || 'index'
 
   if (!pages.has(page)) {
@@ -42,12 +42,13 @@ function handlePage(req, res, next) {
       })
     }
 
-    return move.moveFile(id, dest, (err, newPath) => {
-      if (err) return next(err)
+    
+    const newPath = await move.moveFile(id, dest)
+      .catch(err => next(err))
 
-      // if we were successful, we will be holding a new path
-      res.redirect(newPath)
-    })
+    console.log('in pages',newPath)
+    return res.redirect(newPath)
+
   }
 
   if (page === 'categories' || page === 'index') {

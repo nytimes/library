@@ -28,11 +28,11 @@ exports.getFolders = (id, cb) => {
   })
 }
 
-exports.moveFile = async (id, destination, cb) => {
+exports.moveFile = async (id, destination) => {
   const {parents, slug} = getMeta(id) || {}
   const {path: basePath} = getMeta(destination) || {}
 
-  if (!parents) return cb(Error('Not found'))
+  if (!parents) return Error('Not found')
 
   const auth = promisify(getAuth)
   const authClient = await auth()
@@ -65,7 +65,7 @@ exports.moveFile = async (id, destination, cb) => {
 
   if (basePath === '/trash') {
     oldUrls.forEach((url) => log.info(`TRASHED ${url}`))
-    return cb(null, '/')
+    return '/'
   }
 
   const newUrl = basePath ? `${basePath}/${slug}` : `/${slug}`
@@ -77,11 +77,12 @@ exports.moveFile = async (id, destination, cb) => {
 
   // fake the drive updating immediately by manually copying cache
   async.parallel(oldUrls.map((url) => {
-    return (cb) => {
-      cache.get(url, cb)
+    return () => {
+      const getCache = promisify(cache.get)
+      return getCache(url)
     }
   }), (err, data) => {
-    if (err) return cb(null, '/')
+    if (err) return '/'
 
     const hasHtml = data.filter(({html}) => html && html.length)
     if (!hasHtml.length) return cb(null, '/') // take back to the home page
@@ -90,10 +91,12 @@ exports.moveFile = async (id, destination, cb) => {
     cache.add(id, modified, newUrl, html, (err) => {
       if (err) {
         log.error(err)
-        return cb(null, '/')
+        return '/'
       }
 
-      return cb(null, newUrl)
+      console.log('adding to cache')
+
+      return newUrl
     })
   })
 }
