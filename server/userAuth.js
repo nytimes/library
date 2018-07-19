@@ -10,8 +10,7 @@ const log = require('./logger')
 const config = require('./utils').getConfig()
 
 const router = express.Router()
-
-module.exports = router
+const domains = new Set(process.env.APPROVED_DOMAINS.split(/,\s?/g))
 
 passport.use(new GoogleStrategy.Strategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
@@ -53,9 +52,8 @@ router.get('/auth/redirect', passport.authenticate('google'), (req, res) => {
 
 router.use((req, res, next) => {
   const isDev = process.env.NODE_ENV === 'development'
-  const domains = process.env.APPROVED_DOMAINS.split(/,\s?/g)
   const authenticated = req.isAuthenticated()
-  if (isDev || (authenticated && domains.includes(req.session.passport.user._json.domain))) {
+  if (isDev || (authenticated && domains.has(req.session.passport.user._json.domain))) {
     setUserInfo(req)
     return next()
   }
@@ -79,3 +77,5 @@ function setUserInfo(req) {
     analyticsUserId: md5(req.session.passport.user.id + 'library')
   }
 }
+
+module.exports = router
