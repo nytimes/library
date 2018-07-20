@@ -45,7 +45,6 @@ router.get('/logout', (req, res) => {
   res.redirect('/')
 })
 
-// use the badcom callback path for ease of setup
 router.get('/auth/redirect', passport.authenticate('google'), (req, res) => {
   res.redirect(req.session.authRedirect || '/')
 })
