@@ -8,26 +8,24 @@ const {promisify} = require('util')
 const driveType = process.env.DRIVE_TYPE
 const driveId = process.env.DRIVE_ID
 
-exports.run = (query, cb) => {
-  getAuth(async (err, authClient) => {
-    if (err) {
-      return cb(err)
-    }
-    const drive = google.drive({version: 'v3', auth: authClient})
-    
-    if (driveType === 'shared') {
-      var folderIds = await getAllFolders({drive})
-    }
-    
-    const files = await fullSearch({drive, query, folderIds})
-      .catch(err => log.err(`Error when searching for ${query}, ${err}`))
+exports.run = async (query, cb) => {
+  const auth = promisify(getAuth)
+  const authClient = await auth()
 
-    const fileMetas = files
-      .map((file) => { return list.getMeta(file.id) || {} })
-      .filter(({path, tags}) => (path || '').split('/')[1] !== 'trash' && !tags.includes('hidden'))
-    
-    cb(null, fileMetas)
-  })
+  const drive = google.drive({version: 'v3', auth: authClient})
+
+  if (driveType === 'shared') {
+    var folderIds = await getAllFolders({drive})
+  }
+
+  const files = await fullSearch({drive, query, folderIds})
+    .catch(err => log.err(`Error when searching for ${query}, ${err}`))
+
+  const fileMetas = files
+    .map((file) => { return list.getMeta(file.id) || {} })
+    .filter(({path, tags}) => (path || '').split('/')[1] !== 'trash' && !tags.includes('hidden'))
+
+  cb(null, fileMetas)
 }
 
 async function fullSearch({drive, query, folderIds, results = [], nextPageToken: pageToken}) {

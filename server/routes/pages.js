@@ -41,11 +41,9 @@ async function handlePage(req, res, next) {
         res.render(template, {prettyName, folders, id, parents, template: stringTemplate})
       })
     }
-
     
     return move.moveFile(id, dest)
       .then(result => {
-        console.log('\nmoved file', result)
         res.redirect(result)
       })
       .catch(next)

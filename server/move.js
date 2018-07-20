@@ -76,23 +76,21 @@ exports.moveFile = async (id, destination) => {
   })
 
   // fake the drive updating immediately by manually copying cache
-  // find error cases for getCache
-
   const data = await Promise.all(oldUrls.map((url) => {
     const getCache = promisify(cache.get)
     return getCache(url).catch(err => log.error('Error getting cache', err))
   }))
 
-  // TODO check cache, explain why this is done
+  // cache stores urls and page data, make sure to find actual data object for page
   const hasHtml = data.filter(({html}) => html && html.length)
-  if (!hasHtml.length) return '/' // take back to the home page
+  if (!hasHtml.length) return '/'
 
   const {docId, modified, html} = hasHtml[0]
   const addToCache = promisify(cache.add)
 
   await addToCache(docId, modified, newUrl, html)
           .catch(err => {
-            log.error('Error adding to new url cache', err)
+            log.error('Error adding new url to cache', err)
             return '/'
           })
   
