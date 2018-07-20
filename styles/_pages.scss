@@ -2,7 +2,7 @@
 // Main Homepage
 //------------------------------------------------------------------------------
 #main-search-page {
-  background: #222;
+  background: $main-homepage-background;
   padding: 85px 20px 3px 20px;
   min-height: calc(100vh - 88px);
 
@@ -44,8 +44,8 @@
 
         .logo {
           height: 26px;
-          filter: invert(100%) brightness(80%);
-          padding-top: 7px;
+          // filter: invert(100%) brightness(80%);
+          padding-top: 11px;
 
           @include tablet{
             height: 36px;
@@ -58,18 +58,18 @@
       }
 
       .branding-label {
-        margin: 0 0 0 15px;
+        margin: 0px;
         height: 21px;
         padding: 13px 0 9px 18px;
-        vertical-align: top;
-        border-left: 1px solid rgba(255, 255, 255, 0.35);
-        color: #ccc;
-        font-family: $karnak;
+        // border-left: 1px solid rgba(255, 255, 255, 0.35);
+        color: $main-homepage-text-color;
+        font-family: $helvetica;
         font-size: 28px;
-        text-transform: none;
-        -webkit-font-smoothing: antialiased;
         font-weight: 100;
         line-height: 21px;
+        text-transform: none;
+        vertical-align: top;
+        -webkit-font-smoothing: antialiased;
 
         @include tablet{
           height: 30px;
@@ -80,16 +80,16 @@
 
         @include desktop{
           height: 30px;
-          padding: 15px 0 9px 18px;
+          padding: 15px 0 10px 20px;
           font-size: 38px;
           line-height: 26px;
         }
 
         a:link, a:visited {
-          color: #ccc;
+          color: $gray-50;
         }
         a:hover {
-          color: $pink;
+          color: $accent;
           text-decoration: none;
         }
       }
@@ -97,7 +97,7 @@
 
     .tagline {
       text-align: center;
-      color: #8E8E8E;
+      color: $gray-35;
       margin: 0 auto;
       margin-bottom: 60px;
       font-size: 14px;
@@ -120,7 +120,7 @@
     .search-container {
       clear: both;
       // width: calc(100vw - 60px);
-      background: #e6e2e2;
+      background: $search-container-background;
       padding: 0px 6px 0 0;
 
       @include tablet{
@@ -139,12 +139,12 @@
 
         @include tablet{
           width: calc(100% - 20px);
-          box-shadow: 6px 6px 0px 0px #4d4d4d;
+          box-shadow: 6px 6px 0px 0px $gray-25;;
           line-height: 37px;
         }
         @include desktop{
           width: calc(100% - 20px);
-          box-shadow: 6px 6px 0px 0px #4d4d4d;
+          box-shadow: 6px 6px 0px 0px $gray-25;;
           line-height: 37px;
         }
       }
@@ -152,7 +152,7 @@
       &:hover,
       &:focus,
       &:active {
-        background: #fff;
+        background: $search-container-hover;
         .icon {
           opacity: 1;
         }
@@ -173,7 +173,7 @@
 
       &:hover {
         .icon:hover {
-          background: $pink;
+          background: $accent;
         }
       }
     }
@@ -215,7 +215,7 @@
         h3 {
           font-weight: normal;
           font-size: 14px;
-          color: #8e8e8e;
+          color: $gray-35;
           margin: 15px 0;
 
           @include tablet{
@@ -256,7 +256,7 @@
       .featured-cat-list {
         padding-left: 7px;
         a {
-          color: #ccc;
+          color: $main-homepage-text-color;
           -webkit-font-smoothing: antialiased;
         }
         li {
@@ -270,7 +270,7 @@
           }
 
           .fa {
-            color: #aaa;
+            color: $main-homepage-icon-color;
             margin-right: 7px;
             font-size: 14px;
             line-height: 18px;
@@ -294,20 +294,20 @@
     }
 
     .help-text {
-      color: #8E8E8E;
+      color: $gray-35;
       font-size: 14px;
       line-height: 21px;
       letter-spacing: 0;
       text-align: left;
 
       a {
-        color: #8e8e8e;
-        border-bottom: 1px solid #8e8e8e;
+        color: $gray-35;
+        border-bottom: 1px solid $gray-35;
         padding-bottom: 1px;
 
         &:hover {
-          color: #ccc;
-          border-bottom: 1px solid #ccc;
+          color: $gray-50;
+          border-bottom: 1px solid $gray-50;
           text-decoration: none;
         }
       }
@@ -342,7 +342,7 @@
     .children-container {
       margin: 0 12px 30px 12px;
       padding: 25px;
-      border: 1px solid #ddd;
+      border: 1px solid $gray-60;
       width: 100%;
       -webkit-box-shadow: -4px -4px 0px 0px rgba(239,239,239,1);
       -moz-box-shadow: -4px -4px 0px 0px rgba(239,239,239,1);
@@ -381,7 +381,7 @@
           padding-right: 0;
 
           a {
-            color: #000;
+            color: $black;
           }
         }
       }
@@ -399,12 +399,12 @@
   .folder {
 
     i {
-      color: ($lighterpink * 0.5) + #333;
+      color: ($accent-light * 0.5) + $gray-20;
     }
 
     &.active {
       > i {
-        color: #000;
+        color: $black;
       }
     }
 

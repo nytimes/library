@@ -3,12 +3,12 @@
 //------------------------------------------------------------------------------
 .masthead {
   position: fixed;
-  background: #444;
+  background: $masthead-background;
   top: 0;
   left: 0;
   width: 100vw;
   z-index: 1000000090;
-  color: #ccc;
+  color: $gray-50;
 
   .container {
     position: relative;
@@ -38,8 +38,8 @@
         padding: 4px 0 0 15px;
         vertical-align: top;
         border-left: 1px solid rgba(255, 255, 255, 0.35);
-        color: #ccc;
-        font-family: $karnak;
+        color: $main-homepage-text-color;
+        font-family: $helvetica;
         font-size: 18px;
         text-transform: none;
         -webkit-font-smoothing: antialiased;
@@ -47,10 +47,10 @@
         line-height: 26px;
 
         a:link, a:visited {
-          color: #ccc;
+          color: $gray-50;
         }
         a:hover {
-          color: $pink;
+          color: $accent;
           cursor: pointer;
           text-decoration: none;
         }
@@ -105,12 +105,12 @@
   }
 
   a:visited {
-      color: #F09898;
+      color: $accent-light;
   }
 
   a:link {
       text-decoration: none;
-      color: #F09898;
+      color: $accent-light;
   }
 }
 
@@ -134,17 +134,17 @@
     line-height: 30px;
     font-weight: 400;
     font-style: normal;
-    font-family: $franklin;
+    font-family: $helvetica;
     background-color: transparent;
     transition: background-color 0.3s;
     display: inline-block;
     padding: 7px 10px;
-    border: 1px solid #999;
+    border: 1px solid $gray-40;
     -webkit-font-smoothing: antialiased;
-    -webkit-box-shadow: 5px 5px 0px 0px #4d4d4d;
-    -moz-box-shadow: 5px 5px 0px 0px #4d4d4d;
-    box-shadow: 5px 5px 0px 0px #4d4d4d;
-    color: #000;
+    -webkit-box-shadow: 5px 5px 0px 0px $gray-25;;
+    -moz-box-shadow: 5px 5px 0px 0px $gray-25;;
+    box-shadow: 5px 5px 0px 0px $gray-25;;
+    color: $black;
     float: left;
     padding-left: 15px;
     width: calc(100% - 20px);
@@ -164,7 +164,7 @@
   &:focus,
   &:active {
     outline: none;
-    background:  $lightestpink;
+    background:  $accent-lightest;
     .icon {
       outline: none;
       opacity: 1;
@@ -173,10 +173,10 @@
 
   .icon{
     border: none;
-    background: $pink;
+    background: $accent;
     height: 46px;
     width: 50px;
-    color: #fff;
+    color: $white;
     opacity: 0;
     font-size: 12pt;
     cursor: pointer;
@@ -190,14 +190,14 @@
 
   &:hover {
     .icon:hover {
-      background: $pink;
+      background: $accent;
     }
   }
 
   input::-webkit-input-placeholder,
   input:-moz-placeholder,
   input:-ms-input-placeholder  {
-    color: #aaa;
+    color: $gray-45;
   }
   input:focus::-webkit-input-placeholder,
   input:focus:-moz-placeholder,
@@ -219,20 +219,20 @@
 #user-profile {
   a.btn-user-whole {
     &:link, &:visited {
-      color: #ccc;
+      color: $gray-50;
       font-size: 15px;
       letter-spacing: 0.25px;
       padding: 17px 15px 16px 15px;
     }
     &:hover, &:active, &:target {
-      color: #ccc;
+      color: $gray-50;
       text-decoration: none;
-      background: #666;
+      background: $gray-30;
 
       button.btn-user-initial {
-        background: #000;
-        color: #ccc;
-        border-color: #666;
+        background: $black;
+        color: $gray-50;
+        border-color: $gray-30;
       }
     }
   }
@@ -258,8 +258,8 @@
     font-size: 14px;
     -webkit-font-smoothing: antialiased;
     text-indent: -1px;
-    background: #ccc;
-    color: #666;
+    background: $gray-50;
+    color: $gray-30;
     margin-right: 5px;
     line-height: 0px;
 
@@ -303,7 +303,7 @@
 .popup {
   margin-top: 40px;
 	padding: 0 20px 5px 20px;
-  background-image: linear-gradient(215deg, #FFFFFF 0%, #ececec 100%);
+  background-image: linear-gradient(215deg, $white 0%, $offwhite 100%);
 	border: 1px solid #d4d4d4;
 	width: 260px;
   float: right;
@@ -329,7 +329,7 @@
     font-size: 24px;
     font-weight: bold;
     text-decoration: none;
-    color: #666;
+    color: $gray-30;
     &:hover {
       opacity: 1;
     }
@@ -337,8 +337,8 @@
 
   h3 {
     margin: 10px auto 0px auto;
-    color: #333;
-    border-bottom: 2px solid #333;
+    color: $gray-20;
+    border-bottom: 2px solid $gray-20;
     font-size: 16px;
     line-height: 30px;
     -webkit-font-smoothing: antialiased;
@@ -360,13 +360,13 @@
 
     li {
       a {
-        color: #333;
+        color: $gray-20;
 
         &:hover {
           text-decoration: none;
 
           p {
-            color: #000;
+            color: $black;
           }
         }
       }
@@ -381,7 +381,7 @@
       }
 
       .docs-title {
-        color: $pink;
+        color: $accent;
         margin-bottom: 2px;
       }
 
@@ -391,8 +391,8 @@
       .docs-folder {
         display: inline-block;
         margin-right: 4px;
-        background: #ddd;
-        color: #666;
+        background: $gray-60;
+        color: $gray-30;
         padding: 3px 4px;
         font-weight: 400;
         font-size: 12px;
@@ -404,7 +404,7 @@
       }
       .timestamp {
         font-size: 12px;
-        color: #666;
+        color: $gray-30;
       }
     }
   }
