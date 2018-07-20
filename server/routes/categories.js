@@ -67,6 +67,7 @@ function handleCategory(req, res, next) {
       if (err) {
         return next(err)
       }
+      
       res.locals.docId = data.id // we need this for history later
       const revisionData = originalRevision.data
       const payload = fetchByline(html, revisionData.lastModifyingUser.displayName)
