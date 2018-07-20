@@ -1,13 +1,11 @@
 'use strict'
 const fs = require('fs')
 const path = require('path')
-const md5 = require('md5')
 const yaml = require('js-yaml')
 const {get: deepProp} = require('lodash')
-const log = require('./logger')
 const merge = require('deepmerge')
 
-const config = getConfig()
+const log = require('./logger')
 
 const layoutsDir = path.join(__dirname, '../layouts')
 exports.getTemplates = (subfolder) => {
@@ -34,27 +32,14 @@ exports.sortDocs = (a, b) => {
   return b.resourceType === 'folder' ? 1 : -1
 }
 
-exports.getUserInfo = (req) => {
-  // In development, use stub data
-  if (process.env.NODE_ENV === 'development') {
-    return {
-      email: process.env.TEST_EMAIL || config.footer.defaultEmail,
-      userId: '10',
-      analyticsUserId: md5('10library')
-    }
-  }
-
-  return {
-    email: req.headers['auth.verified_email'],
-    userId: req.headers['auth.verified_sub'],
-    analyticsUserId: md5(req.headers['auth.verified_sub'] + 'library')
-  }
-}
-
 // attempts to require from attemptPath. If file isn't present, looks for a
 // file of the same name in the server dir
 exports.requireWithFallback = (attemptPath) => {
   const baseDir = path.join(__dirname, '..')
+  // only test against prod paths
+  if (process.env.NODE_ENV === 'test') { // @TODO: Remove this before public launch
+    return require(path.join(baseDir, 'server', attemptPath))
+  }
   try {
     return require(path.join(baseDir, 'custom', attemptPath))
   } catch (e) {
@@ -76,7 +61,7 @@ exports.allMiddleware = middlewares.reduce((m, item) => {
   preload: [], postload: []
 })
 
-function getConfig() {
+exports.getConfig = () => {
   const defaultExists = fs.existsSync(path.join(__dirname, '../config/strings.yaml'))
   const customExists = fs.existsSync(path.join(__dirname, '../custom/strings.yaml'))
 
@@ -95,7 +80,7 @@ function getConfig() {
 }
 
 exports.stringTemplate = (configPath, ...args) => {
-  const config = getConfig()
+  const config = exports.getConfig()
   const stringConfig = deepProp(config, configPath)
   const configType = typeof stringConfig
 
