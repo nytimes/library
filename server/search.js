@@ -25,7 +25,7 @@ exports.run = async (query, cb) => {
     .map((file) => { return list.getMeta(file.id) || {} })
     .filter(({path, tags}) => (path || '').split('/')[1] !== 'trash' && !tags.includes('hidden'))
 
-  cb(null, fileMetas)
+  return fileMetas
 }
 
 async function fullSearch({drive, query, folderIds, results = [], nextPageToken: pageToken}) {

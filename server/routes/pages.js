@@ -26,10 +26,11 @@ async function handlePage(req, res, next) {
   const template = `pages/${page}`
   const {q, id, dest} = req.query
   if (page === 'search' && q) {
-    return search.run(q, (err, results) => {
-      if (err) return next(err)
-      res.render(template, {q, results, template: stringTemplate})
-    })
+    return search.run(q)
+      .then(results => {
+        res.render(template, {q, results, template: stringTemplate})
+      })
+      .catch(next)
   }
 
   if (page === 'move-file' && id) {
