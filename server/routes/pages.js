@@ -43,12 +43,12 @@ async function handlePage(req, res, next) {
     }
 
     
-    const newPath = await move.moveFile(id, dest)
-      .catch(err => next(err))
-
-    console.log('in pages',newPath)
-    return res.redirect(newPath)
-
+    return move.moveFile(id, dest)
+      .then(result => {
+        console.log('\nmoved file', result)
+        res.redirect(result)
+      })
+      .catch(next)
   }
 
   if (page === 'categories' || page === 'index') {

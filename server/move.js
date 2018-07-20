@@ -76,29 +76,27 @@ exports.moveFile = async (id, destination) => {
   })
 
   // fake the drive updating immediately by manually copying cache
-  async.parallel(oldUrls.map((url) => {
-    return () => {
-      const getCache = promisify(cache.get)
-      return getCache(url)
-    }
-  }), (err, data) => {
-    if (err) return '/'
+  // find error cases for getCache
 
-    const hasHtml = data.filter(({html}) => html && html.length)
-    if (!hasHtml.length) return cb(null, '/') // take back to the home page
+  const data = await Promise.all(oldUrls.map((url) => {
+    const getCache = promisify(cache.get)
+    return getCache(url).catch(err => log.error('Error getting cache', err))
+  }))
 
-    const {id, modified, html} = hasHtml[0]
-    cache.add(id, modified, newUrl, html, (err) => {
-      if (err) {
-        log.error(err)
-        return '/'
-      }
+  // TODO check cache, explain why this is done
+  const hasHtml = data.filter(({html}) => html && html.length)
+  if (!hasHtml.length) return '/' // take back to the home page
 
-      console.log('adding to cache')
+  const {docId, modified, html} = hasHtml[0]
+  const addToCache = promisify(cache.add)
 
-      return newUrl
-    })
-  })
+  await addToCache(docId, modified, newUrl, html)
+          .catch(err => {
+            log.error('Error adding to new url cache', err)
+            return '/'
+          })
+  
+  return newUrl
 }
 
 // converts raw tree data used for routing into sorted lists with resource
