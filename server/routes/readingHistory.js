@@ -109,12 +109,13 @@ function expandResults(results) {
   })
 }
 
-function getDatastoreClient(cb) {
+async function getDatastoreClient(cb) {
   const gcpProjectId = process.env.GCP_PROJECT_ID || '***REMOVED***'
-  getAuth((authClient) => {
-    const datastoreClient = datastore({ projectId: gcpProjectId, auth: authClient })
-    cb(datastoreClient)
-  })
+  
+  const authClient = await getAuth()
+
+  const datastoreClient = datastore({ projectId: gcpProjectId, auth: authClient })
+  cb(datastoreClient)
 }
 
 function recordView(docMeta, userInfo, datastoreClient) {

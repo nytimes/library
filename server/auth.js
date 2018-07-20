@@ -2,8 +2,9 @@
 
 const path = require('path')
 
-const inflight = require('inflight')
+const inflight = require('promise-inflight')
 const {google} = require('googleapis')
+const {promisify} = require('util')
 
 const log = require('./logger')
 
@@ -16,26 +17,22 @@ if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
 }
 
 // only public method, returns the authClient that can be used for making other requests
-exports.getAuth = (cb) => {
+exports.getAuth = async () => {
   if (authClient) {
-    return cb(null, authClient)
+    return authClient
   }
 
-  setAuthClient(cb)
+  await setAuthClient()
 }
 
 // configures the auth client if we don't already have one
-function setAuthClient(cb) {
-  cb = inflight('auth', cb)
-  // guard against calling while already in progress
-  if (!cb) return
-
-  google.auth.getApplicationDefault((err, client) => {
-    if (err) {
-      return cb(err)
-    }
+async function setAuthClient() {
+  return inflight('auth', async () => {
+    const getAuthDefault = promisify(google.auth.getApplicationDefault).bind(google.auth)
+    const client = await getAuthDefault()
 
     authClient = client
+
     if (authClient.createScopedRequired && authClient.createScopedRequired()) {
       authClient = authClient.createScoped([
         'https://www.googleapis.com/auth/drive',
@@ -45,6 +42,7 @@ function setAuthClient(cb) {
     }
     google.options({auth: authClient})
     log.info('Google API auth successfully retrieved.')
-    cb(null, authClient)
+    
+    return authClient
   })
 }

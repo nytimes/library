@@ -59,8 +59,7 @@ startTreeRefresh(treeUpdateDelay)
 
 async function updateTree() {
   return inflight('tree', async () => {
-    const auth = promisify(getAuth)
-    const authClient = await auth()
+    const authClient = await getAuth()
 
     const drive = google.drive({version: 'v3', auth: authClient})
     const files = await fetchAllFiles({drive})

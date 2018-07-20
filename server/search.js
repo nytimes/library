@@ -8,9 +8,8 @@ const {promisify} = require('util')
 const driveType = process.env.DRIVE_TYPE
 const driveId = process.env.DRIVE_ID
 
-exports.run = async (query, cb) => {
-  const auth = promisify(getAuth)
-  const authClient = await auth()
+exports.run = async query => {
+  const authClient = await getAuth()
 
   const drive = google.drive({version: 'v3', auth: authClient})
 

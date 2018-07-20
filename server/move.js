@@ -34,8 +34,7 @@ exports.moveFile = async (id, destination) => {
 
   if (!parents) return Error('Not found')
 
-  const auth = promisify(getAuth)
-  const authClient = await auth()
+  const authClient = await getAuth()
 
   const drive = google.drive({version: 'v3', auth: authClient})
 
