@@ -20,7 +20,7 @@ function handleCategory(req, res, next) {
   const segments = req.path.split('/')
 
   // get an up to date doc tree
-  getTree(async (err, tree) => {
+  getTree((err, tree) => {
     if (err) {
       return next(err)
     }
@@ -67,7 +67,6 @@ function handleCategory(req, res, next) {
       if (err) {
         return next(err)
       }
-  
       res.locals.docId = data.id // we need this for history later
       const revisionData = originalRevision.data
       const payload = fetchByline(html, revisionData.lastModifyingUser.displayName)
