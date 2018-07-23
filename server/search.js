@@ -14,8 +14,10 @@ exports.run = async (query, cb) => {
 
   const drive = google.drive({version: 'v3', auth: authClient})
 
+  let folderIds
+
   if (driveType === 'shared') {
-    var folderIds = await getAllFolders({drive})
+    folderIds = await getAllFolders({drive})
   }
 
   const files = await fullSearch({drive, query, folderIds})
