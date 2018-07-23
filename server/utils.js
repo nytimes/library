@@ -32,23 +32,6 @@ exports.sortDocs = (a, b) => {
   return b.resourceType === 'folder' ? 1 : -1
 }
 
-// exports.getUserInfo = (req) => {
-//   // In development, use stub data
-//   if (process.env.NODE_ENV === 'development' || process.env.HEROKU) {
-//     return {
-//       email: process.env.TEST_EMAIL || config.footer.defaultEmail,
-//       userId: '10',
-//       analyticsUserId: md5('10library')
-//     }
-//   }
-
-//   return {
-//     email: req.headers['auth.verified_email'],
-//     userId: req.headers['auth.verified_sub'],
-//     analyticsUserId: md5(req.headers['auth.verified_sub'] + 'library')
-//   }
-// }
-
 // attempts to require from attemptPath. If file isn't present, looks for a
 // file of the same name in the server dir
 exports.requireWithFallback = (attemptPath) => {
