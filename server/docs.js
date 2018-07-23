@@ -9,7 +9,6 @@ const inflight = require('inflight')
 
 const {getAuth} = require('./auth')
 const log = require('./logger')
-const list = require('./list')
 const {stringTemplate} = require('./utils')
 
 const formatterV3 = require('./formatter')

@@ -10,7 +10,6 @@ const moment = require('moment')
 const log = require('../logger')
 const {getAuth} = require('../auth')
 const {getMeta} = require('../list')
-const {getUserInfo} = require('../utils')
 
 // Middleware to record views into Cloud Datastore
 router.use((req, res, next) => {
@@ -18,7 +17,7 @@ router.use((req, res, next) => {
     req.on('end', () => {
       if (res.locals.docId) {
         const docMeta = getMeta(res.locals.docId)
-        const userInfo = getUserInfo(req)
+        const {userInfo} = req
         if (!docMeta || !userInfo) return
         recordView(docMeta, userInfo, datastoreClient)
       }
@@ -28,14 +27,14 @@ router.use((req, res, next) => {
 })
 
 router.get('/reading-history/docs.json', (req, res, next) => {
-  fetchHistory(getUserInfo(req), 'Doc', req.query.limit, (err, results) => {
+  fetchHistory(req.userInfo, 'Doc', req.query.limit, (err, results) => {
     if (err) return next(err)
     res.json(results)
   })
 })
 
 router.get('/reading-history/teams.json', (req, res, next) => {
-  fetchHistory(getUserInfo(req), 'Team', req.query.limit, (err, results) => {
+  fetchHistory(req.userInfo, 'Team', req.query.limit, (err, results) => {
     if (err) return next(err)
     res.json(results)
   })
