@@ -13,7 +13,7 @@
   // }
 
   h1.headline {
-    font-family: $helvetica;
+    font-family: $sans;
     font-size: 36px;
     line-height: 40px;
     font-weight: 200;
@@ -41,7 +41,7 @@
 
   .attribution {
     p {
-      font-family: $helvetica;
+      font-family: $sans;
       font-size: 13px;
       color: $gray-40;
       margin: 0;
@@ -118,7 +118,7 @@
     }
 
     .section-kicker, .sibling-kicker {
-      font-family: $helvetica;
+      font-family: $sans;
       font-weight: 600;
       text-transform: capitalize;
       color: $black;
@@ -207,7 +207,7 @@
     word-break: break-word; // force break on very long lines without spaces
 
     p, ul, li, dt, dd {
-      font-family: $helvetica;
+      font-family: $sans;
       font-weight: 300;
       font-size: 1rem;
       line-height: 1.4;
@@ -473,7 +473,7 @@
     }
 
     p {
-      font-family: $helvetica;
+      font-family: $sans;
       font-weight: 300;
       font-size: 14px;
       line-height: 18px;

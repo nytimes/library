@@ -1,65 +1,27 @@
 // Fonts
 //------------------------------------------------------------------------------
-// franklin: "nyt-franklin", arial, helvetica, sans-serif;
-// $chelt: "nyt-cheltenham", georgia, "times new roman", times, serif;
-// $chelt-sh: "nyt-cheltenham-sh", georgia, "times new roman", times, serif;
-// $georgia: georgia, "times new roman", times, serif;
-// $mag-slab: "nyt-mag-slab", georgia, "times new roman", times, serif;
-// $mag-sans: "nyt-mag-sans", arial, helvetica, sans-serif;
-// $mag-serif-headline: "nyt-mag-serif-headline", georgia, helvetica, sans-serif;
-// $stymie: "nyt-stymie",georgia,"times new roman",times,serif;
-// $karnak: "nyt-karnak-display-130124",arial,sans-serif;
-$helvetica: helvetica, arial, sans-serif;
+$branding: 'Alfa Slab One', cursive;
+$sans: 'Open Sans', sans-serif;
 
 // Color
 //------------------------------------------------------------------------------
-$black        : #000;
-$gray-10      : #222;
-$gray-20      : #333;
-$gray-25      : #444;
-$gray-30      : #666;
-$gray-35      : #8e8e8e;
-$gray-40      : #999;
-$gray-45      : #aaa;
-$gray-50      : #ccc;
-$gray-60      : #ddd;
-$gray-70      : #ebebeb;
-$gray-80      : #f3f3f3;
-$gray-90      : #f7f7f7;
 $white        : #fff;
+$black        : #000;
+$gray-10      : $white * 0.1;
+$gray-20      : $white * 0.2;
+$gray-25      : $white * 0.25;
+$gray-30      : $white * 0.3;
+$gray-35      : $white * 0.35;
+$gray-40      : $white * 0.40;
+$gray-45      : $white * 0.45;
+$gray-50      : $white * 0.5;
+$gray-60      : $white * 0.6;
+$gray-70      : $white * 0.7;
+$gray-80      : $white * 0.8;
+$gray-90      : $white * 0.9;
 
 $offwhite: #ececec;
 $accent: #F09898;
-$accent-light: #F09898 * 1.4;
+$accent-light: $accent * 1.4;
 $accent-lightest: #FCF6F6;
-$accent-dark: #F09898 * 0.85;
-
-// Classic Dark Theme
-// $masthead-background: $gray-25;
-// $main-homepage-background: $gray-10;
-// $main-homepage-text-color: $gray-50;
-// $main-homepage-icon-color: $gray-45;
-// $search-container-background: #e6e2e2;
-// $search-container-hover: $white;
-// $btn-homepage-background: $gray-25;
-// $btn-homepage-border: $gray-25;
-// $btn-default-background: $black;
-// $btn-default-background-hover: $black;
-// $btn-default-border: $black;
-// $btn-default-text-color: $gray-50;
-// $btn-default-text-hover: $accent;
-
-// Classic Light Theme
-$masthead-background: $gray-10;
-$main-homepage-background: $white;
-$main-homepage-text-color: $black;
-$main-homepage-icon-color: $black;
-$search-container-background: #e6e2e2;
-$search-container-hover: $gray-70;
-$btn-homepage-background: $white;
-$btn-homepage-border: $black;
-$btn-default-background: $white;
-$btn-default-background-hover: $accent;
-$btn-default-border: $black;
-$btn-default-text-color: $black;
-$btn-default-text-hover: $black;
+$accent-dark: $accent * 0.85;

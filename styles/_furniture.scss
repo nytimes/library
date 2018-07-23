@@ -39,7 +39,7 @@
         vertical-align: top;
         border-left: 1px solid rgba(255, 255, 255, 0.35);
         color: $main-homepage-text-color;
-        font-family: $helvetica;
+        font-family: $sans;
         font-size: 18px;
         text-transform: none;
         -webkit-font-smoothing: antialiased;
@@ -134,7 +134,7 @@
     line-height: 30px;
     font-weight: 400;
     font-style: normal;
-    font-family: $helvetica;
+    font-family: $sans;
     background-color: transparent;
     transition: background-color 0.3s;
     display: inline-block;

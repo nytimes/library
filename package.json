@@ -52,9 +52,9 @@
   },
   "scripts": {
     "start": "node server/index.js",
-    "build": "node-sass styles/style.scss public/css/style.css",
+    "build": "node-sass --include-path --source-map public/css/style.css.map styles,custom/styles styles/style.scss public/css/style.css",
     "debug": "node -r dotenv/config --inspect --debug-brk server/index.js",
-    "watch": "concurrently \"nodemon -r dotenv/config -e js,ejs server/index.js\" \"node-sass -w styles/style.scss public/css/style.css\"",
+    "watch": "concurrently \"nodemon -r dotenv/config -e js,ejs server/index.js\" \"node-sass --watch --source-map public/css/style.css.map --include-path styles,custom/styles styles/style.scss public/css/style.css\"",
     "test": "NODE_ENV=test mocha test/unit --recursive",
     "test:cover": "nyc --reporter=html --reporter=text mocha test/unit --recursive"
   },
