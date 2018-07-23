@@ -11,7 +11,8 @@ const categories = require('./routes/categories')
 const readingHistory = require('./routes/readingHistory')
 const errorPages = require('./routes/errors')
 const {getMeta, getAllRoutes} = require('./list')
-const {allMiddleware} = require('./utils')
+const {allMiddleware, requireWithFallback} = require('./utils')
+const userAuth = requireWithFallback('userAuth')
 
 const app = express()
 
@@ -20,11 +21,13 @@ const {preload, postload} = allMiddleware
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, '../layouts'))
 
-preload.forEach((middleware) => app.use(middleware))
-
 app.get('/healthcheck', (req, res) => {
   res.send('OK')
 })
+
+app.use(userAuth)
+
+preload.forEach((middleware) => app.use(middleware))
 
 app.use((req, res, next) => {
   req.useBeta = process.env.BETA_API === 'true' || Object.keys(req.query).includes('beta')
