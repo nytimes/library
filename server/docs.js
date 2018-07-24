@@ -2,6 +2,7 @@
 
 const async = require('async')
 const {google} = require('googleapis')
+const {promisify} = require('util')
 const cheerio = require('cheerio')
 const slugify = require('slugify')
 const xlsx = require('xlsx')
@@ -82,68 +83,68 @@ exports.fetchByline = (html, creatorOfDoc) => {
 
 function fetch({id, resourceType, req}, authClient, cb) {
   const drive = google.drive({version: 'v3', auth: authClient})
-  async.parallel([
-    (cb) => {
+  const getRevisions = promisify(drive.revisions.get).bind(drive.revisions)
+
+  Promise.all([
+    new Promise((resolve, reject) => {
       if (!supportedTypes.has(resourceType)) {
-        return cb(null, `Library does not support viewing ${resourceType}s yet.`)
+        return resolve(`Library does not support viewing ${resourceType}s yet.`)
       }
 
       if (resourceType === 'spreadsheet') {
-        return fetchSpreadsheet(drive, id, cb)
+        return resolve(fetchSpreadsheet(drive, id))
       }
 
       if (resourceType === 'text/html') {
-        return fetchHTML(drive, id, cb)
+        return resolve(fetchHTML(drive, id))
       }
 
       if (req.useBeta) {
-        google.discoverAPI(`***REMOVED***${process.env.API_KEY}`)
-          .then((docs) => {
-            docs.documents.get({
-              name: `documents/${id}`
-            }, (err, {data}) => {
-              cb(err, data)
-            })
+        const betaDiscovery = `***REMOVED***${process.env.API_KEY}`
+        google.discoverAPI(betaDiscovery).then((docs) => {
+          docs.documents.get({
+            name: `documents/${id}`
+          }, (err, {data}) => {
+            if (err) reject(Error(err))
+            resolve(data)
           })
+        })
       } else {
         drive.files.export({
           fileId: id,
           // text/html exports are not suupported for slideshows
           mimeType: resourceType === 'presentation' ? 'text/plain' : 'text/html'
-        }, (err, {data}) => cb(err, data)) // this prevents receiving an array (?)
+        }, (err, {data}) => {
+          if (err) reject(Error(err))
+          resolve(data)
+        }) // this prevents receiving an array (?)
       }
-    },
-    (cb) => {
+    }),
+    new Promise(async (resolve, reject) => {
       const revisionSupported = new Set(['document', 'spreadsheet', 'presentation'])
       if (!revisionSupported.has(resourceType)) {
         log.info(`Revision data not supported for ${resourceType}:${id}`)
-        return cb(null, {
-          data: { lastModifyingUser: {} }
-        }) // return mock/empty revision object
+        return resolve({data: { lastModifyingUser: {} }}) // return mock/empty revision object
       }
-      drive.revisions.get({
+      const data = await getRevisions({
         fileId: id,
         revisionId: '1',
         fields: '*'
-      }, (err, data) => {
-        // suppress revision history errors, but log them for later
-        if (err) {
-          log.warn(`Failed retrieving revision data for ${resourceType}:${id}. Error was:`, err)
-          return cb(null, {
-            data: { lastModifyingUser: {} }
-          }) // return mock/empty revision object
-        }
-
-        cb(err, data)
+      }).catch((err) => {
+        log.warn(`Failed retrieving revision data for ${resourceType}:${id}. Error was:`, err)
+        return resolve({data: { lastModifyingUser: {} }}) // return mock/empty revision object
       })
-    }
-  ], (err, [html, originalRevision]) => {
-    cb(err, html, originalRevision)
+      resolve(data)
+    })
+  ]).then(([html, originalRevision]) => {
+    cb(null, html, originalRevision)
   })
 }
 
-function fetchSpreadsheet(drive, id, cb) {
-  drive.files.export({
+async function fetchSpreadsheet(drive, id) {
+  const exportFiles = promisify(drive.files.export).bind(drive.files)
+
+  const {data} = await exportFiles({
     fileId: id,
     // for mimeTypes see https://developers.google.com/drive/v3/web/manage-downloads#downloading_google_documents
     mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -151,54 +152,52 @@ function fetchSpreadsheet(drive, id, cb) {
     // HTML export for sheets is limiting. Instead, download as a buffer and use
     // the xlsx library to parse the contents of the file and convert to HTML.
     responseType: 'arraybuffer'
-  }, (err, {data}) => {
-    if (err) return cb(err)
+  }).catch((err) => Error(err))
 
-    const spreadsheet = xlsx.read(data, {type: 'buffer'})
-    const {SheetNames, Sheets} = spreadsheet
+  const spreadsheet = xlsx.read(data, {type: 'buffer'})
+  const {SheetNames, Sheets} = spreadsheet
 
-    // produce some html now since we got back and xls
-    const html = SheetNames.map((name) => {
-      const data = Sheets[name]
-      // get base html from xlsx
-      const base = xlsx.utils.sheet_to_html(data)
-      // manipulate with cheerio
-      const $ = cheerio.load(base)
-      const table = $('table')
-      // add header styles
-      const firstRow = $('table tr:first-of-type')
-      const withHeader = firstRow.html().replace(/(<\/?)td(\s+|>)/ig, '$1th$2')
-      firstRow.html(withHeader)
-      // determine the last row and remove all rows after that
-      const max = Object.keys(data)
-        .filter((key) => key.slice(0, 1) !== '!') // ignore special rows in the sheet
-        .reduce((memo, cell) => {
-          const row = cell.match(/\d+/)
-          const value = parseInt(row, 10)
-          return value > memo ? value : memo
-        }, 0)
-      // remove any extra rows at the bottom of the sheet
-      $(`table tr:nth-of-type(n + ${max + 1})`).remove()
+  // produce some html now since we got back and xls
+  const html = SheetNames.map((name) => {
+    const data = Sheets[name]
+    // get base html from xlsx
+    const base = xlsx.utils.sheet_to_html(data)
+    // manipulate with cheerio
+    const $ = cheerio.load(base)
+    const table = $('table')
+    // add header styles
+    const firstRow = $('table tr:first-of-type')
+    const withHeader = firstRow.html().replace(/(<\/?)td(\s+|>)/ig, '$1th$2')
+    firstRow.html(withHeader)
+    // determine the last row and remove all rows after that
+    const max = Object.keys(data)
+      .filter((key) => key.slice(0, 1) !== '!') // ignore special rows in the sheet
+      .reduce((memo, cell) => {
+        const row = cell.match(/\d+/)
+        const value = parseInt(row, 10)
+        return value > memo ? value : memo
+      }, 0)
+    // remove any extra rows at the bottom of the sheet
+    $(`table tr:nth-of-type(n + ${max + 1})`).remove()
 
-      // spreadsheet names become h1 for TOC
-      const slug = slugify(name)
-      return [`<h1 id="${slug}">${name}</h1>`, '<table>', table.html(), '</table>'].join('\n')
-    }, []).join('\n')
-
-    // expected to be an array because of the way the google api works
-    cb(null, html)
-  })
+    // spreadsheet names become h1 for TOC
+    const slug = slugify(name)
+    return [`<h1 id="${slug}">${name}</h1>`, '<table>', table.html(), '</table>'].join('\n')
+  }, []).join('\n')
+  // expected to be an array because of the way the google api works
+  return html
 }
 
 // returns raw html from the drive
-function fetchHTML(drive, id, cb) {
-  drive.files.get({
+async function fetchHTML(drive, id, cb) {
+  const getFiles = promisify(drive.files.get).bind(drive.files)
+
+  const {data} = await getFiles({
     fileId: id,
     supportsTeamDrives: true,
     alt: 'media'
-  }, (err, {data}) => {
-    cb(err, data)
-  })
+  }).catch((err) => Error(err))
+  return data
 }
 
 function getSections(html) {

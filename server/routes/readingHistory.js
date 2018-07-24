@@ -96,7 +96,7 @@ async function getDatastoreClient() {
 
   const authClient = await getAuth()
 
-  const datastoreClient = datastore({ projectId: gcpProjectId, auth: authClient })
+  const datastoreClient = datastore({ projectId: gcpProjectId, authClient: authClient })
   return datastoreClient
 }
 
