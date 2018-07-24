@@ -4,7 +4,6 @@ const path = require('path')
 
 const inflight = require('promise-inflight')
 const {google} = require('googleapis')
-const {promisify} = require('util')
 
 const log = require('./logger')
 
@@ -25,10 +24,8 @@ exports.getAuth = async () => {
 // configures the auth client if we don't already have one
 async function setAuthClient() {
   return inflight('auth', async () => {
-    const getAuthDefault = promisify(google.auth.getApplicationDefault).bind(google.auth)
-    const client = await getAuthDefault()
-
-    authClient = client
+    const {credential} = await google.auth.getApplicationDefault()
+    authClient = credential
 
     if (authClient.createScopedRequired && authClient.createScopedRequired()) {
       authClient = authClient.createScoped([

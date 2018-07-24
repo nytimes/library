@@ -1,12 +1,10 @@
 'use strict'
 
-const async = require('async')
 const {google} = require('googleapis')
 const {promisify} = require('util')
 const cheerio = require('cheerio')
 const slugify = require('slugify')
 const xlsx = require('xlsx')
-const inflight = require('inflight')
 
 const {getAuth} = require('./auth')
 const log = require('./logger')

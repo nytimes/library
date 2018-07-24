@@ -38,24 +38,23 @@ module.exports = {
 }
 
 async function fetchHistory(userInfo, historyType, queryLimit) {
-  const datastoreClient = await getDatastoreClient()
   const limit = (parseInt(queryLimit, 10) || 5)
   // include a bit extra that we will filter out based on other criteria later
   const datastoreLimit = Math.ceil(limit * 1.5)
   const results = await Promise.all([
-    new Promise((resolve) => {
-      const query = datastoreClient.createQuery(['LibraryView' + historyType])
+    getDatastoreClient().then((client) => {
+      const query = client.createQuery(['LibraryView' + historyType])
         .filter('userId', '=', userInfo.userId)
         .order('lastViewedAt', { descending: true })
         .limit(datastoreLimit)
-      resolve(datastoreClient.runQuery(query))
+      return client.runQuery(query)
     }),
-    new Promise((resolve) => {
-      const query = datastoreClient.createQuery(['LibraryView' + historyType])
+    getDatastoreClient().then((client) => {
+      const query = client.createQuery(['LibraryView' + historyType])
         .filter('userId', '=', userInfo.userId)
         .order('lastViewedAt', { descending: true })
         .limit(datastoreLimit)
-      resolve(datastoreClient.runQuery(query))
+      return client.runQuery(query)
     })
   ])
 
