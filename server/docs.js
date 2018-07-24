@@ -86,7 +86,7 @@ function fetch({id, resourceType, req}, authClient, cb) {
   const getRevisions = promisify(drive.revisions.get).bind(drive.revisions)
 
   Promise.all([
-    new Promise((resolve, reject) => {
+    new Promise(async (resolve, reject) => {
       if (!supportedTypes.has(resourceType)) {
         return resolve(`Library does not support viewing ${resourceType}s yet.`)
       }
@@ -101,14 +101,12 @@ function fetch({id, resourceType, req}, authClient, cb) {
 
       if (req.useBeta) {
         const betaDiscovery = `***REMOVED***${process.env.API_KEY}`
-        google.discoverAPI(betaDiscovery).then((docs) => {
-          docs.documents.get({
-            name: `documents/${id}`
-          }, (err, {data}) => {
-            if (err) reject(Error(err))
-            resolve(data)
-          })
+        const docs = await google.discoverAPI(betaDiscovery)
+        const getDocs = promisify(docs.documents.get).bind(docs.documents)
+        const {data} = await getDocs({name: `documents/${id}`}).catch((err) => {
+          return reject(Error(err))
         })
+        return resolve(data)
       } else {
         drive.files.export({
           fileId: id,
@@ -189,7 +187,7 @@ async function fetchSpreadsheet(drive, id) {
 }
 
 // returns raw html from the drive
-async function fetchHTML(drive, id, cb) {
+async function fetchHTML(drive, id) {
   const getFiles = promisify(drive.files.get).bind(drive.files)
 
   const {data} = await getFiles({
