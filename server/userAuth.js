@@ -59,8 +59,8 @@ router.use((req, res, next) => {
     return next()
   }
 
-  log.info('User not authenticated, setting authRedirect to', req.path)
-  req.session.authRedirect = req.path
+  // log.info('User not authenticated, setting authRedirect to', req.path)
+  // req.session.authRedirect = req.path
   res.redirect('/login')
 })
 
