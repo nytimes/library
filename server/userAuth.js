@@ -52,10 +52,12 @@ router.get('/auth/redirect', passport.authenticate('google'), (req, res) => {
 router.use((req, res, next) => {
   const isDev = process.env.NODE_ENV === 'development'
   const authenticated = req.isAuthenticated()
+
   if (isDev || (authenticated && domains.has(req.session.passport.user._json.domain))) {
     setUserInfo(req)
     return next()
   }
+
   log.info('User not authenticated')
   req.session.authRedirect = req.path
   res.redirect('/login')
