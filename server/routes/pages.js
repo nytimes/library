@@ -16,7 +16,7 @@ module.exports = router
 
 const pages = getTemplates('pages')
 
-function handlePage(req, res, next) {
+async function handlePage(req, res, next) {
   const page = req.params.page || 'index'
 
   if (!pages.has(page)) {

@@ -16,7 +16,7 @@ router.use(async (req, res, next) => {
   req.on('end', () => {
     if (res.locals.docId) {
       const docMeta = getMeta(res.locals.docId)
-      const userInfo = getUserInfo(req)
+      const userInfo = req.userInfo
       if (!docMeta || !userInfo) return
       recordView(docMeta, userInfo, datastoreClient)
     }
@@ -25,12 +25,12 @@ router.use(async (req, res, next) => {
 })
 
 router.get('/reading-history/docs.json', async (req, res, next) => {
-  const results = await fetchHistory(getUserInfo(req), 'Doc', req.query.limit)
+  const results = await fetchHistory(req.userInfo, 'Doc', req.query.limit)
   res.json(results)
 })
 
 router.get('/reading-history/teams.json', async (req, res, next) => {
-  const results = await fetchHistory(getUserInfo(req), 'Team', req.query.limit)
+  const results = await fetchHistory(req.userInfo, 'Team', req.query.limit)
   res.json(results)
 })
 

@@ -15,8 +15,6 @@ exports.run = async (query) => {
 
   const drive = google.drive({version: 'v3', auth: authClient})
 
-  let folderIds
-
   if (driveType === 'shared') {
     folderIds = await getAllFolders({drive})
   }
