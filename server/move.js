@@ -12,7 +12,7 @@ const driveType = process.env.DRIVE_TYPE
 const driveId = process.env.DRIVE_ID
 
 // return the folder html (or at least json object) that can be templated
-exports.getFolders = async (id, cb) => {
+exports.getFolders = async (id) => {
   const data = await getTree().catch((err) => {
     log.warn('Error generating tree', err)
   })

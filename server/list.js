@@ -81,7 +81,7 @@ function getOptions(driveType, id) {
 
   if (driveType === 'shared') {
     return {
-      q: id.map(id => `'${id}' in parents`).join(' or '),
+      q: id.map((id) => `'${id}' in parents`).join(' or '),
       fields
     }
   }
@@ -128,14 +128,14 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentId
 
   // Continue searching if shared folder, since API only returns contents of the immediate parent folder
   // Find folders that have not yet been searched
-  const folders = combined.filter(item =>
+  const folders = combined.filter((item) =>
     item.mimeType === 'application/vnd.google-apps.folder' && parentIds.includes(item.parents[0]))
 
   if (folders.length > 0) {
     return fetchAllFiles({
       listSoFar: combined,
       drive,
-      parentIds: folders.map(folder => folder.id)
+      parentIds: folders.map((folder) => folder.id)
     })
   }
 

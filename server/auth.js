@@ -18,10 +18,7 @@ if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
 
 // only public method, returns the authClient that can be used for making other requests
 exports.getAuth = async () => {
-  if (authClient) {
-    return authClient
-  }
-
+  if (authClient) return authClient
   await setAuthClient()
 }
 
@@ -42,7 +39,7 @@ async function setAuthClient() {
     }
     google.options({auth: authClient})
     log.info('Google API auth successfully retrieved.')
-    
+
     return authClient
   })
 }
