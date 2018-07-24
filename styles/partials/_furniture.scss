@@ -28,6 +28,7 @@
         .logo {
           height: 23px;
           filter: invert(100%) brightness(80%);
+          margin-left: -5px;
         }
       }
 
@@ -39,7 +40,7 @@
         vertical-align: top;
         border-left: 1px solid rgba(255, 255, 255, 0.35);
         color: $main-homepage-text-color;
-        font-family: $sans;
+        font-family: $branding;
         font-size: 18px;
         text-transform: none;
         -webkit-font-smoothing: antialiased;
@@ -47,7 +48,7 @@
         line-height: 26px;
 
         a:link, a:visited {
-          color: $gray-50;
+          color: $gray-80;
         }
         a:hover {
           color: $accent;
