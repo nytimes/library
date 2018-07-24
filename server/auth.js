@@ -46,9 +46,9 @@ async function setAuthClient(cb) {
     } else {
       const getGoogleAuth = promisify(google.auth.getApplicationDefault).bind(google.auth)
       const client = await getGoogleAuth()
+      authClient = client
     }
     
-    authClient = client
     if (authClient.createScopedRequired && authClient.createScopedRequired()) {
       authClient = authClient.createScoped(scopes)
     }
