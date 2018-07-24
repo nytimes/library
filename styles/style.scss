@@ -1,7 +1,13 @@
+// top level templating values that can be overridden
 @import "vars";
 @import "theme";
-@import "mixins";
-@import "base";
-@import "furniture";
-@import "pages";
-@import "categories";
+
+// core layout styles rarely overridden
+@import "core/mixins";
+@import "core/base";
+@import "core/furniture";
+@import "core/pages";
+@import "core/categories";
+
+// final stylesheet with any additional styles for custom logic
+@import "custom";
