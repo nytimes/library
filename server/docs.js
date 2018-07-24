@@ -34,21 +34,17 @@ exports.slugify = (text = '') => {
   })
 }
 
-exports.fetchDoc = async ({id, resourceType, req}, cb) => {
+exports.fetchDoc = async (id, resourceType, req) => {
   if (req.useBeta) log.debug('Using beta formatter')
   const formatter = req.useBeta ? formatterV4 : formatterV3
 
-  cb = inflight(id, cb)
-  if (!cb) return
-
   const auth = await getAuth()
-    .catch(cb)
 
   const [html, originalRevision] = await fetch({id, resourceType, req}, auth)
   const processedHtml = formatter.getProcessedHtml(html)
   const sections = getSections(html)
   // maybe we should pull out headers here
-  cb(null, {html: processedHtml, originalRevision, sections, template: stringTemplate})
+  return {html: processedHtml, originalRevision, sections, template: stringTemplate}
 }
 
 exports.fetchByline = (html, creatorOfDoc) => {

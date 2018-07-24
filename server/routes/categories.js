@@ -56,24 +56,19 @@ async function handleCategory(req, res, next) {
   }
 
   // for docs, fetch the html and then combine with the base data
-  fetchDoc({id, resourceType, req}, (err, {html, originalRevision, sections} = {}) => {
-    if (err) {
-      return next(err)
-    }
-    res.locals.docId = data.id // we need this for history later
-    const revisionData = originalRevision.data
-    const payload = fetchByline(html, revisionData.lastModifyingUser.displayName)
-    res.render(template, Object.assign({}, baseRenderData, {
-      content: payload.html,
-      byline: payload.byline,
-      createdBy: revisionData.lastModifyingUser.displayName,
-      sections
-    }), (err, html) => {
-      if (err) return new Error(err)
-
-      cache.add(id, meta.modifiedTime, req.path, html)
-      res.end(html)
-    })
+  const {html, originalRevision, sections} = await fetchDoc(id, resourceType, req)
+  res.locals.docId = data.id // we need this for history later
+  const revisionData = originalRevision.data
+  const payload = fetchByline(html, revisionData.lastModifyingUser.displayName)
+  res.render(template, Object.assign({}, baseRenderData, {
+    content: payload.html,
+    byline: payload.byline,
+    createdBy: revisionData.lastModifyingUser.displayName,
+    sections
+  }), (err, html) => {
+    if (err) return new Error(err)
+    cache.add(id, meta.modifiedTime, req.path, html)
+    res.end(html)
   })
 }
 
