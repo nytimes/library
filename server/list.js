@@ -20,13 +20,8 @@ let tags = {} // tags to doc id
 let driveBranches = {} // map of id to nodes
 
 exports.getTree = async () => {
-  if (currentTree) {
-    return currentTree
-  }
-
-  return updateTree()
-    .then((tree) => tree)
-    .catch((err) => Promise.reject(err))
+  if (currentTree) return currentTree
+  await updateTree()
 }
 
 // exposes docs metadata

@@ -22,9 +22,7 @@ async function handleCategory(req, res, next) {
   const tree = await getTree()
   const [data, parent] = retrieveDataForPath(req.path, tree)
   const {id, breadcrumb} = data
-  if (!id) {
-    return next(Error('Not found'))
-  }
+  if (!id) return new Error('Not found')
 
   const root = segments[1]
   const meta = getMeta(id)
@@ -50,7 +48,7 @@ async function handleCategory(req, res, next) {
   const {resourceType} = meta
   if (resourceType === 'folder') {
     return res.render(template, baseRenderData, (err, html) => {
-      if (err) return next(err)
+      if (err) return new Error(err)
 
       cache.add(id, meta.modifiedTime, req.path, html)
       res.end(html)
@@ -71,7 +69,7 @@ async function handleCategory(req, res, next) {
       createdBy: revisionData.lastModifyingUser.displayName,
       sections
     }), (err, html) => {
-      if (err) return next(err)
+      if (err) return new Error(err)
 
       cache.add(id, meta.modifiedTime, req.path, html)
       res.end(html)
