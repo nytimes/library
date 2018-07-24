@@ -8,7 +8,7 @@ const {promisify} = require('util')
 const driveType = process.env.DRIVE_TYPE
 const driveId = process.env.DRIVE_ID
 
-exports.run = async (query, cb) => {
+exports.run = async (query) => {
   const auth = promisify(getAuth)
   const authClient = await auth()
 

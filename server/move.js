@@ -88,13 +88,14 @@ exports.moveFile = async (id, destination) => {
   const {docId, modified, html} = hasHtml[0]
   const addToCache = promisify(cache.add)
 
-  await addToCache(docId, modified, newUrl, html)
+  return addToCache(docId, modified, newUrl, html)
+          .then(() => {
+            return newUrl
+          }) 
           .catch(err => {
             log.error('Error adding new url to cache', err)
             return '/'
           })
-  
-  return newUrl
 }
 
 // converts raw tree data used for routing into sorted lists with resource
