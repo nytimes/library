@@ -46,6 +46,7 @@ router.get('/logout', (req, res) => {
 })
 
 router.get('/auth/redirect', passport.authenticate('google'), (req, res) => {
+  console.log('in auth redirect', req.session.authRedirect)
   res.redirect(req.session.authRedirect || '/')
 })
 
@@ -54,15 +55,11 @@ router.use((req, res, next) => {
   const authenticated = req.isAuthenticated()
 
   if (isDev || (authenticated && domains.has(req.session.passport.user._json.domain))) {
-    try {
-      setUserInfo(req)
-      return next()
-    } catch (err) {
-      log.error('Error when setting user info', err)
-    }
+    setUserInfo(req)
+    return next()
   }
 
-  log.info('User not authenticated')
+  log.info('User not authenticated, setting authRedirect to', req.path)
   req.session.authRedirect = req.path
   res.redirect('/login')
 })
