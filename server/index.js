@@ -34,9 +34,7 @@ app.use((req, res, next) => {
   next()
 })
 
-if (!process.env.HEROKU) {
-  app.use(userInfo)
-}
+app.use(userInfo)
 
 // serve all files in the public folder
 app.use('/assets', express.static(path.join(__dirname, '../public')))
@@ -56,9 +54,7 @@ app.get('/view-on-site/:docId', (req, res, next) => {
 })
 
 // main pages
-if (!process.env.HEROKU) {
-  app.use(readingHistory.middleware)
-}
+app.use(readingHistory.middleware)
 
 // don't cache pages client-side to ensure browser always gets latest revision
 app.use((req, res, next) => {
