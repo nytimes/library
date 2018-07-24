@@ -16,7 +16,7 @@ module.exports = router
 
 const pages = getTemplates('pages')
 
-function handlePage(req, res, next) {
+async function handlePage(req, res, next) {
   const page = req.params.page || 'index'
 
   if (!pages.has(page)) {
@@ -26,36 +26,28 @@ function handlePage(req, res, next) {
   const template = `pages/${page}`
   const {q, id, dest} = req.query
   if (page === 'search' && q) {
-    return search.run(q)
-      .then(results => {
-        res.render(template, {q, results, template: stringTemplate})
-      })
-      .catch(next)
+    return search.run(q).then((results) => {
+      res.render(template, {q, results, template: stringTemplate})
+    }).catch(next)
   }
 
   if (page === 'move-file' && id) {
     if (!dest) {
-      return move.getFolders(id, (err, folders) => {
-        if (err) return next(err)
-        const {prettyName, parents} = getMeta(id)
-
-        res.render(template, {prettyName, folders, id, parents, template: stringTemplate})
-      })
+      const folders = await move.getFolders(id)
+      const {prettyName, parents} = getMeta(id)
+      return res.render(template, {prettyName, folders, id, parents, template: stringTemplate})
     }
-    
-    return move.moveFile(id, dest)
-      .then(result => {
-        res.redirect(result)
-      })
-      .catch(next)
+
+    return move.moveFile(id, dest).then((result) => {
+      res.redirect(result)
+    }).catch(next)
   }
 
   if (page === 'categories' || page === 'index') {
-    return getTree((err, tree) => {
-      if (err) return next(err)
-      const categories = buildDisplayCategories(tree)
-      res.render(template, {...categories, template: stringTemplate})
-    })
+    const tree = await getTree()
+    const categories = buildDisplayCategories(tree)
+    res.render(template, {...categories, template: stringTemplate})
+    return
   }
 
   res.render(template, {template: stringTemplate})

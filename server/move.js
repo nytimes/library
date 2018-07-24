@@ -1,6 +1,5 @@
 'use strict'
 const {google} = require('googleapis')
-const async = require('async')
 const {promisify} = require('util')
 
 const log = require('./logger')
@@ -13,19 +12,18 @@ const driveType = process.env.DRIVE_TYPE
 const driveId = process.env.DRIVE_ID
 
 // return the folder html (or at least json object) that can be templated
-exports.getFolders = (id, cb) => {
-  getTree((err, data) => {
-    if (err) return cb(err)
-
-    // map to just the data that we need, the ignore the top level drive entry
-    const extended = extendTree(data)
-    const folders = Object.assign({}, selectFolders(extended), {
-      // The drive doesn't have the same props as other folders
-      prettyName: stringTemplate('branding.prettyName'),
-      isTrashCan: false
-    })
-    return cb(null, [folders])
+exports.getFolders = async (id, cb) => {
+  const data = await getTree().catch((err) => {
+    log.warn('Error generating tree', err)
   })
+  // map to just the data that we need, the ignore the top level drive entry
+  const extended = extendTree(data)
+  const folders = Object.assign({}, selectFolders(extended), {
+    // The drive doesn't have the same props as other folders
+    prettyName: stringTemplate('branding.prettyName'),
+    isTrashCan: false
+  })
+  return [folders]
 }
 
 exports.moveFile = async (id, destination) => {
@@ -41,9 +39,9 @@ exports.moveFile = async (id, destination) => {
   const baseOptions = {
     fileId: id,
     addParents: [destination],
-    removeParents: parents,
+    removeParents: parents
   }
-  
+
   const teamOptions = {
     teamDriveId: driveId,
     corpora: 'teamDrive',
@@ -77,7 +75,7 @@ exports.moveFile = async (id, destination) => {
   // fake the drive updating immediately by manually copying cache
   const data = await Promise.all(oldUrls.map((url) => {
     const getCache = promisify(cache.get)
-    return getCache(url).catch(err => log.error('Error getting cache', err))
+    return getCache(url).catch((err) => log.error('Error getting cache', err))
   }))
 
   // cache stores urls and page data, make sure to find actual data object for page
@@ -87,12 +85,11 @@ exports.moveFile = async (id, destination) => {
   const {docId, modified, html} = hasHtml[0]
   const addToCache = promisify(cache.add)
 
-  await addToCache(docId, modified, newUrl, html)
-          .catch(err => {
-            log.error('Error adding new url to cache', err)
-            return '/'
-          })
-  
+  await addToCache(docId, modified, newUrl, html).catch((err) => {
+    log.error('Error adding new url to cache', err)
+    return '/'
+  })
+
   return newUrl
 }
 

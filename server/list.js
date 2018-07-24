@@ -19,14 +19,14 @@ let docsInfo = {} // doc info by id
 let tags = {} // tags to doc id
 let driveBranches = {} // map of id to nodes
 
-exports.getTree = (cb) => {
+exports.getTree = async () => {
   if (currentTree) {
-    return cb(null, currentTree)
+    return currentTree
   }
 
-  updateTree()
-    .then(tree => cb(null, tree))
-    .catch(cb)
+  return updateTree()
+    .then((tree) => tree)
+    .catch((err) => Promise.reject(err))
 }
 
 // exposes docs metadata
@@ -84,8 +84,8 @@ function getOptions(driveType, id) {
       q: id.map(id => `'${id}' in parents`).join(' or '),
       fields
     }
-  } 
-  
+  }
+
   return {
     teamDriveId: id,
     q: 'trashed = false',
@@ -106,11 +106,11 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentId
   }
 
   log.debug(`searching for files > ${listSoFar.length}`)
-  
+
   // Gets files in single folder (shared) or files listed in single page of response (team)
   const fetchFromDrive = promisify(drive.files.list).bind(drive.files)
   const {data} = await fetchFromDrive(options)
-  
+
   const {files, nextPageToken} = data
   const combined = listSoFar.concat(files)
 
@@ -125,10 +125,10 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentId
 
   // If there are no more pages and this is not a shared folder, return completed list
   if (driveType !== 'shared') return combined
-  
+
   // Continue searching if shared folder, since API only returns contents of the immediate parent folder
   // Find folders that have not yet been searched
-  const folders = combined.filter(item => 
+  const folders = combined.filter(item =>
     item.mimeType === 'application/vnd.google-apps.folder' && parentIds.includes(item.parents[0]))
 
   if (folders.length > 0) {
@@ -331,7 +331,7 @@ function cleanResourceType(mimeType) {
 
 async function startTreeRefresh(interval) {
   log.debug('updating tree...')
-  
+
   try {
     await updateTree()
     log.debug('tree updated.')

@@ -15,15 +15,16 @@ router.get('*', handleCategory)
 module.exports = router
 
 const categories = getTemplates('categories')
-function handleCategory(req, res, next) {
+async function handleCategory(req, res, next) {
   log.info(`GET ${req.path}`)
   const segments = req.path.split('/')
 
   // get an up to date doc tree
-  getTree((err, tree) => {
-    if (err) {
-      return next(err)
-    }
+  const tree = await getTree()
+  // getTree((err, tree) => {
+    // if (err) {
+    //   return next(err)
+    // }
 
     const [data, parent] = retrieveDataForPath(req.path, tree)
     const {id, breadcrumb} = data
@@ -67,7 +68,7 @@ function handleCategory(req, res, next) {
       if (err) {
         return next(err)
       }
-      
+
       res.locals.docId = data.id // we need this for history later
       const revisionData = originalRevision.data
       const payload = fetchByline(html, revisionData.lastModifyingUser.displayName)
@@ -83,7 +84,7 @@ function handleCategory(req, res, next) {
         res.end(html)
       })
     })
-  })
+  // })
 }
 
 function retrieveDataForPath(path, tree) {
