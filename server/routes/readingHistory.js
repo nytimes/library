@@ -1,7 +1,6 @@
 'use strict'
 
-const express = require('express')
-const router = express.Router()
+const router = require('express-promise-router')()
 
 const datastore = require('@google-cloud/datastore')
 const moment = require('moment')

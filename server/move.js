@@ -13,9 +13,8 @@ const driveId = process.env.DRIVE_ID
 
 // return the folder html (or at least json object) that can be templated
 exports.getFolders = async (id) => {
-  const data = await getTree().catch((err) => {
-    log.warn('Error generating tree', err)
-  })
+  const data = await getTree()
+
   // map to just the data that we need, the ignore the top level drive entry
   const extended = extendTree(data)
   const folders = Object.assign({}, selectFolders(extended), {

@@ -1,10 +1,9 @@
 'use strict'
 
-const express = require('express')
-
 const search = require('../search')
 const move = require('../move')
-const router = express.Router()
+
+const router = require('express-promise-router')()
 
 const {getTree, getMeta, getTagged} = require('../list')
 const {getTemplates, sortDocs, stringTemplate} = require('../utils')
@@ -28,7 +27,7 @@ async function handlePage(req, res, next) {
   if (page === 'search' && q) {
     return search.run(q).then((results) => {
       res.render(template, {q, results, template: stringTemplate})
-    }).catch(next)
+    })
   }
 
   if (page === 'move-file' && id) {
@@ -40,7 +39,7 @@ async function handlePage(req, res, next) {
 
     return move.moveFile(id, dest).then((result) => {
       res.redirect(result)
-    }).catch(next)
+    })
   }
 
   if (page === 'categories' || page === 'index') {

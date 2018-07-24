@@ -1,9 +1,8 @@
 'use strict'
 
-const express = require('express')
 const moment = require('moment')
 
-const router = express.Router()
+const router = require('express-promise-router')()
 
 const cache = require('../cache')
 const log = require('../logger')
@@ -63,7 +62,6 @@ async function handleCategory(req, res, next) {
     if (err) {
       return next(err)
     }
-
     res.locals.docId = data.id // we need this for history later
     const revisionData = originalRevision.data
     const payload = fetchByline(html, revisionData.lastModifyingUser.displayName)

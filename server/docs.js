@@ -44,13 +44,11 @@ exports.fetchDoc = async ({id, resourceType, req}, cb) => {
   const auth = await getAuth()
     .catch(cb)
 
-  fetch({id, resourceType, req}, auth, (err, html, originalRevision) => {
-    if (err) return cb(err)
-    html = formatter.getProcessedHtml(html)
-    const sections = getSections(html)
-    // maybe we should pull out headers here
-    cb(err, {html, originalRevision, sections, template: stringTemplate})
-  })
+  const [html, originalRevision] = await fetch({id, resourceType, req}, auth)
+  const processedHtml = formatter.getProcessedHtml(html)
+  const sections = getSections(html)
+  // maybe we should pull out headers here
+  cb(null, {html: processedHtml, originalRevision, sections, template: stringTemplate})
 }
 
 exports.fetchByline = (html, creatorOfDoc) => {
@@ -81,11 +79,11 @@ exports.fetchByline = (html, creatorOfDoc) => {
   }
 }
 
-function fetch({id, resourceType, req}, authClient, cb) {
+async function fetch({id, resourceType, req}, authClient) {
   const drive = google.drive({version: 'v3', auth: authClient})
   const getRevisions = promisify(drive.revisions.get).bind(drive.revisions)
 
-  Promise.all([
+  const [html, originalRevision] = await Promise.all([
     new Promise(async (resolve, reject) => {
       if (!supportedTypes.has(resourceType)) {
         return resolve(`Library does not support viewing ${resourceType}s yet.`)
@@ -103,19 +101,16 @@ function fetch({id, resourceType, req}, authClient, cb) {
         const betaDiscovery = `***REMOVED***${process.env.API_KEY}`
         const docs = await google.discoverAPI(betaDiscovery)
         const getDocs = promisify(docs.documents.get).bind(docs.documents)
-        const {data} = await getDocs({name: `documents/${id}`}).catch((err) => {
-          return reject(Error(err))
-        })
+        const {data} = await getDocs({name: `documents/${id}`})
         return resolve(data)
       } else {
-        drive.files.export({
+        const exportDocs = promisify(drive.files.export).bind(drive.files)
+        const {data} = await exportDocs({
           fileId: id,
           // text/html exports are not suupported for slideshows
           mimeType: resourceType === 'presentation' ? 'text/plain' : 'text/html'
-        }, (err, {data}) => {
-          if (err) reject(Error(err))
-          resolve(data)
-        }) // this prevents receiving an array (?)
+        })
+        resolve(data)
       }
     }),
     new Promise(async (resolve, reject) => {
@@ -134,9 +129,8 @@ function fetch({id, resourceType, req}, authClient, cb) {
       })
       resolve(data)
     })
-  ]).then(([html, originalRevision]) => {
-    cb(null, html, originalRevision)
-  })
+  ])
+  return [html, originalRevision]
 }
 
 async function fetchSpreadsheet(drive, id) {
