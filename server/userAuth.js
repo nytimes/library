@@ -54,8 +54,12 @@ router.use((req, res, next) => {
   const authenticated = req.isAuthenticated()
 
   if (isDev || (authenticated && domains.has(req.session.passport.user._json.domain))) {
-    setUserInfo(req)
-    return next()
+    try {
+      setUserInfo(req)
+      return next()
+    } catch (err) {
+      log.error('Error when setting user info', err)
+    }
   }
 
   log.info('User not authenticated')
