@@ -43,20 +43,16 @@ async function setAuthClient(cb) {
     if (credsInJSON) {
       const keys = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS)
       authClient = nodeAuth.fromJSON(keys);
-      authClient.scopes = scopes
-
-      await authClient.authorize()
-
     } else {
       const getGoogleAuth = promisify(google.auth.getApplicationDefault).bind(google.auth)
       const client = await getGoogleAuth()
-
-      authClient = client
-      if (authClient.createScopedRequired && authClient.createScopedRequired()) {
-        authClient = authClient.createScoped(scopes)
-      }
-      google.options({auth: authClient})
     }
+    
+    authClient = client
+    if (authClient.createScopedRequired && authClient.createScopedRequired()) {
+      authClient = authClient.createScoped(scopes)
+    }
+    google.options({auth: authClient})
 
     cb(null, authClient)
     log.info('Google API auth successfully retrieved.')
