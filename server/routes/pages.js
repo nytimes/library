@@ -26,10 +26,11 @@ function handlePage(req, res, next) {
   const template = `pages/${page}`
   const {q, id, dest} = req.query
   if (page === 'search' && q) {
-    return search.run(q, (err, results) => {
-      if (err) return next(err)
-      res.render(template, {q, results, template: stringTemplate})
-    })
+    return search.run(q)
+      .then(results => {
+        res.render(template, {q, results, template: stringTemplate})
+      })
+      .catch(next)
   }
 
   if (page === 'move-file' && id) {
@@ -41,13 +42,12 @@ function handlePage(req, res, next) {
         res.render(template, {prettyName, folders, id, parents, template: stringTemplate})
       })
     }
-
-    return move.moveFile(id, dest, (err, newPath) => {
-      if (err) return next(err)
-
-      // if we were successful, we will be holding a new path
-      res.redirect(newPath)
-    })
+    
+    return move.moveFile(id, dest)
+      .then(result => {
+        res.redirect(result)
+      })
+      .catch(next)
   }
 
   if (page === 'categories' || page === 'index') {
