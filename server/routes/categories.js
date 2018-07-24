@@ -14,7 +14,7 @@ router.get('*', handleCategory)
 module.exports = router
 
 const categories = getTemplates('categories')
-async function handleCategory(req, res, next) {
+async function handleCategory(req, res) {
   log.info(`GET ${req.path}`)
   const segments = req.path.split('/')
 

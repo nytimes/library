@@ -15,12 +15,9 @@ module.exports = router
 
 const pages = getTemplates('pages')
 
-async function handlePage(req, res, next) {
+async function handlePage(req, res) {
   const page = req.params.page || 'index'
-
-  if (!pages.has(page)) {
-    return next()
-  }
+  if (!pages.has(page)) return
 
   const template = `pages/${page}`
   const {q, id, dest} = req.query
