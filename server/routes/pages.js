@@ -19,6 +19,8 @@ const pages = getTemplates('pages')
 function handlePage(req, res, next) {
   const page = req.params.page || 'index'
 
+  console.log(page)
+
   if (!pages.has(page)) {
     return next()
   }

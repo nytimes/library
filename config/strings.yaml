@@ -69,3 +69,7 @@ error:
     title: Server Error
     heading: Uh oh, that's a 500.
     message: Perhaps try to search for something else instead?
+  domain:
+    title: Operation Not Permitted
+    heading: User Domain Not Authorized
+    message: "<p>The the domain you are logging in with is not permitted. Please try <a href='/login'>logging in</a> again.</p>"

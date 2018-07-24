@@ -7,7 +7,7 @@ const md5 = require('md5')
 const GoogleStrategy = require('passport-google-oauth2')
 
 const log = require('./logger')
-const config = require('./utils').getConfig()
+const {stringTemplate: template} = require('./utils')
 
 const router = express.Router()
 const domains = new Set(process.env.APPROVED_DOMAINS.split(/,\s?/g))
@@ -46,7 +46,7 @@ router.get('/logout', (req, res) => {
 })
 
 router.get('/auth/redirect', passport.authenticate('google'), (req, res) => {
-  console.log('in auth redirect', req.session.authRedirect)
+  console.log('in auth redirect')
   res.redirect(req.session.authRedirect || '/')
 })
 
@@ -59,15 +59,20 @@ router.use((req, res, next) => {
     return next()
   }
 
-  // log.info('User not authenticated, setting authRedirect to', req.path)
-  // req.session.authRedirect = req.path
+  if (authenticated && !domains.has(req.session.passport.user._json.domain)) {
+    res.status(403).render('errors/domain', {template})
+    return
+  }
+
+  log.info('User not authenticated')
+  req.session.authRedirect = req.path
   res.redirect('/login')
 })
 
 function setUserInfo(req) {
   if (process.env.NODE_ENV === 'development') {
     req.userInfo = {
-      email: process.env.TEST_EMAIL || config.footer.defaultEmail,
+      email: process.env.TEST_EMAIL || template('footer.defaultEmail'),
       userId: '10',
       analyticsUserId: md5('10library')
     }
