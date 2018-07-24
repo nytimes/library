@@ -76,7 +76,7 @@ async function updateTree() {
   })
 }
 
-function getOptions(driveType, id) {
+function getOptions(id) {
   const fields = 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)'
 
   if (driveType === 'shared') {
@@ -99,7 +99,7 @@ function getOptions(driveType, id) {
 }
 
 async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentIds = [driveId], drive} = {}) {
-  const options = getOptions(driveType, parentIds)
+  const options = getOptions(parentIds)
 
   if (pageToken) {
     options.pageToken = pageToken

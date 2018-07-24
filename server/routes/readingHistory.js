@@ -9,7 +9,6 @@ const moment = require('moment')
 const log = require('../logger')
 const {getAuth} = require('../auth')
 const {getMeta} = require('../list')
-const {getUserInfo} = require('../utils')
 
 // Middleware to record views into Cloud Datastore
 router.use(async (req, res, next) => {

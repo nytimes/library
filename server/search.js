@@ -12,7 +12,10 @@ const driveId = process.env.DRIVE_ID
 exports.run = async (query) => {
   const authClient = await getAuth()
   let folderIds
+
   const drive = google.drive({version: 'v3', auth: authClient})
+
+  let folderIds
 
   if (driveType === 'shared') {
     folderIds = await getAllFolders({drive})
