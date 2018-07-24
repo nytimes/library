@@ -138,7 +138,7 @@ async function fetchSpreadsheet(drive, id) {
     // HTML export for sheets is limiting. Instead, download as a buffer and use
     // the xlsx library to parse the contents of the file and convert to HTML.
     responseType: 'arraybuffer'
-  }).catch((err) => Error(err))
+  })
 
   const spreadsheet = xlsx.read(data, {type: 'buffer'})
   const {SheetNames, Sheets} = spreadsheet
@@ -182,7 +182,7 @@ async function fetchHTML(drive, id) {
     fileId: id,
     supportsTeamDrives: true,
     alt: 'media'
-  }).catch((err) => Error(err))
+  })
   return data
 }
 

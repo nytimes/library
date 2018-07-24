@@ -20,7 +20,10 @@ exports.run = async (query) => {
   }
 
   const files = await fullSearch({drive, query, folderIds})
-    .catch((err) => log.err(`Error when searching for ${query}, ${err}`))
+    .catch((err) => {
+      log.err(`Error when searching for ${query}, ${err}`)
+      throw new Error(err)
+    })
 
   const fileMetas = files
     .map((file) => { return list.getMeta(file.id) || {} })
