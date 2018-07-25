@@ -37,9 +37,9 @@ router.get('/login', passport.authenticate('google', {
   scope: [
     'https://www.googleapis.com/auth/plus.profile.emails.read',
     'https://www.googleapis.com/auth/userinfo.profile'
-  ]
-}), (req, res) => {
-  console.log('in login')
+  ],
+  prompt: 'select_account',
+  // failureRedirect: '/login'
 })
 
 router.get('/logout', (req, res) => {
