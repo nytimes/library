@@ -90,14 +90,14 @@ async function fetchHTMLForId(id, resourceType, req, drive) {
     const docs = await google.discoverAPI(betaDiscovery)
     const {data} = await docs.documents.get({name: `documents/${id}`})
     return data
-  } else {
-    const {data} = await drive.files.export({
-      fileId: id,
-      // text/html exports are not suupported for slideshows
-      mimeType: resourceType === 'presentation' ? 'text/plain' : 'text/html'
-    })
-    return data
   }
+
+  const {data} = await drive.files.export({
+    fileId: id,
+    // text/html exports are not suupported for slideshows
+    mimeType: resourceType === 'presentation' ? 'text/plain' : 'text/html'
+  })
+  return data
 }
 
 async function fetchOriginalRevisions(id, resourceType, req, drive) {
