@@ -73,56 +73,60 @@ exports.fetchByline = (html, creatorOfDoc) => {
   }
 }
 
+async function fetchHTMLForId(id, resourceType, req, drive) {
+  if (!supportedTypes.has(resourceType)) {
+    return `Library does not support viewing ${resourceType}s yet.`
+  }
+
+  if (resourceType === 'spreadsheet') {
+    return fetchSpreadsheet(drive, id)
+  }
+
+  if (resourceType === 'text/html') {
+    return fetchHTML(drive, id)
+  }
+
+  if (req.useBeta) {
+    const betaDiscovery = `***REMOVED***${process.env.API_KEY}`
+    const docs = await google.discoverAPI(betaDiscovery)
+    const getDocs = promisify(docs.documents.get).bind(docs.documents)
+    const {data} = await getDocs({name: `documents/${id}`})
+    return data
+  } else {
+    const exportDocs = promisify(drive.files.export).bind(drive.files)
+    const {data} = await exportDocs({
+      fileId: id,
+      // text/html exports are not suupported for slideshows
+      mimeType: resourceType === 'presentation' ? 'text/plain' : 'text/html'
+    })
+    return data
+  }
+}
+
+async function fetchOriginalRevisions(id, resourceType, req, drive) {
+  const getRevisions = promisify(drive.revisions.get).bind(drive.revisions)
+  const revisionSupported = new Set(['document', 'spreadsheet', 'presentation'])
+
+  if (!revisionSupported.has(resourceType)) {
+    log.info(`Revision data not supported for ${resourceType}:${id}`)
+    return {data: { lastModifyingUser: {} }} // return mock/empty revision object
+  }
+  const data = await getRevisions({
+    fileId: id,
+    revisionId: '1',
+    fields: '*'
+  }).catch((err) => {
+    log.warn(`Failed retrieving revision data for ${resourceType}:${id}. Error was:`, err)
+    return {data: { lastModifyingUser: {} }} // return mock/empty revision object
+  })
+  return data
+}
+
 async function fetch({id, resourceType, req}, authClient) {
   const drive = google.drive({version: 'v3', auth: authClient})
-  const getRevisions = promisify(drive.revisions.get).bind(drive.revisions)
-
   const [html, originalRevision] = await Promise.all([
-    new Promise(async (resolve, reject) => {
-      if (!supportedTypes.has(resourceType)) {
-        return resolve(`Library does not support viewing ${resourceType}s yet.`)
-      }
-
-      if (resourceType === 'spreadsheet') {
-        return resolve(fetchSpreadsheet(drive, id))
-      }
-
-      if (resourceType === 'text/html') {
-        return resolve(fetchHTML(drive, id))
-      }
-
-      if (req.useBeta) {
-        const betaDiscovery = `***REMOVED***${process.env.API_KEY}`
-        const docs = await google.discoverAPI(betaDiscovery)
-        const getDocs = promisify(docs.documents.get).bind(docs.documents)
-        const {data} = await getDocs({name: `documents/${id}`})
-        return resolve(data)
-      } else {
-        const exportDocs = promisify(drive.files.export).bind(drive.files)
-        const {data} = await exportDocs({
-          fileId: id,
-          // text/html exports are not suupported for slideshows
-          mimeType: resourceType === 'presentation' ? 'text/plain' : 'text/html'
-        })
-        resolve(data)
-      }
-    }),
-    new Promise(async (resolve, reject) => {
-      const revisionSupported = new Set(['document', 'spreadsheet', 'presentation'])
-      if (!revisionSupported.has(resourceType)) {
-        log.info(`Revision data not supported for ${resourceType}:${id}`)
-        return resolve({data: { lastModifyingUser: {} }}) // return mock/empty revision object
-      }
-      const data = await getRevisions({
-        fileId: id,
-        revisionId: '1',
-        fields: '*'
-      }).catch((err) => {
-        log.warn(`Failed retrieving revision data for ${resourceType}:${id}. Error was:`, err)
-        return resolve({data: { lastModifyingUser: {} }}) // return mock/empty revision object
-      })
-      resolve(data)
-    })
+    fetchHTMLForId(id, resourceType, req, drive),
+    fetchOriginalRevisions(id, resourceType, req, drive)
   ])
   return [html, originalRevision]
 }
