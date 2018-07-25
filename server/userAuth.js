@@ -38,8 +38,7 @@ router.get('/login', passport.authenticate('google', {
     'https://www.googleapis.com/auth/plus.profile.emails.read',
     'https://www.googleapis.com/auth/userinfo.profile'
   ],
-  prompt: 'select_account',
-  // failureRedirect: '/login'
+  prompt: 'select_account'
 }))
 
 router.get('/logout', (req, res) => {
@@ -48,12 +47,10 @@ router.get('/logout', (req, res) => {
 })
 
 router.get('/auth/redirect', passport.authenticate('google'), (req, res) => {
-  console.log('hit auth redirect', req.session.authRedirect)
   res.redirect(req.session.authRedirect || '/')
 })
 
 router.use((req, res, next) => {
-  console.log('hit middleware', req.originalUrl)
   const isDev = process.env.NODE_ENV === 'development'
   const authenticated = req.isAuthenticated()
 
