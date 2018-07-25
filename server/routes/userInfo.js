@@ -1,10 +1,9 @@
 'use strict'
 
-const express = require('express')
-const router = express.Router()
+const router = require('express-promise-router')()
 
 // return userinfo as json
-router.get('/whoami.json', (req, res, next) => {
+router.get('/whoami.json', (req, res) => {
   res.json(req.userInfo)
 })
 

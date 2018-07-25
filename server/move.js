@@ -1,6 +1,5 @@
 'use strict'
 const {google} = require('googleapis')
-const async = require('async')
 const {promisify} = require('util')
 
 const log = require('./logger')
@@ -13,19 +12,17 @@ const driveType = process.env.DRIVE_TYPE
 const driveId = process.env.DRIVE_ID
 
 // return the folder html (or at least json object) that can be templated
-exports.getFolders = (id, cb) => {
-  getTree((err, data) => {
-    if (err) return cb(err)
+exports.getFolders = async (id) => {
+  const data = await getTree()
 
-    // map to just the data that we need, the ignore the top level drive entry
-    const extended = extendTree(data)
-    const folders = Object.assign({}, selectFolders(extended), {
-      // The drive doesn't have the same props as other folders
-      prettyName: stringTemplate('branding.prettyName'),
-      isTrashCan: false
-    })
-    return cb(null, [folders])
+  // map to just the data that we need, the ignore the top level drive entry
+  const extended = extendTree(data)
+  const folders = Object.assign({}, selectFolders(extended), {
+    // The drive doesn't have the same props as other folders
+    prettyName: stringTemplate('branding.prettyName'),
+    isTrashCan: false
   })
+  return [folders]
 }
 
 exports.moveFile = async (id, destination) => {
@@ -34,17 +31,16 @@ exports.moveFile = async (id, destination) => {
 
   if (!parents) return Error('Not found')
 
-  const auth = promisify(getAuth)
-  const authClient = await auth()
+  const authClient = await getAuth()
 
   const drive = google.drive({version: 'v3', auth: authClient})
 
   const baseOptions = {
     fileId: id,
     addParents: [destination],
-    removeParents: parents,
+    removeParents: parents
   }
-  
+
   const teamOptions = {
     teamDriveId: driveId,
     corpora: 'teamDrive',
@@ -55,8 +51,7 @@ exports.moveFile = async (id, destination) => {
 
   const options = driveType === 'shared' ? baseOptions : teamOptions
 
-  const updateFile = promisify(drive.files.update).bind(drive.files)
-  await updateFile(options)
+  await drive.files.update(options)
 
   const oldUrls = parents.map((id) => {
     const {path} = getMeta(id) || {}
@@ -78,7 +73,7 @@ exports.moveFile = async (id, destination) => {
   // fake the drive updating immediately by manually copying cache
   const data = await Promise.all(oldUrls.map((url) => {
     const getCache = promisify(cache.get)
-    return getCache(url).catch(err => log.error('Error getting cache', err))
+    return getCache(url).catch((err) => log.error('Error getting cache', err))
   }))
 
   // cache stores urls and page data, make sure to find actual data object for page
@@ -88,14 +83,12 @@ exports.moveFile = async (id, destination) => {
   const {docId, modified, html} = hasHtml[0]
   const addToCache = promisify(cache.add)
 
-  return addToCache(docId, modified, newUrl, html)
-          .then(() => {
-            return newUrl
-          }) 
-          .catch(err => {
-            log.error('Error adding new url to cache', err)
-            return '/'
-          })
+  return addToCache(docId, modified, newUrl, html).then(() => {
+    return newUrl
+  }).catch((err) => {
+    log.error('Error adding new url to cache', err)
+    return '/'
+  })
 }
 
 // converts raw tree data used for routing into sorted lists with resource

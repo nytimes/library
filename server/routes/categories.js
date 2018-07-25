@@ -1,9 +1,8 @@
 'use strict'
 
-const express = require('express')
 const moment = require('moment')
 
-const router = express.Router()
+const router = require('express-promise-router')()
 
 const cache = require('../cache')
 const log = require('../logger')
@@ -15,74 +14,61 @@ router.get('*', handleCategory)
 module.exports = router
 
 const categories = getTemplates('categories')
-function handleCategory(req, res, next) {
+async function handleCategory(req, res) {
   log.info(`GET ${req.path}`)
   const segments = req.path.split('/')
 
   // get an up to date doc tree
-  getTree((err, tree) => {
-    if (err) {
-      return next(err)
-    }
+  const tree = await getTree()
+  const [data, parent] = retrieveDataForPath(req.path, tree)
+  const {id, breadcrumb} = data
+  if (!id) throw new Error('Not found')
 
-    const [data, parent] = retrieveDataForPath(req.path, tree)
-    const {id, breadcrumb} = data
-    if (!id) {
-      return next(Error('Not found'))
-    }
+  const root = segments[1]
+  const meta = getMeta(id)
+  const {mimeType} = meta
+  const layout = categories.has(root) ? root : 'default'
+  const template = `categories/${layout}`
 
-    const root = segments[1]
-    const meta = getMeta(id)
-    const {mimeType} = meta
-    const layout = categories.has(root) ? root : 'default'
-    const template = `categories/${layout}`
+  // don't try to fetch branch node
+  const contextData = prepareContextualData(data, req.path, breadcrumb, parent, meta.slug)
 
-    // don't try to fetch branch node
-    const contextData = prepareContextualData(data, req.path, breadcrumb, parent, meta.slug)
+  const baseRenderData = Object.assign({}, contextData, {
+    url: req.path,
+    title: meta.prettyName,
+    lastUpdatedBy: (meta.lastModifyingUser || {}).displayName,
+    modifiedAt: meta.modifiedTime,
+    createdAt: moment(meta.createdTime).fromNow(),
+    editLink: mimeType === 'text/html' ? meta.folder.webViewLink : meta.webViewLink,
+    id,
+    template: stringTemplate
+  })
 
-    const baseRenderData = Object.assign({}, contextData, {
-      url: req.path,
-      title: meta.prettyName,
-      lastUpdatedBy: (meta.lastModifyingUser || {}).displayName,
-      modifiedAt: meta.modifiedTime,
-      createdAt: moment(meta.createdTime).fromNow(),
-      editLink: mimeType === 'text/html' ? meta.folder.webViewLink : meta.webViewLink,
-      id,
-      template: stringTemplate
+  // if this is a folder, just render from the generic data
+  const {resourceType} = meta
+  if (resourceType === 'folder') {
+    return res.render(template, baseRenderData, (err, html) => {
+      if (err) throw err
+
+      cache.add(id, meta.modifiedTime, req.path, html)
+      res.end(html)
     })
+  }
 
-    // if this is a folder, just render from the generic data
-    const {resourceType} = meta
-    if (resourceType === 'folder') {
-      return res.render(template, baseRenderData, (err, html) => {
-        if (err) return next(err)
-
-        cache.add(id, meta.modifiedTime, req.path, html)
-        res.end(html)
-      })
-    }
-
-    // for docs, fetch the html and then combine with the base data
-    fetchDoc({id, resourceType, req}, (err, {html, originalRevision, sections} = {}) => {
-      if (err) {
-        return next(err)
-      }
-
-      res.locals.docId = data.id // we need this for history later
-      const revisionData = originalRevision.data
-      const payload = fetchByline(html, revisionData.lastModifyingUser.displayName)
-      res.render(template, Object.assign({}, baseRenderData, {
-        content: payload.html,
-        byline: payload.byline,
-        createdBy: revisionData.lastModifyingUser.displayName,
-        sections
-      }), (err, html) => {
-        if (err) return next(err)
-
-        cache.add(id, meta.modifiedTime, req.path, html)
-        res.end(html)
-      })
-    })
+  // for docs, fetch the html and then combine with the base data
+  const {html, originalRevision, sections} = await fetchDoc(id, resourceType, req)
+  res.locals.docId = data.id // we need this for history later
+  const revisionData = originalRevision.data
+  const payload = fetchByline(html, revisionData.lastModifyingUser.displayName)
+  res.render(template, Object.assign({}, baseRenderData, {
+    content: payload.html,
+    byline: payload.byline,
+    createdBy: revisionData.lastModifyingUser.displayName,
+    sections
+  }), (err, html) => {
+    if (err) throw err
+    cache.add(id, meta.modifiedTime, req.path, html)
+    res.end(html)
   })
 }
 
