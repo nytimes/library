@@ -40,7 +40,7 @@ router.get('/login', passport.authenticate('google', {
   ],
   prompt: 'select_account',
   // failureRedirect: '/login'
-})
+}))
 
 router.get('/logout', (req, res) => {
   req.logout()
