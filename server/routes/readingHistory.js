@@ -10,7 +10,8 @@ const {getAuth} = require('../auth')
 const {getMeta} = require('../list')
 
 // Middleware to record views into Cloud Datastore
-router.use(async (req, res, next) => {
+// express-promsie-router will call next() if the return value is 'next'.
+router.use(async (req, res) => {
   const datastoreClient = await getDatastoreClient()
   req.on('end', () => {
     if (res.locals.docId) {
@@ -20,15 +21,15 @@ router.use(async (req, res, next) => {
       recordView(docMeta, userInfo, datastoreClient)
     }
   })
-  next()
+  return 'next'
 })
 
-router.get('/reading-history/docs.json', async (req, res, next) => {
+router.get('/reading-history/docs.json', async (req, res) => {
   const results = await fetchHistory(req.userInfo, 'Doc', req.query.limit)
   res.json(results)
 })
 
-router.get('/reading-history/teams.json', async (req, res, next) => {
+router.get('/reading-history/teams.json', async (req, res) => {
   const results = await fetchHistory(req.userInfo, 'Team', req.query.limit)
   res.json(results)
 })

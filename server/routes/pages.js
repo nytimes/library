@@ -15,9 +15,10 @@ module.exports = router
 
 const pages = getTemplates('pages')
 
-async function handlePage(req, res, next) {
+// express-promsie-router will call next() if the return value is 'next'.
+async function handlePage(req, res) {
   const page = req.params.page || 'index'
-  if (!pages.has(page)) return next() // requires explicit next call
+  if (!pages.has(page)) return 'next'
 
   const template = `pages/${page}`
   const {q, id, dest} = req.query
