@@ -10,7 +10,7 @@ const log = require('./logger')
 let authClient = null
 
 // In local development, look for an auth.json file.
-if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+if (!process.env.GOOGLE_APPLICATION_CREDENTIALS && process.env.NODE_ENV !== 'test') {
   log.warn('GOOGLE_APPLICATION_CREDENTIALS was undefined, using default ./auth.json credentials file...')
   process.env.GOOGLE_APPLICATION_CREDENTIALS = path.join(__dirname, '.auth.json')
 }
