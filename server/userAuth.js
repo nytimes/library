@@ -46,10 +46,13 @@ router.get('/logout', (req, res) => {
 })
 
 router.get('/auth/redirect', passport.authenticate('google'), (req, res) => {
+  console.log('hit auth redirect', req.session.authRedirect)
   res.redirect(req.session.authRedirect || '/')
 })
 
 router.use((req, res, next) => {
+  console.log('hit middleware')
+  console.log(req.originalUrl)
   const isDev = process.env.NODE_ENV === 'development'
   const authenticated = req.isAuthenticated()
 
