@@ -23,7 +23,7 @@
     "mocha": "^3.4.2",
     "moment": "^2.22.2",
     "node-sass": "^4.9.2",
-    "nodemon": "^1.17.5",
+    "nodemon": "^1.18.3",
     "passport": "^0.4.0",
     "passport-google-oauth2": "^0.1.6",
     "pretty": "^2.0.0",
