@@ -6,7 +6,7 @@ const datastore = require('@google-cloud/datastore')
 const moment = require('moment')
 
 const log = require('../logger')
-const {getAuth} = require('../auth')
+const {getAuth: getAuthClient} = require('../auth')
 const {getMeta} = require('../list')
 
 // Middleware to record views into Cloud Datastore
@@ -91,10 +91,8 @@ function expandResults(results) {
 
 async function getDatastoreClient() {
   const gcpProjectId = process.env.GCP_PROJECT_ID || '***REMOVED***'
+  const datastoreClient = datastore({ projectId: gcpProjectId, auth: { getAuthClient } })
 
-  const authClient = await getAuth()
-
-  const datastoreClient = datastore({ projectId: gcpProjectId, authClient: authClient })
   return datastoreClient
 }
 

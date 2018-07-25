@@ -13,6 +13,7 @@
     "deepmerge": "^2.1.1",
     "ejs": "^2.5.6",
     "express": "^4.16.3",
+    "google-auth-library": "^1.6.1",
     "express-promise-router": "^3.0.3",
     "express-session": "^1.15.6",
     "googleapis": "^32.0.0",
@@ -68,6 +69,9 @@
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/newsdev/nyt-docs/issues"
+  },
+  "engines": {
+    "node": "8.11.3"
   },
   "homepage": "https://github.com/newsdev/nyt-docs#readme"
 }

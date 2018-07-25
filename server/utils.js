@@ -48,7 +48,7 @@ exports.requireWithFallback = (attemptPath) => {
 }
 
 // Get list of middleware in a directory
-const middlewares = fs.readdirSync(path.join(__dirname, '../custom/middleware'))
+const middlewares = fs.existsSync(path.join(__dirname, '../custom/middleware')) ? fs.readdirSync(path.join(__dirname, '../custom/middleware')) : []
 
 // create object with preload and postload middleware functions
 exports.allMiddleware = middlewares.reduce((m, item) => {
@@ -61,7 +61,8 @@ exports.allMiddleware = middlewares.reduce((m, item) => {
   preload: [], postload: []
 })
 
-exports.getConfig = () => {
+const config = getConfig()
+function getConfig() {
   const defaultExists = fs.existsSync(path.join(__dirname, '../config/strings.yaml'))
   const customExists = fs.existsSync(path.join(__dirname, '../custom/strings.yaml'))
 
@@ -80,7 +81,6 @@ exports.getConfig = () => {
 }
 
 exports.stringTemplate = (configPath, ...args) => {
-  const config = exports.getConfig()
   const stringConfig = deepProp(config, configPath)
   const configType = typeof stringConfig
 
