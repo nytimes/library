@@ -3,7 +3,6 @@
 const inflight = require('promise-inflight')
 const {google} = require('googleapis')
 const path = require('path')
-const {promisify} = require('util')
 
 const cache = require('./cache')
 const log = require('./logger')
@@ -103,8 +102,7 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentId
   log.debug(`searching for files > ${listSoFar.length}`)
 
   // Gets files in single folder (shared) or files listed in single page of response (team)
-  const fetchFromDrive = promisify(drive.files.list).bind(drive.files)
-  const {data} = await fetchFromDrive(options)
+  const {data} = await drive.files.list(options)
 
   const {files, nextPageToken} = data
   const combined = listSoFar.concat(files)

@@ -39,8 +39,7 @@ async function fullSearch({drive, query, folderIds, results = [], nextPageToken:
     options.pageToken = pageToken
   }
 
-  const listFiles = promisify(drive.files.list).bind(drive.files)
-  const {data} = await listFiles(options)
+  const {data} = await drive.files.list(options)
 
   const {files, nextPageToken} = data
   const total = results.concat(files)

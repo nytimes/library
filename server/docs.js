@@ -1,7 +1,6 @@
 'use strict'
 
 const {google} = require('googleapis')
-const {promisify} = require('util')
 const cheerio = require('cheerio')
 const slugify = require('slugify')
 const xlsx = require('xlsx')
@@ -89,12 +88,10 @@ async function fetchHTMLForId(id, resourceType, req, drive) {
   if (req.useBeta) {
     const betaDiscovery = `***REMOVED***${process.env.API_KEY}`
     const docs = await google.discoverAPI(betaDiscovery)
-    const getDocs = promisify(docs.documents.get).bind(docs.documents)
-    const {data} = await getDocs({name: `documents/${id}`})
+    const {data} = await docs.documents.get({name: `documents/${id}`})
     return data
   } else {
-    const exportDocs = promisify(drive.files.export).bind(drive.files)
-    const {data} = await exportDocs({
+    const {data} = await drive.files.export({
       fileId: id,
       // text/html exports are not suupported for slideshows
       mimeType: resourceType === 'presentation' ? 'text/plain' : 'text/html'
@@ -104,14 +101,13 @@ async function fetchHTMLForId(id, resourceType, req, drive) {
 }
 
 async function fetchOriginalRevisions(id, resourceType, req, drive) {
-  const getRevisions = promisify(drive.revisions.get).bind(drive.revisions)
   const revisionSupported = new Set(['document', 'spreadsheet', 'presentation'])
 
   if (!revisionSupported.has(resourceType)) {
     log.info(`Revision data not supported for ${resourceType}:${id}`)
     return {data: { lastModifyingUser: {} }} // return mock/empty revision object
   }
-  const data = await getRevisions({
+  const data = await drive.revisions.get({
     fileId: id,
     revisionId: '1',
     fields: '*'
@@ -132,9 +128,7 @@ async function fetch({id, resourceType, req}, authClient) {
 }
 
 async function fetchSpreadsheet(drive, id) {
-  const exportFiles = promisify(drive.files.export).bind(drive.files)
-
-  const {data} = await exportFiles({
+  const {data} = await drive.files.export({
     fileId: id,
     // for mimeTypes see https://developers.google.com/drive/v3/web/manage-downloads#downloading_google_documents
     mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -180,9 +174,7 @@ async function fetchSpreadsheet(drive, id) {
 
 // returns raw html from the drive
 async function fetchHTML(drive, id) {
-  const getFiles = promisify(drive.files.get).bind(drive.files)
-
-  const {data} = await getFiles({
+  const {data} = await drive.files.get({
     fileId: id,
     supportsTeamDrives: true,
     alt: 'media'

@@ -51,8 +51,7 @@ exports.moveFile = async (id, destination) => {
 
   const options = driveType === 'shared' ? baseOptions : teamOptions
 
-  const updateFile = promisify(drive.files.update).bind(drive.files)
-  await updateFile(options)
+  await drive.files.update(options)
 
   const oldUrls = parents.map((id) => {
     const {path} = getMeta(id) || {}
