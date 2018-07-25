@@ -59,8 +59,7 @@ router.use((req, res, next) => {
   }
 
   if (authenticated && !domains.has(req.session.passport.user._json.domain)) {
-    res.status(403).render('errors/403', {template})
-    return
+    return next(Error('Unauthorized'))
   }
 
   log.info('User not authenticated')
