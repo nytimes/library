@@ -3,7 +3,6 @@
 const inflight = require('promise-inflight')
 const {google} = require('googleapis')
 const path = require('path')
-const {promisify} = require('util')
 
 const cache = require('./cache')
 const log = require('./logger')
@@ -19,14 +18,9 @@ let docsInfo = {} // doc info by id
 let tags = {} // tags to doc id
 let driveBranches = {} // map of id to nodes
 
-exports.getTree = (cb) => {
-  if (currentTree) {
-    return cb(null, currentTree)
-  }
-
-  updateTree()
-    .then((tree) => cb(null, tree))
-    .catch(cb)
+exports.getTree = async () => {
+  if (currentTree) return currentTree
+  await updateTree()
 }
 
 // exposes docs metadata
@@ -59,8 +53,7 @@ startTreeRefresh(treeUpdateDelay)
 
 async function updateTree() {
   return inflight('tree', async () => {
-    const auth = promisify(getAuth)
-    const authClient = await auth()
+    const authClient = await getAuth()
 
     const drive = google.drive({version: 'v3', auth: authClient})
     const files = await fetchAllFiles({drive})
@@ -109,8 +102,7 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentId
   log.debug(`searching for files > ${listSoFar.length}`)
 
   // Gets files in single folder (shared) or files listed in single page of response (team)
-  const fetchFromDrive = promisify(drive.files.list).bind(drive.files)
-  const {data} = await fetchFromDrive(options)
+  const {data} = await drive.files.list(options)
 
   const {files, nextPageToken} = data
   const combined = listSoFar.concat(files)

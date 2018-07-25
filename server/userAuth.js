@@ -1,6 +1,5 @@
 'use strict'
 
-const express = require('express')
 const passport = require('passport')
 const session = require('express-session')
 const md5 = require('md5')
@@ -9,7 +8,7 @@ const GoogleStrategy = require('passport-google-oauth2')
 const log = require('./logger')
 const {stringTemplate: template} = require('./utils')
 
-const router = express.Router()
+const router = require('express-promise-router')()
 const domains = new Set(process.env.APPROVED_DOMAINS.split(/,\s?/g))
 
 passport.use(new GoogleStrategy.Strategy({

@@ -22,40 +22,34 @@ if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
 
 
 // only public method, returns the authClient that can be used for making other requests
-exports.getAuth = (cb) => {
-  if (authClient) {
-    return cb(null, authClient)
-  }
-
-  setAuthClient(cb)
+exports.getAuth = async () => {
+  if (authClient) return authClient
+  await setAuthClient()
 }
 
 // configures the auth client if we don't already have one
-async function setAuthClient(cb) {
-  const scopes = [
-    'https://www.googleapis.com/auth/drive',
-    'https://www.googleapis.com/auth/cloud-platform', 
-    'https://www.googleapis.com/auth/datastore'
-  ]
-
+async function setAuthClient() {
   return inflight('auth', async () => {
     // In Heroku environment, set GOOGLE_APPLICATION_CREDENTIALS as auth json object to be parsed
     if (credsInJSON) {
       const keys = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS)
       authClient = nodeAuth.fromJSON(keys);
     } else {
-      const getGoogleAuth = promisify(google.auth.getApplicationDefault).bind(google.auth)
-      const client = await getGoogleAuth()
-      authClient = client
+      const {credential} = await google.auth.getApplicationDefault()
+      authClient = credential
     }
     
     if (authClient.createScopedRequired && authClient.createScopedRequired()) {
-      authClient = authClient.createScoped(scopes)
+      authClient = authClient.createScoped([
+        'https://www.googleapis.com/auth/drive',
+        'https://www.googleapis.com/auth/cloud-platform',
+        'https://www.googleapis.com/auth/datastore'
+      ])
     }
     google.options({auth: authClient})
-
-    cb(null, authClient)
     log.info('Google API auth successfully retrieved.')
+
+    return authClient
   })
 }
 
