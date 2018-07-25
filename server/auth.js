@@ -5,7 +5,6 @@ const path = require('path')
 const inflight = require('promise-inflight')
 const {google} = require('googleapis')
 const {auth: nodeAuth} = require('google-auth-library')
-const {promisify} = require('util')
 
 const log = require('./logger')
 
