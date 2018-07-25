@@ -4,7 +4,6 @@ const router = require('express-promise-router')()
 
 const datastore = require('@google-cloud/datastore')
 const moment = require('moment')
-const {promisify} = require('util')
 
 const log = require('../logger')
 const {getAuth: getAuthClient} = require('../auth')
