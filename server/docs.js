@@ -107,7 +107,7 @@ async function fetchOriginalRevisions(id, resourceType, req, drive) {
     log.info(`Revision data not supported for ${resourceType}:${id}`)
     return {data: { lastModifyingUser: {} }} // return mock/empty revision object
   }
-  const data = await drive.revisions.get({
+  return drive.revisions.get({
     fileId: id,
     revisionId: '1',
     fields: '*'
@@ -115,16 +115,15 @@ async function fetchOriginalRevisions(id, resourceType, req, drive) {
     log.warn(`Failed retrieving revision data for ${resourceType}:${id}. Error was:`, err)
     return {data: { lastModifyingUser: {} }} // return mock/empty revision object
   })
-  return data
 }
 
 async function fetch({id, resourceType, req}, authClient) {
   const drive = google.drive({version: 'v3', auth: authClient})
-  const [html, originalRevision] = await Promise.all([
+  const documentData = await Promise.all([
     fetchHTMLForId(id, resourceType, req, drive),
     fetchOriginalRevisions(id, resourceType, req, drive)
   ])
-  return [html, originalRevision]
+  return documentData
 }
 
 async function fetchSpreadsheet(drive, id) {

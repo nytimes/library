@@ -42,21 +42,20 @@ async function fetchHistory(userInfo, historyType, queryLimit) {
   const limit = (parseInt(queryLimit, 10) || 5)
   // include a bit extra that we will filter out based on other criteria later
   const datastoreLimit = Math.ceil(limit * 1.5)
+  const client = await getDatastoreClient()
+
+  const mostViewedQuery = client.createQuery(['LibraryView' + historyType])
+    .filter('userId', '=', userInfo.userId)
+    .order('viewCount', { descending: true })
+    .limit(datastoreLimit)
+  const lastViewedQuery = client.createQuery(['LibraryView' + historyType])
+    .filter('userId', '=', userInfo.userId)
+    .order('lastViewedAt', { descending: true })
+    .limit(datastoreLimit)
+
   const results = await Promise.all([
-    getDatastoreClient().then((client) => {
-      const query = client.createQuery(['LibraryView' + historyType])
-        .filter('userId', '=', userInfo.userId)
-        .order('lastViewedAt', { descending: true })
-        .limit(datastoreLimit)
-      return client.runQuery(query)
-    }),
-    getDatastoreClient().then((client) => {
-      const query = client.createQuery(['LibraryView' + historyType])
-        .filter('userId', '=', userInfo.userId)
-        .order('lastViewedAt', { descending: true })
-        .limit(datastoreLimit)
-      return client.runQuery(query)
-    })
+    client.runQuery(mostViewedQuery),
+    client.runQuery(lastViewedQuery)
   ])
 
   const hasName = (result) => {
