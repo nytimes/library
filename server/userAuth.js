@@ -38,7 +38,9 @@ router.get('/login', passport.authenticate('google', {
     'https://www.googleapis.com/auth/plus.profile.emails.read',
     'https://www.googleapis.com/auth/userinfo.profile'
   ]
-}))
+}), (req, res) => {
+  console.log('in login')
+})
 
 router.get('/logout', (req, res) => {
   req.logout()
@@ -51,8 +53,7 @@ router.get('/auth/redirect', passport.authenticate('google'), (req, res) => {
 })
 
 router.use((req, res, next) => {
-  console.log('hit middleware')
-  console.log(req.originalUrl)
+  console.log('hit middleware', req.originalUrl)
   const isDev = process.env.NODE_ENV === 'development'
   const authenticated = req.isAuthenticated()
 
