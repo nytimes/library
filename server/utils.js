@@ -61,7 +61,7 @@ exports.allMiddleware = middlewares.reduce((m, item) => {
   preload: [], postload: []
 })
 
-exports.getConfig = () => {
+const getConfig = () => {
   const defaultExists = fs.existsSync(path.join(__dirname, '../config/strings.yaml'))
   const customExists = fs.existsSync(path.join(__dirname, '../custom/strings.yaml'))
 
@@ -80,7 +80,7 @@ exports.getConfig = () => {
 }
 
 exports.stringTemplate = (configPath, ...args) => {
-  const config = exports.getConfig()
+  const config = getConfig()
   const stringConfig = deepProp(config, configPath)
   const configType = typeof stringConfig
 
