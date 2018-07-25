@@ -1,8 +1,7 @@
 {
   "name": "nyt-docs",
-  "version": "1.0.0",
   "description": "Docs generated from files in google drive",
-  "main": "index.js",
+  "main": "server/index.js",
   "dependencies": {
     "@google-cloud/datastore": "^1.4.1",
     "***REMOVED***": ">=0.0.7",
@@ -20,7 +19,6 @@
     "js-yaml": "^3.12.0",
     "lodash": "^4.17.10",
     "md5": "^2.2.1",
-    "mocha": "^3.4.2",
     "moment": "^2.22.2",
     "node-sass": "^4.9.2",
     "nodemon": "^1.18.3",
@@ -29,8 +27,6 @@
     "pretty": "^2.0.0",
     "promise-inflight": "^1.0.1",
     "slugify": "^1.2.1",
-    "supertest": "^3.0.0",
-    "supertest-as-promised": "^4.0.2",
     "unescape": "^1.0.1",
     "winston": "^2.4.0",
     "xlsx": "^0.11.0"
@@ -48,8 +44,11 @@
     "eslint-plugin-node": "^5.0.0",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
+    "mocha": "^5.2.0",
     "nock": "^9.4.1",
     "nyc": "^11.2.1",
+    "supertest": "^3.0.0",
+    "supertest-as-promised": "^4.0.2",
     "webpack": "^2.6.1",
     "webpack-dev-server": "^2.4.5"
   },
@@ -58,8 +57,8 @@
     "build": "node-sass styles/style.scss public/css/style.css",
     "debug": "node -r dotenv/config --inspect --debug-brk server/index.js",
     "watch": "concurrently \"nodemon -r dotenv/config -e js,ejs server/index.js\" \"node-sass -w styles/style.scss public/css/style.css\"",
-    "test": "NODE_ENV=test mocha test/**/*.test.js --recursive",
-    "test:cover": "NODE_ENV=test nyc --all --reporter=html --reporter=text mocha test/**/*.test.js --recursive"
+    "test": "NODE_ENV=test mocha test/**/*.test.js --recursive --exit",
+    "test:cover": "NODE_ENV=test nyc --all --reporter=html --reporter=text mocha test/**/*.test.js --recursive --exit"
   },
   "repository": {
     "type": "git",
