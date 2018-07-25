@@ -3,7 +3,7 @@
     <% const placeholder = template('search.placeholder')%>
     <% const focus = locals.focus || '' %>
     <% const msgOnFocus = placeholder || '' %>
-    <input <%= focus %> id="search-box" type="text" name="q" value="<%= locals.q %>" placeholder="<%- placeholder %>" onfocus="this.placeholder = '<%= msgOnFocus %>'" onblur="this.placeholder = <%= placeholder %>"/>
+    <input <%= focus %> id="search-box" type="text" name="q" value="<%= locals.q %>" placeholder="<%- placeholder %>" />
     <button class="icon"><i class="fa fa-search"></i></button>
   </form>
 
