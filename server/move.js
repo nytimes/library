@@ -1,6 +1,6 @@
 'use strict'
 const {google} = require('googleapis')
-const async = require('async')
+const {promisify} = require('util')
 
 const log = require('./logger')
 const {getTree, getMeta} = require('./list')
@@ -8,84 +8,86 @@ const cache = require('./cache')
 const {getAuth} = require('./auth')
 const {sortDocs, stringTemplate} = require('./utils')
 
-const teamDriveId = '***REMOVED***'
+const driveType = process.env.DRIVE_TYPE
+const driveId = process.env.DRIVE_ID
 
 // return the folder html (or at least json object) that can be templated
-exports.getFolders = (id, cb) => {
-  getTree((err, data) => {
-    if (err) return cb(err)
+exports.getFolders = async (id) => {
+  const data = await getTree()
 
-    // map to just the data that we need, the ignore the top level drive entry
-    const extended = extendTree(data)
-    const folders = Object.assign({}, selectFolders(extended), {
-      // The drive doesn't have the same props as other folders
-      prettyName: stringTemplate('branding.prettyName'),
-      isTrashCan: false
-    })
-    return cb(null, [folders])
+  // map to just the data that we need, the ignore the top level drive entry
+  const extended = extendTree(data)
+  const folders = Object.assign({}, selectFolders(extended), {
+    // The drive doesn't have the same props as other folders
+    prettyName: stringTemplate('branding.prettyName'),
+    isTrashCan: false
   })
+  return [folders]
 }
 
-exports.moveFile = (id, destination, cb) => {
+exports.moveFile = async (id, destination) => {
   const {parents, slug} = getMeta(id) || {}
   const {path: basePath} = getMeta(destination) || {}
 
-  if (!parents) return cb(Error('Not found'))
+  if (!parents) return Error('Not found')
 
-  getAuth((err, authClient) => {
-    if (err) return cb(err)
+  const authClient = await getAuth()
 
-    const drive = google.drive({version: 'v3', auth: authClient})
-    drive.files.update({
-      fileId: id,
-      addParents: [destination],
-      removeParents: parents,
-      corpora: 'teamDrive',
-      supportsTeamDrives: true,
-      includeTeamDriveItems: true,
-      teamDriveId
-    }, (err, result) => {
-      if (err) return cb(err)
+  const drive = google.drive({version: 'v3', auth: authClient})
 
-      const oldUrls = parents.map((id) => {
-        const {path} = getMeta(id) || {}
-        return path ? `${path}/${slug}` : `/${slug}`
-      })
+  const baseOptions = {
+    fileId: id,
+    addParents: [destination],
+    removeParents: parents
+  }
 
-      if (basePath === '/trash') {
-        oldUrls.forEach((url) => log.info(`TRASHED ${url}`))
-        return cb(null, '/')
-      }
+  const teamOptions = {
+    teamDriveId: driveId,
+    corpora: 'teamDrive',
+    supportsTeamDrives: true,
+    includeTeamDriveItems: true,
+    ...baseOptions
+  }
 
-      const newUrl = basePath ? `${basePath}/${slug}` : `/${slug}`
+  const options = driveType === 'shared' ? baseOptions : teamOptions
 
-      // log that we moved the page(s) to the new url
-      oldUrls.forEach((url) => {
-        log.info(`MOVED ${url} => ${newUrl}`)
-      })
+  await drive.files.update(options)
 
-      // fake the drive updating immediately by manually copying cache
-      async.parallel(oldUrls.map((url) => {
-        return (cb) => {
-          cache.get(url, cb)
-        }
-      }), (err, data) => {
-        if (err) return cb(null, '/')
+  const oldUrls = parents.map((id) => {
+    const {path} = getMeta(id) || {}
+    return path ? `${path}/${slug}` : `/${slug}`
+  })
 
-        const hasHtml = data.filter(({html}) => html && html.length)
-        if (!hasHtml.length) return cb(null, '/') // take back to the home page
+  if (basePath === '/trash') {
+    oldUrls.forEach((url) => log.info(`TRASHED ${url}`))
+    return '/'
+  }
 
-        const {id, modified, html} = hasHtml[0]
-        cache.add(id, modified, newUrl, html, (err) => {
-          if (err) {
-            log.error(err)
-            return cb(null, '/')
-          }
+  const newUrl = basePath ? `${basePath}/${slug}` : `/${slug}`
 
-          return cb(null, newUrl)
-        })
-      })
-    })
+  // log that we moved the page(s) to the new url
+  oldUrls.forEach((url) => {
+    log.info(`MOVED ${url} => ${newUrl}`)
+  })
+
+  // fake the drive updating immediately by manually copying cache
+  const data = await Promise.all(oldUrls.map((url) => {
+    const getCache = promisify(cache.get)
+    return getCache(url).catch((err) => log.error('Error getting cache', err))
+  }))
+
+  // cache stores urls and page data, make sure to find actual data object for page
+  const hasHtml = data.filter(({html}) => html && html.length)
+  if (!hasHtml.length) return '/'
+
+  const {docId, modified, html} = hasHtml[0]
+  const addToCache = promisify(cache.add)
+
+  return addToCache(docId, modified, newUrl, html).then(() => {
+    return newUrl
+  }).catch((err) => {
+    log.error('Error adding new url to cache', err)
+    return '/'
   })
 }
 

@@ -1,95 +1,80 @@
 'use strict'
 
-const express = require('express')
-const router = express.Router()
+const router = require('express-promise-router')()
 
-const async = require('async')
 const datastore = require('@google-cloud/datastore')
 const moment = require('moment')
 
 const log = require('../logger')
 const {getAuth} = require('../auth')
 const {getMeta} = require('../list')
-const {getUserInfo} = require('../utils')
 
 // Middleware to record views into Cloud Datastore
-router.use((req, res, next) => {
-  getDatastoreClient((datastoreClient) => {
-    req.on('end', () => {
-      if (res.locals.docId) {
-        const docMeta = getMeta(res.locals.docId)
-        const userInfo = getUserInfo(req)
-        if (!docMeta || !userInfo) return
-        recordView(docMeta, userInfo, datastoreClient)
-      }
-    })
-    next()
+// express-promsie-router will call next() if the return value is 'next'.
+router.use(async (req, res) => {
+  const datastoreClient = await getDatastoreClient()
+  req.on('end', () => {
+    if (res.locals.docId) {
+      const docMeta = getMeta(res.locals.docId)
+      const userInfo = req.userInfo
+      if (!docMeta || !userInfo) return
+      recordView(docMeta, userInfo, datastoreClient)
+    }
   })
+  return 'next'
 })
 
-router.get('/reading-history/docs.json', (req, res, next) => {
-  fetchHistory(getUserInfo(req), 'Doc', req.query.limit, (err, results) => {
-    if (err) return next(err)
-    res.json(results)
-  })
+router.get('/reading-history/docs.json', async (req, res) => {
+  const results = await fetchHistory(req.userInfo, 'Doc', req.query.limit)
+  res.json(results)
 })
 
-router.get('/reading-history/teams.json', (req, res, next) => {
-  fetchHistory(getUserInfo(req), 'Team', req.query.limit, (err, results) => {
-    if (err) return next(err)
-    res.json(results)
-  })
+router.get('/reading-history/teams.json', async (req, res) => {
+  const results = await fetchHistory(req.userInfo, 'Team', req.query.limit)
+  res.json(results)
 })
 
 module.exports = {
   middleware: router
 }
 
-function fetchHistory(userInfo, historyType, queryLimit, doneCb) {
-  getDatastoreClient((datastoreClient) => {
-    const limit = (parseInt(queryLimit, 10) || 5)
-    // include a bit extra that we will filter out based on other criteria later
-    const datastoreLimit = Math.ceil(limit * 1.5)
-    async.parallel([
-      (cb) => {
-        const query = datastoreClient.createQuery(['LibraryView' + historyType])
-          .filter('userId', '=', userInfo.userId)
-          .order('viewCount', { descending: true })
-          .limit(datastoreLimit)
+async function fetchHistory(userInfo, historyType, queryLimit) {
+  const limit = (parseInt(queryLimit, 10) || 5)
+  // include a bit extra that we will filter out based on other criteria later
+  const datastoreLimit = Math.ceil(limit * 1.5)
+  const client = await getDatastoreClient()
 
-        datastoreClient.runQuery(query, cb)
-      },
-      (cb) => {
-        const query = datastoreClient.createQuery(['LibraryView' + historyType])
-          .filter('userId', '=', userInfo.userId)
-          .order('lastViewedAt', { descending: true })
-          .limit(datastoreLimit)
-        datastoreClient.runQuery(query, cb)
-      }
-    ], (err, results) => {
-      if (err) {
-        doneCb(err)
-      } else {
-        const hasName = (result) => {
-          return (result && result.doc && result.doc.prettyName) ||
-                 (result && result.team && result.team.prettyName)
-        }
+  const mostViewedQuery = client.createQuery(['LibraryView' + historyType])
+    .filter('userId', '=', userInfo.userId)
+    .order('viewCount', { descending: true })
+    .limit(datastoreLimit)
+  const lastViewedQuery = client.createQuery(['LibraryView' + historyType])
+    .filter('userId', '=', userInfo.userId)
+    .order('lastViewedAt', { descending: true })
+    .limit(datastoreLimit)
 
-        const recentlyViewed = expandResults(results[1][0])
-          .filter(hasName)
-          .slice(0, limit)
+  const results = await Promise.all([
+    client.runQuery(mostViewedQuery),
+    client.runQuery(lastViewedQuery)
+  ])
 
-        const mostViewed = expandResults(results[0][0].filter((r) => { return r.viewCount >= 5 }))
-          .filter(hasName)
-          .slice(0, limit)
+  const hasName = (result) => {
+    return (result && result.doc && result.doc.prettyName) ||
+           (result && result.team && result.team.prettyName)
+  }
 
-        doneCb(null, {
-          recentlyViewed,
-          mostViewed
-        })
-      }
-    })
-  })
+  const recentlyViewed = expandResults(results[1][0])
+    .filter(hasName)
+    .slice(0, limit)
+
+  const mostViewed = expandResults(results[0][0].filter((r) => { return r.viewCount >= 5 }))
+    .filter(hasName)
+    .slice(0, limit)
+
+  return {
+    recentlyViewed,
+    mostViewed
+  }
 }
 
 // Merge full doc/folder metadata into record retrieved from Cloud Datastore
@@ -97,24 +82,20 @@ function expandResults(results) {
   return results.map((result) => {
     result.lastViewed = moment(result.lastViewedAt).fromNow()
 
-    if (result.documentId) {
-      result.doc = getMeta(result.documentId) || {}
-    }
-
-    if (result.teamId) {
-      result.team = getMeta(result.teamId) || {}
-    }
+    if (result.documentId) result.doc = getMeta(result.documentId) || {}
+    if (result.teamId) result.team = getMeta(result.teamId) || {}
 
     return result
   })
 }
 
-function getDatastoreClient(cb) {
+async function getDatastoreClient() {
   const gcpProjectId = process.env.GCP_PROJECT_ID || '***REMOVED***'
-  getAuth((authClient) => {
-    const datastoreClient = datastore({ projectId: gcpProjectId, auth: authClient })
-    cb(datastoreClient)
-  })
+
+  const authClient = await getAuth()
+
+  const datastoreClient = datastore({ projectId: gcpProjectId, authClient: authClient })
+  return datastoreClient
 }
 
 function recordView(docMeta, userInfo, datastoreClient) {

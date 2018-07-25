@@ -1,10 +1,9 @@
 'use strict'
 
-const express = require('express')
-
 const search = require('../search')
 const move = require('../move')
-const router = express.Router()
+
+const router = require('express-promise-router')()
 
 const {getTree, getMeta, getTagged} = require('../list')
 const {getTemplates, sortDocs, stringTemplate} = require('../utils')
@@ -16,46 +15,36 @@ module.exports = router
 
 const pages = getTemplates('pages')
 
-function handlePage(req, res, next) {
+// express-promsie-router will call next() if the return value is 'next'.
+async function handlePage(req, res) {
   const page = req.params.page || 'index'
-
-  if (!pages.has(page)) {
-    return next()
-  }
+  if (!pages.has(page)) return 'next'
 
   const template = `pages/${page}`
   const {q, id, dest} = req.query
   if (page === 'search' && q) {
-    return search.run(q, (err, results) => {
-      if (err) return next(err)
+    return search.run(q).then((results) => {
       res.render(template, {q, results, template: stringTemplate})
     })
   }
 
   if (page === 'move-file' && id) {
     if (!dest) {
-      return move.getFolders(id, (err, folders) => {
-        if (err) return next(err)
-        const {prettyName, parents} = getMeta(id)
-
-        res.render(template, {prettyName, folders, id, parents, template: stringTemplate})
-      })
+      const folders = await move.getFolders(id)
+      const {prettyName, parents} = getMeta(id)
+      return res.render(template, {prettyName, folders, id, parents, template: stringTemplate})
     }
 
-    return move.moveFile(id, dest, (err, newPath) => {
-      if (err) return next(err)
-
-      // if we were successful, we will be holding a new path
-      res.redirect(newPath)
+    return move.moveFile(id, dest).then((result) => {
+      res.redirect(result)
     })
   }
 
   if (page === 'categories' || page === 'index') {
-    return getTree((err, tree) => {
-      if (err) return next(err)
-      const categories = buildDisplayCategories(tree)
-      res.render(template, {...categories, template: stringTemplate})
-    })
+    const tree = await getTree()
+    const categories = buildDisplayCategories(tree)
+    res.render(template, {...categories, template: stringTemplate})
+    return
   }
 
   res.render(template, {template: stringTemplate})

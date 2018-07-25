@@ -3,7 +3,6 @@
 const inflight = require('promise-inflight')
 const {google} = require('googleapis')
 const path = require('path')
-const {promisify} = require('util')
 
 const cache = require('./cache')
 const log = require('./logger')
@@ -19,14 +18,9 @@ let docsInfo = {} // doc info by id
 let tags = {} // tags to doc id
 let driveBranches = {} // map of id to nodes
 
-exports.getTree = (cb) => {
-  if (currentTree) {
-    return cb(null, currentTree)
-  }
-
-  updateTree()
-    .then(tree => cb(null, tree))
-    .catch(cb)
+exports.getTree = async () => {
+  if (currentTree) return currentTree
+  await updateTree()
 }
 
 // exposes docs metadata
@@ -59,8 +53,7 @@ startTreeRefresh(treeUpdateDelay)
 
 async function updateTree() {
   return inflight('tree', async () => {
-    const auth = promisify(getAuth)
-    const authClient = await auth()
+    const authClient = await getAuth()
 
     const drive = google.drive({version: 'v3', auth: authClient})
     const files = await fetchAllFiles({drive})
@@ -77,16 +70,16 @@ async function updateTree() {
   })
 }
 
-function getOptions(driveType, id) {
+function getOptions(id) {
   const fields = 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)'
 
   if (driveType === 'shared') {
     return {
-      q: id.map(id => `'${id}' in parents`).join(' or '),
+      q: id.map((id) => `'${id}' in parents`).join(' or '),
       fields
     }
-  } 
-  
+  }
+
   return {
     teamDriveId: id,
     q: 'trashed = false',
@@ -100,18 +93,17 @@ function getOptions(driveType, id) {
 }
 
 async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentIds = [driveId], drive} = {}) {
-  const options = getOptions(driveType, parentIds)
+  const options = getOptions(parentIds)
 
   if (pageToken) {
     options.pageToken = pageToken
   }
 
   log.debug(`searching for files > ${listSoFar.length}`)
-  
+
   // Gets files in single folder (shared) or files listed in single page of response (team)
-  const fetchFromDrive = promisify(drive.files.list).bind(drive.files)
-  const {data} = await fetchFromDrive(options)
-  
+  const {data} = await drive.files.list(options)
+
   const {files, nextPageToken} = data
   const combined = listSoFar.concat(files)
 
@@ -126,17 +118,17 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentId
 
   // If there are no more pages and this is not a shared folder, return completed list
   if (driveType !== 'shared') return combined
-  
+
   // Continue searching if shared folder, since API only returns contents of the immediate parent folder
   // Find folders that have not yet been searched
-  const folders = combined.filter(item => 
+  const folders = combined.filter((item) =>
     item.mimeType === 'application/vnd.google-apps.folder' && parentIds.includes(item.parents[0]))
 
   if (folders.length > 0) {
     return fetchAllFiles({
       listSoFar: combined,
       drive,
-      parentIds: folders.map(folder => folder.id)
+      parentIds: folders.map((folder) => folder.id)
     })
   }
 
@@ -332,7 +324,7 @@ function cleanResourceType(mimeType) {
 
 async function startTreeRefresh(interval) {
   log.debug('updating tree...')
-  
+
   try {
     await updateTree()
     log.debug('tree updated.')

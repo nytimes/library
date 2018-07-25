@@ -1,15 +1,10 @@
 'use strict'
 
-const express = require('express')
-const {verifyIapToken} = require('***REMOVED***')
-const router = express.Router()
-const {getUserInfo} = require('../utils')
-
-router.use(verifyIapToken())
+const router = require('express-promise-router')()
 
 // return userinfo as json
-router.get('/whoami.json', (req, res, next) => {
-  res.json(getUserInfo(req))
+router.get('/whoami.json', (req, res) => {
+  res.json(req.userInfo)
 })
 
 module.exports = router
