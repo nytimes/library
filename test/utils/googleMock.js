@@ -3,6 +3,7 @@
 const fs = require('fs')
 const path = require('path')
 
+const {page1, page2, page3} = require('../fixtures/driveListing')
 const {simplePayload, rawPayload, multisectionPayload} = require('../fixtures/testHTML')
 
 const spreadsheetBuf = (() => {
@@ -17,12 +18,17 @@ exports.initMocks = (google) => {
   google.drive = () => {
     return {
       files: {
-        'export': ({mimeType, fileId}) => {
+        export: ({mimeType, fileId}) => {
           if (mimeType.includes('spreadsheetml')) return spreadsheetBuf
           if (fileId === 'mulitsection') return multisectionPayload
           return simplePayload
         },
-        'get': () => rawPayload
+        get: () => rawPayload,
+        list: ({pageToken}) => {
+          if (pageToken === 'page2') return page2
+          if (pageToken === 'page3') return page3
+          return page1
+        }
       },
       revisions: {
         get: () => {
