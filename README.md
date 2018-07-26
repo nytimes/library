@@ -57,6 +57,13 @@ This app is hosted on the [Interactive News infrastructure](***REMOVED***/wiki).
   * When you're ready to move the app to prodution, select the release tag you just created on the [prd deploy page](https://***REMOVED***/***REMOVED***/default/deploy), then click "Make this version active."
   * After deployment, visit [https://***REMOVED***/cache-purge-everything](https://***REMOVED***/cache-purge-everything) to flush the app's internal caches.
 
+
+### Deploying to Heroku
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/newsdev/nyt-library/tree/heroku-example)
+
+To deploy to Heroku, make sure to [set up a Google service account](https://console.cloud.google.com/iam-admin/serviceaccounts?_ga=***REMOVED***) and [OAuth 2.0 client](https://developers.google.com/identity/protocols/OAuth2), using http://your-app-url.com/auth/redirect as the callback url. Onces that's set, click the button to configure and deploy your app!
+
 ## Monitoring
 
 Logs: [stg](***REMOVED***&minLogLevel=0&expandAll=false&advancedFilter=resource.type%20%3D%20container%20AND%20resource.labels.cluster_name%20%3D%20%22stg-adm%22%20AND%20resource.labels.namespace_id%20%3D%20%22default%22%20AND%20resource.labels.container_name%20%3D%20%22nyt-library%22) | [prd](https://console.cloud.google.com/logs/viewer?project=***REMOVED***-prd&minLogLevel=0&expandAll=false&advancedFilter=resource.type%20%3D%20container%20AND%20resource.labels.cluster_name%20%3D%20%22prd-adm%22%20AND%20resource.labels.namespace_id%20%3D%20%22default%22%20AND%20resource.labels.container_name%20%3D%20%22nyt-library%22)

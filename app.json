@@ -5,7 +5,7 @@
   "repository": "https://github.com/newsdev/nyt-library",
   "env": {
     "GOOGLE_APPLICATION_CREDENTIALS": {
-      "description": "Your Google service account credentials. Create one [here](https://console.cloud.google.com/iam-admin/serviceaccounts?_ga=***REMOVED***).",
+      "description": "Your Google service account credentials. Create one here: https://console.cloud.google.com/iam-admin/serviceaccounts?_ga=***REMOVED***",
       "required": true
     },
     "DRIVE_TYPE": {
@@ -19,7 +19,7 @@
       "value": "***REMOVED***"
     },
     "GOOGLE_CLIENT_ID": {
-      "description": "Your Google OAuth2 Client ID. Create one [here](https://developers.google.com/identity/protocols/OAuth2)",
+      "description": "Your Google OAuth2 Client ID. Create one here: https://developers.google.com/identity/protocols/OAuth2",
       "required": true
     },
     "GOOGLE_CLIENT_SECRET": {
@@ -29,11 +29,11 @@
     "APPROVED_DOMAINS": {
       "description": "Include approved email domains.",
       "required": true,
-      "value": "yourorganization.com"
+      "value": "nytimes.com"
     },
     "SESSION_SECRET": {
       "required": true,
-      "value": "library"
+      "generator": "secret"
     },
     "NPM_TOKEN": {
       "description": "Enter an NPM token if you are using private modules",

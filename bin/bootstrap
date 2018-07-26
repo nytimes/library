@@ -1,0 +1,3 @@
+#!/usr/bin/env node
+
+// Grab app name and set it as the url
