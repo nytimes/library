@@ -20,7 +20,7 @@ describe('Tree', () => {
 
   it('should have top level children', async () => {
     const {children} = await list.getTree()
-    expect(children).to.include.keys('top-level-document-1', 'top-level-folder', 'faq')
+    expect(children).to.include.keys('top-level-document-1', 'top-level-folder', 'test-folder')
   })
 
   it('should correctly parse tags', () => {
