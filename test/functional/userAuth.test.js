@@ -4,18 +4,9 @@ const request = require('supertest')
 const {assert} = require('chai')
 const express = require('express')
 
-let app
+const app = require('../../server/index')
 
 describe('Authentication', () => {
-  before(function() {
-    this.timeout(5000)
-    process.env.GOOGLE_CLIENT_ID = 'abc123'
-    process.env.GOOGLE_CLIENT_SECRET = 'abc123'
-    process.env.SESSION_SECRET = 'abc123'
-    process.env.APPROVED_DOMAINS = 'test.com'
-    app = require('../../server/index')
-  })
-
   describe('when not logged in', () => {
     it('GET / should redirect to login if unauthenticated', (done) => {
       request(app)
@@ -46,9 +37,7 @@ describe('Authentication', () => {
     emails: [{value: 'test.user@test.com'}],
     id: '10',
     userId: '10',
-    _json: {
-      domain: 'test.com'
-    }
+    _json: {domain: 'test.com'}
   }
 
   describe('when logged in', () => {
