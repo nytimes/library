@@ -8,7 +8,7 @@ const cache = require('./cache')
 const log = require('./logger')
 const {getAuth} = require('./auth')
 const {isSupported} = require('./utils')
-const {cleanName, slugify} = require('./docs')
+const docs = require('./docs')
 
 const driveType = process.env.DRIVE_TYPE
 const driveId = process.env.DRIVE_ID
@@ -143,8 +143,8 @@ function produceTree(files, firstParent) {
     const {parents, id, name} = resource
 
     // prepare data for the individual file and store later for reference
-    const prettyName = cleanName(name)
-    const slug = slugify(prettyName)
+    const prettyName = docs.cleanName(name)
+    const slug = docs.slugify(prettyName)
     const tagString = (name.match(/\|\s*([^|]+)$/i) || [])[1] || ''
     const tags = tagString.split(',')
       .map((t) => t.trim().toLowerCase())
