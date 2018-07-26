@@ -6,13 +6,12 @@ const datastore = require('@google-cloud/datastore')
 const moment = require('moment')
 
 const log = require('../logger')
-const {getAuth: getAuthClient} = require('../auth')
 const {getMeta} = require('../list')
 
 // Middleware to record views into Cloud Datastore
 // express-promsie-router will call next() if the return value is 'next'.
 router.use(async (req, res) => {
-  const datastoreClient = await getDatastoreClient()
+  const datastoreClient = getDatastoreClient()
   req.on('end', () => {
     if (res.locals.docId) {
       const docMeta = getMeta(res.locals.docId)
@@ -42,7 +41,7 @@ async function fetchHistory(userInfo, historyType, queryLimit) {
   const limit = (parseInt(queryLimit, 10) || 5)
   // include a bit extra that we will filter out based on other criteria later
   const datastoreLimit = Math.ceil(limit * 1.5)
-  const client = await getDatastoreClient()
+  const client = getDatastoreClient()
 
   const mostViewedQuery = client.createQuery(['LibraryView' + historyType])
     .filter('userId', '=', userInfo.userId)
@@ -88,10 +87,9 @@ function expandResults(results) {
     return result
   })
 }
-
-async function getDatastoreClient() {
+function getDatastoreClient() {
   const gcpProjectId = process.env.GCP_PROJECT_ID || '***REMOVED***'
-  const datastoreClient = datastore({ projectId: gcpProjectId, auth: { getAuthClient } })
+  const datastoreClient = datastore({ projectId: gcpProjectId })
 
   return datastoreClient
 }
