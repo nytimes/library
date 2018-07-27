@@ -32,6 +32,17 @@ describe('Page getting', () => {
         })
     })
 
+    it('GET /healthcheck', (done) => {
+      request(app)
+        .get('/healthcheck')
+        .expect(200)
+        .end((err, res) => {
+          if (err) return done(err)
+          expect(res.text).to.equal('OK')
+          done()
+        })
+    })
+
     it('GET /test-folder', (done) => {
       request(app)
         .get('/test-folder')
@@ -43,6 +54,18 @@ describe('Page getting', () => {
           // check it has links to children
           expect(res.text).to.include('Article 1 in test folder')
           expect(res.text).to.include('Article 2 in test folder')
+          done()
+        })
+    })
+
+    it('GET /test-folder/', (done) => {
+      request(app)
+        // should strip trailing slash
+        .get('/test-folder/')
+        .expect(302) // Should be cached at this point
+        .end((err, res) => {
+          if (err) return done(err)
+          expect(res.text).to.equal('Found. Redirecting to /test-folder')
           done()
         })
     })

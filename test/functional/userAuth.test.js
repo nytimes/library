@@ -14,11 +14,11 @@ const userInfo = {
 }
 
 describe('Authentication', () => { // COMBAK
-  /*
   describe('when not logged in', () => {
     before(() => {
       express.request.user = {}
       express.request.userInfo = {}
+      express.request.isAuthenticated = () => false
     })
 
     it('GET / should redirect to login if unauthenticated', (done) => {
@@ -45,7 +45,7 @@ describe('Authentication', () => { // COMBAK
         })
     })
   })
-*/
+
   describe('when logged in', () => {
     before(() => {
       express.request.user = userInfo
@@ -55,6 +55,7 @@ describe('Authentication', () => { // COMBAK
         analyticsUserId: 'asdfjkl123library'
       }
       app.request.session = {passport: {user: userInfo}}
+      express.request.isAuthenticated = () => true
     })
 
     it('GET /whoami.json should return correct information', (done) => {
