@@ -1,16 +1,15 @@
 'use strict'
 
 const {google} = require('googleapis')
-const {getAuth} = require('./auth')
+const auth = require('./auth')
 const list = require('./list')
 const log = require('./logger')
-const {promisify} = require('util')
 
 const driveType = process.env.DRIVE_TYPE
 const driveId = process.env.DRIVE_ID
 
 exports.run = async (query) => {
-  const authClient = await getAuth()
+  const authClient = await auth.getAuth()
   let folderIds
 
   const drive = google.drive({version: 'v3', auth: authClient})
@@ -62,8 +61,7 @@ async function getAllFolders({nextPageToken: pageToken, drive, parentIds = [driv
     options.pageToken = pageToken
   }
 
-  const fetchFolders = promisify(drive.files.list).bind(drive.files)
-  const {data} = await fetchFolders(options)
+  const {data} = await drive.files.list(options)
 
   const {files, nextPageToken} = data
   const combined = foldersSoFar.concat(files)
