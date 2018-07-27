@@ -19,39 +19,142 @@ describe('Reading History', () => {
     app.request.session = {passport: {user: userInfo}}
   })
 
-  it('GET /reading-history/docs.json succeeds', (done) => {
-    request(app)
-      .get('/reading-history/docs.json')
-      .expect(200)
-      .end((err, res) => {
-        if (err) return done(err)
-        const json = JSON.parse(res.text)
-        expect(json).to.have.keys('recentlyViewed', 'mostViewed')
-        done()
-      })
+  describe('GET /reading-history/docs.json', () => {
+    it('should succeed', (done) => {
+      request(app)
+        .get('/reading-history/docs.json')
+        .expect(200)
+        .end((err, res) => {
+          if (err) return done(err)
+          const json = JSON.parse(res.text)
+          expect(json).to.have.keys('recentlyViewed', 'mostViewed')
+          done()
+        })
+    })
+
+    it('should have correct docs', (done) => {
+      request(app)
+        .get('/reading-history/docs.json')
+        .expect(200)
+        .end((err, res) => {
+          if (err) return done(err)
+          const {recentlyViewed, mostViewed} = JSON.parse(res.text)
+          const recentIds = recentlyViewed.map((obj) => obj.documentId)
+          const mostIds = mostViewed.map((obj) => obj.documentId)
+          expect(recentIds).to.include(
+            'xxxxxJ7S71V0K0z_P6XvDkdh4aIYO8AbMeVjfXDxxxxxJFbiE',
+            'xxxxxZjvhyI8uWoQpCFRmdLrLc5yyD1sjEVCkFrxxxxxdU6JQ',
+            'xxxxxhd7b-l4h2N3JfjOtxkudx1Zs0M9g09RporxxxxxBq6z8',
+            'xxxxxlLU3WQO9D_BmsCHu0R8teQwiRfNRPRl8AlxxxxxjaVts'
+          )
+          expect(mostIds).to.include(
+            'xxxxxJ7S71V0K0z_P6XvDkdh4aIYO8AbMeVjfXDxxxxxJFbiE',
+            'xxxxxZjvhyI8uWoQpCFRmdLrLc5yyD1sjEVCkFrxxxxxdU6JQ',
+            'xxxxxhd7b-l4h2N3JfjOtxkudx1Zs0M9g09RporxxxxxBq6z8'
+          )
+          done()
+        })
+    })
+
+    it('should have correct recent doc info', (done) => {
+      request(app)
+        .get('/reading-history/docs.json')
+        .expect(200)
+        .end((err, res) => {
+          if (err) return done(err)
+          const {recentlyViewed} = JSON.parse(res.text)
+          const {doc} = recentlyViewed.filter(({documentId}) => {
+            return documentId === 'xxxxxJ7S71V0K0z_P6XvDkdh4aIYO8AbMeVjfXDxxxxxJFbiE'
+          })[0]
+          expect(doc.id).equals('xxxxxJ7S71V0K0z_P6XvDkdh4aIYO8AbMeVjfXDxxxxxJFbiE')
+          expect(doc.name).equals('Article in recently viewed | tagtest')
+          expect(doc.prettyName).equals('Article in recently viewed')
+          expect(doc.mimeType).equals('application/vnd.google-apps.document')
+          expect(doc.tags).to.include('tagtest')
+          expect(doc.slug).equals('article-in-recently-viewed')
+          done()
+        })
+    })
+
+    it('should have correct most viewed doc info', (done) => {
+      request(app)
+        .get('/reading-history/docs.json')
+        .expect(200)
+        .end((err, res) => {
+          if (err) return done(err)
+          const {recentlyViewed} = JSON.parse(res.text)
+          const {doc} = recentlyViewed.filter(({documentId}) => {
+            return documentId === 'xxxxxZjvhyI8uWoQpCFRmdLrLc5yyD1sjEVCkFrxxxxxdU6JQ'
+          })[0]
+          expect(doc.id).equals('xxxxxZjvhyI8uWoQpCFRmdLrLc5yyD1sjEVCkFrxxxxxdU6JQ')
+          expect(doc.name).equals('Article IoHwo')
+          expect(doc.prettyName).equals('Article IoHwo')
+          expect(doc.mimeType).equals('application/vnd.google-apps.document')
+          expect(doc.tags).to.be.empty
+          expect(doc.slug).equals('article-iohwo')
+          done()
+        })
+    })
   })
 
-  it('GET /reading-history/docs.json has correct docs', (done) => {
-    request(app)
-      .get('/reading-history/docs.json')
-      .expect(200)
-      .end((err, res) => {
-        if (err) return done(err)
-        const {recentlyViewed, mostViewed} = JSON.parse(res.text)
-        const recentIds = recentlyViewed.map((obj) => obj.documentId)
-        const mostIds = mostViewed.map((obj) => obj.documentId)
-        expect(recentIds).to.include(
-          'xxxxxJ7S71V0K0z_P6XvDkdh4aIYO8AbMeVjfXDxxxxxJFbiE',
-          'xxxxxZjvhyI8uWoQpCFRmdLrLc5yyD1sjEVCkFrxxxxxdU6JQ',
-          'xxxxxhd7b-l4h2N3JfjOtxkudx1Zs0M9g09RporxxxxxBq6z8',
-          'xxxxxlLU3WQO9D_BmsCHu0R8teQwiRfNRPRl8AlxxxxxjaVts'
-        )
-        expect(mostIds).to.include(
-          'xxxxxJ7S71V0K0z_P6XvDkdh4aIYO8AbMeVjfXDxxxxxJFbiE',
-          'xxxxxZjvhyI8uWoQpCFRmdLrLc5yyD1sjEVCkFrxxxxxdU6JQ',
-          'xxxxxhd7b-l4h2N3JfjOtxkudx1Zs0M9g09RporxxxxxBq6z8'
-        )
-        done()
-      })
+  describe('GET /reading-history/teams.json', () => {
+    it('should succeed', (done) => {
+      request(app)
+        .get('/reading-history/teams.json')
+        .expect(200)
+        .end((err, res) => {
+          if (err) return done(err)
+          const json = JSON.parse(res.text)
+          expect(json).to.have.keys('recentlyViewed', 'mostViewed')
+          done()
+        })
+    })
+
+    it('should have correct teams', (done) => {
+      request(app)
+        .get('/reading-history/teams.json')
+        .expect(200)
+        .end((err, res) => {
+          if (err) return done(err)
+          const {recentlyViewed, mostViewed} = JSON.parse(res.text)
+          const recentIds = recentlyViewed.map((obj) => obj.teamId)
+          const mostIds = mostViewed.map((obj) => obj.teamId)
+          expect(recentIds).to.include(
+            'xxxxxbiOr5xN_Z3RpbERYdnxxxxxd1TDQ',
+            'xxxxxCF5lovN5fv1FY5JGMHChB7Ixxxxxn7sSX',
+            'xxxxxHdNDs0WL7UROAgvR6PpeOQ4xxxxxbzc85',
+            'xxxxxJOeJisUARNajc1er77iUqbRxxxxx1JLRT',
+            'xxxxxyeFAwx1EW0VNs3yVacUXRVoxxxxxsV21W'
+          )
+          expect(mostIds).to.include(
+            'xxxxxbiOr5xN_Z3RpbERYdnxxxxxd1TDQ',
+            'xxxxxCF5lovN5fv1FY5JGMHChB7Ixxxxxn7sSX',
+            'xxxxxHdNDs0WL7UROAgvR6PpeOQ4xxxxxbzc85',
+            'xxxxxJOeJisUARNajc1er77iUqbRxxxxx1JLRT',
+            'xxxxxyeFAwx1EW0VNs3yVacUXRVoxxxxxsV21W'
+          )
+          done()
+        })
+    })
+
+    it('should have correct recent team info', (done) => {
+      request(app)
+        .get('/reading-history/teams.json')
+        .expect(200)
+        .end((err, res) => {
+          if (err) return done(err)
+          const {recentlyViewed} = JSON.parse(res.text)
+          const {team} = recentlyViewed.filter(({teamId}) => {
+            return teamId === 'xxxxxCF5lovN5fv1FY5JGMHChB7Ixxxxxn7sSX'
+          })[0]
+          expect(team.id).equals('xxxxxCF5lovN5fv1FY5JGMHChB7Ixxxxxn7sSX')
+          expect(team.name).equals('Team Folder 2 | team')
+          expect(team.prettyName).equals('Team Folder 2')
+          expect(team.mimeType).equals('application/vnd.google-apps.folder')
+          expect(team.tags).to.include('team')
+          expect(team.slug).equals('team-folder-2')
+          done()
+        })
+    })
   })
 })
