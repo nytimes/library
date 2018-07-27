@@ -129,4 +129,4 @@ datastore.prototype.get = async () => {
   ]
 }
 
-datastore.prototype.upsert = () => true
+datastore.prototype.upsert = () => Promise.resolve(true)
