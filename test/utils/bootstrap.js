@@ -117,3 +117,16 @@ datastore.prototype.runQuery = ({
     ]
   }
 }
+
+datastore.prototype.get = async () => {
+  return [
+    {
+      viewCount: 5,
+      lastViewedAt: '2017-09-08T15:48:55.751Z',
+      userId: '10',
+      email: 'test.user@nytimes.com'
+    }
+  ]
+}
+
+datastore.prototype.upsert = () => true
