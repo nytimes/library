@@ -1,9 +1,15 @@
 'use strict'
 
 const {expect} = require('chai')
+let {google} = require('googleapis')
+const proxyquire = require('proxyquire').noPreserveCache()
+const sinon = require('sinon')
 
-const search = require('../../server/search')
-const auth = require('../../server/auth')
+let auth = require('../../server/auth')
+let list = require('../../server/list')
+let search = require('../../server/search')
+const {page1, page2, page3} = require('../fixtures/driveListing')
+
 /* eslint-disable no-unused-expressions */
 
 describe('Search', () => {
@@ -11,7 +17,7 @@ describe('Search', () => {
   describe('when not authenticated', () => {
     let oldAuth
     before(() => {
-      oldAuth = auth
+      oldAuth = auth.getAuth
       auth.getAuth = function() {
         return new Promise((resolve, reject) => {
           reject(Error('error occured'))
@@ -25,46 +31,87 @@ describe('Search', () => {
           expect(err).to.exist
         })
     })
+
+    after(() => {
+      auth.getAuth = oldAuth
+    })
   })
 
-  // it('should successfully be able to fetch a tree', async () => {
-  //   const tree = await list.getTree()
-  //   expect(tree.children).to.exist // eslint-disable-line no-unused-expressions
-  // })
+  describe('in shared drive', () => {
+    before(() => {
+      // process.env.DRIVE_TYPE = 'shared'
 
-  // it('should contain top level items', async () => {
-  //   const tree = await list.getTree()
-  //   expect(tree).to.include.keys(
-  //     'breadcrumb', 'children', 'home', 'id', 'nodeType', 'sort'
-  //   )
-  // })
+      // // reload search.js to use env var
+      search = proxyquire('../../server/search', {})
+      //   google: {
+      //     drive: function() {
+      //       return {
+      //         files: {
+      //           list: {
 
-  // it('should have top level children', async () => {
-  //   const {children} = await list.getTree()
-  //   expect(children).to.include.keys('top-level-document-1', 'top-level-folder', 'test-folder')
-  // })
+      //           }
+      //         }
+      //       }
+      //     }
+      //   }
+      // })
 
-  // it('should correctly parse tags', () => {
-  //   expect(list.getTagged('home')).to.include('xxxxxhz2Km1y-dFv3AVeUD4fkIdh6syCL8NDV2NxxxxxiTe74')
-  //   expect(list.getTagged('hidden')).to.include('xxxxxHopd4F8UZ5o0DdiQHf5phvLWvqpWpcWCByxxxxxc8960')
-  // })
+    })
 
-  // it('should correctly report children', () => {
-  //   const {children} = list.getChildren('xxxxxSgXzlz_9VWItb3V0UExxxxxU2X1U')
-  //   expect(children.length).to.equal(6)
-  //   expect(children).to.include(
-  //     'xxxxxy_mPdkoj1yR_3Xz5d6-uOjGot_CvgzVzROxxxxxpRzuU',
-  //     'xxxxx0VTyJVjdf0ozpd68iTQ9-QMpG3MMElroRexxxxxQ2zhA',
-  //     'xxxxxIPPZm2jTh8T3qav2OiPQ2KfHUfICpo8VOKxxxxxKjzrE',
-  //     'xxxxxdBk63JDd1Ra0q2tfVDr_Ubn9H16-7xWax9xxxxxadXes',
-  //     'xxxxx5OF9xg6EapqBP5cPxrwAaXxxeMG6r0IpAvxxxxxxrGtY',
-  //     'xxxxxXifc2UmJOTZUcE9GYUxxxxx1MTjQ'
-  //   )
-  // })
+    it('should query for folders first', async () => {
+      const listFilesSpy = sinon.spy(listFiles)
+      google.drive = function sharedDrive() {
+        return {
+          files: {
+            list: listFilesSpy
+          }
+        }
+      }
+      const results = await search.run('test', 'shared')
 
-  // it('should be able to fetch all routes', () => {
-  //   const routes = list.getAllRoutes()
-  //   expect(routes).to.exist
-  //   expect(routes).to.not.be.empty
-  // })
+      expect(listFilesSpy.args[0][0].q).to.include("application/vnd.google-apps.folder")
+    })
+
+    it('should construct a query string with folder parent ids')
+
+
+    after(() => {
+    })
+  })
+
+  describe('in team drive', () => {
+    it('should search directly for folders')
+  })
+
+  describe('result handling', () => {
+    it('should not show trashed files')
+
+    it('should not show hidden files')
+
+    it('should throw an error if searching fails')
+
+  })
 })
+
+
+function listFiles({pageToken, ...options}) {
+  // if (options.q.includes("mimeType = 'application/vnd.google-apps.folder'")) {
+    if (pageToken === 'page2') return {data: {files: onlyFolders(page2), nextPageToken: 'page3'}}
+    if (pageToken === 'page3') return {data: {files: onlyFolders(page3)}}
+    return {data: {files: onlyFolders(page1), nextPageToken: 'page2'}}
+  // } 
+
+  // if (options.q.includes("mimeType != 'application/vnd.google-apps.folder'")) {
+  //   if (pageToken === 'page2') return page2
+  //   if (pageToken === 'page3') return page3
+  //   return page1
+  // }
+}
+
+function onlyFolders(page) {
+  return page.data.files
+          .filter(obj => obj.mimeType === 'application/vnd.google-apps.folder' && !obj.parents.includes(process.env.DRIVE_ID))
+}
+
+
+
