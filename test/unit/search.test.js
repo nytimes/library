@@ -18,10 +18,8 @@ describe('Search', () => {
     let oldAuth
     before(() => {
       oldAuth = auth.getAuth
-      auth.getAuth = function() {
-        return new Promise((resolve, reject) => {
-          reject(Error('error occured'))
-        })
+      auth.getAuth = () => {
+        throw Error('error occured')
       }
     })
 
@@ -47,7 +45,7 @@ describe('Search', () => {
 
     it('should query for folders, then files', async () => {
       const listFilesSpy = sinon.spy(listZeroFiles)
-      google.drive = function sharedDrive() {
+      google.drive = () => {
         return {
           files: {
             list: listFilesSpy
@@ -64,7 +62,7 @@ describe('Search', () => {
 
     it('should construct a query string with folder parent ids', async () => {
       const listFilesSpy = sinon.spy(listSearchResults)
-      google.drive = function sharedDrive() {
+      google.drive = () => {
         return {
           files: {
             list: listFilesSpy
@@ -91,7 +89,7 @@ describe('Search', () => {
 
     it('should search directly for folders', async () => {
       const listFilesSpy = sinon.spy(listZeroFiles)
-      google.drive = function sharedDrive() {
+      google.drive = () => {
         return {
           files: {
             list: listFilesSpy
@@ -103,18 +101,81 @@ describe('Search', () => {
 
       expect(listFilesSpy.calledOnce).to.be.true
       expect(listFilesSpy.args[0][0].q).to.include("mimeType != \'application/vnd.google-apps.folder\'")
+      expect(listFilesSpy.args[0][0].teamDriveId).to.equal(process.env.DRIVE_ID)
     })
   })
 
   describe('result handling', () => {
-    it('should not show trashed files', async () => {
+    before(() => {
+      process.env.DRIVE_TYPE = 'team'
+      search = proxyquire('../../server/search', {})
 
+      google.drive = () => {
+        return {
+          files: {
+            list: listSearchResults
+          }
+        }
+      }
     })
 
-    it('should not show hidden files')
+    it('should return an array of files', async () => {
+      list.getMeta = fileId => {
+        return {id: fileId, path: '/', tags: ['test']}
+      }
 
-    it('should throw an error if searching fails')
+      const results = await search.run('test')
 
+      expect(results).to.be.an('array')
+      expect(results[0]).to.be.an('object')
+      expect(Object.keys(results[0])).to.include('id')
+    })
+
+    it('should not show trashed files', async () => {
+      list.getMeta = fileId => ({id: fileId, path: '/trash', tags: []})
+
+      const results = await search.run('test')
+      expect(results).to.be.empty
+    })
+
+    it('should not show hidden files', async () => {
+      list.getMeta = fileId => ({id: fileId, path: '/', tags: ['hidden']})
+
+      const results = await search.run('test')
+      expect(results).to.be.empty
+    })
+
+    it('should produce empty array when no results found', async () => {
+      list.getMeta = fileId => ({id: fileId, path: '/', tags: []})
+
+      google.drive = () => {
+        return {
+          files: {
+            list: listZeroFiles
+          }
+        }
+      }
+
+      const results = await search.run('test')
+      expect(results).to.be.empty
+    })
+
+    it('should throw an error if searching fails', async () => {
+      google.drive = () => {
+        return {
+          files: {
+            list: () => {
+              throw Error('Error occured')
+            }
+          }
+        }
+      }
+
+      await search.run('test')
+        .catch((err) => {
+          expect(err).to.exist
+        })
+    })
   })
 })
 
@@ -142,5 +203,3 @@ function onlyFiles(page) {
   return page.data.files
           .filter(obj => obj.mimeType !== 'application/vnd.google-apps.folder')
 }
-
-
