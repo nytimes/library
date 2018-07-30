@@ -5,9 +5,10 @@ const auth = require('./auth')
 const list = require('./list')
 const log = require('./logger')
 
+const driveType = process.env.DRIVE_TYPE
 const driveId = process.env.DRIVE_ID
 
-exports.run = async (query, driveType='team') => {
+exports.run = async (query) => {
   const authClient = await auth.getAuth()
   let folderIds
 
@@ -17,7 +18,7 @@ exports.run = async (query, driveType='team') => {
     folderIds = await getAllFolders({drive})
   }
 
-  const files = await fullSearch({drive, query, folderIds, driveType})
+  const files = await fullSearch({drive, query, folderIds})
     .catch((err) => {
       log.error(`Error when searching for ${query}, ${err}`)
       throw err
@@ -30,8 +31,8 @@ exports.run = async (query, driveType='team') => {
   return fileMetas
 }
 
-async function fullSearch({drive, query, folderIds, results = [], nextPageToken: pageToken, driveType}) {
-  const options = getOptions(query, folderIds, driveType)
+async function fullSearch({drive, query, folderIds, results = [], nextPageToken: pageToken}) {
+  const options = getOptions(query, folderIds)
 
   if (pageToken) {
     options.pageToken = pageToken
@@ -43,7 +44,7 @@ async function fullSearch({drive, query, folderIds, results = [], nextPageToken:
   const total = results.concat(files)
 
   if (nextPageToken) {
-    return fullSearch({drive, query, results: total, nextPageToken, folderIds, driveType})
+    return fullSearch({drive, query, results: total, nextPageToken, folderIds})
   }
 
   return total
@@ -86,7 +87,7 @@ async function getAllFolders({nextPageToken: pageToken, drive, parentIds = [driv
   return combined.map((folder) => folder.id)
 }
 
-function getOptions(query, folderIds, driveType) {
+function getOptions(query, folderIds) {
   const fields = '*'
 
   if (driveType === 'shared') {

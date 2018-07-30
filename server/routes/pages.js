@@ -8,8 +8,6 @@ const router = require('express-promise-router')()
 const {getTree, getMeta, getTagged} = require('../list')
 const {getTemplates, sortDocs, stringTemplate} = require('../utils')
 
-const driveType = process.env.DRIVE_TYPE
-
 router.get('/', handlePage)
 router.get('/:page', handlePage)
 
@@ -25,7 +23,7 @@ async function handlePage(req, res) {
   const template = `pages/${page}`
   const {q, id, dest} = req.query
   if (page === 'search' && q) {
-    return search.run(q, driveType).then((results) => {
+    return search.run(q).then((results) => {
       res.render(template, {q, results, template: stringTemplate})
     })
   }

@@ -8,7 +8,7 @@ const sinon = require('sinon')
 let auth = require('../../server/auth')
 let list = require('../../server/list')
 let search = require('../../server/search')
-const {page1, page2, page3} = require('../fixtures/driveListing')
+const {page1} = require('../fixtures/driveListing')
 
 /* eslint-disable no-unused-expressions */
 
@@ -39,27 +39,14 @@ describe('Search', () => {
 
   describe('in shared drive', () => {
     before(() => {
-      // process.env.DRIVE_TYPE = 'shared'
+      process.env.DRIVE_TYPE = 'shared'
 
-      // // reload search.js to use env var
+      // reload search.js to use env var
       search = proxyquire('../../server/search', {})
-      //   google: {
-      //     drive: function() {
-      //       return {
-      //         files: {
-      //           list: {
-
-      //           }
-      //         }
-      //       }
-      //     }
-      //   }
-      // })
-
     })
 
-    it('should query for folders first', async () => {
-      const listFilesSpy = sinon.spy(listFiles)
+    it('should query for folders, then files', async () => {
+      const listFilesSpy = sinon.spy(listZeroFiles)
       google.drive = function sharedDrive() {
         return {
           files: {
@@ -67,24 +54,62 @@ describe('Search', () => {
           }
         }
       }
-      const results = await search.run('test', 'shared')
-
-      expect(listFilesSpy.args[0][0].q).to.include("application/vnd.google-apps.folder")
+      
+      await search.run('test')
+      
+      expect(listFilesSpy.calledTwice).to.be.true
+      expect(listFilesSpy.args[0][0].q).to.include("mimeType = \'application/vnd.google-apps.folder\'")
+      expect(listFilesSpy.args[1][0].q).to.include("mimeType != \'application/vnd.google-apps.folder\'")
     })
 
-    it('should construct a query string with folder parent ids')
+    it('should construct a query string with folder parent ids', async () => {
+      const listFilesSpy = sinon.spy(listSearchResults)
+      google.drive = function sharedDrive() {
+        return {
+          files: {
+            list: listFilesSpy
+          }
+        }
+      }
+      const folderIds = onlyFolders(page1).map(obj => obj.id)
+      const str = `(${folderIds.map((id) => `'${id}' in parents`).join(' or ')})`
 
-
-    after(() => {
+      await search.run('test')
+      // expect second call to drive.files to use the ids of the fetched folder ids
+      expect(listFilesSpy.calledTwice).to.be.true
+      expect(listFilesSpy.args[1][0].q).to.include(str)
     })
   })
 
   describe('in team drive', () => {
-    it('should search directly for folders')
+
+    before(() => {
+      process.env.DRIVE_TYPE = 'team'
+
+      search = proxyquire('../../server/search', {})
+    })
+
+    it('should search directly for folders', async () => {
+      const listFilesSpy = sinon.spy(listZeroFiles)
+      google.drive = function sharedDrive() {
+        return {
+          files: {
+            list: listFilesSpy
+          }
+        }
+      }
+      
+      await search.run('test')
+
+      expect(listFilesSpy.calledOnce).to.be.true
+      expect(listFilesSpy.args[0][0].q).to.include("mimeType != \'application/vnd.google-apps.folder\'")
+    })
   })
 
   describe('result handling', () => {
-    it('should not show trashed files')
+    it('should not show trashed files', async () => {
+
+    })
 
     it('should not show hidden files')
 
@@ -94,18 +119,18 @@ describe('Search', () => {
 })
 
 
-function listFiles({pageToken, ...options}) {
-  // if (options.q.includes("mimeType = 'application/vnd.google-apps.folder'")) {
-    if (pageToken === 'page2') return {data: {files: onlyFolders(page2), nextPageToken: 'page3'}}
-    if (pageToken === 'page3') return {data: {files: onlyFolders(page3)}}
-    return {data: {files: onlyFolders(page1), nextPageToken: 'page2'}}
-  // } 
+function listZeroFiles() {
+  return {data: {files: []}}
+}
 
-  // if (options.q.includes("mimeType != 'application/vnd.google-apps.folder'")) {
-  //   if (pageToken === 'page2') return page2
-  //   if (pageToken === 'page3') return page3
-  //   return page1
-  // }
+function listSearchResults({pageToken, q}) {
+  if (q.includes("mimeType = 'application/vnd.google-apps.folder'")) {
+    return {data: {files: onlyFolders(page1)}}
+  } 
+
+  if (q.includes("mimeType != 'application/vnd.google-apps.folder'")) {
+    return {data: {files: onlyFiles(page1)}}
+  }
 }
 
 function onlyFolders(page) {
@@ -113,5 +138,9 @@ function onlyFolders(page) {
           .filter(obj => obj.mimeType === 'application/vnd.google-apps.folder' && !obj.parents.includes(process.env.DRIVE_ID))
 }
 
+function onlyFiles(page) {
+  return page.data.files
+          .filter(obj => obj.mimeType !== 'application/vnd.google-apps.folder')
+}
 
 
