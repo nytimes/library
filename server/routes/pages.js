@@ -22,6 +22,7 @@ async function handlePage(req, res) {
 
   const template = `pages/${page}`
   const {q, id, dest} = req.query
+  console.log('query: ', req.query)
   if (page === 'search' && q) {
     return search.run(q).then((results) => {
       res.render(template, {q, results, template: stringTemplate})
@@ -29,12 +30,16 @@ async function handlePage(req, res) {
   }
 
   if (page === 'move-file' && id) {
+    console.log('on page move file for', id)
     if (!dest) {
+      console.log('no dest')
       const folders = await move.getFolders(id)
       const {prettyName, parents} = getMeta(id)
+      console.log('got meta', getMeta(id))
       return res.render(template, {prettyName, folders, id, parents, template: stringTemplate})
     }
 
+    console.log('going to move to', dest)
     return move.moveFile(id, dest).then((result) => {
       res.redirect(result)
     })
