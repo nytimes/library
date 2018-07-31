@@ -1,5 +1,5 @@
 'use strict'
-/* eslint-disable no-unused-expressions */
+
 const {expect} = require('chai')
 
 const errorHandler = require('../../server/routes/errors')
@@ -38,7 +38,7 @@ describe('Error Handler', () => {
     errorHandler({}, req, res, () => {})
     const {template, opts} = res.renderResults
     expect(template).equals('errors/500')
-    expect(opts.err).to.be.empty
+    expect(opts.err).to.be.empty // eslint-disable-line no-unused-expressions
     expect(opts.template).to.be.a('function')
   })
 })

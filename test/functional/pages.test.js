@@ -1,7 +1,5 @@
 'use strict'
 
-/* eslint-disable no-unused-expressions */
-
 const request = require('supertest')
 const {expect} = require('chai')
 

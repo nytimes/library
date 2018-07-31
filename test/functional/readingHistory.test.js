@@ -1,5 +1,5 @@
 'use strict'
-/* eslint-disable no-unused-expressions */
+
 const request = require('supertest')
 const {expect} = require('chai')
 
@@ -81,7 +81,7 @@ describe('Reading History', () => {
           expect(doc.name).equals('Article IoHwo')
           expect(doc.prettyName).equals('Article IoHwo')
           expect(doc.mimeType).equals('application/vnd.google-apps.document')
-          expect(doc.tags).to.be.empty
+          expect(doc.tags).to.be.empty // eslint-disable-line no-unused-expressions
           expect(doc.slug).equals('article-iohwo')
         })
     })
@@ -127,7 +127,8 @@ describe('Reading History', () => {
       return request(app)
         .get('/reading-history/teams.json')
         .expect(200)
-        .then((res) => {          const {recentlyViewed} = JSON.parse(res.text)
+        .then((res) => {
+          const {recentlyViewed} = JSON.parse(res.text)
           const {team} = recentlyViewed.filter(({teamId}) => {
             return teamId === 'xxxxxCF5lovN5fv1FY5JGMHChB7Ixxxxxn7sSX'
           })[0]
