@@ -121,7 +121,7 @@ describe('Docs', () => {
   })
 
   describe('Fetching html', () => {
-    it('should successully fetch html', async () => {
+    it('should fetch html document from drive', async () => {
       const sheet = await fetchDoc('id1', 'text/html', {})
       expect(sheet).to.include.keys('html', 'originalRevision')
     })

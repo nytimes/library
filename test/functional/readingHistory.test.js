@@ -17,8 +17,8 @@ describe('Reading History', () => {
     app.request.session = {passport: {user: userInfo}}
   })
 
-  describe('GET /reading-history/docs.json', () => {
-    it('should succeed', () => {
+  describe('for documents', () => {
+    it('should return 200 with json', () => {
       return request(app)
         .get('/reading-history/docs.json')
         .expect(200)
@@ -87,8 +87,8 @@ describe('Reading History', () => {
     })
   })
 
-  describe('GET /reading-history/teams.json', () => {
-    it('should succeed', () => {
+  describe('for teams', () => {
+    it('should return 200 with json', () => {
       return request(app)
         .get('/reading-history/teams.json')
         .expect(200)
