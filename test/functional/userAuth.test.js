@@ -13,7 +13,7 @@ const userInfo = {
   _json: {domain: 'test.com'}
 }
 
-describe('Authentication', () => { // COMBAK
+describe('Authentication', () => {
   describe('when not logged in', () => {
     before(() => {
       express.request.user = {}
@@ -21,27 +21,23 @@ describe('Authentication', () => { // COMBAK
       express.request.isAuthenticated = () => false
     })
 
-    it('GET / should redirect to login if unauthenticated', (done) => {
-      request(app)
+    it('GET / should redirect to login if unauthenticated', () => {
+      return request(app)
         .get('/')
         .expect(302) // expect user to be found
-        .end((err, res) => {
-          if (err) return done(err)
+        .then((res) => {
           assert(res.redirect)
           assert.equal(res.text, 'Found. Redirecting to /login')
-          done()
         })
     })
 
-    it('GET a path should redirect to login if unauthenticated', (done) => {
-      request(app)
+    it('GET a path should redirect to login if unauthenticated', () => {
+      return request(app)
         .get('/foo/bar')
         .expect(302)
-        .end((err, res) => {
-          if (err) return done(err)
+        .then((res) => {
           assert(res.redirect)
           assert.equal(res.text, 'Found. Redirecting to /login')
-          done()
         })
     })
   })
@@ -58,30 +54,26 @@ describe('Authentication', () => { // COMBAK
       express.request.isAuthenticated = () => true
     })
 
-    it('GET /whoami.json should return correct information', (done) => {
-      request(app)
+    it('GET /whoami.json should return correct information', () => {
+      return request(app)
         .get('/whoami.json')
         .expect(200) // expect user to be found
         .expect('Content-Type', /json/)
-        .end((err, res) => {
-          if (err) return done(err)
+        .then((res) => {
           const whoami = JSON.parse(JSON.stringify(res.body))
           assert.equal(whoami.email, 'test.user@test.com')
           assert.equal(whoami.userId, '10')
           assert.equal(whoami.analyticsUserId, 'asdfjkl123library')
-          done()
         })
     })
 
-    it('GET /logout should redirect to /', (done) => {
-      request(app)
+    it('GET /logout should redirect to /', () => {
+      return request(app)
         .get('/logout')
         .expect(302) // expect user to be found
-        .end((err, res) => {
-          if (err) return done(err)
+        .then((res) => {
           assert(res.redirect)
           assert.equal(res.text, 'Found. Redirecting to /')
-          done()
         })
     })
   })

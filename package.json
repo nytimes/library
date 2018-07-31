@@ -49,7 +49,6 @@
     "nyc": "^11.2.1",
     "sinon": "^6.1.4",
     "supertest": "^3.0.0",
-    "supertest-as-promised": "^4.0.2",
     "webpack": "^2.6.1",
     "webpack-dev-server": "^2.4.5"
   },

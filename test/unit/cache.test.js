@@ -1,6 +1,6 @@
 'use strict'
 
-const request = require('supertest-as-promised')
+const request = require('supertest')
 const assert = require('assert')
 const bluebird = require('bluebird')
 const moment = require('moment')

@@ -3,7 +3,6 @@
 const {expect} = require('chai')
 
 const list = require('../../server/list')
-/* eslint-disable no-unused-expressions */
 
 describe('Tree', () => {
   it('should successfully be able to fetch a tree', async () => {
@@ -43,7 +42,7 @@ describe('Tree', () => {
 
   it('should be able to fetch all routes', () => {
     const routes = list.getAllRoutes()
-    expect(routes).to.exist
-    expect(routes).to.not.be.empty
+    expect(routes).to.exist // eslint-disable-line no-unused-expressions
+    expect(routes).to.not.be.empty // eslint-disable-line no-unused-expressions
   })
 })
