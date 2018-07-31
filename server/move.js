@@ -3,7 +3,7 @@ const {google} = require('googleapis')
 const {promisify} = require('util')
 
 const log = require('./logger')
-const {getTree, getMeta} = require('./list')
+const list = require('./list')
 const cache = require('./cache')
 const {getAuth} = require('./auth')
 const {sortDocs, stringTemplate} = require('./utils')
@@ -12,7 +12,7 @@ const driveId = process.env.DRIVE_ID
 
 // return the folder html (or at least json object) that can be templated
 exports.getFolders = async () => {
-  const data = await getTree()
+  const data = await list.getTree()
 
   // map to just the data that we need, the ignore the top level drive entry
   const extended = extendTree(data)
@@ -26,8 +26,8 @@ exports.getFolders = async () => {
 }
 
 exports.moveFile = async (id, destination, driveType='team') => {
-  const {parents, slug} = getMeta(id) || {}
-  const {path: basePath} = getMeta(destination) || {}
+  const {parents, slug} = list.getMeta(id) || {}
+  const {path: basePath} = list.getMeta(destination) || {}
 
   if (!parents) return Error('Not found')
 
@@ -50,11 +50,10 @@ exports.moveFile = async (id, destination, driveType='team') => {
   }
 
   const options = driveType === 'shared' ? baseOptions : teamOptions
-  console.log(options)
   await drive.files.update(options)
 
   const oldUrls = parents.map((id) => {
-    const {path} = getMeta(id) || {}
+    const {path} = list.getMeta(id) || {}
     return path ? `${path}/${slug}` : `/${slug}`
   })
 
@@ -64,8 +63,6 @@ exports.moveFile = async (id, destination, driveType='team') => {
   }
 
   const newUrl = basePath ? `${basePath}/${slug}` : `/${slug}`
-  console.log(newUrl)
-  console.log(oldUrls)
 
   // log that we moved the page(s) to the new url
   oldUrls.forEach((url) => {
@@ -97,7 +94,7 @@ exports.moveFile = async (id, destination, driveType='team') => {
 
 // converts raw tree data used for routing into sorted lists with resource
 function extendTree({id, children: keys}) {
-  const {prettyName, resourceType, sort, isTrashCan} = getMeta(id) || {}
+  const {prettyName, resourceType, sort, isTrashCan} = list.getMeta(id) || {}
 
   const children = Object.values(keys || {})
   const extended = children && children.length && !isTrashCan
