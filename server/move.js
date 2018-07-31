@@ -8,7 +8,6 @@ const cache = require('./cache')
 const {getAuth} = require('./auth')
 const {sortDocs, stringTemplate} = require('./utils')
 
-const driveType = process.env.DRIVE_TYPE
 const driveId = process.env.DRIVE_ID
 
 // return the folder html (or at least json object) that can be templated
@@ -26,7 +25,7 @@ exports.getFolders = async () => {
   return [folders]
 }
 
-exports.moveFile = async (id, destination) => {
+exports.moveFile = async (id, destination, driveType='team') => {
   const {parents, slug} = getMeta(id) || {}
   const {path: basePath} = getMeta(destination) || {}
 
