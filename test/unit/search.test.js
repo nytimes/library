@@ -32,57 +32,80 @@ describe('Search', () => {
   })
 
   describe('in shared drive', () => {
-    it('should query for folders, then files', async () => {
-      const listFilesSpy = sinon.spy(listZeroFiles)
-      google.drive = () => {
-        return {
-          files: {
-            list: listFilesSpy
+    describe('when making first api call to retrieve folders in drive', () => {
+      let listFilesSpy
+      before(() => {
+        listFilesSpy = sinon.spy(listZeroFiles)
+        google.drive = () => {
+          return {
+            files: {
+              list: listFilesSpy
+            }
           }
         }
-      }
-      
-      await search.run('test', 'shared')
-      
-      expect(listFilesSpy.calledTwice).to.be.true
-      expect(listFilesSpy.args[0][0].q).to.include("mimeType = \'application/vnd.google-apps.folder\'")
-      expect(listFilesSpy.args[1][0].q).to.include("mimeType != \'application/vnd.google-apps.folder\'")
+      })
+
+      it('should query for folders', async () => {
+        await search.run('test', 'shared')
+        const queryString = "mimeType = \'application/vnd.google-apps.folder\'"
+        
+        expect(listFilesSpy.args[0][0].q).to.include(queryString)
+      })
     })
 
-    it('should construct a query string with folder parent ids', async () => {
-      const listFilesSpy = sinon.spy(listSearchResults)
-      google.drive = () => {
-        return {
-          files: {
-            list: listFilesSpy
+    describe('when making second api call to retrieve search results', () => {
+      let listFilesSpy
+      
+      before(async () => {
+        listFilesSpy = sinon.spy(listSearchResults)
+        google.drive = () => {
+          return {
+            files: {
+              list: listFilesSpy
+            }
           }
         }
-      }
-      const folderIds = onlyFolders(page1).map((obj) => obj.id)
-      const str = `(${folderIds.map((id) => `'${id}' in parents`).join(' or ')})`
+        await search.run('test', 'shared')
+      })
 
-      await search.run('test', 'shared')
-      // expect second call to drive.files to use the ids of the fetched folder ids
-      expect(listFilesSpy.calledTwice).to.be.true // eslint-disable-line no-unused-expressions
-      expect(listFilesSpy.args[1][0].q).to.include(str)
+      it('should not query for folders', () => {
+        const queryString = "mimeType != \'application/vnd.google-apps.folder\'"
+
+        expect(listFilesSpy.args[1][0].q).to.include(queryString)
+      })
+
+      it('should construct a query string with folder parent ids', async () => {
+        const folderIds = onlyFolders(page1).map((obj) => obj.id)
+        const str = `(${folderIds.map((id) => `'${id}' in parents`).join(' or ')})`
+
+        expect(listFilesSpy.args[1][0].q).to.include(str)
+      })
     })
+
+
   })
 
   describe('in team drive', () => {
-    it('should search directly for folders', async () => {
-      const listFilesSpy = sinon.spy(listZeroFiles)
-      google.drive = () => {
-        return {
-          files: {
-            list: listFilesSpy
+    describe('when querying the drive api', () => {
+      let listFilesSpy
+      before(() => {
+        listFilesSpy = sinon.spy(listZeroFiles)
+        google.drive = () => {
+          return {
+            files: {
+              list: listFilesSpy
+            }
           }
         }
-      }
-      await search.run('test', 'team')
+      })
 
-      expect(listFilesSpy.calledOnce).to.be.true // eslint-disable-line no-unused-expressions
-      expect(listFilesSpy.args[0][0].q).to.include("mimeType != 'application/vnd.google-apps.folder'")
-      expect(listFilesSpy.args[0][0].teamDriveId).to.equal(process.env.DRIVE_ID)
+      it('should search directly for files', async () => {
+        await search.run('test', 'team')
+
+        expect(listFilesSpy.calledOnce).to.be.true // eslint-disable-line no-unused-expressions
+        expect(listFilesSpy.args[0][0].q).to.include("mimeType != 'application/vnd.google-apps.folder'")
+        expect(listFilesSpy.args[0][0].teamDriveId).to.equal(process.env.DRIVE_ID)
+      })
     })
   })
 
@@ -121,37 +144,44 @@ describe('Search', () => {
       expect(results).to.be.empty // eslint-disable-line no-unused-expressions
     })
 
-    it('should produce empty array when no results found', async () => {
-      list.getMeta = (fileId) => ({id: fileId, path: '/', tags: []})
-
-      google.drive = () => {
-        return {
-          files: {
-            list: listZeroFiles
-          }
-        }
-      }
-
-      const results = await search.run('test')
-      expect(results).to.be.empty // eslint-disable-line no-unused-expressions
-    })
-
-    it('should throw an error if searching fails', async () => {
-      google.drive = () => {
-        return {
-          files: {
-            list: () => {
-              throw Error('Error occured')
+    describe('when no results found', () => {
+      before(() => {
+        list.getMeta = (fileId) => ({id: fileId, path: '/', tags: []})
+        google.drive = () => {
+          return {
+            files: {
+              list: listZeroFiles
             }
           }
         }
-      }
+      })
 
-      await search.run('test')
-        .catch((err) => {
-          expect(err).to.exist // eslint-disable-line no-unused-expressions
-        })
+      it('should produce empty array', async () => {
+        const results = await search.run('test')
+        expect(results).to.be.empty // eslint-disable-line no-unused-expressions
+      })
     })
+
+    describe('when the drive api throws an error', () => {
+      before(() => {
+        google.drive = () => {
+          return {
+            files: {
+              list: () => {
+                throw Error('Error occured')
+              }
+            }
+          }
+        }
+      })
+      it('should propagate through the search call', async () => {
+        await search.run('test')
+          .catch((err) => {
+            expect(err).to.exist // eslint-disable-line no-unused-expressions
+          })
+      })
+    })
+
   })
 })
 

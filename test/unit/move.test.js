@@ -55,11 +55,26 @@ describe('Move files', () => {
     it('should specify a prettyName on the top level', () => {
       expect(folders[0].prettyName).to.be.a('string')
     })
+
+    it('should contain children arrays', () => {
+      expect(folders[0].children).to.be.an('array')
+      expect(folders[0].children[0].children).to.be.an('array')
+    })
   })
 
   describe('moveFile function', () => {
     const {fileId, destination, html} = sampleFile
     let path, newPath, updateSpy, newUrl
+
+    before(async () => {
+      const {path: oldPath, slug} = list.getMeta(fileId)
+      path = `${oldPath}/${slug}`
+      const {path: destPath} = list.getMeta(destination)
+      newPath = `${destPath}/${slug}`
+      
+      const addToCache = promisify(cache.add)
+      await addToCache(fileId, nextModified(), path, html)
+    })
 
     beforeEach(async () => {
       updateSpy = sinon.spy(updateFile)
@@ -70,17 +85,13 @@ describe('Move files', () => {
           }
         }
       }
-
-      const addToCache = promisify(cache.add)
-      await addToCache(fileId, nextModified(), path, html)
     })
 
-    before(() => {
-      const {path: oldPath, slug} = list.getMeta(fileId)
-      path = `${oldPath}/${slug}`
-      const {path: destPath} = list.getMeta(destination)
-      newPath = `${destPath}/${slug}`
+    after(async () => {
+      const purgeCache = promisify(cache.purge)
+      await cache.purge({url: newUrl, modified: nextModified()})
     })
+
 
     describe('when not Google authenticated', () => {
       let oldAuth
@@ -103,18 +114,18 @@ describe('Move files', () => {
       })
     })
 
-    it('should return an error when file has no parents', async () => {
+    it('should return an error when the file has no parent folders', async () => {
       const result = await move.moveFile('fakeId', 'fakeDest')
       expect(result).to.exist.and.be.an.instanceOf(Error)
     })
 
-    it('should return an error when the drive id is supplied', async () => {
+    it('should return an error when the drive id is supplied as the file to move', async () => {
       const result = await move.moveFile(process.env.DRIVE_ID, 'fakeDest')
       expect(result).to.exist.and.be.an.instanceOf(Error)
     })
 
     describe('in team drive', () => {
-      it('should use team drive options with update API', async () => {
+      it('should use team drive options with drive api', async () => {
         newUrl = await move.moveFile(fileId, destination, 'team')
 
         const options = updateSpy.args[0][0]
@@ -126,7 +137,7 @@ describe('Move files', () => {
     })
 
     describe('in shared drive', () => {
-      it('should use shared drive options with update API', async () => {
+      it('should use shared drive options with drive api', async () => {
         newUrl = await move.moveFile(fileId, destination, 'shared')
         const options = updateSpy.args[0][0]
 
@@ -145,7 +156,7 @@ describe('Move files', () => {
         }
       })
 
-      it('should redirect to home if destination is trash', async () => {
+      it('should redirect to home', async () => {
         newUrl = await move.moveFile(fileId, 'trash', 'shared')
         expect(newUrl).to.equal('/')
       })
@@ -157,39 +168,54 @@ describe('Move files', () => {
     })
 
     describe('cache interaction', () => {
-      it('should redirect to home if no html is found with file id', async () => {
-        const getCacheStub = sinon.stub(cache, 'get')
-        getCacheStub.callsFake((path, cb) => {
-          cb(null, [{html: null}])
+      describe('when specified file id has no associated html stored in cache', () => {
+        let getCacheStub
+
+        before(() => {
+          getCacheStub = sinon.stub(cache, 'get')
+          getCacheStub.callsFake((path, cb) => {
+            cb(null, [{html: null}])
+          })
         })
         
-        newUrl = await move.moveFile(fileId, destination, 'shared')
-        expect(newUrl).to.equal('/')
-        
-        getCacheStub.restore()
+        it('should redirect to home', async () => {
+          newUrl = await move.moveFile(fileId, destination, 'shared')
+          expect(newUrl).to.equal('/')
+        })
+
+        after(() => {
+          getCacheStub.restore()
+        })
       })
 
-      it('should return new url when successfully added to cache', async () => {
+      describe('when cache errors', () => {
+        let addToCacheStub
+
+        before(async () => {
+          const addToCache = promisify(cache.add)
+          await addToCache(fileId, nextModified(), path, html)
+
+          addToCacheStub = sinon.stub(cache, 'add')
+          addToCacheStub.callsFake((id, modified, newurl, html, cb) => cb(Error('Add to cache error')))
+        })
+        
+        it('should redirect to home', async () => {
+          newUrl = await move.moveFile(fileId, destination, 'shared')
+          expect(newUrl).to.equal('/')
+        })
+
+        after(() => {
+          addToCacheStub.restore()
+        })
+      })
+
+      it('should return new url when new path is successfully added to cache', async () => {
         newUrl = await move.moveFile(fileId, destination)
 
         expect(newUrl).to.equal(newPath)
       })
 
-      it('should redirect to home if cache errors', async () => {
-        const addToCacheStub = sinon.stub(cache, 'add')
-        addToCacheStub.callsFake((id, modified, newurl, html, cb) => cb(Error('Add to cache error')))
-
-        newUrl = await move.moveFile(fileId, destination, 'shared')
-
-        expect(newUrl).to.equal('/')
-      })
     })
-
-    afterEach(async () => {
-      const purgeCache = promisify(cache.purge)
-      await cache.purge({url: newUrl, modified: nextModified()})
-    })
-
   })
 
 })
