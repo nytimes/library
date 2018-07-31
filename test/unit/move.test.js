@@ -13,8 +13,8 @@ let cache = require('../../server/cache')
 const {page1, page2, page3} = require('../fixtures/driveListing')
 
 const sampleFile = {
-  fileId: 'xxxxxhz2Km1y-dFv3AVeUD4fkIdh6syCL8NDV2NxxxxxiTe74',
-  destination: 'xxxxxz3-SzaA2bosRlItwcP8GEP5xxxxx3nSxT',
+  fileId: '174d31f319c2787f5e42e4d0eed83fe7',
+  destination: '7fef124c834e00accc566f1f60d5193e',
   html: '<html><h1>Test file </h1></html>',
   path: '/article-21-2/article-afia',
   modified: moment(0).format(),
@@ -53,7 +53,7 @@ describe('Move files', () => {
     it('should specify the drive id on the top level', () => {
       expect(folders[0].id).to.equal(process.env.DRIVE_ID)
     })
-    
+
     it('should specify a prettyName on the top level', () => {
       expect(folders[0].prettyName).to.be.a('string')
     })
@@ -101,7 +101,7 @@ describe('Move files', () => {
       it('should use shared drive options with update API', async () => {
         newUrl = await move.moveFile(fileId, destination, 'shared')
         const options = updateSpy.args[0][0]
-        
+
         expect(updateSpy.calledOnce).to.be.true
         expect(options.teamDriveId).to.equal(undefined)
         expect(options.fileId).to.equal(fileId)
