@@ -52,7 +52,7 @@ describe('Docs', () => {
       expect(byline).equals('John Smith')
     })
 
-    it('should not return a byline not a real byline', () => {
+    it('should return byline override if present in document', () => {
       const {byline} = fetchByline('<p>I am standing by Port Authority</p>', 'Ben Koski')
       expect(byline).to.not.equals('Port Authority')
       expect(byline).equals('Ben Koski')
@@ -60,7 +60,7 @@ describe('Docs', () => {
   })
 
   describe('Fetching Docs', () => {
-    it('should successully fetch a document data', async () => {
+    it('should fetch document data with expected structure', async () => {
       const doc = await fetchDoc('id1', 'document', {})
       expect(doc).to.include.keys('html', 'originalRevision')
     })
@@ -86,7 +86,7 @@ describe('Docs', () => {
   })
 
   describe('Fetching Sheets', () => {
-    it('should successully fetch sheet data', async () => {
+    it('should fetch sheet data with expected structure', async () => {
       const sheet = await fetchDoc('id1', 'spreadsheet', {})
       expect(sheet).to.include.keys('html', 'originalRevision')
     })
@@ -104,7 +104,7 @@ describe('Docs', () => {
   })
 
   describe('Fetching html', () => {
-    it('should fetch html document from drive', async () => {
+    it('should fetch html data with expected structure', async () => {
       const sheet = await fetchDoc('id1', 'text/html', {})
       expect(sheet).to.include.keys('html', 'originalRevision')
     })
