@@ -15,6 +15,8 @@ module.exports = router
 
 const pages = getTemplates('pages')
 
+const driveType = process.env.DRIVE_TYPE
+
 // express-promsie-router will call next() if the return value is 'next'.
 async function handlePage(req, res) {
   const page = req.params.page || 'index'
@@ -23,19 +25,23 @@ async function handlePage(req, res) {
   const template = `pages/${page}`
   const {q, id, dest} = req.query
   if (page === 'search' && q) {
-    return search.run(q).then((results) => {
+    return search.run(q, driveType).then((results) => {
       res.render(template, {q, results, template: stringTemplate})
     })
   }
 
   if (page === 'move-file' && id) {
+    console.log('on page move file for', id)
     if (!dest) {
+      console.log('no dest')
       const folders = await move.getFolders(id)
       const {prettyName, parents} = getMeta(id)
+      console.log('got meta', getMeta(id))
       return res.render(template, {prettyName, folders, id, parents, template: stringTemplate})
     }
 
-    return move.moveFile(id, dest).then((result) => {
+    console.log('going to move to', dest)
+    return move.moveFile(id, dest, driveType).then((result) => {
       res.redirect(result)
     })
   }
