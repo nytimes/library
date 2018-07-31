@@ -17,7 +17,8 @@ const sampleFile = {
   destination: 'xxxxxz3-SzaA2bosRlItwcP8GEP5xxxxx3nSxT',
   html: '<html><h1>Test file </h1></html>',
   path: '/article-21-2/article-afia',
-  modified: moment(0).format()
+  modified: moment(0).format(),
+  newPath: '/article-10-1/team-folder-1/article-afia'
 }
 
 let count = 0
@@ -30,7 +31,11 @@ const nextModified = () => {
 
 describe('Move files', () => {
   describe('results from getFolders', async () => {
-    const folders = await move.getFolders()
+    let folders
+    
+    before(async () => {
+      folders = await move.getFolders()
+    })
 
     it('should return only folders', () => {
       const onlyFolders = folders[0].children
@@ -70,7 +75,7 @@ describe('Move files', () => {
       await addToCache(fileId, nextModified(), path, html)
     })
 
-    const {fileId, destination, html, path} = sampleFile
+    const {fileId, destination, html, path, newPath} = sampleFile
     it('should return an error when file has no parents', async () => {
       const result = await move.moveFile('fakeId', 'fakeDest')
       expect(result).to.exist.and.be.an.instanceOf(Error)
@@ -85,9 +90,7 @@ describe('Move files', () => {
       it('should use team drive options with update API', async () => {
         newUrl = await move.moveFile(fileId, destination, 'team')
         const options = updateSpy.args[0][0]
-        console.log('team options', options)
         
-        // expect(updateSpy.calledOnce).to.be.true
         expect(options.corpora).to.equal('teamDrive')
         expect(options.teamDriveId).to.equal(process.env.DRIVE_ID)
         expect(options.fileId).to.equal(fileId)
@@ -98,7 +101,6 @@ describe('Move files', () => {
       it('should use shared drive options with update API', async () => {
         newUrl = await move.moveFile(fileId, destination, 'shared')
         const options = updateSpy.args[0][0]
-        console.log('shared options', options)
         
         expect(updateSpy.calledOnce).to.be.true
         expect(options.teamDriveId).to.equal(undefined)
@@ -128,10 +130,29 @@ describe('Move files', () => {
 
     describe('cache interaction', () => {
       it('should redirect to home if no html is found with file id', async () => {
-        sinon.stub(cache, 'get').callsFake((path, cb) => {
+        const getCacheStub = sinon.stub(cache, 'get')
+        getCacheStub.callsFake((path, cb) => {
           cb(null, [{html: null}])
         })
+        
         newUrl = await move.moveFile(fileId, destination, 'shared')
+        expect(newUrl).to.equal('/')
+        
+        getCacheStub.restore()
+      })
+
+      it('should return new url when successfully added to cache', async () => {
+        newUrl = await move.moveFile(fileId, destination)
+
+        expect(newUrl).to.equal(newPath)
+      })
+
+      it('should redirect to home if cache errors', async () => {
+        const addToCacheStub = sinon.stub(cache, 'add')
+        addToCacheStub.callsFake((id, modified, newurl, html, cb) => cb(Error('Add to cache error')))
+
+        newUrl = await move.moveFile(fileId, destination, 'shared')
+
         expect(newUrl).to.equal('/')
       })
     })

@@ -75,8 +75,6 @@ exports.moveFile = async (id, destination, driveType='team') => {
     return getCache(url).catch((err) => log.error('Error getting cache', err))
   }))
 
-  console.log(data)
-
   // cache stores urls and page data, make sure to find actual data object for page
   const hasHtml = data.filter(({html}) => html && html.length)
   if (!hasHtml.length) return '/'
