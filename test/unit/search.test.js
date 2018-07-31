@@ -2,7 +2,6 @@
 
 const {expect} = require('chai')
 let {google} = require('googleapis')
-const proxyquire = require('proxyquire').noPreserveCache()
 const sinon = require('sinon')
 
 let auth = require('../../server/auth')
@@ -39,13 +38,6 @@ describe('Search', () => {
   // })
 
   describe('in shared drive', () => {
-    before(() => {
-      process.env.DRIVE_TYPE = 'shared'
-
-      // reload search.js to use env var
-      search = proxyquire('../../server/search', {})
-    })
-
     it('should query for folders, then files', async () => {
       const listFilesSpy = sinon.spy(listZeroFiles)
       google.drive = () => {
@@ -56,7 +48,7 @@ describe('Search', () => {
         }
       }
       
-      await search.run('test')
+      await search.run('test', 'shared')
       
       expect(listFilesSpy.calledTwice).to.be.true
       expect(listFilesSpy.args[0][0].q).to.include("mimeType = \'application/vnd.google-apps.folder\'")
@@ -75,7 +67,7 @@ describe('Search', () => {
       const folderIds = onlyFolders(page1).map(obj => obj.id)
       const str = `(${folderIds.map((id) => `'${id}' in parents`).join(' or ')})`
 
-      await search.run('test')
+      await search.run('test', 'shared')
       // expect second call to drive.files to use the ids of the fetched folder ids
       expect(listFilesSpy.calledTwice).to.be.true
       expect(listFilesSpy.args[1][0].q).to.include(str)
@@ -83,13 +75,6 @@ describe('Search', () => {
   })
 
   describe('in team drive', () => {
-
-    before(() => {
-      process.env.DRIVE_TYPE = 'team'
-
-      search = proxyquire('../../server/search', {})
-    })
-
     it('should search directly for folders', async () => {
       const listFilesSpy = sinon.spy(listZeroFiles)
       google.drive = () => {
@@ -100,7 +85,7 @@ describe('Search', () => {
         }
       }
       
-      await search.run('test')
+      await search.run('test', 'team')
 
       expect(listFilesSpy.calledOnce).to.be.true
       expect(listFilesSpy.args[0][0].q).to.include("mimeType != \'application/vnd.google-apps.folder\'")
@@ -110,9 +95,6 @@ describe('Search', () => {
 
   describe('result handling', () => {
     before(() => {
-      process.env.DRIVE_TYPE = 'team'
-      search = proxyquire('../../server/search', {})
-
       google.drive = () => {
         return {
           files: {

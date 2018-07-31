@@ -2,7 +2,6 @@
 
 const {expect} = require('chai')
 let {google} = require('googleapis')
-const proxyquire = require('proxyquire').noPreserveCache()
 const sinon = require('sinon')
 const moment = require('moment')
 const {promisify} = require('util')
@@ -62,7 +61,7 @@ describe('Move files', () => {
 
   describe('moveFile function', () => {
     let updateSpy, newUrl
-    before(() => {
+    beforeEach(() => {
       updateSpy = sinon.spy(updateFile)
       google.drive = () => {
         return {
@@ -84,45 +83,18 @@ describe('Move files', () => {
       expect(result).to.exist.and.be.an.instanceOf(Error)
     })
 
-    describe('in shared drive', () => {
-      before(async () => {
-        process.env.DRIVE_TYPE = 'shared'
-
-        // reload move.js to use env var
-        move = proxyquire('../../server/move', {})
-        
-        const addToCache = promisify(cache.add)
-        await addToCache(fileId, nextModified(), path, html)
-      })
-
-      it('should use shared drive options with update API', async () => {
-        const newUrl = await move.moveFile(fileId, destination)
-        const options = updateSpy.args[0][0]
-        console.log(options)
-        
-        expect(updateSpy.calledOnce).to.be.true
-        expect(options.teamDriveId).to.equal(undefined)
-        // expect(options.teamDriveId).to.equal(process.env.DRIVE_ID)
-        // expect(options.fileId).to.equal(fileId)
-      })
-    })
-
     describe('in team drive', () => {
       before(async () => {
-        process.env.DRIVE_TYPE = 'team'
-
-        // reload move.js to use env var
-        move = proxyquire('../../server/move', {})
-        
         const addToCache = promisify(cache.add)
         await addToCache(fileId, nextModified(), path, html)
       })
 
       it('should use team drive options with update API', async () => {
-        newUrl = await move.moveFile(fileId, destination)
+        newUrl = await move.moveFile(fileId, destination, 'team')
         const options = updateSpy.args[0][0]
+        console.log('team options', options)
         
-        expect(updateSpy.calledOnce).to.be.true
+        // expect(updateSpy.calledOnce).to.be.true
         expect(options.corpora).to.equal('teamDrive')
         expect(options.teamDriveId).to.equal(process.env.DRIVE_ID)
         expect(options.fileId).to.equal(fileId)
@@ -133,6 +105,33 @@ describe('Move files', () => {
         await cache.purge({url: newUrl, modified: nextModified()})
       })
     })
+
+    describe('in shared drive', () => {
+      before(async () => {
+        const addToCache = promisify(cache.add)
+        await addToCache(fileId, nextModified(), path, html)
+      })
+
+      it('should use shared drive options with update API', async () => {
+        newUrl = await move.moveFile(fileId, destination, 'shared')
+        const options = updateSpy.args[0][0]
+        console.log('shared options', options)
+        
+        expect(updateSpy.calledOnce).to.be.true
+        expect(options.teamDriveId).to.equal(undefined)
+        // expect(options.teamDriveId).to.equal(process.env.DRIVE_ID)
+        // expect(options.fileId).to.equal(fileId)
+      })
+    })
+
+    describe('post Google API call', () => {
+      
+    })
+
+    // afterEach(() => {
+    //   console.log(updateSpy)
+    // })
+
   })
 
 })

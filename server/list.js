@@ -56,7 +56,7 @@ async function updateTree() {
     const authClient = await getAuth()
 
     const drive = google.drive({version: 'v3', auth: authClient})
-    const files = await fetchAllFiles({drive})
+    const files = await fetchAllFiles({drive, driveType})
 
     currentTree = produceTree(files, driveId)
 
@@ -92,7 +92,7 @@ function getOptions(id) {
   }
 }
 
-async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentIds = [driveId], drive} = {}) {
+async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentIds = [driveId], drive} = {}, driveType) {
   const options = getOptions(parentIds)
 
   if (pageToken) {
@@ -128,7 +128,8 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentId
     return fetchAllFiles({
       listSoFar: combined,
       drive,
-      parentIds: folders.map((folder) => folder.id)
+      parentIds: folders.map((folder) => folder.id),
+      driveType
     })
   }
 
