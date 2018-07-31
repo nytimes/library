@@ -1,12 +1,27 @@
 version: "3.6"
 services:
+  # redis cache
+  redis:
+    image: redis
+    container_name: redis_cache
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - 6379:6379
+
+  # main application image
   library:
+    links:
+      - redis
     env_file: .env
     build:
       context: .
       args:
         CUSTOM_NPM_PACKAGE: ${CUSTOM_NPM_PACKAGE}
     image: library
+    environment:
+      - REDIS_URI=redis_cache
+      - NODE_ENV=development
     ports:
       - 3000:3000
-    tty: true
