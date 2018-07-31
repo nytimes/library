@@ -65,7 +65,7 @@ describe('Docs', () => {
       expect(doc).to.include.keys('html', 'originalRevision')
     })
 
-    it('should get correct revision data', async () => {
+    it('should return revision data with correct format', async () => {
       const {originalRevision} = await fetchDoc('id1', 'document', {})
       expect(originalRevision.data).to.have.keys('kind', 'mimeType', 'modifiedTime', 'published', 'lastModifyingUser')
     })
@@ -91,7 +91,7 @@ describe('Docs', () => {
       expect(sheet).to.include.keys('html', 'originalRevision')
     })
 
-    it('should get correct revision data', async () => {
+    it('should return revision data with correct format', async () => {
       const {originalRevision} = await fetchDoc('id1', 'spreadsheet', {})
       expect(originalRevision.data).to.have.keys('kind', 'mimeType', 'modifiedTime', 'published', 'lastModifyingUser')
     })
