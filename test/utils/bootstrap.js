@@ -12,7 +12,7 @@ initMocks(google)
 process.env.NODE_ENV = 'test'
 
 // Drive ID matches top level folder in mock drive listing
-process.env.DRIVE_ID = 'xxxxxtBjEYdigUxxxxxk9PVA'
+process.env.DRIVE_ID = 'b1ae9c8be6c34aa155f157207a0c840e'
 process.env.GOOGLE_CLIENT_ID = 'abc123'
 process.env.GOOGLE_CLIENT_SECRET = 'abc123'
 process.env.SESSION_SECRET = 'abc123'
@@ -44,19 +44,19 @@ datastore.prototype.runQuery = ({
         userId: '10',
         lastViewedAt: '2018-07-25T21:15:27.429Z',
         viewCount: 8,
-        documentId: 'xxxxxJ7S71V0K0z_P6XvDkdh4aIYO8AbMeVjfXDxxxxxJFbiE'
+        documentId: '8135b90bcc7085a0daa231d9a1109b5c'
       },
       {
         email: 'test.user@nytimes.com',
         userId: '10',
         lastViewedAt: '2018-07-25T20:45:37.014Z',
         viewCount: 36,
-        documentId: 'xxxxxZjvhyI8uWoQpCFRmdLrLc5yyD1sjEVCkFrxxxxxdU6JQ'
+        documentId: '88ca5e30ddb527b4e6266deeef78bff7'
       },
       {
         lastViewedAt: '2018-07-25T20:23:08.840Z',
         viewCount: 10,
-        documentId: 'xxxxxhd7b-l4h2N3JfjOtxkudx1Zs0M9g09RporxxxxxBq6z8',
+        documentId: 'b5a16aaa74bd7e3354f87bd4fa531010',
         email: 'test.user@nytimes.com',
         userId: '10'
       },
@@ -65,7 +65,7 @@ datastore.prototype.runQuery = ({
         userId: '10',
         lastViewedAt: '2018-07-25T20:15:03.458Z',
         viewCount: 1,
-        documentId: 'xxxxxlLU3WQO9D_BmsCHu0R8teQwiRfNRPRl8AlxxxxxjaVts'
+        documentId: 'e2536944549231810b2863405fca90ca'
       }
       ],
       {
@@ -80,18 +80,18 @@ datastore.prototype.runQuery = ({
         userId: '10',
         lastViewedAt: '2018-07-25T19:50:46.280Z',
         viewCount: 236,
-        teamId: 'xxxxxbiOr5xN_Z3RpbERYdnxxxxxd1TDQ'
+        teamId: 'a370ee8b7d07b9d2d144740083f9dd10'
       },
       {
         lastViewedAt: '2018-06-29T16:45:55.455Z',
         viewCount: 55,
-        teamId: 'xxxxxCF5lovN5fv1FY5JGMHChB7Ixxxxxn7sSX',
+        teamId: '6478ec336324a91b837acf752d7babc4',
         email: 'test.user@nytimes.com',
         userId: '10'
       },
       {
         viewCount: 23,
-        teamId: 'xxxxxHdNDs0WL7UROAgvR6PpeOQ4xxxxxbzc85',
+        teamId: '886297c1fad89a90244cfe6587d2fcd8',
         email: 'test.user@nytimes.com',
         userId: '10',
         lastViewedAt: '2018-07-23T20:04:40.524Z'
@@ -99,12 +99,12 @@ datastore.prototype.runQuery = ({
       {
         lastViewedAt: '2018-07-24T17:13:56.773Z',
         viewCount: 21,
-        teamId: 'xxxxxJOeJisUARNajc1er77iUqbRxxxxx1JLRT',
+        teamId: '24e88e5e2ed1f3a42c7884da046ef6ed',
         email: 'test.user@nytimes.com',
         userId: '10'
       },
       {
-        teamId: 'xxxxxyeFAwx1EW0VNs3yVacUXRVoxxxxxsV21W',
+        teamId: 'e958268cc71fad1faa4a84df0e4aff2b',
         email: 'test.user@nytimes.com',
         userId: '10',
         lastViewedAt: '2017-09-08T15:48:55.751Z',

@@ -23,20 +23,20 @@ describe('Tree', () => {
   })
 
   it('should correctly parse tags', () => {
-    expect(list.getTagged('home')).to.include('xxxxxhz2Km1y-dFv3AVeUD4fkIdh6syCL8NDV2NxxxxxiTe74')
-    expect(list.getTagged('hidden')).to.include('xxxxxHopd4F8UZ5o0DdiQHf5phvLWvqpWpcWCByxxxxxc8960')
+    expect(list.getTagged('home')).to.include('174d31f319c2787f5e42e4d0eed83fe7')
+    expect(list.getTagged('hidden')).to.include('0d6c4b7036c9e852996ac5c23239e9a3')
   })
 
   it('should correctly report children', () => {
-    const {children} = list.getChildren('xxxxxSgXzlz_9VWItb3V0UExxxxxU2X1U')
+    const {children} = list.getChildren('f2f9987da7aef80de3733bbe882e6b1e')
     expect(children.length).to.equal(6)
     expect(children).to.include(
-      'xxxxxy_mPdkoj1yR_3Xz5d6-uOjGot_CvgzVzROxxxxxpRzuU',
-      'xxxxx0VTyJVjdf0ozpd68iTQ9-QMpG3MMElroRexxxxxQ2zhA',
-      'xxxxxIPPZm2jTh8T3qav2OiPQ2KfHUfICpo8VOKxxxxxKjzrE',
-      'xxxxxdBk63JDd1Ra0q2tfVDr_Ubn9H16-7xWax9xxxxxadXes',
-      'xxxxx5OF9xg6EapqBP5cPxrwAaXxxeMG6r0IpAvxxxxxxrGtY',
-      'xxxxxXifc2UmJOTZUcE9GYUxxxxx1MTjQ'
+      '981cd74318b6350f8054319c8d0d0a92',
+      '1872a6e4df263f9bb9c1004c3bda1530',
+      '38a019f9ec84049959ee617a04298c0b',
+      '70a03c7ef29818a00645afe981369c5c',
+      'da5a966305a1272dde641f28f73b0e13',
+      '1a25f79c96a4f06f102af0d3ae774896'
     )
   })
 

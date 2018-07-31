@@ -62,13 +62,13 @@ describe('Server responses', () => {
 
     it('should render folder list when moving a file', () => {
       return request(app)
-        .get('/move-file?id=xxxxxwsaMf60sZLTt5bhPKe2k5zmwEyMXjafR9Kxxxxx33Pqg')
+        .get('/move-file?id=2bb299cfeab29b790cb3b11727586a77')
         .expect(200)
         .then((res) => {
           expect(res.text).to.include('<h2>Choose a folder to move \'Article to move\' to</h2>')
           // check it has folder list and a folder to move it to
           expect(res.text).to.include('<ul class="folder-list">')
-          expect(res.text).to.include('<a href="?id=xxxxxwsaMf60sZLTt5bhPKe2k5zmwEyMXjafR9Kxxxxx33Pqg&dest=xxxxxSgXzlz_9SGZpTVNab2xxxxxpSYVk">Article -0 70</a>')
+          expect(res.text).to.include('<a href="?id=2bb299cfeab29b790cb3b11727586a77&dest=c351dc69415c5d3502c37f6b674b3c86">Article -0 70</a>')
         })
     })
 
