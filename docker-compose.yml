@@ -4,7 +4,7 @@ services:
   redis:
     image: redis
     container_name: redis_cache
-    command: redis-server /usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf --loglevel verbose
     volumes:
       - ./redis.conf:/usr/local/etc/redis/redis.conf
     ports:
