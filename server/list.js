@@ -143,8 +143,8 @@ function produceTree(files, firstParent) {
     const {parents, id, name} = resource
 
     // prepare data for the individual file and store later for reference
-    const prettyName = docs.cleanName(name)
-    const slug = docs.slugify(prettyName)
+    const prettyName = docs.cleanName(name) // @TODO remove circular dependency,
+    const slug = docs.slugify(prettyName) // it is causing issues with tests, etc
     const tagString = (name.match(/\|\s*([^|]+)$/i) || [])[1] || ''
     const tags = tagString.split(',')
       .map((t) => t.trim().toLowerCase())
