@@ -1,5 +1,8 @@
 FROM node:8.11.3
 
+ARG npm_token
+ENV NPM_TOKEN = npm_token
+
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 

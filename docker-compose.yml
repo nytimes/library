@@ -19,6 +19,7 @@ services:
       context: .
       args:
         CUSTOM_NPM_PACKAGE: ${CUSTOM_NPM_PACKAGE}
+        npm_token: ${NPM_TOKEN}
     image: library
     environment:
       - REDIS_URI=redis_cache
