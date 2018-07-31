@@ -10,30 +10,26 @@ let search = require('../../server/search')
 const {page1} = require('../fixtures/driveListing')
 
 describe('Search', () => {
+  describe('when not Google authenticated', () => {
+    let oldAuth
+    before(() => {
+      oldAuth = google.auth.getApplicationDefault
+      google.auth.getApplicationDefault = () => {
+        return Promise.reject(Error('Auth error'))
+      }
+    })
 
-  // describe('should return an error when not Google authenticated', () => {
-  //   let oldAuth, oldDriveList
-  //   before(() => {
-  //     oldAuth = google.auth.getApplicationDefault
-  //   })
+    it('should return an error', async () => {
+      await search.run('test')
+        .catch(err => {
+          expect(err).to.exist.and.be.an.instanceOf(Error)
+        })
+    })
 
-  //   it('should return an error', async () => {
-  //     google.auth.getApplicationDefault = () => {
-  //       console.log('in getApplicationDefault error')
-  //       return Error('Auth error')
-  //     }
-  //     const result = await search.run('test')
-  //     console.log(result)
-  //       .catch((err) => {
-  //         console.log(err)
-  //         expect(err).to.exist
-  //       })
-  //   })
-
-  //   after(() => {
-  //     google.auth.getApplicationDefault = oldAuth
-  //   })
-  // })
+    after(() => {
+      google.auth.getApplicationDefault = oldAuth
+    })
+  })
 
   describe('in shared drive', () => {
     it('should query for folders, then files', async () => {

@@ -12,13 +12,11 @@ let move = require('../../server/move')
 let cache = require('../../server/cache')
 const {page1, page2, page3} = require('../fixtures/driveListing')
 
+const folderType = 'application/vnd.google-apps.folder'
 const sampleFile = {
-  fileId: '174d31f319c2787f5e42e4d0eed83fe7',
-  destination: '7fef124c834e00accc566f1f60d5193e',
-  html: '<html><h1>Test file </h1></html>',
-  path: '/article-21-2/article-afia',
-  modified: moment(0).format(),
-  newPath: '/article-10-1/team-folder-1/article-afia'
+  fileId: page1.data.files.find(file => file.mimeType !== folderType).id,
+  destination: page1.data.files.find(file => file.mimeType === folderType).id,
+  html: '<html><h1>Test file </h1></html>'
 }
 
 let count = 0
@@ -60,7 +58,9 @@ describe('Move files', () => {
   })
 
   describe('moveFile function', () => {
-    let updateSpy, newUrl
+    const {fileId, destination, html} = sampleFile
+    let path, newPath, updateSpy, newUrl
+
     beforeEach(async () => {
       updateSpy = sinon.spy(updateFile)
       google.drive = () => {
@@ -75,7 +75,34 @@ describe('Move files', () => {
       await addToCache(fileId, nextModified(), path, html)
     })
 
-    const {fileId, destination, html, path, newPath} = sampleFile
+    before(() => {
+      const {path: oldPath, slug} = list.getMeta(fileId)
+      path = `${oldPath}/${slug}`
+      const {path: destPath} = list.getMeta(destination)
+      newPath = `${destPath}/${slug}`
+    })
+
+    describe('when not Google authenticated', () => {
+      let oldAuth
+      before(() => {
+        oldAuth = google.auth.getApplicationDefault
+        google.auth.getApplicationDefault = () => {
+          return Promise.reject(Error('Auth error'))
+        }
+      })
+
+      it('should return an error', async () => {
+        await move.moveFile('test')
+          .catch(err => {
+            expect(err).to.exist.and.be.an.instanceOf(Error)
+          })
+      })
+
+      after(() => {
+        google.auth.getApplicationDefault = oldAuth
+      })
+    })
+
     it('should return an error when file has no parents', async () => {
       const result = await move.moveFile('fakeId', 'fakeDest')
       expect(result).to.exist.and.be.an.instanceOf(Error)
@@ -89,8 +116,9 @@ describe('Move files', () => {
     describe('in team drive', () => {
       it('should use team drive options with update API', async () => {
         newUrl = await move.moveFile(fileId, destination, 'team')
+
         const options = updateSpy.args[0][0]
-        
+
         expect(options.corpora).to.equal('teamDrive')
         expect(options.teamDriveId).to.equal(process.env.DRIVE_ID)
         expect(options.fileId).to.equal(fileId)
