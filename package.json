@@ -13,6 +13,7 @@
     "deepmerge": "^2.1.1",
     "ejs": "^2.5.6",
     "express": "^4.16.3",
+    "google-auth-library": "^1.6.1",
     "express-promise-router": "^3.0.3",
     "express-session": "^1.15.6",
     "googleapis": "^32.0.0",
@@ -54,7 +55,7 @@
   },
   "scripts": {
     "start": "node server/index.js",
-    "build": "node-sass styles/style.scss public/css/style.css",
+    "build": "node-sass --include-path custom/styles --include-path styles/partials --source-map public/css/style.css.map --source-map-contents styles/style.scss public/css/style.css",
     "debug": "node -r dotenv/config --inspect --debug-brk server/index.js",
     "watch": "concurrently \"nodemon -r dotenv/config -e js,ejs server/index.js\" \"node-sass -w styles/style.scss public/css/style.css\"",
     "test": "NODE_ENV=test mocha test/**/*.test.js -r ./test/utils/bootstrap.js --recursive --exit",
@@ -68,6 +69,9 @@
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/newsdev/nyt-docs/issues"
+  },
+  "engines": {
+    "node": "8.11.3"
   },
   "homepage": "https://github.com/newsdev/nyt-docs#readme"
 }
