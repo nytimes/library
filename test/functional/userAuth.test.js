@@ -13,7 +13,7 @@ const userInfo = {
   _json: {domain: 'test.com'}
 }
 
-describe('Authentication', () => { // COMBAK
+describe('Authentication', () => {
   describe('when not logged in', () => {
     before(() => {
       express.request.user = {}

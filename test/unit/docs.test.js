@@ -20,12 +20,6 @@ describe('Docs', () => {
       expect(cleanName('one | two | three')).equals('one | two')
     })
 
-    it('should remove trailing delimeters', () => {
-      expect(cleanName('foo | thing')).equals('foo')
-      expect(cleanName('one   |      two')).equals('one')
-      expect(cleanName('one | two | three')).equals('one | two')
-    })
-
     it('should remove file extensions', () => {
       expect(cleanName('foo.html')).equals('foo')
       expect(cleanName('foo.txt')).equals('foo')
@@ -36,7 +30,9 @@ describe('Docs', () => {
   describe('Slugification', () => {
     it('should slugify simple phrases', () => {
       expect(slugify('this is a slug')).equals('this-is-a-slug')
+      expect(slugify(' this   is a     slug   ')).equals('this-is-a-slug')
       expect(slugify('this-is a slug')).equals('this-is-a-slug')
+      expect(slugify('this... is a slug!')).equals('this-is-a-slug')
       expect(slugify('2018 this is a slug')).equals('2018-this-is-a-slug')
     })
 
@@ -90,27 +86,14 @@ describe('Docs', () => {
   })
 
   describe('Fetching Sheets', () => {
-    it('should successully fetch a document data', async () => {
-      const doc = await fetchDoc('id1', 'document', {})
-      expect(doc).to.include.keys('html', 'originalRevision')
-    })
-
-    it('should get correct revision data', async () => {
-      const {originalRevision} = await fetchDoc('id1', 'document', {})
-      expect(originalRevision.data).to.have.keys('kind', 'mimeType', 'modifiedTime', 'published', 'lastModifyingUser')
-    })
-
-    it('should have correct mimetype for document', async () => {
-      const {originalRevision} = await fetchDoc('id1', 'document', {})
-      const {mimeType} = originalRevision.data
-      expect(mimeType).equals('application/vnd.google-apps.document')
-    })
-  })
-
-  describe('Fetching Sheets', () => {
     it('should successully fetch sheet data', async () => {
       const sheet = await fetchDoc('id1', 'spreadsheet', {})
       expect(sheet).to.include.keys('html', 'originalRevision')
+    })
+
+    it('should get correct revision data', async () => {
+      const {originalRevision} = await fetchDoc('id1', 'spreadsheet', {})
+      expect(originalRevision.data).to.have.keys('kind', 'mimeType', 'modifiedTime', 'published', 'lastModifyingUser')
     })
 
     it('should successully parse the sheet to a html table', async () => {
