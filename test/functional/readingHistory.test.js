@@ -18,24 +18,21 @@ describe('Reading History', () => {
   })
 
   describe('GET /reading-history/docs.json', () => {
-    it('should succeed', (done) => {
-      request(app)
+    it('should succeed', () => {
+      return request(app)
         .get('/reading-history/docs.json')
         .expect(200)
-        .end((err, res) => {
-          if (err) return done(err)
+        .then((res) => {
           const json = JSON.parse(res.text)
           expect(json).to.have.keys('recentlyViewed', 'mostViewed')
-          done()
         })
     })
 
-    it('should have correct docs', (done) => {
-      request(app)
+    it('should have correct docs', () => {
+      return request(app)
         .get('/reading-history/docs.json')
         .expect(200)
-        .end((err, res) => {
-          if (err) return done(err)
+        .then((res) => {
           const {recentlyViewed, mostViewed} = JSON.parse(res.text)
           const recentIds = recentlyViewed.map((obj) => obj.documentId)
           const mostIds = mostViewed.map((obj) => obj.documentId)
@@ -50,16 +47,14 @@ describe('Reading History', () => {
             'xxxxxZjvhyI8uWoQpCFRmdLrLc5yyD1sjEVCkFrxxxxxdU6JQ',
             'xxxxxhd7b-l4h2N3JfjOtxkudx1Zs0M9g09RporxxxxxBq6z8'
           )
-          done()
         })
     })
 
-    it('should have correct recent doc info', (done) => {
-      request(app)
+    it('should have correct recent doc info', () => {
+      return request(app)
         .get('/reading-history/docs.json')
         .expect(200)
-        .end((err, res) => {
-          if (err) return done(err)
+        .then((res) => {
           const {recentlyViewed} = JSON.parse(res.text)
           const {doc} = recentlyViewed.filter(({documentId}) => {
             return documentId === 'xxxxxJ7S71V0K0z_P6XvDkdh4aIYO8AbMeVjfXDxxxxxJFbiE'
@@ -70,16 +65,14 @@ describe('Reading History', () => {
           expect(doc.mimeType).equals('application/vnd.google-apps.document')
           expect(doc.tags).to.include('tagtest')
           expect(doc.slug).equals('article-in-recently-viewed')
-          done()
         })
     })
 
-    it('should have correct most viewed doc info', (done) => {
-      request(app)
+    it('should have correct most viewed doc info', () => {
+      return request(app)
         .get('/reading-history/docs.json')
         .expect(200)
-        .end((err, res) => {
-          if (err) return done(err)
+        .then((res) => {
           const {recentlyViewed} = JSON.parse(res.text)
           const {doc} = recentlyViewed.filter(({documentId}) => {
             return documentId === 'xxxxxZjvhyI8uWoQpCFRmdLrLc5yyD1sjEVCkFrxxxxxdU6JQ'
@@ -90,30 +83,26 @@ describe('Reading History', () => {
           expect(doc.mimeType).equals('application/vnd.google-apps.document')
           expect(doc.tags).to.be.empty
           expect(doc.slug).equals('article-iohwo')
-          done()
         })
     })
   })
 
   describe('GET /reading-history/teams.json', () => {
-    it('should succeed', (done) => {
-      request(app)
+    it('should succeed', () => {
+      return request(app)
         .get('/reading-history/teams.json')
         .expect(200)
-        .end((err, res) => {
-          if (err) return done(err)
+        .then((res) => {
           const json = JSON.parse(res.text)
           expect(json).to.have.keys('recentlyViewed', 'mostViewed')
-          done()
         })
     })
 
-    it('should have correct teams', (done) => {
-      request(app)
+    it('should have correct teams', () => {
+      return request(app)
         .get('/reading-history/teams.json')
         .expect(200)
-        .end((err, res) => {
-          if (err) return done(err)
+        .then((res) => {
           const {recentlyViewed, mostViewed} = JSON.parse(res.text)
           const recentIds = recentlyViewed.map((obj) => obj.teamId)
           const mostIds = mostViewed.map((obj) => obj.teamId)
@@ -131,17 +120,14 @@ describe('Reading History', () => {
             'xxxxxJOeJisUARNajc1er77iUqbRxxxxx1JLRT',
             'xxxxxyeFAwx1EW0VNs3yVacUXRVoxxxxxsV21W'
           )
-          done()
         })
     })
 
-    it('should have correct recent team info', (done) => {
-      request(app)
+    it('should have correct recent team info', () => {
+      return request(app)
         .get('/reading-history/teams.json')
         .expect(200)
-        .end((err, res) => {
-          if (err) return done(err)
-          const {recentlyViewed} = JSON.parse(res.text)
+        .then((res) => {          const {recentlyViewed} = JSON.parse(res.text)
           const {team} = recentlyViewed.filter(({teamId}) => {
             return teamId === 'xxxxxCF5lovN5fv1FY5JGMHChB7Ixxxxxn7sSX'
           })[0]
@@ -151,7 +137,6 @@ describe('Reading History', () => {
           expect(team.mimeType).equals('application/vnd.google-apps.folder')
           expect(team.tags).to.include('team')
           expect(team.slug).equals('team-folder-2')
-          done()
         })
     })
   })
