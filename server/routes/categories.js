@@ -15,6 +15,7 @@ module.exports = router
 
 const categories = getTemplates('categories')
 async function handleCategory(req, res) {
+  console.log('handling categories')
   log.info(`GET ${req.path}`)
   const segments = req.path.split('/')
 
@@ -47,10 +48,12 @@ async function handleCategory(req, res) {
   // if this is a folder, just render from the generic data
   const {resourceType} = meta
   if (resourceType === 'folder') {
+    console.log('rendering folder', baseRenderData)
     return res.render(template, baseRenderData, (err, html) => {
       if (err) throw err
 
       cache.add(id, meta.modifiedTime, req.path, html)
+      console.log(html)
       res.end(html)
     })
   }

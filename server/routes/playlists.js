@@ -3,6 +3,7 @@
 const {google} = require('googleapis')
 const router = require('express-promise-router')()
 const url = require('url')
+const moment = require('moment')
 
 const {getAuth} = require('../auth')
 const cache = require('../cache')
@@ -14,6 +15,7 @@ const {getTemplates, sortDocs, stringTemplate} = require('../utils')
 router.get('/playlist/:playlistName', handlePlaylist)
 module.exports = router
 
+const playlists = getTemplates('playlists')
 async function handlePlaylist(req, res) {
   console.log('handling single playlist')
   const {playlistName} = req.params
@@ -21,7 +23,7 @@ async function handlePlaylist(req, res) {
   // fetch playlist with name specified in params
   const playlists = getTagged('playlist')
   const playlistId = playlists.find(playlistId => getMeta(playlistId).slug === playlistName)
-  // const playlistInfo = getMeta(playlistId)
+  const playlistMeta = getMeta(playlistId)
 
   // read link column using google
   const authClient = await getAuth()
@@ -29,13 +31,39 @@ async function handlePlaylist(req, res) {
   const response = await sheets.spreadsheets.values.get({spreadsheetId: playlistId, range: 'A1:A100'})
 
   const values = response.data.values.slice(1).map(link => getDocId(link))
+  const contextData = prepareContextualData(playlistMeta, values)
 
-  // similar functionality as categories
+  const renderData = Object.assign({}, contextData, {
+    parentLinks: [{url: '/playlists', name: 'Playlists'}],
+    template: stringTemplate,
+    url: playlistMeta.path,
+    title: playlistMeta.prettyName,
+    modifiedAt: playlistMeta.modifiedTime,
+    lastUpdatedBy: (playlistMeta.lastModifyingUser || {}).displayName,
+    createdAt: moment(playlistMeta.createdTime).fromNow(),
+    // editLink: mimeType === 'text/html' ? playlistMeta.folder.webViewLink : playlistMeta.webViewLink
+  })
 
-  // grab links, map to id
-  // list
+  res.render(`playlists/default`, renderData)
+}
 
-  // res.render()
+function prepareContextualData(playlistMeta, values) {
+  const children = values.map(docId => {
+    const meta = getMeta(docId)
+    return {
+      sort: meta.prettyName,
+      name: meta.prettyName,
+      url: meta.path,
+      editLink: meta.mimeType === 'text/html' ? meta.folder.webViewLink : meta.webViewLink,
+      // id,
+    }
+  })
+
+  return {
+    parentId: playlistMeta.id,
+    children
+  }
+
 }
 
 function getDocId(link) {
