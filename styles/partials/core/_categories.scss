@@ -13,11 +13,11 @@
   // }
 
   h1.headline {
-    font-family: $chelt;
+    font-family: $sans;
     font-size: 36px;
     line-height: 40px;
     font-weight: 200;
-    color: #000;
+    color: $black;
     margin: 20px 0 5px;
 
     @include tablet {
@@ -41,9 +41,9 @@
 
   .attribution {
     p {
-      font-family: $franklin;
+      font-family: $sans;
       font-size: 13px;
-      color: #999;
+      color: $gray-40;
       margin: 0;
       line-height: 18px;
       font-weight: 400;
@@ -60,18 +60,18 @@
     font-weight: 400;
 
     a {
-      color: #999;
+      color: $gray-40;
       text-decoration: underline;
       .fa {
         margin-left: 5px;
-        color: #999;
+        color: $gray-40;
       }
     }
 
     a:hover {
-      color: $pink;
+      color: $accent;
       .fa {
-        color: $pink;
+        color: $accent;
       }
     }
 
@@ -118,10 +118,10 @@
     }
 
     .section-kicker, .sibling-kicker {
-      font-family: $franklin;
+      font-family: $sans;
       font-weight: 600;
       text-transform: capitalize;
-      color: #000;
+      color: $black;
       font-size: 14px;
       line-height: 24px;
       margin-bottom: 10px;
@@ -145,7 +145,7 @@
         line-height: 20px;
         text-indent: -4px;
         padding: 4px 0px;
-        border-bottom: 0.5px solid #ddd;
+        border-bottom: 0.5px solid $gray-60;
         font-weight: 400;
 
         &:last-child {
@@ -154,10 +154,10 @@
 
         a {
           padding: 3px 5px;
-          color: #333;
+          color: $gray-20;
 
           &:hover {
-            color: $pink;
+            color: $accent;
           }
         }
       }
@@ -167,7 +167,7 @@
       list-style-type: none;
       margin: 40px 0 40px 0;
       padding: 20px;
-      border: 1px solid #ddd;
+      border: 1px solid $gray-60;
       -webkit-box-shadow: -8px -8px 0px 0px rgba(236,236,236,1);
       -moz-box-shadow: -8px -8px 0px 0px rgba(236,236,236,1);
       box-shadow: -8px -8px 0px 0px rgba(236,236,236,1);
@@ -189,7 +189,7 @@
 
         &:before {
           content: "";
-          border-bottom: 1px solid #ccc;
+          border-bottom: 1px solid $gray-50;
           width: 10px;
           display: inline-block;
           vertical-align: middle;
@@ -202,12 +202,12 @@
   .g-main-content {
     max-width: 600px;
     margin: 0px auto 0 auto;
-    border-top: 5px solid #ddd;
+    border-top: 5px solid $gray-60;
     padding: 10px 0px;
     word-break: break-word; // force break on very long lines without spaces
 
     p, ul, li, dt, dd {
-      font-family: $franklin;
+      font-family: $sans;
       font-weight: 300;
       font-size: 1rem;
       line-height: 1.4;
@@ -249,7 +249,7 @@
 
     img {
       max-width: calc(100vw - 80px);
-      border: 1px solid #ddd;
+      border: 1px solid $gray-60;
       padding: 10px;
       display: block;
       margin: 20px auto;
@@ -280,7 +280,7 @@
     .children-container {
       margin: 40px 0 40px 0;
       padding: 20px 0px 20px 40px;
-      border: 1px solid #ddd;
+      border: 1px solid $gray-60;
       -webkit-box-shadow: -4px -4px 0px 0px #efefef;
       -moz-box-shadow: -4px -4px 0px 0px #efefef;
       box-shadow: -4px -4px 0px 0px #efefef;
@@ -341,7 +341,7 @@
         box-sizing: border-box;
 
         a {
-          color: #000;
+          color: $black;
         }
       }
     }
@@ -361,10 +361,10 @@
 
     pre{
       counter-reset:line-numbering;
-      background: $lightestpink;
+      background: $accent-lightest;
       padding:0px 0px 20px 0;
       width:600px;
-      color:#000;
+      color:$black;
 
       .line {
         display: flex;
@@ -384,7 +384,7 @@
         width: 1.5em;
         text-align: right;
         opacity: 0.5;
-        color:#aaa;
+        color:$gray-45;
       }
 
       &:before {
@@ -393,7 +393,7 @@
         height: 20px;
         content: 'Code';
         background: #EEE9E9;
-        color:#aaa;
+        color:$gray-45;
         padding-left: 10px;
         margin-bottom: 10px;
         margin-top: 20px;
@@ -402,8 +402,8 @@
     }
 
     tt {
-      background: $lightestpink;
-      color: $darkpink;
+      background: $accent-lightest;
+      color: $accent-dark;
       padding: 2px 5px;
     }
   }
@@ -425,7 +425,7 @@
           // color: #483d8b;
           // padding: 3px 7px;
           // font-weight: 400;
-          background: #ddd;
+          background: $gray-60;
           color: #666;
           padding: 3px 6px;
           font-weight: 400;
@@ -436,8 +436,8 @@
           text-decoration: none;
 
           span {
-            background: $lightestpink;
-            color: #000;
+            background: $accent-lightest;
+            color: $black;
           }
         }
       }
@@ -465,7 +465,7 @@
   .g-footer {
     max-width: 600px;
     margin: 80px auto 60px auto;
-    border-top: 1px solid #ccc;
+    border-top: 1px solid $gray-50;
     padding: 20px 0px;
 
     .button.btn-plaintext {
@@ -473,7 +473,7 @@
     }
 
     p {
-      font-family: $franklin;
+      font-family: $sans;
       font-weight: 300;
       font-size: 14px;
       line-height: 18px;

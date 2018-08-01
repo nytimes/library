@@ -28,7 +28,7 @@ jobs:
 
       - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
 
-      - run: yarn install
+      - run: npm install
 
       - save_cache:
           paths:

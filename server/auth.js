@@ -4,6 +4,7 @@ const path = require('path')
 
 const inflight = require('promise-inflight')
 const {google} = require('googleapis')
+const {auth: nodeAuth} = require('google-auth-library')
 
 const log = require('./logger')
 
@@ -15,17 +16,24 @@ if (!process.env.GOOGLE_APPLICATION_CREDENTIALS && process.env.NODE_ENV !== 'tes
   process.env.GOOGLE_APPLICATION_CREDENTIALS = path.join(__dirname, '.auth.json')
 }
 
+
 // only public method, returns the authClient that can be used for making other requests
 exports.getAuth = async () => {
-  if (authClient) return authClient
+  if (authClient && process.env.NODE_ENV !== 'test') return authClient
   await setAuthClient()
 }
 
 // configures the auth client if we don't already have one
 async function setAuthClient() {
   return inflight('auth', async () => {
-    const {credential} = await google.auth.getApplicationDefault()
-    authClient = credential
+    // In Heroku environment, set GOOGLE_APPLICATION_CREDENTIALS as auth json object to be parsed
+    try {
+      const keys = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS)
+      authClient = nodeAuth.fromJSON(keys);
+    } catch (err) {
+      const {credential} = await google.auth.getApplicationDefault()
+      authClient = credential
+    }
 
     if (authClient.createScopedRequired && authClient.createScopedRequired()) {
       authClient = authClient.createScoped([

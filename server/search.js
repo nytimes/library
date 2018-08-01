@@ -1,14 +1,14 @@
 'use strict'
 
 const {google} = require('googleapis')
-const auth = require('./auth')
+const {getAuth} = require('./auth')
 const list = require('./list')
 const log = require('./logger')
 
 const driveId = process.env.DRIVE_ID
 
 exports.run = async (query, driveType='team') => {
-  const authClient = await auth.getAuth()
+  const authClient = await getAuth()
   let folderIds
 
   const drive = google.drive({version: 'v3', auth: authClient})
