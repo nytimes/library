@@ -17,6 +17,7 @@ const pages = getTemplates('pages')
 
 // express-promsie-router will call next() if the return value is 'next'.
 async function handlePage(req, res) {
+  console.log(req.params.page, req.query)
   const page = req.params.page || 'index'
   if (!pages.has(page)) return 'next'
 
@@ -43,7 +44,7 @@ async function handlePage(req, res) {
   if (page === 'categories' || page === 'index') {
     const tree = await getTree()
     const categories = buildDisplayCategories(tree)
-    res.render(template, {...categories, template: stringTemplate})
+     res.render(template, {...categories, template: stringTemplate})
     return
   }
 

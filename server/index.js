@@ -7,6 +7,7 @@ const async = require('async')
 const {middleware: cache, purge} = require('./cache')
 const userInfo = require('./routes/userInfo')
 const pages = require('./routes/pages')
+const playlists = require('./routes/playlists')
 const categories = require('./routes/categories')
 const readingHistory = require('./routes/readingHistory')
 const errorPages = require('./routes/errors')
@@ -77,6 +78,8 @@ app.get('/cache-purge-everything', (req, res, next) => {
 
 app.use(pages)
 app.use(cache)
+
+app.use(playlists)
 
 // category pages will be cache busted when their last updated timestamp changes
 app.use(categories)
