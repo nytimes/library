@@ -53,7 +53,6 @@ async function handleCategory(req, res) {
       if (err) throw err
 
       cache.add(id, meta.modifiedTime, req.path, html)
-      console.log(html)
       res.end(html)
     })
   }

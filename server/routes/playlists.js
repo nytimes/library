@@ -17,19 +17,19 @@ module.exports = router
 
 const playlists = getTemplates('playlists')
 async function handlePlaylist(req, res) {
-  console.log('handling single playlist')
   const {playlistName} = req.params
 
-  // fetch playlist with name specified in params
+  // fetch playlist with slug specified in params
   const playlists = getTagged('playlist')
   const playlistId = playlists.find(playlistId => getMeta(playlistId).slug === playlistName)
   const playlistMeta = getMeta(playlistId)
 
-  // read link column using google
+  // get playlist from google spreadsheet using api
   const authClient = await getAuth()
   const sheets = google.sheets({version: 'v4', auth: authClient})
   const response = await sheets.spreadsheets.values.get({spreadsheetId: playlistId, range: 'A1:A100'})
 
+  // prepare data to render
   const values = response.data.values.slice(1).map(link => getDocId(link))
   const contextData = prepareContextualData(playlistMeta, values)
 
@@ -44,7 +44,12 @@ async function handlePlaylist(req, res) {
     // editLink: mimeType === 'text/html' ? playlistMeta.folder.webViewLink : playlistMeta.webViewLink
   })
 
-  res.render(`playlists/default`, renderData)
+  res.render(`playlists/default`, renderData, (err, html) => {
+    if (err) throw err
+
+    cache.add(playlistId, playlistMeta.modifiedTime, req.path, html)
+    res.end(html)
+  })
 }
 
 function prepareContextualData(playlistMeta, values) {
