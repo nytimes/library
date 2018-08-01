@@ -28,9 +28,29 @@ const {promisify} = require('util')
 /* eslint-disable no-unused-expressions */
 
 describe('Playlists', () => {
-  it('should fetch playlist with the specified name in route params')
 
-  it('')
+  describe('single playlist page', () => {
+    describe('route handling', () => {
+      it('should search for files tagged playlist')
+      
+      it('should fetch file information with slug from url path')
+    })
+    
+    describe('sheets api interaction', () => {
+      it('should pass playlist id as spreadsheet id')
+    })
+
+    describe('result formatting', () => {
+      it('should have children')
+    })
+    
+    it('should add playlist page to cache')
+  })
+
+  describe('playlists page', () => {
+
+  })
+
 })
 
 // describe('Move files', () => {

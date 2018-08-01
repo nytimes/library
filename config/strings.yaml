@@ -40,7 +40,7 @@ search:
       suggestion: To request a new page, contact your administrators.
 
 # categories/default
-file:
+folder:
   childrenList:
     kicker: !!js/function (title) => `Pages in ${title}`
   # partials/sectionList
@@ -49,6 +49,11 @@ file:
   #partials/siblingList
   siblingList:
     heading: Related Docs
+
+# playlists/default
+playlist:
+  childrenList:
+    kicker: !!js/function (title) => `${title} Playlist`
 
 # pages/move-file
 moveFile:

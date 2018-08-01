@@ -237,11 +237,11 @@ function addPaths(byId) {
     }, {})
 
   function derivePathInfo(item) {
-    const {parents, slug, webViewLink: drivePath, isHome, resourceType} = item || {}
+    const {parents, slug, webViewLink: drivePath, isHome, resourceType, tags} = item || {}
     const parentId = parents[0]
     const hasParent = parentId && parentId !== driveId
     const parent = byId[parentId]
-    const renderInLibrary = isSupported(resourceType)
+    const renderInLibrary = isSupported(resourceType) || tags.includes('playlist')
 
     if (hasParent && !parent) {
       log.warn(`Found file (${item.name}) with parent (${parentId}) but no parent info!`)

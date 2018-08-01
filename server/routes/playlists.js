@@ -8,7 +8,7 @@ const moment = require('moment')
 const {getAuth} = require('../auth')
 const cache = require('../cache')
 const log = require('../logger')
-const {getTagged, getMeta} = require('../list')
+const {getTagged, getMeta, getTree} = require('../list')
 const {fetchDoc, cleanName, fetchByline} = require('../docs')
 const {getTemplates, sortDocs, stringTemplate} = require('../utils')
 
@@ -23,6 +23,7 @@ async function handlePlaylist(req, res) {
   const playlists = getTagged('playlist')
   const playlistId = playlists.find(playlistId => getMeta(playlistId).slug === playlistName)
   const playlistMeta = getMeta(playlistId)
+  console.log(playlistMeta)
 
   // get playlist from google spreadsheet using api
   const authClient = await getAuth()
@@ -33,6 +34,11 @@ async function handlePlaylist(req, res) {
   const values = response.data.values.slice(1).map(link => getDocId(link))
   const contextData = prepareContextualData(playlistMeta, values)
 
+  // prepare breadcrumbs
+  const tree = await getTree()
+  const [data, parent] = retrieveDataForPath(playlistMeta.path, tree)
+  const {id, breadcrumb} = data
+
   const renderData = Object.assign({}, contextData, {
     parentLinks: [{url: '/playlists', name: 'Playlists'}],
     template: stringTemplate,
@@ -41,7 +47,7 @@ async function handlePlaylist(req, res) {
     modifiedAt: playlistMeta.modifiedTime,
     lastUpdatedBy: (playlistMeta.lastModifyingUser || {}).displayName,
     createdAt: moment(playlistMeta.createdTime).fromNow(),
-    // editLink: mimeType === 'text/html' ? playlistMeta.folder.webViewLink : playlistMeta.webViewLink
+    editLink: playlistMeta.mimeType === 'text/html' ? playlistMeta.folder.webViewLink : playlistMeta.webViewLink
   })
 
   res.render(`playlists/default`, renderData, (err, html) => {
@@ -60,15 +66,40 @@ function prepareContextualData(playlistMeta, values) {
       name: meta.prettyName,
       url: meta.path,
       editLink: meta.mimeType === 'text/html' ? meta.folder.webViewLink : meta.webViewLink,
-      // id,
     }
   })
 
   return {
     parentId: playlistMeta.id,
-    children
+    children,
+    id: playlistMeta.id,
   }
 
+}
+
+function retrieveDataForPath(path, tree) {
+  const segments = path.split('/').slice(1).filter((s) => s.length)
+
+  let pointer = tree
+  let parent = null
+
+  if (segments[0] === 'trash') {
+    return [{}, {}]
+  }
+
+  // continue traversing down the tree while there are still segements to go
+  while ((pointer || {}).nodeType === 'branch' && segments.length) {
+    parent = pointer
+    pointer = pointer.children[segments.shift()]
+  }
+
+  // if we are going to view a directory, switch to the home doc where possible
+  if ((pointer || {}).nodeType === 'branch' && pointer.home) {
+    pointer = Object.assign({}, pointer, {id: pointer.home, originalId: pointer.id})
+  }
+
+  // return the leaf and its immediate branch
+  return [pointer || {}, parent]
 }
 
 function getDocId(link) {

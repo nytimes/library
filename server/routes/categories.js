@@ -27,6 +27,7 @@ async function handleCategory(req, res) {
 
   const root = segments[1]
   const meta = getMeta(id)
+  console.log(meta)
   const {mimeType} = meta
   const layout = categories.has(root) ? root : 'default'
   const template = `categories/${layout}`
@@ -75,7 +76,10 @@ async function handleCategory(req, res) {
 }
 
 function retrieveDataForPath(path, tree) {
+  console.log('in retrieveDataForPath', path)
   const segments = path.split('/').slice(1).filter((s) => s.length)
+
+  console.log(segments)
 
   let pointer = tree
   let parent = null
@@ -100,6 +104,7 @@ function retrieveDataForPath(path, tree) {
 }
 
 function prepareContextualData(data, url, breadcrumb, parent, slug) {
+  console.log(breadcrumb, url)
   const breadcrumbInfo = breadcrumb.map(({id}) => getMeta(id))
 
   const {children: siblings, id} = parent
