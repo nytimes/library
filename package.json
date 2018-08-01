@@ -7,6 +7,7 @@
     "***REMOVED***": ">=0.0.7",
     "assert": "^1.4.1",
     "async": "^2.4.1",
+    "bluebird": "^3.5.1",
     "cache-manager": "^2.4.0",
     "chai": "^4.0.2",
     "cheerio": "^1.0.0-rc.1",
@@ -46,11 +47,9 @@
     "eslint-plugin-standard": "^3.0.1",
     "mocha": "^5.2.0",
     "nock": "^9.4.1",
-    "nyc": "^11.2.1",
+    "nyc": "^13.0.1",
     "sinon": "^6.1.4",
-    "supertest": "^3.0.0",
-    "webpack": "^2.6.1",
-    "webpack-dev-server": "^2.4.5"
+    "supertest": "^3.0.0"
   },
   "scripts": {
     "start": "node server/index.js",
