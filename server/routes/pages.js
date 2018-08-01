@@ -17,7 +17,6 @@ const pages = getTemplates('pages')
 
 // express-promsie-router will call next() if the return value is 'next'.
 async function handlePage(req, res) {
-  console.log(req.params.page, req.query)
   const page = req.params.page || 'index'
   if (!pages.has(page)) return 'next'
 
@@ -39,6 +38,17 @@ async function handlePage(req, res) {
     return move.moveFile(id, dest).then((result) => {
       res.redirect(result)
     })
+  }
+
+  if (page === 'playlists') {
+    const playlists = getTagged('playlist')
+    console.log(playlists)
+
+    // console.log(playlists)
+    // const playlists = buildPlaylistModules(playlists)
+    // const categories = buildDisplayCategories(playlists)
+    // res.render(template, {...categories, template: stringTemplate})
+    return 
   }
 
   if (page === 'categories' || page === 'index') {
