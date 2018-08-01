@@ -3,14 +3,19 @@
 const fs = require('fs')
 const path = require('path')
 
+const {google} = require('googleapis')
+const datastore = require('@google-cloud/datastore')
+
 const {page1, page2, page3} = require('../fixtures/driveListing')
 const {simplePayload, rawPayload, multisectionPayload} = require('../fixtures/testHTML')
+const {docResponse, teamResponse} = require('../fixtures/datastoreResponses.json')
 
 const spreadsheetBuf = (() => {
-  return {data: fs.readFileSync(path.join(__dirname, '../fixtures/sheet-buffer'))}
+  return {data: fs.readFileSync(path.join(__dirname, '../fixtures/sheetBuffer.buf'))}
 })()
 
-exports.initMocks = (google) => {
+exports.init = () => {
+  // google drive mocks
   google.auth.getApplicationDefault = () => {
     return {credential: {JWT: {}}}
   }
@@ -48,4 +53,28 @@ exports.initMocks = (google) => {
       }
     }
   }
+
+  // google datastore mocks
+  datastore.prototype.key = () => {}
+
+  datastore.prototype.runQuery = ({
+    kinds
+  }) => {
+    const kind = kinds[0]
+    if (kind === 'LibraryViewDoc') return docResponse
+    return teamResponse
+  }
+
+  datastore.prototype.get = async () => {
+    return [
+      {
+        viewCount: 5,
+        lastViewedAt: '2017-09-08T15:48:55.751Z',
+        userId: '10',
+        email: 'test.user@nytimes.com'
+      }
+    ]
+  }
+
+  datastore.prototype.upsert = () => Promise.resolve(true)
 }
