@@ -278,12 +278,12 @@ async function retrievePlaylistData(id) {
     const id = url.parse(link[0]).pathname.split('/')[3]
     const {prettyName} = docsInfo[id]
 
-    return {id, prettyName}
+    return id
   })
 
   playlistInfo = {
     ...playlistInfo,
-    id: values
+    [id]: values
   }
 
   return values

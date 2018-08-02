@@ -7,6 +7,7 @@ const router = require('express-promise-router')()
 const cache = require('../cache')
 const log = require('../logger')
 const {getTree, getMeta, getPlaylist} = require('../list')
+const {handlePlaylist} = require('./playlists')
 const {fetchDoc, cleanName, fetchByline} = require('../docs')
 const {getTemplates, sortDocs, stringTemplate} = require('../utils')
 
@@ -20,7 +21,7 @@ async function handleCategory(req, res) {
 
   // get an up to date doc tree
   const tree = await getTree()
-  const [data, parent] = retrieveDataForPath(req.path, tree)
+  const [data, parent] = await retrieveDataForPath(req.path, tree)
   console.log('DATA', data, '\n\nPARENT', parent)
   const {id, breadcrumb} = data
   if (!id) throw new Error('Not found')
@@ -31,6 +32,28 @@ async function handleCategory(req, res) {
 
   const layout = categories.has(root) ? root : 'default'
   const template = `categories/${layout}`
+
+  // if the page is a playlist, render playlist overview
+  if (tags.includes('playlist')) {
+    const playlistMeta = await getPlaylist(id)
+
+    // TODO: consolidate/refactor this function
+    const playlistRenderData = handlePlaylist(meta, playlistMeta, breadcrumb)
+
+    res.render(`playlists/default`, playlistRenderData, (err, html) => {
+      if (err) throw err
+
+      cache.add(id, playlistMeta.modifiedTime, req.path, html)
+      res.end(html)
+    })
+  }
+
+  // if parent is a playlist
+  const parentMeta = getMeta(parent.id)
+  if (parentMeta && parentMeta.tags.includes('playlist')) {
+    // process data
+    // render as a playlist    
+  }
 
   // don't try to fetch branch node
   const contextData = prepareContextualData(data, req.path, breadcrumb, parent, meta.slug)
@@ -45,24 +68,7 @@ async function handleCategory(req, res) {
     id,
     template: stringTemplate
   })
-
-  // if the page is a playlist, render playlist overview
-  if (tags.includes('playlist')) {
-    const playlistMeta = getPlaylist(id)
-    res.render(`playlists/default`, baseRenderData, (err, html) => {
-      if (err) throw err
-
-      cache.add(id, playlistMeta.modifiedTime, req.path, html)
-      res.end(html)
-    })
-  }
-
-  // if immediate parent is a playlist, render in playlist format
-  const {tags: parentTags} = getMeta(breadcrumb[breadcrumb.length - 1].id)
-  const isInPlaylist = parentTags.includes('playlist')
   
-  console.log(segments)
-
   // if this is a folder, just render from the generic data
   if (resourceType === 'folder') {
     return res.render(template, baseRenderData, (err, html) => {
@@ -90,11 +96,8 @@ async function handleCategory(req, res) {
   })
 }
 
-function retrieveDataForPath(path, tree) {
-  console.log('in retrieveDataForPath', path)
+async function retrieveDataForPath(path, tree) {
   const segments = path.split('/').slice(1).filter((s) => s.length)
-
-  console.log(segments)
 
   let pointer = tree
   let parent = null
@@ -103,10 +106,27 @@ function retrieveDataForPath(path, tree) {
     return [{}, {}]
   }
 
-  // continue traversing down the tree while there are still segements to go
+  // continue traversing down the tree while there are still segments to go
   while ((pointer || {}).nodeType === 'branch' && segments.length) {
     parent = pointer
     pointer = pointer.children[segments.shift()]
+  }
+  
+  // if the path points to a file within a playlist
+  if (getMeta(pointer.id).tags.includes('playlist') && segments.length === 1) {
+    const playlistInfo = await getPlaylist(pointer.id)
+    const playlistFileId = playlistInfo.find(fileId => getMeta(fileId).slug === segments[0])
+
+    if (playlistFileId) {
+      const {id} = getMeta(playlistFileId)
+      const grandparent = parent
+      parent = pointer
+      pointer = {
+        id,
+        // generate breadcrumb based on playlist's path
+        breadcrumb: parent.breadcrumb.concat({id: parent.id})
+      }
+    }
   }
 
   // if we are going to view a directory, switch to the home doc where possible
@@ -160,7 +180,7 @@ function createRelatedList(slugs, self, baseUrl) {
         name: prettyName,
         editLink: webViewLink,
         resourceType,
-        url: tags.includes('playlist') ? `/playlist/${slug}` : url,
+        url,
         tags
       }
     })

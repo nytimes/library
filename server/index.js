@@ -79,8 +79,6 @@ app.get('/cache-purge-everything', (req, res, next) => {
 app.use(pages)
 app.use(cache)
 
-app.use(playlists)
-
 // category pages will be cache busted when their last updated timestamp changes
 app.use(categories)
 
