@@ -30,17 +30,16 @@ async function handlePlaylist(req, res) {
   const sheets = google.sheets({version: 'v4', auth: authClient})
   const response = await sheets.spreadsheets.values.get({spreadsheetId: playlistId, range: 'A1:A100'})
 
-  // prepare data to render
-  const values = response.data.values.slice(1).map(link => getDocId(link))
-  const contextData = prepareContextualData(playlistMeta, values)
-
   // prepare breadcrumbs
   const tree = await getTree()
   const [data, parent] = retrieveDataForPath(playlistMeta.path, tree)
   const {id, breadcrumb} = data
 
+  // prepare data to render
+  const values = response.data.values.slice(1).map(link => getDocId(link))
+  const contextData = prepareContextualData(playlistMeta, values, breadcrumb)
+
   const renderData = Object.assign({}, contextData, {
-    parentLinks: [{url: '/playlists', name: 'Playlists'}],
     template: stringTemplate,
     url: playlistMeta.path,
     title: playlistMeta.prettyName,
@@ -58,7 +57,22 @@ async function handlePlaylist(req, res) {
   })
 }
 
-function prepareContextualData(playlistMeta, values) {
+function prepareContextualData(playlistMeta, values, breadcrumb) {
+  const {id, path} = playlistMeta
+  const breadcrumbInfo = breadcrumb.map(({id}) => getMeta(id))
+
+  // extend the breadcrumb with render data
+  const parentLinks = path
+    .split('/')
+    .slice(1, -1) // ignore the base empty string and self
+    .map((segment, i, arr) => {
+      return {
+        url: `/${arr.slice(0, i + 1).join('/')}`,
+        name: cleanName(breadcrumbInfo[i].name),
+        editLink: breadcrumbInfo[i].webViewLink
+      }
+    })
+
   const children = values.map(docId => {
     const meta = getMeta(docId)
     return {
@@ -70,9 +84,10 @@ function prepareContextualData(playlistMeta, values) {
   })
 
   return {
-    parentId: playlistMeta.id,
+    parentId: id,
     children,
-    id: playlistMeta.id,
+    id,
+    parentLinks
   }
 
 }

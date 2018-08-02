@@ -104,7 +104,6 @@ function retrieveDataForPath(path, tree) {
 }
 
 function prepareContextualData(data, url, breadcrumb, parent, slug) {
-  console.log(breadcrumb, url)
   const breadcrumbInfo = breadcrumb.map(({id}) => getMeta(id))
 
   const {children: siblings, id} = parent
