@@ -6,7 +6,7 @@ const router = require('express-promise-router')()
 
 const cache = require('../cache')
 const log = require('../logger')
-const {getTree, getMeta} = require('../list')
+const {getTree, getMeta, getPlaylist} = require('../list')
 const {fetchDoc, cleanName, fetchByline} = require('../docs')
 const {getTemplates, sortDocs, stringTemplate} = require('../utils')
 
@@ -15,20 +15,20 @@ module.exports = router
 
 const categories = getTemplates('categories')
 async function handleCategory(req, res) {
-  console.log('handling categories')
   log.info(`GET ${req.path}`)
   const segments = req.path.split('/')
 
   // get an up to date doc tree
   const tree = await getTree()
   const [data, parent] = retrieveDataForPath(req.path, tree)
+  console.log('DATA', data, '\n\nPARENT', parent)
   const {id, breadcrumb} = data
   if (!id) throw new Error('Not found')
 
   const root = segments[1]
   const meta = getMeta(id)
-  console.log(meta)
-  const {mimeType} = meta
+  const {resourceType, tags} = meta
+
   const layout = categories.has(root) ? root : 'default'
   const template = `categories/${layout}`
 
@@ -41,15 +41,30 @@ async function handleCategory(req, res) {
     lastUpdatedBy: (meta.lastModifyingUser || {}).displayName,
     modifiedAt: meta.modifiedTime,
     createdAt: moment(meta.createdTime).fromNow(),
-    editLink: mimeType === 'text/html' ? meta.folder.webViewLink : meta.webViewLink,
+    editLink: meta.mimeType === 'text/html' ? meta.folder.webViewLink : meta.webViewLink,
     id,
     template: stringTemplate
   })
 
+  // if the page is a playlist, render playlist overview
+  if (tags.includes('playlist')) {
+    const playlistMeta = getPlaylist(id)
+    res.render(`playlists/default`, baseRenderData, (err, html) => {
+      if (err) throw err
+
+      cache.add(id, playlistMeta.modifiedTime, req.path, html)
+      res.end(html)
+    })
+  }
+
+  // if immediate parent is a playlist, render in playlist format
+  const {tags: parentTags} = getMeta(breadcrumb[breadcrumb.length - 1].id)
+  const isInPlaylist = parentTags.includes('playlist')
+  
+  console.log(segments)
+
   // if this is a folder, just render from the generic data
-  const {resourceType} = meta
   if (resourceType === 'folder') {
-    console.log('rendering folder', baseRenderData)
     return res.render(template, baseRenderData, (err, html) => {
       if (err) throw err
 
@@ -145,7 +160,7 @@ function createRelatedList(slugs, self, baseUrl) {
         name: prettyName,
         editLink: webViewLink,
         resourceType,
-        url,
+        url: tags.includes('playlist') ? `/playlist/${slug}` : url,
         tags
       }
     })

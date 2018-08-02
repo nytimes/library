@@ -75,7 +75,8 @@ function buildDisplayCategories(tree) {
     .sort(sortDocs)
     .map((category) => {
       category.children = Object.values(category.children || {}).map(({id}) => {
-        const {prettyName: name, path: url, resourceType, sort} = getMeta(id)
+        const {prettyName: name, path, resourceType, sort, tags, slug} = getMeta(id)
+        const url = tags.includes('playlist') ? `/playlist/${slug}` : path
         return { name, resourceType, url, sort }
       }).sort(sortDocs)
       return category

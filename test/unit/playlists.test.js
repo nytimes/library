@@ -29,6 +29,18 @@ const {promisify} = require('util')
 
 describe('Playlists', () => {
 
+  describe('list.getPlaylists', () => {
+    it('should return playlist info if it already exists')
+    it('should pass playlist id as spreadsheet id')
+
+    it('should throw an error if authentication fails')
+
+    it('should set playlist info without manipulating the existing values')
+
+    it('should return an array of objects describing documents in the playlist')
+
+  })
+
   describe('single playlist page', () => {
     describe('route handling', () => {
       it('should search for files tagged playlist')
@@ -37,7 +49,6 @@ describe('Playlists', () => {
     })
     
     describe('sheets api interaction', () => {
-      it('should pass playlist id as spreadsheet id')
     })
 
     describe('result formatting', () => {

@@ -3,6 +3,7 @@
 const inflight = require('promise-inflight')
 const {google} = require('googleapis')
 const path = require('path')
+const url = require('url')
 
 const cache = require('./cache')
 const log = require('./logger')
@@ -17,6 +18,7 @@ let currentTree = null // current route data by slug
 let docsInfo = {} // doc info by id
 let tags = {} // tags to doc id
 let driveBranches = {} // map of id to nodes
+let playlistInfo = {} // playlist info by id
 
 exports.getTree = async () => {
   if (currentTree) return currentTree
@@ -37,6 +39,12 @@ exports.getTagged = (tag) => {
 
 exports.getChildren = (id) => {
   return driveBranches[id]
+}
+
+exports.getPlaylist = (id) => {
+  if (playlistInfo[id]) return playlistInfo[id]
+
+  return retrievePlaylistData(id)
 }
 
 exports.getAllRoutes = () => {
@@ -254,9 +262,31 @@ function addPaths(byId) {
     return {
       folder: Object.assign({}, parent, parentInfo), // make sure folder contains path
       topLevelFolder: hasParent ? parentInfo.folder : Object.assign({}, item),
+      //TODO: make path array for all paths it could live in
       path: renderInLibrary ? libraryPath : drivePath
     }
   }
+}
+
+async function retrievePlaylistData(id) {
+  const authClient = await getAuth()
+  const sheets = google.sheets({version: 'v4', auth: authClient})
+  const response = await sheets.spreadsheets.values.get({spreadsheetId: id, range: 'A1:A100'})
+
+  // format data from api response
+  const values = response.data.values.slice(1).map(link => {
+    const id = url.parse(link[0]).pathname.split('/')[3]
+    const {prettyName} = docsInfo[id]
+
+    return {id, prettyName}
+  })
+
+  playlistInfo = {
+    ...playlistInfo,
+    id: values
+  }
+
+  return values
 }
 
 function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
