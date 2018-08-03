@@ -1,21 +1,20 @@
 'use strict'
 
 const {expect} = require('chai')
-let {google} = require('googleapis')
+const {google} = require('googleapis')
 const sinon = require('sinon')
 const moment = require('moment')
 const {promisify} = require('util')
 
-let auth = require('../../server/auth')
-let list = require('../../server/list')
-let move = require('../../server/move')
-let cache = require('../../server/cache')
-const {page1, page2, page3} = require('../fixtures/driveListing')
+const list = require('../../server/list')
+const move = require('../../server/move')
+const cache = require('../../server/cache')
+const {page1} = require('../fixtures/driveListing')
 
 const folderType = 'application/vnd.google-apps.folder'
 const sampleFile = {
-  fileId: page1.data.files.find(file => file.mimeType !== folderType).id,
-  destination: page1.data.files.find(file => file.mimeType === folderType).id,
+  fileId: page1.data.files.find((file) => file.mimeType !== folderType).id,
+  destination: page1.data.files.find((file) => file.mimeType === folderType).id,
   html: '<html><h1>Test file </h1></html>'
 }
 
@@ -24,13 +23,12 @@ const nextModified = () => {
   count += 1
   return moment(sampleFile.modified).add(count, 'days').format()
 }
-
-/* eslint-disable no-unused-expressions */
+const updateFile = () => {}
 
 describe('Move files', () => {
   describe('results from getFolders', async () => {
     let folders
-    
+
     before(async () => {
       folders = await move.getFolders()
     })
@@ -39,7 +37,7 @@ describe('Move files', () => {
       const onlyFolders = folders[0].children
         .reduce((acc, val) => acc && list.getMeta(val.id).resourceType === 'folder', true)
 
-      expect(onlyFolders).to.be.true
+      expect(onlyFolders).to.be.true // eslint-disable-line no-unused-expressions
     })
 
     it('should return a single object nested in an array', () => {
@@ -71,7 +69,7 @@ describe('Move files', () => {
       path = `${oldPath}/${slug}`
       const {path: destPath} = list.getMeta(destination)
       newPath = `${destPath}/${slug}`
-      
+
       const addToCache = promisify(cache.add)
       await addToCache(fileId, nextModified(), path, html)
     })
@@ -87,11 +85,7 @@ describe('Move files', () => {
       }
     })
 
-    after(async () => {
-      const purgeCache = promisify(cache.purge)
-      await cache.purge({url: newUrl, modified: nextModified()})
-    })
-
+    after(async () => cache.purge({url: newUrl, modified: nextModified()}))
 
     describe('when not Google authenticated', () => {
       let oldAuth
@@ -102,15 +96,15 @@ describe('Move files', () => {
         }
       })
 
-      it('should return an error', async () => {
-        await move.moveFile('test')
-          .catch(err => {
-            expect(err).to.exist.and.be.an.instanceOf(Error)
-          })
-      })
-
       after(() => {
         google.auth.getApplicationDefault = oldAuth
+      })
+
+      it('should return an error', async () => {
+        await move.moveFile('test')
+          .catch((err) => {
+            expect(err).to.exist.and.be.an.instanceOf(Error)
+          })
       })
     })
 
@@ -141,17 +135,17 @@ describe('Move files', () => {
         newUrl = await move.moveFile(fileId, destination, 'shared')
         const options = updateSpy.args[0][0]
 
-        expect(updateSpy.calledOnce).to.be.true
+        expect(updateSpy.calledOnce).to.be.true  // eslint-disable-line no-unused-expressions
         expect(options.teamDriveId).to.equal(undefined)
         expect(options.fileId).to.equal(fileId)
       })
     })
 
     describe('when trashing files', () => {
-      let oldGetMeta = list.getMeta
+      const oldGetMeta = list.getMeta
       before(() => {
         list.getMeta = (id) => {
-          if(id === 'trash') return {path: '/trash'}
+          if (id === 'trash') return {path: '/trash'}
           return oldGetMeta(id)
         }
       })
@@ -164,7 +158,6 @@ describe('Move files', () => {
       after(() => {
         list.getMeta = oldGetMeta
       })
-
     })
 
     describe('cache interaction', () => {
@@ -177,14 +170,14 @@ describe('Move files', () => {
             cb(null, [{html: null}])
           })
         })
-        
-        it('should redirect to home', async () => {
-          newUrl = await move.moveFile(fileId, destination, 'shared')
-          expect(newUrl).to.equal('/')
-        })
 
         after(() => {
           getCacheStub.restore()
+        })
+
+        it('should redirect to home', async () => {
+          newUrl = await move.moveFile(fileId, destination, 'shared')
+          expect(newUrl).to.equal('/')
         })
       })
 
@@ -198,7 +191,7 @@ describe('Move files', () => {
           addToCacheStub = sinon.stub(cache, 'add')
           addToCacheStub.callsFake((id, modified, newurl, html, cb) => cb(Error('Add to cache error')))
         })
-        
+
         it('should redirect to home', async () => {
           newUrl = await move.moveFile(fileId, destination, 'shared')
           expect(newUrl).to.equal('/')
@@ -214,10 +207,6 @@ describe('Move files', () => {
 
         expect(newUrl).to.equal(newPath)
       })
-
     })
   })
-
 })
-
-function updateFile() { return }

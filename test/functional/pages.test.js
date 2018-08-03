@@ -21,11 +21,7 @@ describe('Server responses', () => {
       return request(app)
         .get('/')
         .expect(200)
-        .then((res) => {
-          // find a better way to check that this is actually home?
-          expect(res.text).to.include('Find by Team')
-          expect(res.text).to.include('Useful Docs')
-        })
+        .then((res) => expect(res.text).to.include('<title>NYT Library</title>'))
     })
 
     it('should return 200 OK for healthcheck', () => {

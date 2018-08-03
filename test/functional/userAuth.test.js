@@ -21,6 +21,17 @@ describe('Authentication', () => {
       express.request.isAuthenticated = () => false
     })
 
+    after(() => {
+      express.request.user = userInfo
+      express.request.userInfo = {
+        email: 'test.user@test.com',
+        userId: '10',
+        analyticsUserId: 'asdfjkl123library'
+      }
+      app.request.session = {passport: {user: userInfo}}
+      express.request.isAuthenticated = () => true
+    })
+
     it('GET / should redirect to login if unauthenticated', () => {
       return request(app)
         .get('/')
@@ -43,17 +54,6 @@ describe('Authentication', () => {
   })
 
   describe('when logged in', () => {
-    before(() => {
-      express.request.user = userInfo
-      express.request.userInfo = {
-        email: 'test.user@test.com',
-        userId: '10',
-        analyticsUserId: 'asdfjkl123library'
-      }
-      app.request.session = {passport: {user: userInfo}}
-      express.request.isAuthenticated = () => true
-    })
-
     it('GET /whoami.json should return correct information', () => {
       return request(app)
         .get('/whoami.json')

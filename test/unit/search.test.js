@@ -1,12 +1,11 @@
 'use strict'
 
 const {expect} = require('chai')
-let {google} = require('googleapis')
+const {google} = require('googleapis')
 const sinon = require('sinon')
 
-const auth = require('../../server/auth')
 const list = require('../../server/list')
-let search = require('../../server/search')
+const search = require('../../server/search')
 const {page1} = require('../fixtures/driveListing')
 
 describe('Search', () => {
@@ -19,15 +18,15 @@ describe('Search', () => {
       }
     })
 
-    it('should return an error', async () => {
-      await search.run('test')
-        .catch(err => {
-          expect(err).to.exist.and.be.an.instanceOf(Error)
-        })
-    })
-
     after(() => {
       google.auth.getApplicationDefault = oldAuth
+    })
+
+    it('should return an error', async () => {
+      await search.run('test')
+        .catch((err) => {
+          expect(err).to.exist.and.be.an.instanceOf(Error)
+        })
     })
   })
 
@@ -47,15 +46,14 @@ describe('Search', () => {
 
       it('should query for folders', async () => {
         await search.run('test', 'shared')
-        const queryString = "mimeType = \'application/vnd.google-apps.folder\'"
-        
+        const queryString = "mimeType = 'application/vnd.google-apps.folder'"
         expect(listFilesSpy.args[0][0].q).to.include(queryString)
       })
     })
 
     describe('when making second api call to retrieve search results', () => {
       let listFilesSpy
-      
+
       before(async () => {
         listFilesSpy = sinon.spy(listSearchResults)
         google.drive = () => {
@@ -69,7 +67,7 @@ describe('Search', () => {
       })
 
       it('should not query for folders', () => {
-        const queryString = "mimeType != \'application/vnd.google-apps.folder\'"
+        const queryString = "mimeType != 'application/vnd.google-apps.folder'"
 
         expect(listFilesSpy.args[1][0].q).to.include(queryString)
       })
@@ -81,8 +79,6 @@ describe('Search', () => {
         expect(listFilesSpy.args[1][0].q).to.include(str)
       })
     })
-
-
   })
 
   describe('in team drive', () => {
@@ -121,7 +117,7 @@ describe('Search', () => {
     })
 
     it('should return an array of files', async () => {
-      list.getMeta = fileId => ({id: fileId, path: '/', tags: ['test']})
+      list.getMeta = (fileId) => ({id: fileId, path: '/', tags: ['test']})
 
       const results = await search.run('test')
 
@@ -181,7 +177,6 @@ describe('Search', () => {
           })
       })
     })
-
   })
 })
 
