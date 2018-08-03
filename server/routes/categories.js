@@ -48,11 +48,25 @@ async function handleCategory(req, res) {
     })
   }
 
-  // if parent is a playlist
+  // if parent is a playlist, render doc in the playlist view
   const parentMeta = getMeta(parent.id)
   if (parentMeta && parentMeta.tags.includes('playlist')) {
     // process data
-    // render as a playlist    
+    console.log('in a playlist')
+    const {html, originalRevision, sections} = await fetchDoc(id, resourceType, req)
+    const revisionData = originalRevision.data
+    const payload = fetchByline(html, revisionData.lastModifyingUser.displayName)
+    // render as a playlist
+    res.render(`pages/playlists`, { // TODO: prepare data, streamline this handleCategory function
+      template: stringTemplate, 
+      content: payload.html,
+      byline: payload.byline,
+      createdBy: revisionData.lastModifyingUser.displayName,
+      sections
+    }, (err, html) => {
+      if (err) throw err
+      res.end(html)
+    })
   }
 
   // don't try to fetch branch node
@@ -142,7 +156,9 @@ function prepareContextualData(data, url, breadcrumb, parent, slug) {
   const breadcrumbInfo = breadcrumb.map(({id}) => getMeta(id))
 
   const {children: siblings, id} = parent
+  console.log(siblings, id)
   const {children, originalId} = data
+  console.log(children, originalId)
   const self = url.split('/').slice(-1)[0]
   // most of what we are doing here is preparing parents and siblings
   // we need the url and parent object, as well as the breadcrumb to do that
@@ -170,6 +186,7 @@ function prepareContextualData(data, url, breadcrumb, parent, slug) {
 }
 
 function createRelatedList(slugs, self, baseUrl) {
+  console.log(slugs, self, baseUrl)
   return Object.keys(slugs)
     .filter((slug) => slug !== self)
     .map((slug) => {
