@@ -25,7 +25,7 @@ exports.getFolders = async () => {
   return [folders]
 }
 
-exports.moveFile = async (id, destination, driveType='team') => {
+exports.moveFile = async (id, destination, driveType = 'team') => {
   const {parents, slug} = list.getMeta(id) || {}
   const {path: basePath} = list.getMeta(destination) || {}
 

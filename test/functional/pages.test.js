@@ -13,9 +13,9 @@ const userInfo = {
 }
 
 describe('Server responses', () => {
-  before(() => {
-    app.request.session = {passport: {user: userInfo}}
-  })
+  before(() => { app.request.session = {passport: {user: userInfo}} })
+  after(() => { app.request.session = {} })
+
   describe('that return HTML', () => {
     it('should return 200 and content for homepage', () => {
       return request(app)

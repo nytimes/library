@@ -13,27 +13,27 @@ const userInfo = {
 }
 
 describe('Reading History', () => {
-  before(() => {
-    app.request.session = {passport: {user: userInfo}}
-  })
+  before(() => { app.request.session = {passport: {user: userInfo}} })
+  after(() => { app.request.session = {} })
 
   describe('for documents', () => {
     it('should return 200 with json', () => {
       return request(app)
         .get('/reading-history/docs.json')
+        .set('Accept', 'application/json')
         .expect(200)
         .then((res) => {
-          const json = JSON.parse(res.text)
-          expect(json).to.have.keys('recentlyViewed', 'mostViewed')
+          expect(res.body).to.have.keys('recentlyViewed', 'mostViewed')
         })
     })
 
     it('should have correct docs', () => {
       return request(app)
         .get('/reading-history/docs.json')
+        .set('Accept', 'application/json')
         .expect(200)
         .then((res) => {
-          const {recentlyViewed, mostViewed} = JSON.parse(res.text)
+          const {recentlyViewed, mostViewed} = res.body
           const recentIds = recentlyViewed.map((obj) => obj.documentId)
           const mostIds = mostViewed.map((obj) => obj.documentId)
           expect(recentIds).to.include(
@@ -53,9 +53,10 @@ describe('Reading History', () => {
     it('should have correct recent doc info', () => {
       return request(app)
         .get('/reading-history/docs.json')
+        .set('Accept', 'application/json')
         .expect(200)
         .then((res) => {
-          const {recentlyViewed} = JSON.parse(res.text)
+          const {recentlyViewed} = res.body
           const {doc} = recentlyViewed.filter(({documentId}) => {
             return documentId === '8135b90bcc7085a0daa231d9a1109b5c'
           })[0]
@@ -71,9 +72,10 @@ describe('Reading History', () => {
     it('should have correct most viewed doc info', () => {
       return request(app)
         .get('/reading-history/docs.json')
+        .set('Accept', 'application/json')
         .expect(200)
         .then((res) => {
-          const {recentlyViewed} = JSON.parse(res.text)
+          const {recentlyViewed} = res.body
           const {doc} = recentlyViewed.filter(({documentId}) => {
             return documentId === '88ca5e30ddb527b4e6266deeef78bff7'
           })[0]
@@ -92,18 +94,19 @@ describe('Reading History', () => {
       return request(app)
         .get('/reading-history/teams.json')
         .expect(200)
+        .set('Accept', 'application/json')
         .then((res) => {
-          const json = JSON.parse(res.text)
-          expect(json).to.have.keys('recentlyViewed', 'mostViewed')
+          expect(res.body).to.have.keys('recentlyViewed', 'mostViewed')
         })
     })
 
     it('should have correct teams', () => {
       return request(app)
         .get('/reading-history/teams.json')
+        .set('Accept', 'application/json')
         .expect(200)
         .then((res) => {
-          const {recentlyViewed, mostViewed} = JSON.parse(res.text)
+          const {recentlyViewed, mostViewed} = res.body
           const recentIds = recentlyViewed.map((obj) => obj.teamId)
           const mostIds = mostViewed.map((obj) => obj.teamId)
           expect(recentIds).to.include(
@@ -126,9 +129,10 @@ describe('Reading History', () => {
     it('should have correct recent team info', () => {
       return request(app)
         .get('/reading-history/teams.json')
+        .set('Accept', 'application/json')
         .expect(200)
         .then((res) => {
-          const {recentlyViewed} = JSON.parse(res.text)
+          const {recentlyViewed} = res.body
           const {team} = recentlyViewed.filter(({teamId}) => {
             return teamId === '6478ec336324a91b837acf752d7babc4'
           })[0]

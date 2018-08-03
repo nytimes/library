@@ -32,7 +32,7 @@ describe('Authentication', () => {
       express.request.isAuthenticated = () => true
     })
 
-    it('GET / should redirect to login if unauthenticated', () => {
+    it('should redirect to login if unauthenticated at homepage', () => {
       return request(app)
         .get('/')
         .expect(302) // expect user to be found
@@ -42,7 +42,7 @@ describe('Authentication', () => {
         })
     })
 
-    it('GET a path should redirect to login if unauthenticated', () => {
+    it('should redirect to login if unauthenticated at path', () => {
       return request(app)
         .get('/foo/bar')
         .expect(302)
@@ -54,7 +54,7 @@ describe('Authentication', () => {
   })
 
   describe('when logged in', () => {
-    it('GET /whoami.json should return correct information', () => {
+    it('should return correct information at /whoami.json', () => {
       return request(app)
         .get('/whoami.json')
         .expect(200) // expect user to be found
@@ -67,7 +67,7 @@ describe('Authentication', () => {
         })
     })
 
-    it('GET /logout should redirect to /', () => {
+    it('should redirect to / after logout', () => {
       return request(app)
         .get('/logout')
         .expect(302) // expect user to be found

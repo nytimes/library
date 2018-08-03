@@ -29,7 +29,7 @@ async function setAuthClient() {
     // In Heroku environment, set GOOGLE_APPLICATION_CREDENTIALS as auth json object to be parsed
     try {
       const keys = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS)
-      authClient = nodeAuth.fromJSON(keys);
+      authClient = nodeAuth.fromJSON(keys)
     } catch (err) {
       const {credential} = await google.auth.getApplicationDefault()
       authClient = credential

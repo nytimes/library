@@ -92,7 +92,7 @@ function getOptions(id) {
   }
 }
 
-async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentIds = [driveId], drive} = {}, driveType) {
+async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentIds = [driveId], drive} = {}, driveType = 'team') {
   const options = getOptions(parentIds)
 
   if (pageToken) {
