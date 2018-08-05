@@ -172,7 +172,7 @@ describe('Move files', () => {
         })
 
         after(() => {
-          getCacheStub.restore()
+          cache.get.restore()
         })
 
         it('should redirect to home', async () => {

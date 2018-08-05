@@ -28,7 +28,6 @@ exports.getFolders = async () => {
 exports.moveFile = async (id, destination, driveType = 'team') => {
   const {parents, slug} = list.getMeta(id) || {}
   const {path: basePath} = list.getMeta(destination) || {}
-  console.log(parents, slug, basePath)
 
   if (!parents) return Error('Not found')
 
