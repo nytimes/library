@@ -88,7 +88,12 @@ match the branding of your organization. This is covered in the [customization r
 ## Deploying the app
 
 ### Using Heroku
-**Heroku deploy TKTKTKT**
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/newsdev/nyt-library/tree/heroku-example)
+
+To deploy to Heroku, make sure to [set up a Google service account](https://console.cloud.google.com/iam-admin/serviceaccounts?_ga=***REMOVED***) and [OAuth 2.0 client](https://developers.google.com/identity/protocols/OAuth2), using http://your-app-url.com/auth/redirect as the callback url. Onces that's set, click the button to configure and deploy your app!
+
+## Monitoring
 
 ### Using Docker
 **Docker deploy TKTKTKT**

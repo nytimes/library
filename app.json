@@ -1,0 +1,44 @@
+{
+  "name": "Library on Heroku",
+  "description": "One place for your organization's documents.",
+  "logo": "https://***REMOVED***",
+  "repository": "https://github.com/newsdev/nyt-library",
+  "env": {
+    "GOOGLE_APPLICATION_CREDENTIALS": {
+      "description": "Your Google service account credentials. Create one here: https://console.cloud.google.com/iam-admin/serviceaccounts?_ga=***REMOVED***",
+      "required": true
+    },
+    "DRIVE_TYPE": {
+      "description": "Specifify whether your Google Drive is a 'shared' or 'team' drive.",
+      "required": true,
+      "value": "shared"
+    },
+    "DRIVE_ID": {
+      "description": "Your Google Drive ID.",
+      "required": true,
+      "value": "***REMOVED***"
+    },
+    "GOOGLE_CLIENT_ID": {
+      "description": "Your Google OAuth2 Client ID. Create one here: https://developers.google.com/identity/protocols/OAuth2",
+      "required": true
+    },
+    "GOOGLE_CLIENT_SECRET": {
+      "description": "Your Google OAuth2 Client Secret.",
+      "required": true
+    },
+    "APPROVED_DOMAINS": {
+      "description": "Include approved email domains.",
+      "required": true,
+      "value": "nytimes.com"
+    },
+    "SESSION_SECRET": {
+      "required": true,
+      "generator": "secret"
+    },
+    "NPM_TOKEN": {
+      "description": "Enter an NPM token if you are using private modules",
+      "required": false
+    }
+  }
+}
+
