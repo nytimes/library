@@ -4,7 +4,8 @@ const {expect} = require('chai')
 const {google} = require('googleapis')
 const sinon = require('sinon')
 const moment = require('moment')
-const {promisify} = require('util')
+// TODO: remove once cache is promisified
+const {promisify} = require('util') 
 
 const list = require('../../server/list')
 const move = require('../../server/move')
@@ -142,21 +143,20 @@ describe('Move files', () => {
     })
 
     describe('when trashing files', () => {
-      const oldGetMeta = list.getMeta
+      let listStub
       before(() => {
-        list.getMeta = (id) => {
-          if (id === 'trash') return {path: '/trash'}
-          return oldGetMeta(id)
-        }
+        listStub = sinon.stub(list, 'getMeta')
+        listStub.withArgs('trash').returns({path: '/trash'})
+        listStub.callThrough()
+      })
+
+      after(() => {
+        listStub.restore()
       })
 
       it('should redirect to home', async () => {
         newUrl = await move.moveFile(fileId, 'trash', 'shared')
         expect(newUrl).to.equal('/')
-      })
-
-      after(() => {
-        list.getMeta = oldGetMeta
       })
     })
 
@@ -192,13 +192,13 @@ describe('Move files', () => {
           addToCacheStub.callsFake((id, modified, newurl, html, cb) => cb(Error('Add to cache error')))
         })
 
+        after(() => {
+          addToCacheStub.restore()
+        })
+
         it('should redirect to home', async () => {
           newUrl = await move.moveFile(fileId, destination, 'shared')
           expect(newUrl).to.equal('/')
-        })
-
-        after(() => {
-          addToCacheStub.restore()
         })
       })
 
