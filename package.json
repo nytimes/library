@@ -4,7 +4,6 @@
   "main": "server/index.js",
   "dependencies": {
     "@google-cloud/datastore": "^1.4.1",
-    "***REMOVED***": ">=0.0.7",
     "assert": "^1.4.1",
     "async": "^2.4.1",
     "cache-manager": "^2.4.0",
@@ -22,7 +21,6 @@
     "md5": "^2.2.1",
     "moment": "^2.22.2",
     "node-sass": "^4.9.2",
-    "nodemon": "^1.18.3",
     "passport": "^0.4.0",
     "passport-google-oauth2": "^0.1.6",
     "pretty": "^2.0.0",
@@ -31,10 +29,6 @@
     "unescape": "^1.0.1",
     "winston": "^2.4.0",
     "xlsx": "^0.11.0"
-  },
-  "optionalDependencies": {
-    "cache-manager-ioredis": "^1.0.1",
-    "raven": "^2.6.3"
   },
   "devDependencies": {
     "concurrently": "^3.4.0",
@@ -47,6 +41,7 @@
     "eslint-plugin-standard": "^3.0.1",
     "mocha": "^5.2.0",
     "nock": "^9.4.1",
+    "nodemon": "^1.18.3",
     "nyc": "^11.2.1",
     "supertest": "^3.0.0",
     "supertest-as-promised": "^4.0.2",
