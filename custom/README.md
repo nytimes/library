@@ -16,13 +16,42 @@ custom/
 │   └── middleware2.js
 ├── strings.yaml
 ├── styles
-│   └── __theme.scss
+│   ├── _theme.scss
+│   └── _custom.scss
 └── userAuth.js
 ```
 
 ## Styles
-Sass variable overrides can be placed in `custom/styles/__theme.scss`. This allows
-for setting
+Sass variable overrides can be placed in `custom/styles/_theme.scss`. This allows
+for setting custom values for colors and fonts across the entire application. An
+example theme file could look like this:
+
+```scss
+// Font imports
+@import url('https://fonts.googleapis.com/css?family=Alfa+Slab+One|Open+Sans:400,400i,700,700i&subset=latin-ext');
+
+ // Example Light Theme
+$branding:                     "Alpha Slab One", cursive;
+$sans:                         "Open Sans", arial, helvetica, sans-serif;
+$masthead-background:          $gray-10;
+$main-homepage-background:     $white;
+$main-homepage-text-color:     $black;
+$main-homepage-icon-color:     $black;
+$search-container-background:  #e6e2e2;
+$search-container-hover:       $gray-70;
+$btn-homepage-background:      $white;
+$btn-homepage-border:          $black;
+$btn-default-background:       $white;
+$btn-default-background-hover: $accent;
+$btn-default-border:           $black;
+$btn-default-text-color:       $black;
+$btn-default-text-hover:       $black;
+```
+
+
+If you would like to use the default theme but want to override some styling,
+you can add a `_custom.scss` file to the styles folder. There, you can place
+scss to override any styles you see fit.
 
 ## Text, Language, and Branding
 The site name, logo, and most of the text on the website can be modified from the
