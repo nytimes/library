@@ -22,7 +22,6 @@ async function handleCategory(req, res) {
   // get an up to date doc tree
   const tree = await getTree()
   const [data, parent] = await retrieveDataForPath(req.path, tree)
-  console.log('DATA', data, '\n\nPARENT', parent)
   const {id, breadcrumb} = data
   if (!id) throw new Error('Not found')
 
@@ -41,7 +40,7 @@ async function handleCategory(req, res) {
     // TODO: consolidate/refactor this function
     const playlistRenderData = handlePlaylist(meta, playlistMeta, breadcrumb)
 
-    res.render(`playlists/default`, playlistRenderData, (err, html) => {
+    return res.render(`playlists/default`, playlistRenderData, (err, html) => {
       if (err) throw err
 
       cache.add(id, playlistMeta.modifiedTime, req.path, html)
@@ -60,13 +59,14 @@ async function handleCategory(req, res) {
     const playlistData = await preparePlaylistData(data, req.path, parent)
     console.log(playlistData)
     // render as a playlist
-    res.render(`pages/playlists`, playlistData, { // TODO: prepare data, streamline this handleCategory function
+    return res.render(`pages/playlists`, Object.assign({}, playlistData, { // TODO: prepare data, streamline this handleCategory function
       template: stringTemplate, 
       content: payload.html,
       byline: payload.byline,
       createdBy: revisionData.lastModifyingUser.displayName,
-      sections
-    }, (err, html) => {
+      sections,
+      title: meta.prettyName
+    }), (err, html) => {
       if (err) throw err
       res.end(html)
     })
@@ -157,20 +157,36 @@ async function retrieveDataForPath(path, tree) {
 
 async function preparePlaylistData(data, url, parent) {
   const {id, breadcrumb} = data
+  const breadcrumbInfo = breadcrumb.map(({id}) => getMeta(id))
 
   const playlistLinks = await getPlaylist(parent.id)
   const playlistData = playlistLinks.map(id => {
     const {prettyName, slug} = getMeta(id)
-    return {id, prettyName, slug}
+    return {
+      url: `${url.split('/').slice(0, -1).join('/')}/${slug}`,
+      id, 
+      prettyName, 
+      slug}
+  })
+
+  const parentLinks = url
+  .split('/')
+  .slice(1, -1) // ignore the base empty string and self
+  .map((segment, i, arr) => {
+    return {
+      url: `/${arr.slice(0, i + 1).join('/')}`,
+      name: cleanName(breadcrumbInfo[i].name),
+      editLink: breadcrumbInfo[i].webViewLink
+    }
   })
 
   return {
-    playlistData
+    playlistData,
+    parentLinks
   }
-
 }
 
-async function prepareContextualData(data, url, breadcrumb, parent, slug) {
+function prepareContextualData(data, url, breadcrumb, parent, slug) {
   const breadcrumbInfo = breadcrumb.map(({id}) => getMeta(id))
 
   const {children: siblings, id} = parent
@@ -180,11 +196,6 @@ async function prepareContextualData(data, url, breadcrumb, parent, slug) {
   // we need the url and parent object, as well as the breadcrumb to do that
   const siblingLinks = createRelatedList(siblings, self, `${url.split('/').slice(0, -1).join('/')}`)
   const childrenLinks = createRelatedList(children || {}, self, url)
-
-  const playlistLinks = playlistIds.map(id => {
-    const {name} = getMeta(id)
-    return {name, id}
-  })
 
   // extend the breadcrumb with render data
   const parentLinks = url

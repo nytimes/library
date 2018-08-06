@@ -2,9 +2,16 @@
 <html>
   <body>
     <h1 class="visually-hidden">Default template</h1>
+    <%- include ../partials/header %>
     <div class="g-body">
       <div class="g-left-panel">
         <%- include('../partials/playlistList') %>
+      </div>
+      <div class="g-main-content">
+        <% if (locals.content) { %>
+        <%- content %>
+        <% } %>
+
       </div>
     </div>
   </body>

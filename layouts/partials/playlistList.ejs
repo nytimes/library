@@ -1,6 +1,7 @@
-	
-<div>
-	<% playlistData.forEach((doc) => { %>
-		<p><%=doc.prettyName%></p>
+<ul>
+	<% playlistData.map((doc) => { %>
+		<li>
+			<a class="content-link" href="<%- doc.url %>"><%= doc.prettyName %></a>
+		</li>
 	<% }) %>
-</div>
+</ul>
