@@ -5,7 +5,7 @@ const {google} = require('googleapis')
 const sinon = require('sinon')
 const moment = require('moment')
 // TODO: remove once cache is promisified
-const {promisify} = require('util') 
+const {promisify} = require('util')
 
 const list = require('../../server/list')
 const move = require('../../server/move')
@@ -143,16 +143,13 @@ describe('Move files', () => {
     })
 
     describe('when trashing files', () => {
-      let listStub
       before(() => {
-        listStub = sinon.stub(list, 'getMeta')
+        const listStub = sinon.stub(list, 'getMeta')
         listStub.withArgs('trash').returns({path: '/trash'})
         listStub.callThrough()
       })
 
-      after(() => {
-        listStub.restore()
-      })
+      after(() => sinon.restore())
 
       it('should redirect to home', async () => {
         newUrl = await move.moveFile(fileId, 'trash', 'shared')
@@ -162,18 +159,13 @@ describe('Move files', () => {
 
     describe('cache interaction', () => {
       describe('when specified file id has no associated html stored in cache', () => {
-        let getCacheStub
-
         before(() => {
-          getCacheStub = sinon.stub(cache, 'get')
+          const getCacheStub = sinon.stub(cache, 'get')
           getCacheStub.callsFake((path, cb) => {
             cb(null, [{html: null}])
           })
         })
-
-        after(() => {
-          cache.get.restore()
-        })
+        after(() => sinon.restore())
 
         it('should redirect to home', async () => {
           newUrl = await move.moveFile(fileId, destination, 'shared')
@@ -182,19 +174,15 @@ describe('Move files', () => {
       })
 
       describe('when cache errors', () => {
-        let addToCacheStub
-
         before(async () => {
           const addToCache = promisify(cache.add)
           await addToCache(fileId, nextModified(), path, html)
 
-          addToCacheStub = sinon.stub(cache, 'add')
+          const addToCacheStub = sinon.stub(cache, 'add')
           addToCacheStub.callsFake((id, modified, newurl, html, cb) => cb(Error('Add to cache error')))
         })
 
-        after(() => {
-          addToCacheStub.restore()
-        })
+        after(() => sinon.restore())
 
         it('should redirect to home', async () => {
           newUrl = await move.moveFile(fileId, destination, 'shared')

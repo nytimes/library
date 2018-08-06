@@ -16,11 +16,8 @@ const userInfo = {
 
 describe('Authentication', () => {
   describe('when not logged in', () => {
-    let authStub
-    before(() => {
-      authStub = sinon.stub(express.request, 'isAuthenticated').returns(false)
-    })
-    after(() => authStub.restore())
+    before(() => sinon.stub(express.request, 'isAuthenticated').returns(false))
+    after(() => sinon.restore())
 
     it('should redirect to login if unauthenticated at homepage', () => {
       return request(app)
@@ -44,11 +41,8 @@ describe('Authentication', () => {
   })
 
   describe('when logged in', () => {
-    let sessionStub
-    before(() => {
-      sessionStub = sinon.stub(app.request, 'session').value({passport: {user: userInfo}})
-    })
-    after(() => sessionStub.restore())
+    before(() => sinon.stub(app.request, 'session').value({passport: {user: userInfo}}))
+    after(() => sinon.restore())
 
     it('should return correct information at /whoami.json', () => {
       return request(app)

@@ -14,11 +14,8 @@ const userInfo = {
 }
 
 describe('Reading History', () => {
-  let sessionStub
-  before(() => {
-    sessionStub = sinon.stub(app.request, 'session').value({passport: {user: userInfo}})
-  })
-  after(() => sessionStub.restore())
+  beforeEach(() => sinon.stub(app.request, 'session').value({passport: {user: userInfo}}))
+  afterEach(() => sinon.restore())
 
   describe('for documents', () => {
     it('should return 200 with json', () => {
