@@ -9,16 +9,17 @@ Custom middleware is also supported.
 A `custom` directory using all overrides will have the following structure:
 ```
 custom/
+├── package.json       // for any npm modules required for custom code
 ├── cache
 │   └── store.js
 ├── middleware
-│   ├── middleware1.js
+│   ├── middleware1.js // pre/postload exports will be included as middleware
 │   └── middleware2.js
 ├── strings.yaml
 ├── styles
 │   ├── _theme.scss
 │   └── _custom.scss
-└── userAuth.js
+└── userAuth.js        // authentication middleware overrides
 ```
 
 ## Styles
