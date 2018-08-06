@@ -35,10 +35,13 @@
       "required": true,
       "generator": "secret"
     },
+    "CUSTOMIZATION_GIT_REPO": {
+      "required": false,
+      "description": "A git with the contents of your 'custom' directory for automatic deployment."
+    },
     "NPM_TOKEN": {
       "description": "Enter an NPM token if you are using private modules",
       "required": false
     }
   }
 }
-

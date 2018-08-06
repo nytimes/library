@@ -99,6 +99,11 @@ To set the proper Heroku config variables, make sure to [set up a Google service
 //registry.npmjs.org/:_authToken=${NPM_TOKEN}
 ```
 
+If you wish to deploy Library with customizations, create a git repo with the files
+you would like to include. Set the `CUSTOMIZATION_GIT_REPO` environment variable
+to the cloning URL. Files in the repo and packages specified in the `package.json`
+will be included in your library installation.
+
 ### Using Docker
 Library can be used as a base image for deployment using Docker. This allows you
 to automate building and deploying a custom version of Library during Docker's
