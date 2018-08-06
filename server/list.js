@@ -275,19 +275,14 @@ async function retrievePlaylistData(id) {
   const response = await sheets.spreadsheets.values.get({spreadsheetId: id, range: 'A1:A100'})
 
   // format data from api response
-  const values = response.data.values.slice(1).map(link => {
+  const playlistIds = response.data.values.slice(1).map(link => {
     const id = url.parse(link[0]).pathname.split('/')[3]
-    const {prettyName} = docsInfo[id]
-
     return id
   })
 
-  playlistInfo = {
-    ...playlistInfo,
-    [id]: values
-  }
+  playlistInfo[id] = playlistIds
 
-  return values
+  return playlistIds
 }
 
 function handleUpdates(id, {info: lastInfo, tree: lastTree}) {

@@ -20,10 +20,12 @@ async function handleCategory(req, res) {
   const segments = req.path.split('/')
 
   // get an up to date doc tree
+  // TODO: put in separate function
+  // consider putting this in middleware
   const tree = await getTree()
-  const [data, parent] = await retrieveDataForPath(req.path, tree)
-  const {id, breadcrumb} = data
-  if (!id) throw new Error('Not found')
+  const [data, parent] = await retrieveDataForPath(req.path, tree) || []
+  const {id, breadcrumb} = data || {}
+  if (!id) throw new Error('Not found') // call next here instead of throwing error
 
   const root = segments[1]
   const meta = getMeta(id)
@@ -33,7 +35,7 @@ async function handleCategory(req, res) {
   const template = `categories/${layout}`
 
   // if the page is a playlist, render playlist overview
-  if (tags.includes('playlist')) {
+  if (tags.includes('playlist')) { //TODO: render with playlist view
     log.info('Item is a playlist')
     const playlistMeta = await getPlaylist(id)
 
@@ -120,7 +122,7 @@ async function retrieveDataForPath(path, tree) {
   let parent = null
 
   if (segments[0] === 'trash') {
-    return [{}, {}]
+    return
   }
 
   // continue traversing down the tree while there are still segments to go
@@ -128,6 +130,8 @@ async function retrieveDataForPath(path, tree) {
     parent = pointer
     pointer = pointer.children[segments.shift()]
   }
+
+  if (!pointer) return
   
   // if the path points to a file within a playlist
   if (getMeta(pointer.id).tags.includes('playlist') && segments.length === 1) {
