@@ -2,6 +2,7 @@
 
 const request = require('supertest')
 const {assert} = require('chai')
+const sinon = require('sinon')
 const express = require('express')
 
 const app = require('../../server/index')
@@ -15,22 +16,11 @@ const userInfo = {
 
 describe('Authentication', () => {
   describe('when not logged in', () => {
+    let authStub
     before(() => {
-      express.request.user = {}
-      express.request.userInfo = {}
-      express.request.isAuthenticated = () => false
+      authStub = sinon.stub(express.request, 'isAuthenticated').returns(false)
     })
-
-    after(() => {
-      express.request.user = userInfo
-      express.request.userInfo = {
-        email: 'test.user@test.com',
-        userId: '10',
-        analyticsUserId: 'asdfjkl123library'
-      }
-      app.request.session = {passport: {user: userInfo}}
-      express.request.isAuthenticated = () => true
-    })
+    after(() => authStub.restore())
 
     it('should redirect to login if unauthenticated at homepage', () => {
       return request(app)
@@ -54,6 +44,14 @@ describe('Authentication', () => {
   })
 
   describe('when logged in', () => {
+    let sessionStub
+    before(() => {
+      sessionStub = sinon.stub(app.request, 'session').get(() => {
+        return {passport: {user: userInfo}}
+      })
+    })
+    after(() => sessionStub.restore())
+
     it('should return correct information at /whoami.json', () => {
       return request(app)
         .get('/whoami.json')

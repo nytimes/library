@@ -2,6 +2,7 @@
 
 const request = require('supertest')
 const {expect} = require('chai')
+const sinon = require('sinon')
 
 const app = require('../../server/index')
 
@@ -13,8 +14,13 @@ const userInfo = {
 }
 
 describe('Reading History', () => {
-  before(() => { app.request.session = {passport: {user: userInfo}} })
-  after(() => { app.request.session = {} })
+  let sessionStub
+  before(() => {
+    sessionStub = sinon.stub(app.request, 'session').get(() => {
+      return {passport: {user: userInfo}}
+    })
+  })
+  after(() => sessionStub.restore())
 
   describe('for documents', () => {
     it('should return 200 with json', () => {

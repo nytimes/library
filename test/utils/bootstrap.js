@@ -22,9 +22,10 @@ const userInfo = {
   _json: {domain: 'test.com'}
 }
 
-// express mocks
+// express mocks to bypass user auth
 express.request.user = userInfo
 express.request.userInfo = userInfo
+express.request.isAuthenticated = () => true
 
 // drive and datastore mocks
 googleMock.init()
