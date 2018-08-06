@@ -1,26 +1,11 @@
 <!DOCTYPE html>
 <html>
-  <!-- <%- include ../partials/head %> -->
   <body>
     <h1 class="visually-hidden">Default template</h1>
-    <!-- <%- include ../partials/header %> -->
-    <!-- <%- include ../partials/nav %> -->
     <div class="g-body">
       <div class="g-left-panel">
-      	All docs in playlist!!
+        <%- include('../partials/playlistList') %>
       </div>
-
-      <div class="g-main-content">
-        <% if (locals.content) { %>
-        <%- content %>
-        <% } %>
-
-     <!--    <% if (locals.children && children.length) { %>
-        <%- include('../partials/childrenList', {children, kicker: template('folder.childrenList.kicker', title)}) %> -->
-        <% } %>
-      </div>
-
-      <!-- <%- include('../partials/footer', { pageType: 'document', topLevelFolder: url.split('/')[1] }) %> -->
     </div>
   </body>
 </html>

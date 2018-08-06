@@ -41,10 +41,11 @@ exports.getChildren = (id) => {
   return driveBranches[id]
 }
 
-exports.getPlaylist = (id) => {
+exports.getPlaylist = async (id) => {
   if (playlistInfo[id]) return playlistInfo[id]
 
-  return retrievePlaylistData(id)
+  const playlistData = await retrievePlaylistData(id)
+  return playlistData
 }
 
 exports.getAllRoutes = () => {
