@@ -52,7 +52,6 @@ async function handleCategory(req, res) {
   const parentMeta = getMeta(parent.id)
   if (parentMeta && parentMeta.tags.includes('playlist')) {
     // process data
-    console.log('in a playlist')
     const {html, originalRevision, sections} = await fetchDoc(id, resourceType, req)
     const revisionData = originalRevision.data
     const payload = fetchByline(html, revisionData.lastModifyingUser.displayName)
