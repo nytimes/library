@@ -16,9 +16,7 @@ const userInfo = {
 describe('Reading History', () => {
   let sessionStub
   before(() => {
-    sessionStub = sinon.stub(app.request, 'session').get(() => {
-      return {passport: {user: userInfo}}
-    })
+    sessionStub = sinon.stub(app.request, 'session').value({passport: {user: userInfo}})
   })
   after(() => sessionStub.restore())
 

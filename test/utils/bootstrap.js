@@ -27,5 +27,9 @@ express.request.user = userInfo
 express.request.userInfo = userInfo
 express.request.isAuthenticated = () => true
 
+// create empty session before requests are made
+const app = require('../../server/index') // must be required after env vars set
+app.request.session = {}
+
 // drive and datastore mocks
 googleMock.init()
