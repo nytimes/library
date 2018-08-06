@@ -21,7 +21,7 @@ describe('Server responses', () => {
       return request(app)
         .get('/')
         .expect(200)
-        .then((res) => expect(res.text).to.include('<title>NYT Library</title>'))
+        .then((res) => expect(res.text).to.include('<title>Team Library</title>'))
     })
 
     it('should return 200 OK for healthcheck', () => {

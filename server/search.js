@@ -7,7 +7,7 @@ const log = require('./logger')
 
 const driveId = process.env.DRIVE_ID
 
-exports.run = async (query, driveType='team') => {
+exports.run = async (query, driveType = 'team') => {
   const authClient = await getAuth()
   let folderIds
 
