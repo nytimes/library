@@ -2,13 +2,11 @@
 
 const request = require('supertest')
 const assert = require('assert')
-const bluebird = require('bluebird')
 const moment = require('moment')
 const express = require('express')
 
 const {f} = require('../utils')
 const cache = require('../../server/cache')
-const {purgeAsync, redirectAsync} = bluebird.promisifyAll(cache)
 
 const server = express()
 server.use(cache.middleware)
@@ -93,7 +91,7 @@ describe('The cache', f((mocha) => {
 
     it('should save redirects when valid', f((mocha) => {
       const newPath = '/parent/sample-entry-2'
-      return redirectAsync(path, newPath, modified)
+      return cache.redirect(path, newPath, modified)
         // check the redirect saved
         .then(() => getCache().expect(302).expect('Location', newPath))
         // and that cache was purged at the destination

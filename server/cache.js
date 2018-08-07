@@ -72,40 +72,31 @@ exports.add = async (id, newModified, path, html) => {
 
 // redirects when a url changes
 // should we expose a cb here for testing?
-exports.redirect = async (path, newPath, modified, cb = () => {}) => {
+exports.redirect = async (path, newPath, modified) => {
   const data = await exports.get(path)
   const {noCache, redirectUrl} = data || {}
 
   // since we run multiple pods, we don't need to set the redirect more than once
-  if (redirectUrl === newPath) return cb(new Error('Already configured that redirect'))
+  if (redirectUrl === newPath) return new Error('Already configured that redirect')
 
   log.info(`ADDING REDIRECT: ${path} => ${newPath}`)
   // if (err) log.warn(`Failed retrieving data for redirect of ${path}`)
 
+  cache.set(path, {redirectUrl: newPath}, (err) => {
+    if (err) log.warn(`Failed setting redirect for ${path} => ${newPath}`, err)
+    return err
+  })
+
   const preventCacheReason = noCache ? 'redirect_detected' : null
-  async.parallel([
-    (cb) => {
-      // store redirect url at current location
-      cache.set(path, {redirectUrl: newPath}, (err) => {
-        if (err) log.warn(`Failed setting redirect for ${path} => ${newPath}`, err)
-        cb(err)
-      })
-    },
-    (cb) => {
-      // purge the cache on the destination to eliminate old redirects
-      // we should ignore redirects at the new location
-      // @TODO: why do we need to pass 'modified' as an ignore param here?
-      purgeCache({
-        url: newPath,
-        modified,
-        editEmail: preventCacheReason,
-        ignore: ['redirect', 'missing', 'modified']
-      }, (err) => {
-        if (err && err.message !== 'Not found') log.warn(`Failed purging redirect destination ${newPath}`, err)
-        cb(err)
-      })
-    }
-  ], cb)
+  purgeCache({
+    url: newPath,
+    modified,
+    editEmail: preventCacheReason,
+    ignore: ['redirect', 'missing', 'modified']
+  }, (err) => {
+    if (err && err.message !== 'Not found') log.warn(`Failed purging redirect destination ${newPath}`, err)
+    return err
+  })
 }
 
 // expose the purgeCache method externally so that list can call while building tree
