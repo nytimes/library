@@ -40,11 +40,6 @@ exports.middleware = (req, res, next) => {
       return next()
     }
 
-    // if (err) {
-    //   log.warn(`Failed retrieving cache for ${req.path}`, err)
-    //   return next() // silently proceed in the stack
-    // }
-
     const {html, redirectUrl, id} = data || {}
     if (redirectUrl) {
       return res.redirect(redirectUrl)
@@ -61,24 +56,18 @@ exports.middleware = (req, res, next) => {
   })
 }
 
-exports.add = (id, newModified, path, html, cb = () => {}) => {
-  if (!newModified) return cb(new Error('Refusing to store new item without modified time.'))
+exports.add = async (id, newModified, path, html) => {
+  if (!newModified) return new Error('Refusing to store new item without modified time.')
 
   exports.get(path).then((data) => {
-    // if (err) {
-    //   log.warn(`Failed saving cache data for ${path}`, err)
-    //   return cb(err)
-    // }
-
     const {modified, noCache, html: oldHtml} = data || {}
     // don't store any items over noCache entries
-    if (noCache) return cb()// refuse to cache any items that are being edited
+    if (noCache) return // refuse to cache any items that are being edited
     // if there was previous data and it is not older than the new data, don't do anything
-    if (oldHtml && modified && !isNewer(modified, newModified)) return cb()// nothing to do if data is current
+    if (oldHtml && modified && !isNewer(modified, newModified)) return // nothing to do if data is current
     // store new data in the cache
     cache.set(path, {html, modified: newModified, id}, (err) => {
       if (err) log.warn(`Failed saving new cache data for ${path}`, err)
-      cb(err)
     })
   })
 }
@@ -134,7 +123,6 @@ function purgeCache({url, modified, editEmail, ignore}, cb = () => {}) {
   if (!url) return cb(Error(`Can't purge cache without url! Given url was ${url}`))
 
   exports.get(url).then((data) => {
-    // if (err) log.warn(`Received error while trying to retrieve existing cache for purge of ${url}`, err)
     // compare current cache entry data vs this request
     const {redirectUrl, noCache, html, modified: oldModified, purgeId: lastPurgeId} = data || {}
 

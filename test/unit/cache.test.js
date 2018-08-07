@@ -8,7 +8,7 @@ const express = require('express')
 
 const {f} = require('../utils')
 const cache = require('../../server/cache')
-const {purgeAsync, addAsync, redirectAsync, middleware} = bluebird.promisifyAll(cache)
+const {purgeAsync, redirectAsync, middleware} = bluebird.promisifyAll(cache)
 
 const server = express()
 server.use(middleware)
@@ -28,7 +28,7 @@ const nextModified = () => {
 }
 
 const purgeCache = () => purgeAsync({url: path, modified: nextModified(), ignore: 'all'})
-const addCache = () => addAsync(id, nextModified(), path, html)
+const addCache = async () => cache.add(id, nextModified(), path, html)
 const getCache = (url = path) => request(server).get(url)
 
 // can we run against cache explicitly?
@@ -37,12 +37,12 @@ describe('The cache', f((mocha) => {
     beforeEach(f((mocha) => purgeCache))
 
     it('should not save if no modification time is passed', f((mocha) => {
-      return addAsync(id, null, path, html)
+      return cache.add(id, null, path, html)
         .catch((err) => assert(err, 'an error is returned'))
     }))
 
     it('should save successfully with valid data', f((mocha) => {
-      return addAsync(id, nextModified(), path, html) // no error is returned
+      return cache.add(id, nextModified(), path, html) // no error is returned
     }))
   }))
 

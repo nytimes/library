@@ -71,8 +71,7 @@ describe('Move files', () => {
       const {path: destPath} = list.getMeta(destination)
       newPath = `${destPath}/${slug}`
 
-      const addToCache = promisify(cache.add)
-      await addToCache(fileId, nextModified(), path, html)
+      await cache.add(fileId, nextModified(), path, html)
     })
 
     beforeEach(async () => {
@@ -173,11 +172,10 @@ describe('Move files', () => {
 
       describe('when cache errors', () => {
         before(async () => {
-          const addToCache = promisify(cache.add)
-          await addToCache(fileId, nextModified(), path, html)
+          await cache.add(fileId, nextModified(), path, html)
 
           const addToCacheStub = sinon.stub(cache, 'add')
-          addToCacheStub.callsFake((id, modified, newurl, html, cb) => cb(Error('Add to cache error')))
+          addToCacheStub.callsFake((id, modified, newurl, html) => Error('Add to cache error'))
         })
 
         after(() => sinon.restore())
