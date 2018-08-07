@@ -1,3 +1,5 @@
+'use strict'
+
 const fs = require('fs')
 const {google} = require('googleapis')
 const {getAuth} = require('../../server/auth')
@@ -7,8 +9,8 @@ const TEST_FILE_ID = '***REMOVED***'
 
 // Run this from root of project as "node test/utils/updateSupportedFormats.js"
 // to refresh the contents of supported_formats.html
-getAuth((err, auth) => {
-  if (err) { return console.log('Failed getting auth!', err) }
+async function updateSupportedFormats() {
+  const auth = await getAuth()
 
   const drive = google.drive({version: 'v3', auth: auth})
   drive.files.export({
@@ -24,8 +26,10 @@ getAuth((err, auth) => {
     docs.documents.get({ name: `documents/${TEST_FILE_ID}` }, (err, {data}) => {
       if (err) { return console.log('Failed fetching v4 file!', err) }
       const json = JSON.stringify(data)
-      fs.writeFileSync('test/fixtures/docv4.json', json, { encoding: 'utf8' })
+      fs.writeFileSync('test/fixtures/supportedFormatsV4.json', json, { encoding: 'utf8' })
       console.log('Successfully fetched v4 json payload.')
     })
   })
-})
+}
+
+updateSupportedFormats()

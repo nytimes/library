@@ -6,6 +6,7 @@
     "@google-cloud/datastore": "^1.4.1",
     "assert": "^1.4.1",
     "async": "^2.4.1",
+    "bluebird": "^3.5.1",
     "cache-manager": "^2.4.0",
     "chai": "^4.0.2",
     "cheerio": "^1.0.0-rc.1",
@@ -41,20 +42,17 @@
     "eslint-plugin-standard": "^3.0.1",
     "mocha": "^5.2.0",
     "nock": "^9.4.1",
-    "nodemon": "^1.18.3",
-    "nyc": "^11.2.1",
-    "supertest": "^3.0.0",
-    "supertest-as-promised": "^4.0.2",
-    "webpack": "^2.6.1",
-    "webpack-dev-server": "^2.4.5"
+    "nyc": "^13.0.1",
+    "sinon": "^6.1.4",
+    "supertest": "^3.0.0"
   },
   "scripts": {
     "start": "node server/index.js",
     "build": "node-sass --include-path custom/styles --include-path styles/partials --source-map public/css/style.css.map --source-map-contents styles/style.scss public/css/style.css",
     "debug": "node -r dotenv/config --inspect --debug-brk server/index.js",
     "watch": "concurrently \"nodemon -r dotenv/config -e js,ejs server/index.js\" \"nodemon -e scss --watch styles --watch custom/styles -x npm run build\"",
-    "test": "NODE_ENV=test mocha test/**/*.test.js --recursive --exit",
-    "test:cover": "NODE_ENV=test nyc --all --reporter=html --reporter=text mocha test/**/*.test.js --recursive --exit"
+    "test": "NODE_ENV=test mocha test/**/*.test.js -r ./test/utils/bootstrap.js --recursive --exit",
+    "test:cover": "NODE_ENV=test nyc --include=server/** --reporter=html --reporter=text mocha test/**/*.test.js -r ./test/utils/bootstrap.js --recursive --exit"
   },
   "repository": {
     "type": "git",

@@ -11,7 +11,7 @@ const log = require('./logger')
 let authClient = null
 
 // In local development, look for an auth.json file.
-if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+if (!process.env.GOOGLE_APPLICATION_CREDENTIALS && process.env.NODE_ENV !== 'test') {
   log.warn('GOOGLE_APPLICATION_CREDENTIALS was undefined, using default ./auth.json credentials file...')
   process.env.GOOGLE_APPLICATION_CREDENTIALS = path.join(__dirname, '.auth.json')
 }
@@ -19,7 +19,7 @@ if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
 
 // only public method, returns the authClient that can be used for making other requests
 exports.getAuth = async () => {
-  if (authClient) return authClient
+  if (authClient && process.env.NODE_ENV !== 'test') return authClient
   await setAuthClient()
 }
 
@@ -29,7 +29,7 @@ async function setAuthClient() {
     // In Heroku environment, set GOOGLE_APPLICATION_CREDENTIALS as auth json object to be parsed
     try {
       const keys = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS)
-      authClient = nodeAuth.fromJSON(keys);
+      authClient = nodeAuth.fromJSON(keys)
     } catch (err) {
       const {credential} = await google.auth.getApplicationDefault()
       authClient = credential

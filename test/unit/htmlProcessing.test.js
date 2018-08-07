@@ -102,7 +102,7 @@ describe('HTML processing', () => {
 describe('JSON Payload Formatting', () => {
   before(function () {
     const formatter = require('../../server/formatter-beta')
-    const payload = require('../fixtures/docv4.json')
+    const payload = require('../fixtures/supportedFormatsV4.json')
     this.rawJSON = payload
     this.processedJSON = formatter.jsonToHtml(this.rawJSON)
     this.output = cheerio.load(this.processedJSON)
