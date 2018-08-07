@@ -20,9 +20,7 @@ async function handlePlaylist(req, res) {
   const {resourceType, tags, id} = meta
   const {breadcrumb} = data
 
-  console.log(meta, data, id)
-
-  if (!meta || !data || !id) throw new Error('Not found')
+  if (!meta || !data) throw new Error('Not found')
 
   // if the page is a playlist, render playlist overview
   if (tags.includes('playlist')) { //TODO: render with playlist view
