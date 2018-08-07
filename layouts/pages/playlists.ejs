@@ -16,8 +16,8 @@
       </div>
       <%- include('../partials/footer', { pageType: 'playlist' }) %>
       <div>
-      	<a href="<%= previous %>">Previous in playlist</a> 
-      	<a href="<%= next %>">Next in Playlist</a>
+      	<a href="<%= previous %>"><%- template('playlist.nav.previous') %></a> 
+      	<a href="<%= next %>"><%- template('playlist.nav.next') %></a>
       </div>
     </div>
   </body>

@@ -81,6 +81,7 @@ app.use(cache)
 
 // category pages will be cache busted when their last updated timestamp changes
 app.use(categories)
+//TODO use app.use(playlists)
 
 postload.forEach((middleware) => app.use(middleware))
 

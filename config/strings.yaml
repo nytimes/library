@@ -54,6 +54,9 @@ folder:
 playlist:
   childrenList:
     kicker: !!js/function (title) => `${title} Playlist`
+  nav:
+    previous: <
+    next: '>'
 
 # pages/move-file
 moveFile:
