@@ -119,42 +119,41 @@ async function purgeCache({url, modified, editEmail, ignore}, cb = () => {}) {
 
   if (!url) return cb(Error(`Can't purge cache without url! Given url was ${url}`))
 
-  const data = await exports.get(url)//.then((data) => {
-    // compare current cache entry data vs this request
-    const {redirectUrl, noCache, html, modified: oldModified, purgeId: lastPurgeId} = data || {}
+  const data = await exports.get(url)
+  // compare current cache entry data vs this request
+  const {redirectUrl, noCache, html, modified: oldModified, purgeId: lastPurgeId} = data || {}
 
-    if (redirectUrl && !shouldIgnore('redirect')) return cb(new Error('Unauthorized'))
-    // edit is considered its own override for everything but redirect
-    if (editEmail && editEmail.includes('@')) { // @TODO cleanup this hack
-      log.info(`CACHE PURGE PERSIST for ${noCacheDelay}s (${editEmail}): ${url}`)
-      return cache.set(url, {noCache: true}, {ttl: noCacheDelay}, cb)
+  if (redirectUrl && !shouldIgnore('redirect')) return cb(new Error('Unauthorized'))
+  // edit is considered its own override for everything but redirect
+  if (editEmail && editEmail.includes('@')) { // @TODO cleanup this hack
+    log.info(`CACHE PURGE PERSIST for ${noCacheDelay}s (${editEmail}): ${url}`)
+    return cache.set(url, {noCache: true}, {ttl: noCacheDelay}, cb)
+  }
+
+  // try and dedupe extra requests from multiple pods (tidier logs)
+  const purgeId = `${modified}-${editEmail || ''}-${ignore}`
+  if (purgeId === lastPurgeId && !shouldIgnore('all')) return cb(new Error(`Same purge id as previous request ${purgeId}`))
+  // by default, don't try to purge empty
+  if (!html && !shouldIgnore('missing')) return cb(new Error('Not found'))
+  // by default, don't purge a noCache entry
+  if (noCache && !shouldIgnore('editing')) return cb(new Error('Unauthorized'))
+  // by default, don't purge when the modification time is not fresher than previous
+  if (!isNewer(oldModified, modified) && !shouldIgnore('modified')) return cb(new Error('No purge of fresh content'))
+
+  // if we passed all the checks, determine all ancestor links and purge
+  const segments = url.split('/').map((segment, i, segments) => {
+    return segments.slice(0, i).concat([segment]).join('/')
+  }).filter((s) => s.length) // don't allow purging empty string
+
+  // call the callback when all segments have been purged
+  async.parallel(segments.map((path) => {
+    return (cb) => {
+      log.info(`CACHE PURGE ${path} FROM CHANGE AT ${url}`)
+      // there is an edge here where a homepage upstream was being edited and already not in cache.
+      // we need to get the cache entries for all of these in case and not purge them to account for that edge
+      cache.set(path, {modified, purgeId}, cb)
     }
-
-    // try and dedupe extra requests from multiple pods (tidier logs)
-    const purgeId = `${modified}-${editEmail || ''}-${ignore}`
-    if (purgeId === lastPurgeId && !shouldIgnore('all')) return cb(new Error(`Same purge id as previous request ${purgeId}`))
-    // by default, don't try to purge empty
-    if (!html && !shouldIgnore('missing')) return cb(new Error('Not found'))
-    // by default, don't purge a noCache entry
-    if (noCache && !shouldIgnore('editing')) return cb(new Error('Unauthorized'))
-    // by default, don't purge when the modification time is not fresher than previous
-    if (!isNewer(oldModified, modified) && !shouldIgnore('modified')) return cb(new Error('No purge of fresh content'))
-
-    // if we passed all the checks, determine all ancestor links and purge
-    const segments = url.split('/').map((segment, i, segments) => {
-      return segments.slice(0, i).concat([segment]).join('/')
-    }).filter((s) => s.length) // don't allow purging empty string
-
-    // call the callback when all segments have been purged
-    async.parallel(segments.map((path) => {
-      return (cb) => {
-        log.info(`CACHE PURGE ${path} FROM CHANGE AT ${url}`)
-        // there is an edge here where a homepage upstream was being edited and already not in cache.
-        // we need to get the cache entries for all of these in case and not purge them to account for that edge
-        cache.set(path, {modified, purgeId}, cb)
-      }
-    }), cb)
-  // })
+  }), cb)
 }
 
 function isNewer(oldModified, newModified) {

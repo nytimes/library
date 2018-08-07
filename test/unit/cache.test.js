@@ -27,7 +27,7 @@ const nextModified = () => {
   return moment(modified).add(count, 'days').format()
 }
 
-const purgeCache = () => purgeAsync({url: path, modified: nextModified(), ignore: 'all'})
+const purgeCache = async () => cache.purge({url: path, modified: nextModified(), ignore: 'all'})
 const addCache = async () => cache.add(id, nextModified(), path, html)
 const getCache = (url = path) => request(server).get(url)
 
@@ -52,7 +52,7 @@ describe('The cache', f((mocha) => {
     it('should succeed via the purge method', f((mocha) => {
       return getCache()
         .expect(200)
-        .then(() => purgeAsync({url: path, modified: nextModified()}))
+        .then(() => cache.purge({url: path, modified: nextModified()}))
         .then(() => getCache().expect(404))
     }))
 
@@ -83,7 +83,7 @@ describe('The cache', f((mocha) => {
     }))
 
     it('should not be returned when empty', f((mocha) => {
-      return purgeAsync({ url: path, modified: nextModified() })
+      return cache.purge({ url: path, modified: nextModified() })
         .then(() => getCache().expect(404))
     }))
   }))
