@@ -1,6 +1,5 @@
 'use strict'
 
-const async = require('async')
 const moment = require('moment')
 const {promisify} = require('util')
 
@@ -12,7 +11,11 @@ const cache = requireWithFallback('cache/store')
 // delay caching for 1 hour by default after editing, with env var override
 const noCacheDelay = parseInt(process.env.EDIT_CACHE_DELAY, 10) || 60 * 60
 
-exports.get = promisify(cache.get) // expose the ability to retreive cache data internally
+const setCache = promisify(cache.set)
+const getCache = promisify(cache.get)
+
+exports.get = getCache // expose the ability to retreive cache data internally
+
 // detects purge requests and serves cached responses when available
 exports.middleware = async (req, res, next) => {
   // handle the purge request if purge or edit params are present
@@ -34,7 +37,7 @@ exports.middleware = async (req, res, next) => {
   }
 
   // otherwise consult cache for stored html
-  const data = await exports.get(req.path)
+  const data = await getCache(req.path)
   if (req.useBeta) {
     log.info('Skipping cache for beta API')
     return next()
@@ -58,14 +61,14 @@ exports.middleware = async (req, res, next) => {
 exports.add = async (id, newModified, path, html) => {
   if (!newModified) return new Error('Refusing to store new item without modified time.')
 
-  const data = await exports.get(path)
+  const data = await getCache(path)
   const {modified, noCache, html: oldHtml} = data || {}
   // don't store any items over noCache entries
   if (noCache) return // refuse to cache any items that are being edited
   // if there was previous data and it is not older than the new data, don't do anything
   if (oldHtml && modified && !isNewer(modified, newModified)) return // nothing to do if data is current
   // store new data in the cache
-  cache.set(path, {html, modified: newModified, id}, (err) => {
+  setCache(path, {html, modified: newModified, id}).catch((err) => {
     if (err) log.warn(`Failed saving new cache data for ${path}`, err)
   })
 }
@@ -73,7 +76,7 @@ exports.add = async (id, newModified, path, html) => {
 // redirects when a url changes
 // should we expose a cb here for testing?
 exports.redirect = async (path, newPath, modified) => {
-  const data = await exports.get(path)
+  const data = await getCache(path)
   const {noCache, redirectUrl} = data || {}
 
   // since we run multiple pods, we don't need to set the redirect more than once
@@ -82,7 +85,7 @@ exports.redirect = async (path, newPath, modified) => {
   log.info(`ADDING REDIRECT: ${path} => ${newPath}`)
   // if (err) log.warn(`Failed retrieving data for redirect of ${path}`)
 
-  cache.set(path, {redirectUrl: newPath}, (err) => {
+  setCache(path, {redirectUrl: newPath}).catch((err) => {
     if (err) log.warn(`Failed setting redirect for ${path} => ${newPath}`, err)
     return err
   })
@@ -101,7 +104,7 @@ exports.redirect = async (path, newPath, modified) => {
 
 // expose the purgeCache method externally so that list can call while building tree
 exports.purge = purgeCache
-const setCache = promisify(cache.set)
+
 async function purgeCache({url, modified, editEmail, ignore}) {
   modified = modified || moment().subtract(1, 'hour').utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
 
@@ -110,7 +113,7 @@ async function purgeCache({url, modified, editEmail, ignore}) {
 
   if (!url) throw new Error(`Can't purge cache without url! Given url was ${url}`)
 
-  const data = await exports.get(url)
+  const data = await getCache(url)
   // compare current cache entry data vs this request
   const {redirectUrl, noCache, html, modified: oldModified, purgeId: lastPurgeId} = data || {}
 
