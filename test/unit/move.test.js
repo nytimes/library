@@ -4,8 +4,6 @@ const {expect} = require('chai')
 const {google} = require('googleapis')
 const sinon = require('sinon')
 const moment = require('moment')
-// TODO: remove once cache is promisified
-const {promisify} = require('util')
 
 const list = require('../../server/list')
 const move = require('../../server/move')

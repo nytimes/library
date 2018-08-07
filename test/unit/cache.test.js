@@ -8,10 +8,10 @@ const express = require('express')
 
 const {f} = require('../utils')
 const cache = require('../../server/cache')
-const {purgeAsync, redirectAsync, middleware} = bluebird.promisifyAll(cache)
+const {purgeAsync, redirectAsync} = bluebird.promisifyAll(cache)
 
 const server = express()
-server.use(middleware)
+server.use(cache.middleware)
 
 const sampleEntry = {
   id: 'some_id',

@@ -14,7 +14,7 @@ const noCacheDelay = parseInt(process.env.EDIT_CACHE_DELAY, 10) || 60 * 60
 
 exports.get = promisify(cache.get) // expose the ability to retreive cache data internally
 // detects purge requests and serves cached responses when available
-exports.middleware = (req, res, next) => {
+exports.middleware = async (req, res, next) => {
   // handle the purge request if purge or edit params are present
   const {purge, edit, ignore} = req.query
   if (purge || edit) {
@@ -34,87 +34,84 @@ exports.middleware = (req, res, next) => {
   }
 
   // otherwise consult cache for stored html
-  exports.get(req.path).then((data) => {
-    if (req.useBeta) {
-      log.info('Skipping cache for beta API')
-      return next()
-    }
+  const data = await exports.get(req.path)
+  if (req.useBeta) {
+    log.info('Skipping cache for beta API')
+    return next()
+  }
 
-    const {html, redirectUrl, id} = data || {}
-    if (redirectUrl) {
-      return res.redirect(redirectUrl)
-    }
+  const {html, redirectUrl, id} = data || {}
+  if (redirectUrl) {
+    return res.redirect(redirectUrl)
+  }
 
-    // if no html was returned proceed to next middleware
-    if (!html) return next()
+  // if no html was returned proceed to next middleware
+  if (!html) return next()
 
-    // attach doc id to the request for reading history tracking
-    res.locals.docId = id
+  // attach doc id to the request for reading history tracking
+  res.locals.docId = id
 
-    log.info(`CACHE HIT ${req.path}.`)
-    res.end(html)
-  })
+  log.info(`CACHE HIT ${req.path}.`)
+  res.end(html)
 }
 
 exports.add = async (id, newModified, path, html) => {
   if (!newModified) return new Error('Refusing to store new item without modified time.')
 
-  exports.get(path).then((data) => {
-    const {modified, noCache, html: oldHtml} = data || {}
-    // don't store any items over noCache entries
-    if (noCache) return // refuse to cache any items that are being edited
-    // if there was previous data and it is not older than the new data, don't do anything
-    if (oldHtml && modified && !isNewer(modified, newModified)) return // nothing to do if data is current
-    // store new data in the cache
-    cache.set(path, {html, modified: newModified, id}, (err) => {
-      if (err) log.warn(`Failed saving new cache data for ${path}`, err)
-    })
+  const data = await exports.get(path)
+  const {modified, noCache, html: oldHtml} = data || {}
+  // don't store any items over noCache entries
+  if (noCache) return // refuse to cache any items that are being edited
+  // if there was previous data and it is not older than the new data, don't do anything
+  if (oldHtml && modified && !isNewer(modified, newModified)) return // nothing to do if data is current
+  // store new data in the cache
+  cache.set(path, {html, modified: newModified, id}, (err) => {
+    if (err) log.warn(`Failed saving new cache data for ${path}`, err)
   })
 }
 
 // redirects when a url changes
 // should we expose a cb here for testing?
-exports.redirect = (path, newPath, modified, cb = () => {}) => {
-  exports.get(path).then((data) => {
-    const {noCache, redirectUrl} = data || {}
+exports.redirect = async (path, newPath, modified, cb = () => {}) => {
+  const data = await exports.get(path)
+  const {noCache, redirectUrl} = data || {}
 
-    // since we run multiple pods, we don't need to set the redirect more than once
-    if (redirectUrl === newPath) return cb(new Error('Already configured that redirect'))
+  // since we run multiple pods, we don't need to set the redirect more than once
+  if (redirectUrl === newPath) return cb(new Error('Already configured that redirect'))
 
-    log.info(`ADDING REDIRECT: ${path} => ${newPath}`)
-    // if (err) log.warn(`Failed retrieving data for redirect of ${path}`)
+  log.info(`ADDING REDIRECT: ${path} => ${newPath}`)
+  // if (err) log.warn(`Failed retrieving data for redirect of ${path}`)
 
-    const preventCacheReason = noCache ? 'redirect_detected' : null
-    async.parallel([
-      (cb) => {
-        // store redirect url at current location
-        cache.set(path, {redirectUrl: newPath}, (err) => {
-          if (err) log.warn(`Failed setting redirect for ${path} => ${newPath}`, err)
-          cb(err)
-        })
-      },
-      (cb) => {
-        // purge the cache on the destination to eliminate old redirects
-        // we should ignore redirects at the new location
-        // @TODO: why do we need to pass 'modified' as an ignore param here?
-        purgeCache({
-          url: newPath,
-          modified,
-          editEmail: preventCacheReason,
-          ignore: ['redirect', 'missing', 'modified']
-        }, (err) => {
-          if (err && err.message !== 'Not found') log.warn(`Failed purging redirect destination ${newPath}`, err)
-          cb(err)
-        })
-      }
-    ], cb)
-  })
+  const preventCacheReason = noCache ? 'redirect_detected' : null
+  async.parallel([
+    (cb) => {
+      // store redirect url at current location
+      cache.set(path, {redirectUrl: newPath}, (err) => {
+        if (err) log.warn(`Failed setting redirect for ${path} => ${newPath}`, err)
+        cb(err)
+      })
+    },
+    (cb) => {
+      // purge the cache on the destination to eliminate old redirects
+      // we should ignore redirects at the new location
+      // @TODO: why do we need to pass 'modified' as an ignore param here?
+      purgeCache({
+        url: newPath,
+        modified,
+        editEmail: preventCacheReason,
+        ignore: ['redirect', 'missing', 'modified']
+      }, (err) => {
+        if (err && err.message !== 'Not found') log.warn(`Failed purging redirect destination ${newPath}`, err)
+        cb(err)
+      })
+    }
+  ], cb)
 }
 
 // expose the purgeCache method externally so that list can call while building tree
 exports.purge = purgeCache
 
-function purgeCache({url, modified, editEmail, ignore}, cb = () => {}) {
+async function purgeCache({url, modified, editEmail, ignore}, cb = () => {}) {
   modified = modified || moment().subtract(1, 'hour').utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
 
   const overrides = ignore && Array.isArray(ignore) ? new Set(ignore) : new Set().add(ignore)
@@ -122,7 +119,7 @@ function purgeCache({url, modified, editEmail, ignore}, cb = () => {}) {
 
   if (!url) return cb(Error(`Can't purge cache without url! Given url was ${url}`))
 
-  exports.get(url).then((data) => {
+  const data = await exports.get(url)//.then((data) => {
     // compare current cache entry data vs this request
     const {redirectUrl, noCache, html, modified: oldModified, purgeId: lastPurgeId} = data || {}
 
@@ -157,7 +154,7 @@ function purgeCache({url, modified, editEmail, ignore}, cb = () => {}) {
         cache.set(path, {modified, purgeId}, cb)
       }
     }), cb)
-  })
+  // })
 }
 
 function isNewer(oldModified, newModified) {
