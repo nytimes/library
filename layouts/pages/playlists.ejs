@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
-<%- include('../partials/head') %>
+<%- include('../partials/head', {title}) %>
   <body>
     <h1 class="visually-hidden">Default template</h1>
-    <%- include('../partials/header') %>
-
+    <%- include('../partials/header', {title}) %>
+    <%- include ../partials/nav %>
     <div class="g-body">
       <div class="g-left-panel">
         <%- include('../partials/playlistList') %>
@@ -13,7 +13,11 @@
         <% if (locals.content) { %>
         <%- content %>
         <% } %>
-
+      </div>
+      <%- include('../partials/footer', { pageType: 'playlist' }) %>
+      <div>
+      	<a href="<%= previous %>">Previous in playlist</a> 
+      	<a href="<%= next %>">Next in Playlist</a>
       </div>
     </div>
   </body>

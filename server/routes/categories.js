@@ -164,13 +164,15 @@ async function preparePlaylistData(data, url, parent) {
   const breadcrumbInfo = breadcrumb.map(({id}) => getMeta(id))
 
   const playlistLinks = await getPlaylist(parent.id)
+  const basePath = url.split('/').slice(0, -1).join('/')
   const playlistData = playlistLinks.map(id => {
     const {prettyName, slug} = getMeta(id)
     return {
-      url: `${url.split('/').slice(0, -1).join('/')}/${slug}`,
+      url: `${basePath}/${slug}`,
       id, 
       prettyName, 
-      slug}
+      slug
+    }
   })
 
   const parentLinks = url
@@ -184,9 +186,16 @@ async function preparePlaylistData(data, url, parent) {
     }
   })
 
+  // get paths for previous and next item in playlist
+  const i = playlistLinks.indexOf(id)
+  const previous = playlistLinks[i - 1] ? `${basePath}/${getMeta(playlistLinks[i - 1]).slug}` : ''
+  const next = playlistLinks[i + 1] ? `${basePath}/${getMeta(playlistLinks[i + 1]).slug}` : ''
+
   return {
     playlistData,
-    parentLinks
+    parentLinks,
+    previous,
+    next
   }
 }
 
