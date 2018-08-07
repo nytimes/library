@@ -10,6 +10,7 @@ const {getTree, getMeta, getPlaylist} = require('../list')
 const {handlePlaylist} = require('./playlists')
 const {fetchDoc, cleanName, fetchByline} = require('../docs')
 const {getTemplates, sortDocs, stringTemplate} = require('../utils')
+const {parseUrl} = require('../urlParser')
 
 router.get('*', handleCategory)
 module.exports = router
@@ -17,61 +18,20 @@ module.exports = router
 const categories = getTemplates('categories')
 async function handleCategory(req, res) {
   log.info(`GET ${req.path}`)
-  const segments = req.path.split('/')
+  // TODO: consider putting this in middleware
+  const {meta, parent, data} = await parseUrl(req.path)
 
-  // get an up to date doc tree
-  // TODO: put in separate function
-  // consider putting this in middleware
-  const tree = await getTree()
-  const [data, parent] = await retrieveDataForPath(req.path, tree) || []
-  const {id, breadcrumb} = data || {}
-  if (!id) throw new Error('Not found') // call next here instead of throwing error
-
-  const root = segments[1]
-  const meta = getMeta(id)
-  const {resourceType, tags} = meta
+  if (!meta || !data) return 'next'
+  
+  const {resourceType, tags, id} = meta
+  const {breadcrumb} = data
 
   const layout = categories.has(root) ? root : 'default'
   const template = `categories/${layout}`
 
-  // if the page is a playlist, render playlist overview
-  if (tags.includes('playlist')) { //TODO: render with playlist view
-    log.info('Item is a playlist')
-    const playlistMeta = await getPlaylist(id)
-
-    // TODO: consolidate/refactor this function
-    const playlistRenderData = handlePlaylist(meta, playlistMeta, breadcrumb)
-
-    return res.render(`playlists/default`, playlistRenderData, (err, html) => {
-      if (err) throw err
-
-      cache.add(id, playlistMeta.modifiedTime, req.path, html)
-      res.end(html)
-    })
-  }
-
-  // if parent is a playlist, render doc in the playlist view
   const parentMeta = getMeta(parent.id)
-  if (parentMeta && parentMeta.tags.includes('playlist')) {
-    log.info('Item is a page in playlist')
-    // process data
-    const {html, originalRevision, sections} = await fetchDoc(id, resourceType, req)
-    const revisionData = originalRevision.data
-    const payload = fetchByline(html, revisionData.lastModifyingUser.displayName)
-    const playlistData = await preparePlaylistData(data, req.path, parent)
-    console.log(playlistData)
-    // render as a playlist
-    return res.render(`pages/playlists`, Object.assign({}, playlistData, { // TODO: prepare data, streamline this handleCategory function
-      template: stringTemplate, 
-      content: payload.html,
-      byline: payload.byline,
-      createdBy: revisionData.lastModifyingUser.displayName,
-      sections,
-      title: meta.prettyName
-    }), (err, html) => {
-      if (err) throw err
-      res.end(html)
-    })
+  if (tags.includes('playlist') || (parentMeta && parentMeta.tags.includes('playlist'))) { 
+    return 'next'
   }
 
   // don't try to fetch branch node
@@ -159,45 +119,6 @@ async function retrieveDataForPath(path, tree) {
   return [pointer || {}, parent]
 }
 
-async function preparePlaylistData(data, url, parent) {
-  const {id, breadcrumb} = data
-  const breadcrumbInfo = breadcrumb.map(({id}) => getMeta(id))
-
-  const playlistLinks = await getPlaylist(parent.id)
-  const basePath = url.split('/').slice(0, -1).join('/')
-  const playlistData = playlistLinks.map(id => {
-    const {prettyName, slug} = getMeta(id)
-    return {
-      url: `${basePath}/${slug}`,
-      id, 
-      prettyName, 
-      slug
-    }
-  })
-
-  const parentLinks = url
-  .split('/')
-  .slice(1, -1) // ignore the base empty string and self
-  .map((segment, i, arr) => {
-    return {
-      url: `/${arr.slice(0, i + 1).join('/')}`,
-      name: cleanName(breadcrumbInfo[i].name),
-      editLink: breadcrumbInfo[i].webViewLink
-    }
-  })
-
-  // get paths for previous and next item in playlist
-  const i = playlistLinks.indexOf(id)
-  const previous = playlistLinks[i - 1] ? `${basePath}/${getMeta(playlistLinks[i - 1]).slug}` : ''
-  const next = playlistLinks[i + 1] ? `${basePath}/${getMeta(playlistLinks[i + 1]).slug}` : ''
-
-  return {
-    playlistData,
-    parentLinks,
-    previous,
-    next
-  }
-}
 
 function prepareContextualData(data, url, breadcrumb, parent, slug) {
   const breadcrumbInfo = breadcrumb.map(({id}) => getMeta(id))
