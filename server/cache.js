@@ -2,6 +2,7 @@
 
 const async = require('async')
 const moment = require('moment')
+const {promisify} = require('util')
 
 const log = require('./logger')
 const {requireWithFallback} = require('./utils')
@@ -11,7 +12,7 @@ const cache = requireWithFallback('cache/store')
 // delay caching for 1 hour by default after editing, with env var override
 const noCacheDelay = parseInt(process.env.EDIT_CACHE_DELAY, 10) || 60 * 60
 
-exports.get = cache.get // expose the ability to retreive cache data internally
+exports.get = promisify(cache.get) // expose the ability to retreive cache data internally
 // detects purge requests and serves cached responses when available
 exports.middleware = (req, res, next) => {
   // handle the purge request if purge or edit params are present
@@ -33,16 +34,16 @@ exports.middleware = (req, res, next) => {
   }
 
   // otherwise consult cache for stored html
-  cache.get(req.path, (err, data) => {
+  exports.get(req.path).then((data) => {
     if (req.useBeta) {
       log.info('Skipping cache for beta API')
       return next()
     }
 
-    if (err) {
-      log.warn(`Failed retrieving cache for ${req.path}`, err)
-      return next() // silently proceed in the stack
-    }
+    // if (err) {
+    //   log.warn(`Failed retrieving cache for ${req.path}`, err)
+    //   return next() // silently proceed in the stack
+    // }
 
     const {html, redirectUrl, id} = data || {}
     if (redirectUrl) {
@@ -63,11 +64,11 @@ exports.middleware = (req, res, next) => {
 exports.add = (id, newModified, path, html, cb = () => {}) => {
   if (!newModified) return cb(new Error('Refusing to store new item without modified time.'))
 
-  cache.get(path, (err, data) => {
-    if (err) {
-      log.warn(`Failed saving cache data for ${path}`, err)
-      return cb(err)
-    }
+  exports.get(path).then((data) => {
+    // if (err) {
+    //   log.warn(`Failed saving cache data for ${path}`, err)
+    //   return cb(err)
+    // }
 
     const {modified, noCache, html: oldHtml} = data || {}
     // don't store any items over noCache entries
@@ -85,14 +86,14 @@ exports.add = (id, newModified, path, html, cb = () => {}) => {
 // redirects when a url changes
 // should we expose a cb here for testing?
 exports.redirect = (path, newPath, modified, cb = () => {}) => {
-  cache.get(path, (err, data) => {
+  exports.get(path).then((data) => {
     const {noCache, redirectUrl} = data || {}
 
     // since we run multiple pods, we don't need to set the redirect more than once
     if (redirectUrl === newPath) return cb(new Error('Already configured that redirect'))
 
     log.info(`ADDING REDIRECT: ${path} => ${newPath}`)
-    if (err) log.warn(`Failed retrieving data for redirect of ${path}`)
+    // if (err) log.warn(`Failed retrieving data for redirect of ${path}`)
 
     const preventCacheReason = noCache ? 'redirect_detected' : null
     async.parallel([
@@ -132,8 +133,8 @@ function purgeCache({url, modified, editEmail, ignore}, cb = () => {}) {
 
   if (!url) return cb(Error(`Can't purge cache without url! Given url was ${url}`))
 
-  cache.get(url, (err, data) => {
-    if (err) log.warn(`Received error while trying to retrieve existing cache for purge of ${url}`, err)
+  exports.get(url).then((data) => {
+    // if (err) log.warn(`Received error while trying to retrieve existing cache for purge of ${url}`, err)
     // compare current cache entry data vs this request
     const {redirectUrl, noCache, html, modified: oldModified, purgeId: lastPurgeId} = data || {}
 

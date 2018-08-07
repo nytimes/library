@@ -161,9 +161,7 @@ describe('Move files', () => {
       describe('when specified file id has no associated html stored in cache', () => {
         before(() => {
           const getCacheStub = sinon.stub(cache, 'get')
-          getCacheStub.callsFake((path, cb) => {
-            cb(null, [{html: null}])
-          })
+          getCacheStub.callsFake((path, cb) => [{html: null}])
         })
         after(() => sinon.restore())
 

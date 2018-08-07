@@ -71,8 +71,7 @@ exports.moveFile = async (id, destination, driveType = 'team') => {
 
   // fake the drive updating immediately by manually copying cache
   const data = await Promise.all(oldUrls.map((url) => {
-    const getCache = promisify(cache.get)
-    return getCache(url).catch((err) => log.error('Error getting cache', err))
+    return cache.get(url)
   }))
 
   // cache stores urls and page data, make sure to find actual data object for page
