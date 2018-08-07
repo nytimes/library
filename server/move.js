@@ -1,6 +1,5 @@
 'use strict'
 const {google} = require('googleapis')
-const {promisify} = require('util')
 
 const log = require('./logger')
 const list = require('./list')

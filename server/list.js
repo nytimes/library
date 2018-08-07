@@ -286,7 +286,7 @@ function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
       const {path, modifiedTime} = item
       const action = isTrashed(oldItem) ? 'Added' : 'Removed'
       // @TODO: This does not restore deleted documents which are undone to the same location
-      return cache.purge({
+      cache.purge({
         url: path,
         modified: modifiedTime,
         editEmail: `item${action}`,
@@ -304,7 +304,9 @@ function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
     } else {
       // should we be calling purge every time?
       // basically we are just calling purge because we don't know the last modified
-      cache.purge({url: newItem.path, modified: newItem.modifiedTime})
+      cache.purge({url: newItem.path, modified: newItem.modifiedTime}).catch((err) => {
+        console.log('err', err);
+      })
     }
   })
 }

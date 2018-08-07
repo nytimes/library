@@ -24,7 +24,7 @@ exports.middleware = async (req, res, next) => {
       url: req.path,
       editEmail: email,
       ignore: overrides
-    }, (err) => {
+    }).then(() => res.end('OK')).catch((err) => {
       if (err) {
         log.warn(`Cache purge failed for ${req.path}`, err)
         return next(err)
@@ -88,12 +88,12 @@ exports.redirect = async (path, newPath, modified) => {
   })
 
   const preventCacheReason = noCache ? 'redirect_detected' : null
-  purgeCache({
+  return purgeCache({
     url: newPath,
     modified,
     editEmail: preventCacheReason,
     ignore: ['redirect', 'missing', 'modified']
-  }, (err) => {
+  }).catch((err) => {
     if (err && err.message !== 'Not found') log.warn(`Failed purging redirect destination ${newPath}`, err)
     return err
   })
@@ -101,35 +101,36 @@ exports.redirect = async (path, newPath, modified) => {
 
 // expose the purgeCache method externally so that list can call while building tree
 exports.purge = purgeCache
-
-async function purgeCache({url, modified, editEmail, ignore}, cb = () => {}) {
+const setCache = promisify(cache.set)
+async function purgeCache({url, modified, editEmail, ignore}) {
   modified = modified || moment().subtract(1, 'hour').utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
 
   const overrides = ignore && Array.isArray(ignore) ? new Set(ignore) : new Set().add(ignore)
   const shouldIgnore = (type) => overrides.has(type) || overrides.has('all') || overrides.has('1')
 
-  if (!url) return cb(Error(`Can't purge cache without url! Given url was ${url}`))
+  if (!url) throw new Error(`Can't purge cache without url! Given url was ${url}`)
 
   const data = await exports.get(url)
   // compare current cache entry data vs this request
   const {redirectUrl, noCache, html, modified: oldModified, purgeId: lastPurgeId} = data || {}
 
-  if (redirectUrl && !shouldIgnore('redirect')) return cb(new Error('Unauthorized'))
+  if (redirectUrl && !shouldIgnore('redirect')) throw new Error('Unauthorized')
   // edit is considered its own override for everything but redirect
+
   if (editEmail && editEmail.includes('@')) { // @TODO cleanup this hack
     log.info(`CACHE PURGE PERSIST for ${noCacheDelay}s (${editEmail}): ${url}`)
-    return cache.set(url, {noCache: true}, {ttl: noCacheDelay}, cb)
+    return setCache(url, {noCache: true}, {ttl: noCacheDelay})
   }
 
   // try and dedupe extra requests from multiple pods (tidier logs)
   const purgeId = `${modified}-${editEmail || ''}-${ignore}`
-  if (purgeId === lastPurgeId && !shouldIgnore('all')) return cb(new Error(`Same purge id as previous request ${purgeId}`))
+  if (purgeId === lastPurgeId && !shouldIgnore('all')) return new Error(`Same purge id as previous request ${purgeId}`)
   // by default, don't try to purge empty
-  if (!html && !shouldIgnore('missing')) return cb(new Error('Not found'))
+  if (!html && !shouldIgnore('missing')) return new Error('Not found')
   // by default, don't purge a noCache entry
-  if (noCache && !shouldIgnore('editing')) return cb(new Error('Unauthorized'))
+  if (noCache && !shouldIgnore('editing')) return new Error('Unauthorized')
   // by default, don't purge when the modification time is not fresher than previous
-  if (!isNewer(oldModified, modified) && !shouldIgnore('modified')) return cb(new Error('No purge of fresh content'))
+  if (!isNewer(oldModified, modified) && !shouldIgnore('modified')) return new Error('No purge of fresh content')
 
   // if we passed all the checks, determine all ancestor links and purge
   const segments = url.split('/').map((segment, i, segments) => {
@@ -137,14 +138,12 @@ async function purgeCache({url, modified, editEmail, ignore}, cb = () => {}) {
   }).filter((s) => s.length) // don't allow purging empty string
 
   // call the callback when all segments have been purged
-  async.parallel(segments.map((path) => {
-    return (cb) => {
-      log.info(`CACHE PURGE ${path} FROM CHANGE AT ${url}`)
-      // there is an edge here where a homepage upstream was being edited and already not in cache.
-      // we need to get the cache entries for all of these in case and not purge them to account for that edge
-      cache.set(path, {modified, purgeId}, cb)
-    }
-  }), cb)
+  return segments.map((path) => {
+    log.info(`CACHE PURGE ${path} FROM CHANGE AT ${url}`)
+    // there is an edge here where a homepage upstream was being edited and already not in cache.
+    // we need to get the cache entries for all of these in case and not purge them to account for that edge
+    setCache(path, {modified, purgeId})
+  })
 }
 
 function isNewer(oldModified, newModified) {
