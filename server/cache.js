@@ -59,7 +59,7 @@ exports.middleware = async (req, res, next) => {
 }
 
 exports.add = async (id, newModified, path, html) => {
-  if (!newModified) return new Error('Refusing to store new item without modified time.')
+  if (!newModified) throw new Error('Refusing to store new item without modified time.')
 
   const data = await getCache(path)
   const {modified, noCache, html: oldHtml} = data || {}
@@ -69,7 +69,7 @@ exports.add = async (id, newModified, path, html) => {
   if (oldHtml && modified && !isNewer(modified, newModified)) return // nothing to do if data is current
   // store new data in the cache
   setCache(path, {html, modified: newModified, id}).catch((err) => {
-    if (err) log.warn(`Failed saving new cache data for ${path}`, err)
+    log.warn(`Failed saving new cache data for ${path}`, err)
   })
 }
 
@@ -80,7 +80,7 @@ exports.redirect = async (path, newPath, modified) => {
   const {noCache, redirectUrl} = data || {}
 
   // since we run multiple pods, we don't need to set the redirect more than once
-  if (redirectUrl === newPath) return new Error('Already configured that redirect')
+  if (redirectUrl === newPath) throw new Error('Already configured that redirect')
 
   log.info(`ADDING REDIRECT: ${path} => ${newPath}`)
   // if (err) log.warn(`Failed retrieving data for redirect of ${path}`)
@@ -127,13 +127,13 @@ async function purgeCache({url, modified, editEmail, ignore}) {
 
   // try and dedupe extra requests from multiple pods (tidier logs)
   const purgeId = `${modified}-${editEmail || ''}-${ignore}`
-  if (purgeId === lastPurgeId && !shouldIgnore('all')) return new Error(`Same purge id as previous request ${purgeId}`)
+  if (purgeId === lastPurgeId && !shouldIgnore('all')) throw new Error(`Same purge id as previous request ${purgeId}`)
   // by default, don't try to purge empty
-  if (!html && !shouldIgnore('missing')) return new Error('Not found')
+  if (!html && !shouldIgnore('missing')) throw new Error('Not found')
   // by default, don't purge a noCache entry
-  if (noCache && !shouldIgnore('editing')) return new Error('Unauthorized')
+  if (noCache && !shouldIgnore('editing')) throw new Error('Unauthorized')
   // by default, don't purge when the modification time is not fresher than previous
-  if (!isNewer(oldModified, modified) && !shouldIgnore('modified')) return new Error('No purge of fresh content')
+  if (!isNewer(oldModified, modified) && !shouldIgnore('modified')) throw new Error('No purge of fresh content')
 
   // if we passed all the checks, determine all ancestor links and purge
   const segments = url.split('/').map((segment, i, segments) => {

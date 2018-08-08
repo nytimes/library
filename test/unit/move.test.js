@@ -83,7 +83,7 @@ describe('Move files', () => {
       }
     })
 
-    after(async () => cache.purge({url: newUrl, modified: nextModified()}))
+    after(async () => cache.purge({url: newUrl, modified: nextModified(), ignore: 'all'}))
 
     describe('when not Google authenticated', () => {
       let oldAuth
