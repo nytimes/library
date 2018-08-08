@@ -1,7 +1,7 @@
 // Basic Styling
 //------------------------------------------------------------------------------
 body {
-  font-family: $sans;
+  font-family: $font-sans;
   font-weight: 100;
   margin: 0;
   padding: 0;
@@ -19,7 +19,7 @@ pre {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: $sans;
+  font-family: $font-sans;
   margin-top: 45px;
   margin-bottom: 20px;
 }
@@ -68,7 +68,7 @@ button:focus {
   line-height: 18px;
   font-weight: 300;
   font-style: normal;
-  font-family: $sans;
+  font-family: $font-sans;
   background-color: transparent;
   border-radius: 3px;
   transition: background-color 0.3s;
@@ -140,7 +140,7 @@ button:focus {
   line-height: 20px;
   font-weight: 400;
   font-style: normal;
-  font-family: $sans;
+  font-family: $font-sans;
   background-color: transparent;
   transition: background-color 0.3s;
   display: inline-block;
