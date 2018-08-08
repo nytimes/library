@@ -8,7 +8,7 @@
   left: 0;
   width: 100vw;
   z-index: 1000000090;
-  color: $gray-50;
+  color: $main-homepage-icon-color;
 
   .container {
     position: relative;
@@ -220,13 +220,12 @@
 #user-profile {
   a.btn-user-whole {
     &:link, &:visited {
-      color: $gray-50;
+      color: $main-homepage-icon-color;
       font-size: 15px;
       letter-spacing: 0.25px;
       padding: 17px 15px 16px 15px;
     }
     &:hover, &:active, &:target {
-      color: $gray-50;
       text-decoration: none;
       background: $gray-30;
 
@@ -253,23 +252,16 @@
   button.btn-user-initial {
     border-radius: 50%;
     width: 32px;
-    height: 31px;
+    height: 32px;
     position: relative;
-    top: 1px;
     font-size: 14px;
     -webkit-font-smoothing: antialiased;
     text-indent: -1px;
-    background: $gray-50;
+    background: $gray-70;
     color: $gray-30;
     margin-right: 5px;
     line-height: 0px;
-
-    @include tablet{
-      text-indent: -3px;
-    }
-    @include desktop{
-      text-indent: -3px;
-    }
+    text-align: center;
   }
 }
 
