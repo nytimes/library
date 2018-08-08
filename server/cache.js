@@ -29,11 +29,8 @@ middlewareRouter.use(async (req, res) => {
       editEmail: email,
       ignore: overrides
     }).then(() => res.end('OK')).catch((err) => {
-      if (err) {
-        log.warn(`Cache purge failed for ${req.path}`, err)
-        throw err
-      }
-      res.end('OK')
+      log.warn(`Cache purge failed for ${req.path}`, err)
+      throw err
     })
   }
 
