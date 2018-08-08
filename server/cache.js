@@ -2,6 +2,7 @@
 
 const moment = require('moment')
 const {promisify} = require('util')
+const middlewareRouter = require('express-promise-router')()
 
 const log = require('./logger')
 const {requireWithFallback} = require('./utils')
@@ -17,7 +18,7 @@ const getCache = promisify(cache.get)
 exports.get = getCache // expose the ability to retreive cache data internally
 
 // detects purge requests and serves cached responses when available
-exports.middleware = async (req, res, next) => {
+middlewareRouter.use(async (req, res) => {
   // handle the purge request if purge or edit params are present
   const {purge, edit, ignore} = req.query
   if (purge || edit) {
@@ -30,7 +31,7 @@ exports.middleware = async (req, res, next) => {
     }).then(() => res.end('OK')).catch((err) => {
       if (err) {
         log.warn(`Cache purge failed for ${req.path}`, err)
-        return next(err)
+        throw err
       }
       res.end('OK')
     })
@@ -38,25 +39,25 @@ exports.middleware = async (req, res, next) => {
 
   // otherwise consult cache for stored html
   const data = await getCache(req.path)
+
   if (req.useBeta) {
     log.info('Skipping cache for beta API')
-    return next()
+    return 'next'
   }
 
   const {html, redirectUrl, id} = data || {}
-  if (redirectUrl) {
-    return res.redirect(redirectUrl)
-  }
+  if (redirectUrl) return res.redirect(redirectUrl)
 
   // if no html was returned proceed to next middleware
-  if (!html) return next()
+  if (!html) return 'next'
 
   // attach doc id to the request for reading history tracking
   res.locals.docId = id
-
   log.info(`CACHE HIT ${req.path}.`)
   res.end(html)
-}
+})
+
+exports.middleware = middlewareRouter
 
 exports.add = async (id, newModified, path, html) => {
   if (!newModified) throw new Error('Refusing to store new item without modified time.')
