@@ -1,7 +1,8 @@
+'use strict'
+
 const {getTree, getPlaylist, getMeta} = require('./list')
 
 exports.parseUrl = async (path) => {
-  console.log(path)
   const segments = path.split('/')
   const tree = await getTree()
   const [data, parent] = await retrieveDataForPath(path, tree) || []
@@ -13,7 +14,6 @@ exports.parseUrl = async (path) => {
 
   return {meta, data, parent}
 }
-
 
 async function retrieveDataForPath(path, tree) {
   const segments = path.split('/').slice(1).filter((s) => s.length)

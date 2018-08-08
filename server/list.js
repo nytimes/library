@@ -19,6 +19,7 @@ let docsInfo = {} // doc info by id
 let tags = {} // tags to doc id
 let driveBranches = {} // map of id to nodes
 let playlistInfo = {} // playlist info by id
+let altPaths = {}
 
 exports.getTree = async () => {
   if (currentTree) return currentTree
@@ -41,11 +42,17 @@ exports.getChildren = (id) => {
   return driveBranches[id]
 }
 
-exports.getPlaylist = async (id) => {
+exports.getPlaylist = async (id, url) => {
   if (playlistInfo[id]) return playlistInfo[id]
 
   const playlistData = await retrievePlaylistData(id)
   return playlistData
+}
+
+exports.setNewPath = (id, url) => {
+  if (!altPaths[id] || !altPaths[id].includes(url)) {
+    altPaths[id] = (altPaths[id] || []).concat(url)
+  }
 }
 
 exports.getAllRoutes = () => {
@@ -194,6 +201,7 @@ function produceTree(files, firstParent) {
       byParent[parentId] = parent
     })
 
+
     return [byParent, byId, tagIds]
   }, [{}, {}, {}])
 
@@ -329,7 +337,10 @@ function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
     } else {
       // should we be calling purge every time?
       // basically we are just calling purge because we don't know the last modified
-      cache.purge({url: newItem.path, modified: newItem.modifiedTime})
+      const allPaths = (altPaths[id] || []).concat(newItem.path)
+      allPaths.forEach(url => {
+        cache.purge({url, modified: newItem.modifiedTime})
+      })
     }
   })
 }
