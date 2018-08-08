@@ -19,7 +19,7 @@ let docsInfo = {} // doc info by id
 let tags = {} // tags to doc id
 let driveBranches = {} // map of id to nodes
 let playlistInfo = {} // playlist info by id
-let altPaths = {}
+let altPaths = {} // more paths where doc is found
 
 exports.getTree = async () => {
   if (currentTree) return currentTree
