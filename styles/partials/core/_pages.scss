@@ -44,8 +44,9 @@
 
         .logo {
           height: 26px;
+          fill: red;
           // filter: invert(100%) brightness(80%);
-          padding-top: 11px;
+          padding-top: 7px;
 
           @include tablet{
             height: 36px;
@@ -58,11 +59,11 @@
       }
 
       .branding-label {
-        margin: 0px;
+        margin: 0 0 0 15px;
         height: 21px;
-        padding: 13px 0 9px 18px;
-        // border-left: 1px solid rgba(255, 255, 255, 0.35);
-        color: $main-homepage-text-color;
+        padding: 10px 0 10px 15px;
+        border-left: 1px solid $main-homepage-text-color;
+        color: $main-homepage-icon-color;
         font-family: $branding;
         font-size: 28px;
         font-weight: 100;
@@ -97,7 +98,7 @@
 
     .tagline {
       text-align: center;
-      color: $gray-35;
+      color: $main-homepage-text-color;
       margin: 0 auto;
       margin-bottom: 60px;
       font-size: 14px;
@@ -256,7 +257,7 @@
       .featured-cat-list {
         padding-left: 7px;
         a {
-          color: $main-homepage-text-color;
+          color: $btn-default-text-color;
           -webkit-font-smoothing: antialiased;
         }
         li {
