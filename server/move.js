@@ -79,9 +79,12 @@ exports.moveFile = async (id, destination, driveType = 'team') => {
 
   const {docId, modified, html} = hasHtml[0]
 
-  const cacheResult = await cache.add(docId, modified, newUrl, html)
-  if (cacheResult instanceof Error) return '/'
-  return newUrl
+  return cache.add(docId, modified, newUrl, html).then(() => {
+    return newUrl
+  }).catch((err) => {
+    log.warn(`Failed saving new cache data for ${newUrl}`, err)
+    return '/'
+  })
 }
 
 // converts raw tree data used for routing into sorted lists with resource

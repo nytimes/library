@@ -83,7 +83,8 @@ describe('Move files', () => {
       }
     })
 
-    after(async () => cache.purge({url: newUrl, modified: nextModified(), ignore: 'all'}))
+    // in error tests, this will throw "not found", so quiet errors.
+    after(async () => cache.purge({url: newUrl, modified: nextModified()}).catch(() => {}))
 
     describe('when not Google authenticated', () => {
       let oldAuth
@@ -173,7 +174,9 @@ describe('Move files', () => {
           await cache.add(fileId, nextModified(), path, html)
 
           const addToCacheStub = sinon.stub(cache, 'add')
-          addToCacheStub.callsFake((id, modified, newurl, html) => Error('Add to cache error'))
+          addToCacheStub.callsFake((id, modified, newurl, html) => {
+            return Promise.reject(new Error('Add to cache error'))
+          })
         })
 
         after(() => sinon.restore())

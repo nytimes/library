@@ -68,9 +68,7 @@ exports.add = async (id, newModified, path, html) => {
   // if there was previous data and it is not older than the new data, don't do anything
   if (oldHtml && modified && !isNewer(modified, newModified)) return // nothing to do if data is current
   // store new data in the cache
-  setCache(path, {html, modified: newModified, id}).catch((err) => {
-    log.warn(`Failed saving new cache data for ${path}`, err)
-  })
+  return setCache(path, {html, modified: newModified, id})
 }
 
 // redirects when a url changes
@@ -83,9 +81,8 @@ exports.redirect = async (path, newPath, modified) => {
   if (redirectUrl === newPath) throw new Error('Already configured that redirect')
 
   log.info(`ADDING REDIRECT: ${path} => ${newPath}`)
-  // if (err) log.warn(`Failed retrieving data for redirect of ${path}`)
 
-  setCache(path, {redirectUrl: newPath}).catch((err) => {
+  await setCache(path, {redirectUrl: newPath}).catch((err) => {
     if (err) log.warn(`Failed setting redirect for ${path} => ${newPath}`, err)
     return err
   })
@@ -141,12 +138,14 @@ async function purgeCache({url, modified, editEmail, ignore}) {
   }).filter((s) => s.length) // don't allow purging empty string
 
   // call the callback when all segments have been purged
-  return segments.map((path) => {
-    log.info(`CACHE PURGE ${path} FROM CHANGE AT ${url}`)
-    // there is an edge here where a homepage upstream was being edited and already not in cache.
-    // we need to get the cache entries for all of these in case and not purge them to account for that edge
-    setCache(path, {modified, purgeId})
-  })
+  return Promise.all(
+    segments.map((path) => {
+      log.info(`CACHE PURGE ${path} FROM CHANGE AT ${url}`)
+      // there is an edge here where a homepage upstream was being edited and already not in cache.
+      // we need to get the cache entries for all of these in case and not purge them to account for that edge
+      setCache(path, {modified, purgeId})
+    })
+  )
 }
 
 function isNewer(oldModified, newModified) {
