@@ -41,18 +41,7 @@ async function handlePage(req, res) {
       res.redirect(result)
     })
   }
-
-  if (page === 'playlists') {
-    const playlists = getTagged('playlist')
-    console.log(playlists)
-
-    // console.log(playlists)
-    // const playlists = buildPlaylistModules(playlists)
-    // const categories = buildDisplayCategories(playlists)
-    // res.render(template, {...categories, template: stringTemplate})
-    return 
-  }
-
+  
   if (page === 'categories' || page === 'index') {
     const tree = await getTree()
     const categories = buildDisplayCategories(tree)
