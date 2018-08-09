@@ -57,7 +57,8 @@ scss to override any styles you see fit.
 ## Text, Language, and Branding
 The site name, logo, and most of the text on the website can be modified from the
 `strings.yaml` file. Any value in `config/strings.yaml` can be overridden by
-placing a value for the same key in `custom/strings.yaml`.
+placing a value for the same key in `custom/strings.yaml`, with a custom string, 
+Javascript function, or image path.
 
 ## Middleware
 Middleware can be added to the beginning or end of the request cycle by placing
