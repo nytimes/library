@@ -57,7 +57,7 @@ scss to override any styles you see fit.
 ## Text, Language, and Branding
 The site name, logo, and most of the text on the website can be modified from the
 `strings.yaml` file. Any value in `config/strings.yaml` can be overridden by
-placing a value for the same key in `custom/strings.yaml`, with a custom string, 
+placing a value for the same key in `custom/strings.yaml`, with a custom string,
 Javascript function, or image path.
 
 ## Middleware
@@ -80,7 +80,9 @@ directory. This file must export an object with the methods
 - `get(key, callback)`, where `callback` takes `(err, value)`
 
 ## Authentication
-By default, Library uses Google oAuth to authenticate users. Different authentication system or disabling authentication alltogether can be done by creating `custom/userAuth.js`.
+By default, Library uses Google oAuth and [`passport ](http://www.passportjs.org/) to authenticate users. Different authentication systems can be used by overriding `custom/userAuth.js`, and can easily be implemented using
+a different [`passport` strategy](http://www.passportjs.org/packages/) that fits
+needs of your organization.
 
 This file must export an express router or middleware that contains all authentication
 logic. The logic placed in this file are run early in the middleware chain, allowing
