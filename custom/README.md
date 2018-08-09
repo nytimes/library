@@ -85,5 +85,5 @@ a different [`passport` strategy](http://www.passportjs.org/packages/) that fits
 needs of your organization.
 
 This file must export an express router or middleware that contains all authentication
-logic. The logic placed in this file are run early in the middleware chain, allowing
+logic. The logic placed in this file is run early in the middleware chain, allowing
 you to ensure a user is authenticated before they are able to access site content.
