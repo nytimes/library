@@ -1,0 +1,8 @@
+{
+  "defaultSrc": ["'self'"],
+  "scriptSrc": ["'self'", "'unsafe-inline'", "cdnjs.cloudflare.com", "*.google-analytics.com"],
+  "styleSrc": ["'self'", "'unsafe-inline'", "fonts.googleapis.com", "maxcdn.bootstrapcdn.com", "*.googleusercontent.com"],
+  "fontSrc": ["'self'", "fonts.gstatic.com", "maxcdn.bootstrapcdn.com"],
+  "imgSrc": ["'self'", "data:", "*.googleusercontent.com", "*.google-analytics.com"],
+  "objectSrc": ["'none'"]
+}
