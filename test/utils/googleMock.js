@@ -5,6 +5,7 @@ const path = require('path')
 
 const {google} = require('googleapis')
 const datastore = require('@google-cloud/datastore')
+const {sampleSize} = require('lodash')
 
 const {page1, page2, page3} = require('../fixtures/driveListing')
 const {simplePayload, rawPayload, multisectionPayload} = require('../fixtures/testHTML')
@@ -49,6 +50,22 @@ exports.init = () => {
               me: false
             }
           }})
+        }
+      }
+    }
+  }
+
+  google.sheets = () => {
+    return {
+      spreadsheets: {
+        values: {
+          get: () => {
+            return {
+              data: { 
+                values: sampleSize(page1.data.files, 20).map(file => [file.webViewLink]) 
+              }
+            }
+          }
         }
       }
     }

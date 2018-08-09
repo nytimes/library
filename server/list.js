@@ -41,7 +41,7 @@ exports.getChildren = (id) => {
   return driveBranches[id]
 }
 
-exports.getPlaylist = async (id, url) => {
+exports.getPlaylist = async (id) => {
   if (playlistInfo[id]) return playlistInfo[id]
 
   const playlistData = await retrievePlaylistData(id)
