@@ -5,11 +5,11 @@
   "repository": "https://github.com/newsdev/nyt-library",
   "env": {
     "GOOGLE_APPLICATION_CREDENTIALS": {
-      "description": "Your Google service account credentials. Create one here: https://console.cloud.google.com/iam-admin/serviceaccounts?_ga=***REMOVED***",
+      "description": "Your Google service account credentials in JSON format. Create one here: https://console.cloud.google.com/iam-admin/serviceaccounts?_ga=***REMOVED***",
       "required": true
     },
     "DRIVE_TYPE": {
-      "description": "Specifify whether your Google Drive is a 'shared' or 'team' drive.",
+      "description": "Set this value to `shared` if your documents are in a shared folder or `team` for a team drive.",
       "required": true,
       "value": "shared"
     },
