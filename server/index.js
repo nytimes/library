@@ -5,7 +5,6 @@ const express = require('express')
 const async = require('async')
 const csp = require('helmet-csp')
 
-
 const {middleware: cache, purge} = require('./cache')
 const userInfo = require('./routes/userInfo')
 const pages = require('./routes/pages')
@@ -16,7 +15,6 @@ const {getMeta, getAllRoutes} = require('./list')
 const {allMiddleware, requireWithFallback} = require('./utils')
 const userAuth = requireWithFallback('userAuth')
 const customCsp = requireWithFallback('csp')
-
 
 const app = express()
 
