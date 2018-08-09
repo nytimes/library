@@ -4,12 +4,10 @@ const {google} = require('googleapis')
 const {getAuth} = require('./auth')
 const list = require('./list')
 const log = require('./logger')
-const {promisify} = require('util')
 
-const driveType = process.env.DRIVE_TYPE
 const driveId = process.env.DRIVE_ID
 
-exports.run = async (query) => {
+exports.run = async (query, driveType = 'team') => {
   const authClient = await getAuth()
   let folderIds
 
@@ -19,9 +17,9 @@ exports.run = async (query) => {
     folderIds = await getAllFolders({drive})
   }
 
-  const files = await fullSearch({drive, query, folderIds})
+  const files = await fullSearch({drive, query, folderIds, driveType})
     .catch((err) => {
-      log.err(`Error when searching for ${query}, ${err}`)
+      log.error(`Error when searching for ${query}, ${err}`)
       throw err
     })
 
@@ -32,8 +30,8 @@ exports.run = async (query) => {
   return fileMetas
 }
 
-async function fullSearch({drive, query, folderIds, results = [], nextPageToken: pageToken}) {
-  const options = getOptions(query, folderIds)
+async function fullSearch({drive, query, folderIds, results = [], nextPageToken: pageToken, driveType}) {
+  const options = getOptions(query, folderIds, driveType)
 
   if (pageToken) {
     options.pageToken = pageToken
@@ -45,7 +43,7 @@ async function fullSearch({drive, query, folderIds, results = [], nextPageToken:
   const total = results.concat(files)
 
   if (nextPageToken) {
-    return fullSearch({drive, query, results: total, nextPageToken})
+    return fullSearch({drive, query, results: total, nextPageToken, folderIds, driveType})
   }
 
   return total
@@ -62,8 +60,7 @@ async function getAllFolders({nextPageToken: pageToken, drive, parentIds = [driv
     options.pageToken = pageToken
   }
 
-  const fetchFolders = promisify(drive.files.list).bind(drive.files)
-  const {data} = await fetchFolders(options)
+  const {data} = await drive.files.list(options)
 
   const {files, nextPageToken} = data
   const combined = foldersSoFar.concat(files)
@@ -89,7 +86,7 @@ async function getAllFolders({nextPageToken: pageToken, drive, parentIds = [driv
   return combined.map((folder) => folder.id)
 }
 
-function getOptions(query, folderIds) {
+function getOptions(query, folderIds, driveType) {
   const fields = '*'
 
   if (driveType === 'shared') {

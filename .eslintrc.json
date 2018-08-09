@@ -8,7 +8,9 @@
       "describe": true,
       "it": true,
       "before": true,
-      "beforeEach": true
+      "beforeEach": true,
+      "after": true,
+      "afterEach": true
     },
     "rules": {
       "arrow-parens": 0,

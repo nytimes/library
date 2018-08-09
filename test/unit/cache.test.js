@@ -1,13 +1,13 @@
 'use strict'
 
-const request = require('supertest-as-promised')
+const request = require('supertest')
 const assert = require('assert')
 const bluebird = require('bluebird')
 const moment = require('moment')
 const express = require('express')
 
-const {f} = require('../../utils')
-const cache = require('../../../server/cache')
+const {f} = require('../utils')
+const cache = require('../../server/cache')
 const {purgeAsync, addAsync, redirectAsync, middleware} = bluebird.promisifyAll(cache)
 
 const server = express()

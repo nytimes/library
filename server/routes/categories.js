@@ -123,8 +123,8 @@ async function retrieveDataForPath(path, tree) {
 function prepareContextualData(data, url, breadcrumb, parent, slug) {
   const breadcrumbInfo = breadcrumb.map(({id}) => getMeta(id))
 
-  const {children: siblings, id} = parent
-  const {children, originalId} = data
+  const {children: siblings} = parent
+  const {children} = data
   const self = url.split('/').slice(-1)[0]
   // most of what we are doing here is preparing parents and siblings
   // we need the url and parent object, as well as the breadcrumb to do that
@@ -143,8 +143,9 @@ function prepareContextualData(data, url, breadcrumb, parent, slug) {
       }
     })
 
+  const {id} = breadcrumb.length ? breadcrumb[breadcrumb.length - 1] : data
   return {
-    parentId: originalId || id, // this seems broken
+    parentId: id,
     parentLinks,
     siblings: siblingLinks,
     children: childrenLinks
