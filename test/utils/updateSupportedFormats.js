@@ -5,7 +5,7 @@ const {google} = require('googleapis')
 const {getAuth} = require('../../server/auth')
 require('dotenv').config()
 
-const TEST_FILE_ID = '***REMOVED***'
+const TEST_FILE_ID = '10o-sZt7kzP-GZDEFrNbfwBy7hFe1toNgEVH2QdQSZ5s'
 
 // Run this from root of project as "node test/utils/updateSupportedFormats.js"
 // to refresh the contents of supported_formats.html
