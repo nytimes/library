@@ -1,17 +1,16 @@
 'use strict'
 
-const {getTree, getPlaylist, getMeta} = require('./list')
+const {getTree, getPlaylist, getMeta, getDocsInfo} = require('./list')
 
 exports.parseUrl = async (path) => {
-  console.log(path)
   const segments = path.split('/')
   const tree = await getTree()
   const [data, parent] = await retrieveDataForPath(path, tree) || []
-  
   const {id} = data || {}
   
   const root = segments[1]
-  const meta = getMeta(id)
+  const meta = getMeta(id) || {}
+
 
   return {meta, data, parent}
 }
@@ -33,11 +32,18 @@ async function retrieveDataForPath(path, tree) {
   }
 
   if (!pointer) return
-  
+
   // if the path points to a file within a playlist
   if (getMeta(pointer.id).tags.includes('playlist') && segments.length === 1) {
     const playlistInfo = await getPlaylist(pointer.id)
-    const playlistFileId = playlistInfo.find(fileId => getMeta(fileId).slug === segments[0])
+    let playlistFileId
+
+    // use try/catch here because user could enter inaccessible/incorrect links in the spreadsheet
+    try {
+      playlistFileId = playlistInfo.find(fileId => getMeta(fileId).slug === segments[0])
+    } catch (err) {
+      return
+    }
 
     if (playlistFileId) {
       const {id} = getMeta(playlistFileId)
@@ -48,8 +54,6 @@ async function retrieveDataForPath(path, tree) {
         // generate breadcrumb based on playlist's path
         breadcrumb: parent.breadcrumb.concat({id: parent.id})
       }
-    } else {
-      throw new Error('Not found')
     }
   }
 

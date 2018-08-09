@@ -63,7 +63,9 @@ exports.init = () => {
             return {
               data: { 
                 values: spreadsheetId === '9ddd07c7d0d3a52020a381bce75fc8b4-8' ?
-                  page1.data.files.slice(0, 20).map(file => [file.webViewLink]) :
+                  page1.data.files.slice(0, 20)
+                    .filter(file => file.mimeType !== 'application/vnd.google-apps.folder')
+                    .map(file => [file.webViewLink]) :
                   sampleSize(page1.data.files, 20).map(file => [file.webViewLink]) 
               }
             }

@@ -30,6 +30,8 @@ exports.getMeta = (id) => {
   return docsInfo[id]
 }
 
+exports.getDocsInfo = () => docsInfo
+
 // returns all tags currently parsed from docs, by sort field
 exports.getTagged = (tag) => {
   if (tag) return tags[tag] || []

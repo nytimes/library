@@ -15,13 +15,12 @@ router.get('*', handlePlaylist)
 module.exports = router
 
 async function handlePlaylist(req, res) {
-  console.log(req)
-  const {meta, parent, data} = await parseUrl(req.url)
+  const {meta, parent, data} = await parseUrl(req.path)
+
+  if (!meta || !data) throw new Error('Not found')
 
   const {resourceType, tags, id} = meta
   const {breadcrumb} = data
-
-  if (!meta || !data) throw new Error('Not found')
 
   // if the page is a playlist, render playlist overview
   if (tags.includes('playlist')) { //TODO: render with playlist view
