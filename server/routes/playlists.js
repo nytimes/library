@@ -5,11 +5,10 @@ const router = require('express-promise-router')()
 const moment = require('moment')
 
 const {getAuth} = require('../auth')
-const cache = require('../cache')
 const log = require('../logger')
-const {getTagged, getMeta, getTree, getPlaylist, setNewPath} = require('../list')
+const {getMeta, getTree, getPlaylist} = require('../list')
 const {fetchDoc, cleanName, fetchByline} = require('../docs')
-const {getTemplates, sortDocs, stringTemplate} = require('../utils')
+const {stringTemplate} = require('../utils')
 const {parseUrl} = require('../urlParser')
 
 router.get('*', handlePlaylist)
@@ -29,12 +28,10 @@ async function handlePlaylist(req, res) {
     const playlistIds = await getPlaylist(id)
 
     // TODO: consolidate/refactor this function
-    const playlistRenderData = preparePlaylistOverview(meta, playlistIds, breadcrumb)
+    const playlistOverviewData = preparePlaylistOverview(meta, playlistIds, breadcrumb)
 
-    return res.render(`playlists/default`, playlistRenderData, (err, html) => {
+    return res.render(`playlists/default`, playlistOverviewData, (err, html) => {
       if (err) throw err
-
-      cache.add(id, meta.modifiedTime, req.path, html)
       res.end(html)
     })
   }
@@ -43,16 +40,15 @@ async function handlePlaylist(req, res) {
   const parentMeta = getMeta(parent.id)
   if (parentMeta && parentMeta.tags.includes('playlist')) {
     log.info('Getting page in playlist')
-    setNewPath(id, req.path) // add this path to in-memory store for cache busting when doc changes
 
     // process data
     const {html, originalRevision, sections} = await fetchDoc(id, resourceType, req)
     const revisionData = originalRevision.data
     const payload = fetchByline(html, revisionData.lastModifyingUser.displayName)
-    const playlistData = await preparePlaylistPage(data, req.path, parent)
+    const playlistPageData = await preparePlaylistPage(data, req.path, parent)
 
     // render as a playlist
-    return res.render(`pages/playlists`, Object.assign({}, playlistData, { // TODO: prepare data, streamline this handleCategory function
+    return res.render(`pages/playlists`, Object.assign({}, playlistPageData, { // TODO: prepare data, streamline this handleCategory function
       template: stringTemplate, 
       content: payload.html,
       byline: payload.byline,
@@ -61,8 +57,6 @@ async function handlePlaylist(req, res) {
       title: meta.prettyName
     }), (err, html) => {
       if (err) throw err
-
-      cache.add(id, meta.modifiedTime, req.path, html)
       res.end(html)
     })
   }
