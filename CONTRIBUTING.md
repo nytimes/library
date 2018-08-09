@@ -4,8 +4,8 @@
 **`server`** contains all server-side code, including authentication, document
 parsing, caching, and routing.
 
-**`config`** contains configuration files. This included the cloud datastore
-configuration as well as the strings used throughout the app.
+**`config`** contains configuration files. This includes the cloud datastore
+configuration as well as a file containing the strings used throughout the app.
 
 **`layouts`** contains `ejs` templates for all views and partials used by Library.
 
