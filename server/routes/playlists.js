@@ -15,7 +15,8 @@ router.get('*', handlePlaylist)
 module.exports = router
 
 async function handlePlaylist(req, res) {
-  const {meta, parent, data} = await parseUrl(req.path)
+  console.log(req)
+  const {meta, parent, data} = await parseUrl(req.url)
 
   const {resourceType, tags, id} = meta
   const {breadcrumb} = data
