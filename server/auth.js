@@ -30,7 +30,7 @@ async function setAuthClient() {
       const keys = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS)
       authClient = nodeAuth.fromJSON(keys)
     } catch (err) {
-      log.info('Failed JSON auth with error', err)
+      log.info('Couldn\'t use application creds as JSON value:', err.message)
       const {credential} = await google.auth.getApplicationDefault()
       authClient = credential
     }

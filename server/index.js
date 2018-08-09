@@ -3,6 +3,8 @@ const path = require('path')
 
 const express = require('express')
 const async = require('async')
+const csp = require('helmet-csp')
+
 
 const {middleware: cache, purge} = require('./cache')
 const userInfo = require('./routes/userInfo')
@@ -13,6 +15,8 @@ const errorPages = require('./routes/errors')
 const {getMeta, getAllRoutes} = require('./list')
 const {allMiddleware, requireWithFallback} = require('./utils')
 const userAuth = requireWithFallback('userAuth')
+const customCsp = requireWithFallback('csp')
+
 
 const app = express()
 
@@ -25,6 +29,7 @@ app.get('/healthcheck', (req, res) => {
   res.send('OK')
 })
 
+app.use(csp({directives: customCsp}))
 app.use(userAuth)
 
 preload.forEach((middleware) => app.use(middleware))
