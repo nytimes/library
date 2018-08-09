@@ -54,7 +54,8 @@
     "debug": "node -r dotenv/config --inspect --debug-brk server/index.js",
     "watch": "concurrently \"nodemon -r dotenv/config -e js,ejs server/index.js\" \"nodemon -e scss --watch styles --watch custom/styles -x npm run build\"",
     "test": "NODE_ENV=test mocha test/**/*.test.js --recursive --exit",
-    "test:cover": "NODE_ENV=test nyc --all --reporter=html --reporter=text mocha test/**/*.test.js --recursive --exit"
+    "test:cover": "NODE_ENV=test nyc --all --reporter=html --reporter=text mocha test/**/*.test.js --recursive --exit",
+    "lint": "eslint ./server"
   },
   "repository": {
     "type": "git",
