@@ -42,6 +42,7 @@ async function retrieveDataForPath(path, tree) {
     try {
       playlistFileId = playlistInfo.find(fileId => getMeta(fileId).slug === segments[0])
     } catch (err) {
+      console.log('err')
       return
     }
 
@@ -54,7 +55,7 @@ async function retrieveDataForPath(path, tree) {
         // generate breadcrumb based on playlist's path
         breadcrumb: parent.breadcrumb.concat({id: parent.id})
       }
-    }
+    } else return
   }
 
   // if we are going to view a directory, switch to the home doc where possible

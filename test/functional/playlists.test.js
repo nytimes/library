@@ -22,7 +22,7 @@ describe('Playlist route handling', () => {
     return request(app)
             .get(`${playlistPath}/article-dnecn`)
             .expect(200)
-            
+            .then((res) => expect(res.text).to.contain('<div class="sibling-kicker">Article dnEcn Playlist</div>'))
   })
 
   it('should query a playlist', () => {
@@ -35,6 +35,6 @@ describe('Playlist route handling', () => {
   it('should return a 404 requesting nonexistent playlist page', () => {
     return request(app)
             .get(`${playlistPath}/fjfaklfjdalkf`)
-
+            .expect(404)
   })
 })
