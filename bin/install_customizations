@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+echo "Checking for CUSTOMIZATION_GIT_REPO environment variable..."
+
+if ! [[ -z ${CUSTOMIZATION_GIT_REPO} ]];
+  then
+    echo "Cloning custom repo...";
+    # remove cusotm to allow for cloning to that directory name
+    rm -r ./custom;
+    git clone $CUSTOMIZATION_GIT_REPO custom;
+    echo "Installing custom packages...";
+    cd ./custom;
+    npm i;
+    # force overwriting of packages if necessary
+    yes | cp -rf ./node_modules/* ../node_modules;
+  else
+    echo "Not found. Continuing with standard Library deploy";
+fi;
+
+echo "Done!"

@@ -1,8 +1,66 @@
 # Customizing Library
 
-Eventually this will be a nice guide but for now it's going to be my scratchpad!
+## The `custom` Directory
 
-## Custom Middleware
+The `custom` directory mirrors the directory structure of `server`. For certain
+files, overrides can be created to allow for custom implementations.
+Custom middleware is also supported.
+
+A `custom` directory using all overrides will have the following structure:
+```
+custom/
+├── package.json       // for any npm modules required for custom code
+├── cache
+│   └── store.js
+├── middleware
+│   ├── middleware1.js // pre/postload exports will be included as middleware
+│   └── middleware2.js
+├── strings.yaml
+├── styles
+│   ├── _theme.scss
+│   └── _custom.scss
+└── userAuth.js        // authentication middleware overrides
+```
+
+## Styles
+Sass variable overrides can be placed in `custom/styles/_theme.scss`. This allows
+for setting custom values for colors and fonts across the entire application. An
+example theme file could look like this:
+
+```scss
+// Font imports
+@import url('https://fonts.googleapis.com/css?family=Alfa+Slab+One|Open+Sans:400,400i,700,700i&subset=latin-ext');
+
+ // Example Light Theme
+$branding:                     "Alpha Slab One", cursive;
+$sans:                         "Open Sans", arial, helvetica, sans-serif;
+$masthead-background:          $gray-10;
+$main-homepage-background:     $white;
+$main-homepage-text-color:     $black;
+$main-homepage-icon-color:     $black;
+$search-container-background:  #e6e2e2;
+$search-container-hover:       $gray-70;
+$btn-homepage-background:      $white;
+$btn-homepage-border:          $black;
+$btn-default-background:       $white;
+$btn-default-background-hover: $accent;
+$btn-default-border:           $black;
+$btn-default-text-color:       $black;
+$btn-default-text-hover:       $black;
+```
+
+
+If you would like to use the default theme but want to override some styling,
+you can add a `_custom.scss` file to the styles folder. There, you can place
+scss to override any styles you see fit.
+
+## Text, Language, and Branding
+The site name, logo, and most of the text on the website can be modified from the
+`strings.yaml` file. Any value in `config/strings.yaml` can be overridden by
+placing a value for the same key in `custom/strings.yaml`, with a custom string,
+Javascript function, or image path.
+
+## Middleware
 Middleware can be added to the beginning or end of the request cycle by placing
 files into `custom/middleware`. These files can export `preload` and `postload`
 functions. These functions must be valid middleware with params
@@ -12,15 +70,20 @@ functions. These functions must be valid middleware with params
 `postload`
 
 
-**Sentry**
-To use Sentry, run `npm i raven`, and set the `SENTRY_DSN` env variable.
-
-
-## Custom Cache Client
-Cache by default is in-memory. If you provide the env variables
-`REDIS_URI` and `REDIS_PASS` to appropriate values, redis will be used.
+## Cache Client
+By default, Library uses an in-memory cache. A custom cache client can be written
+to be used in its place.
 
 A custom cache client can used by placing a `store.js` file in the `custom/cache`
 directory. This file must export an object with the methods
 - `set(key, value, callback)`, where `callback` takes `(err, success)`
 - `get(key, callback)`, where `callback` takes `(err, value)`
+
+## Authentication
+By default, Library uses Google oAuth and [`passport ](http://www.passportjs.org/) to authenticate users. Different authentication systems can be used by overriding `custom/userAuth.js`, and can easily be implemented using
+a different [`passport` strategy](http://www.passportjs.org/packages/) that fits
+needs of your organization.
+
+This file must export an express router or middleware that contains all authentication
+logic. The logic placed in this file is run early in the middleware chain, allowing
+you to ensure a user is authenticated before they are able to access site content.

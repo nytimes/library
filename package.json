@@ -13,10 +13,11 @@
     "deepmerge": "^2.1.1",
     "ejs": "^2.5.6",
     "express": "^4.16.3",
-    "google-auth-library": "^1.6.1",
     "express-promise-router": "^3.0.3",
     "express-session": "^1.15.6",
+    "google-auth-library": "^1.6.1",
     "googleapis": "^32.0.0",
+    "helmet-csp": "^2.7.1",
     "js-yaml": "^3.12.0",
     "lodash": "^4.17.10",
     "md5": "^2.2.1",
@@ -54,7 +55,8 @@
     "debug": "node -r dotenv/config --inspect --debug-brk server/index.js",
     "watch": "concurrently \"nodemon -r dotenv/config -e js,ejs server/index.js\" \"nodemon -e scss --watch styles --watch custom/styles -x npm run build\"",
     "test": "NODE_ENV=test mocha test/**/*.test.js -r ./test/utils/bootstrap.js --recursive --exit",
-    "test:cover": "NODE_ENV=test nyc --include=server/** --reporter=html --reporter=text mocha test/**/*.test.js -r ./test/utils/bootstrap.js --recursive --exit"
+    "test:cover": "NODE_ENV=test nyc --include=server/** --reporter=html --reporter=text mocha test/**/*.test.js -r ./test/utils/bootstrap.js --recursive --exit",
+    "lint": "eslint ./server"
   },
   "repository": {
     "type": "git",
