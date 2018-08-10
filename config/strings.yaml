@@ -54,6 +54,8 @@ folder:
 playlist:
   childrenList:
     kicker: !!js/function (title) => `${title} Playlist`
+  siblingList:
+    heading: !!js/function (title) => `${title} Playlist`
   nav:
     previous: <
     next: '>'

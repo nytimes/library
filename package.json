@@ -42,6 +42,7 @@
     "eslint-plugin-standard": "^3.0.1",
     "mocha": "^5.2.0",
     "nock": "^9.4.1",
+    "nodemon": "^1.18.3",
     "nyc": "^13.0.1",
     "sinon": "^6.1.4",
     "supertest": "^3.0.0",

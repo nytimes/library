@@ -17,6 +17,8 @@ module.exports = router
 async function handlePlaylist(req, res) {
   const {meta, parent, data} = await parseUrl(req.path)
 
+  console.log(data)
+
   if (!meta || !data) throw new Error('Not found')
 
   const {resourceType, tags, id} = meta
@@ -84,12 +86,13 @@ async function preparePlaylistPage(data, url, parent) {
   const playlistLinks = await getPlaylist(parent.id, url)
   const basePath = url.split('/').slice(0, -1).join('/')
   const playlistData = playlistLinks.map(id => {
-    const {prettyName, slug} = getMeta(id)
+    const {prettyName, slug, nodeType} = getMeta(id)
     return {
       url: `${basePath}/${slug}`,
       id, 
-      prettyName, 
-      slug
+      name: prettyName, 
+      slug,
+      nodeType
     }
   })
 

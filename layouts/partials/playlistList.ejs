@@ -1,7 +1,11 @@
-<ul>
-	<% playlistData.map((doc) => { %>
-		<li>
-			<a class="content-link" href="<%- doc.url %>"><%= doc.prettyName %></a>
-		</li>
-	<% }) %>
+<ul class="sibling">
+  <div class="sibling-kicker"><%- template('playlist.siblingList.heading', title) %></div>
+  <% playlistData.forEach((link) => { %>
+    <% const type = link.nodeType === 'branch' ? 'folder' : 'file' %>
+    <li class="type-<%= type %>">
+      <% const icon = type === 'folder' ? 'fa-folder' : 'fa-file-o'; %>
+      <i class="fa foldericon <%= icon %>" aria-hidden="true"></i>
+      <a class="content-link" href="<%- link.url %>" ><%= link.name %></a>
+    </li>
+  <% }) %>
 </ul>

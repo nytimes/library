@@ -31,4 +31,10 @@ describe('Playlist route handling', () => {
             .expect(200)
             .then((res) => expect(res.text).to.contain('<h1 class="visually-hidden">Default Playlist template</h1>'))
   })
+
+  it('should return a 404 requesting nonexistent playlist page', () => {
+    return request(app)
+            .get(`${playlistPath}/fjfaklfjdalkf`)
+
+  })
 })
