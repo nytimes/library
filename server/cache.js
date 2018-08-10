@@ -89,7 +89,7 @@ exports.redirect = async (path, newPath, modified) => {
     ignore: ['redirect', 'missing', 'modified']
   }).catch((err) => {
     if (err && err.message !== 'Not found') log.warn(`Failed purging redirect destination ${newPath}`, err)
-    return err
+    throw err
   })
 }
 
