@@ -120,15 +120,16 @@ async function purgeCache({url, modified, editEmail, ignore}) {
     return setCache(url, {noCache: true}, {ttl: noCacheDelay})
   }
 
-  // try and dedupe extra requests from multiple pods (tidier logs)
   const purgeId = `${modified}-${editEmail || ''}-${ignore}`
-  if (purgeId === lastPurgeId && !shouldIgnore('all')) throw new Error(`Same purge id as previous request ${purgeId}`)
+
+  // try and dedupe extra requests from multiple pods (tidier logs)
+  if (purgeId === lastPurgeId && !shouldIgnore('all')) throw new Error(`Same purge id as previous request ${purgeId} for ${url}`)
   // by default, don't try to purge empty
   if (!html && !shouldIgnore('missing')) throw new Error('Not found')
   // by default, don't purge a noCache entry
   if (noCache && !shouldIgnore('editing')) throw new Error('Unauthorized')
   // by default, don't purge when the modification time is not fresher than previous
-  if (!isNewer(oldModified, modified) && !shouldIgnore('modified')) throw new Error('No purge of fresh content')
+  if (!isNewer(oldModified, modified) && !shouldIgnore('modified')) throw new Error(`No purge of fresh content for ${url}`)
 
   // if we passed all the checks, determine all ancestor links and purge
   const segments = url.split('/').map((segment, i, segments) => {
