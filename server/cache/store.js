@@ -5,8 +5,8 @@ const {promisify} = require('util')
 
 const cache = cacheManager.caching({ store: 'memory' })
 
-cache.set = promisify(cache.set)
-cache.get = promisify(cache.get)
-
 // Export in-memory cache with promisified get and set methods
-module.exports = cache
+module.exports = {
+  set: promisify(cache.set),
+  get: promisify(cache.get)
+}

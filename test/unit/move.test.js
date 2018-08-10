@@ -84,7 +84,7 @@ describe('Move files', () => {
     })
 
     // in error tests, this will throw "not found", so quiet errors.
-    after(async () => cache.purge({url: newUrl, modified: nextModified()}).catch(() => {}))
+    after(() => cache.purge({url: newUrl, modified: nextModified()}).catch(() => {}))
 
     describe('when not Google authenticated', () => {
       let oldAuth
@@ -95,9 +95,7 @@ describe('Move files', () => {
         }
       })
 
-      after(() => {
-        google.auth.getApplicationDefault = oldAuth
-      })
+      after(() => { google.auth.getApplicationDefault = oldAuth })
 
       it('should return an error', async () => {
         await move.moveFile('test')

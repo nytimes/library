@@ -25,8 +25,8 @@ const nextModified = () => {
   return moment(modified).add(count, 'days').format()
 }
 
-const purgeCache = async () => cache.purge({url: path, modified: nextModified(), ignore: 'all'})
-const addCache = async () => cache.add(id, nextModified(), path, html)
+const purgeCache = () => cache.purge({url: path, modified: nextModified(), ignore: 'all'})
+const addCache = () => cache.add(id, nextModified(), path, html)
 const getCache = (url = path) => request(server).get(url)
 
 // can we run against cache explicitly?
