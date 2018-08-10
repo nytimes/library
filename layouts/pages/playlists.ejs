@@ -5,7 +5,7 @@
     <h1 class="visually-hidden">Default template</h1>
     <%- include('../partials/header', {title}) %>
     <%- include ../partials/nav %>
-    <div class="g-body">
+    <div class="g-body" id="playlist-page">
       <div class="g-left-panel">
         <%- include('../partials/playlistList') %>
       </div>
@@ -14,11 +14,11 @@
         <%- content %>
         <% } %>
       </div>
-      <%- include('../partials/footer', { pageType: 'playlist' }) %>
       <div>
-      	<a href="<%= previous %>"><%- template('playlist.nav.previous') %></a> 
-      	<a href="<%= next %>"><%- template('playlist.nav.next') %></a>
+      	<a id="previous" href="<%= previous %>"><%- template('playlist.nav.previous') %></a> 
+      	<a id="next" href="<%= next %>"><%- template('playlist.nav.next') %></a>
       </div>
+      <%- include('../partials/footer', { pageType: 'playlist' }) %>
     </div>
   </body>
 </html>
