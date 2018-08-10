@@ -42,7 +42,6 @@ async function retrieveDataForPath(path, tree) {
     try {
       playlistFileId = playlistInfo.find(fileId => getMeta(fileId).slug === segments[0])
     } catch (err) {
-      console.log('err')
       return
     }
 
