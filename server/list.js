@@ -3,6 +3,7 @@
 const inflight = require('promise-inflight')
 const {google} = require('googleapis')
 const path = require('path')
+const url = require('url')
 
 const cache = require('./cache')
 const log = require('./logger')
@@ -17,6 +18,7 @@ let currentTree = null // current route data by slug
 let docsInfo = {} // doc info by id
 let tags = {} // tags to doc id
 let driveBranches = {} // map of id to nodes
+let playlistInfo = {} // playlist info by id
 
 exports.getTree = async () => {
   if (currentTree) return currentTree
@@ -28,6 +30,8 @@ exports.getMeta = (id) => {
   return docsInfo[id]
 }
 
+exports.getDocsInfo = () => docsInfo
+
 // returns all tags currently parsed from docs, by sort field
 exports.getTagged = (tag) => {
   if (tag) return tags[tag] || []
@@ -37,6 +41,13 @@ exports.getTagged = (tag) => {
 
 exports.getChildren = (id) => {
   return driveBranches[id]
+}
+
+exports.getPlaylist = async (id) => {
+  if (playlistInfo[id]) return playlistInfo[id]
+
+  const playlistData = await retrievePlaylistData(id)
+  return playlistData
 }
 
 exports.getAllRoutes = () => {
@@ -92,7 +103,7 @@ function getOptions(id) {
   }
 }
 
-async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentIds = [driveId], drive} = {}, driveType = 'team') {
+async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentIds = [driveId], driveType = 'team', drive} = {}) {
   const options = getOptions(parentIds)
 
   if (pageToken) {
@@ -186,6 +197,7 @@ function produceTree(files, firstParent) {
       byParent[parentId] = parent
     })
 
+
     return [byParent, byId, tagIds]
   }, [{}, {}, {}])
 
@@ -238,11 +250,11 @@ function addPaths(byId) {
     }, {})
 
   function derivePathInfo(item) {
-    const {parents, slug, webViewLink: drivePath, isHome, resourceType} = item || {}
+    const {parents, slug, webViewLink: drivePath, isHome, resourceType, tags} = item || {}
     const parentId = parents[0]
     const hasParent = parentId && parentId !== driveId
     const parent = byId[parentId]
-    const renderInLibrary = isSupported(resourceType)
+    const renderInLibrary = isSupported(resourceType) || tags.includes('playlist')
 
     if (hasParent && !parent) {
       log.warn(`Found file (${item.name}) with parent (${parentId}) but no parent info!`)
@@ -255,9 +267,26 @@ function addPaths(byId) {
     return {
       folder: Object.assign({}, parent, parentInfo), // make sure folder contains path
       topLevelFolder: hasParent ? parentInfo.folder : Object.assign({}, item),
+      //TODO: make path array for all paths it could live in
       path: renderInLibrary ? libraryPath : drivePath
     }
   }
+}
+
+async function retrievePlaylistData(id) {
+  const authClient = await getAuth()
+  const sheets = google.sheets({version: 'v4', auth: authClient})
+  const response = await sheets.spreadsheets.values.get({spreadsheetId: id, range: 'A1:A100'})
+
+  // format data from api response
+  const playlistIds = response.data.values.slice(1).map(link => {
+    const id = url.parse(link[0]).pathname.split('/')[3]
+    return id
+  })
+
+  playlistInfo[id] = playlistIds
+
+  return playlistIds
 }
 
 function handleUpdates(id, {info: lastInfo, tree: lastTree}) {

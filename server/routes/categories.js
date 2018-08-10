@@ -6,9 +6,11 @@ const router = require('express-promise-router')()
 
 const cache = require('../cache')
 const log = require('../logger')
-const {getTree, getMeta} = require('../list')
+const {getTree, getMeta, getPlaylist} = require('../list')
+const {handlePlaylist} = require('./playlists')
 const {fetchDoc, cleanName, fetchByline} = require('../docs')
 const {getTemplates, sortDocs, stringTemplate} = require('../utils')
+const {parseUrl} = require('../urlParser')
 
 router.get('*', handleCategory)
 module.exports = router
@@ -16,19 +18,21 @@ module.exports = router
 const categories = getTemplates('categories')
 async function handleCategory(req, res) {
   log.info(`GET ${req.path}`)
-  const segments = req.path.split('/')
+  // TODO: consider putting this in middleware
+  const {meta, parent, data} = await parseUrl(req.path)
 
-  // get an up to date doc tree
-  const tree = await getTree()
-  const [data, parent] = retrieveDataForPath(req.path, tree)
-  const {id, breadcrumb} = data
-  if (!id) throw new Error('Not found')
+  if (!meta || !data) return 'next'
+  
+  const {resourceType, tags, id} = meta
+  const {breadcrumb} = data
 
-  const root = segments[1]
-  const meta = getMeta(id)
-  const {mimeType} = meta
   const layout = categories.has(root) ? root : 'default'
   const template = `categories/${layout}`
+
+  const parentMeta = getMeta(parent.id)
+  if (tags.includes('playlist') || (parentMeta && parentMeta.tags.includes('playlist'))) { 
+    return 'next'
+  }
 
   // don't try to fetch branch node
   const contextData = prepareContextualData(data, req.path, breadcrumb, parent, meta.slug)
@@ -39,13 +43,12 @@ async function handleCategory(req, res) {
     lastUpdatedBy: (meta.lastModifyingUser || {}).displayName,
     modifiedAt: meta.modifiedTime,
     createdAt: moment(meta.createdTime).fromNow(),
-    editLink: mimeType === 'text/html' ? meta.folder.webViewLink : meta.webViewLink,
+    editLink: meta.mimeType === 'text/html' ? meta.folder.webViewLink : meta.webViewLink,
     id,
     template: stringTemplate
   })
-
+  
   // if this is a folder, just render from the generic data
-  const {resourceType} = meta
   if (resourceType === 'folder') {
     return res.render(template, baseRenderData, (err, html) => {
       if (err) throw err
@@ -72,20 +75,39 @@ async function handleCategory(req, res) {
   })
 }
 
-function retrieveDataForPath(path, tree) {
+async function retrieveDataForPath(path, tree) {
   const segments = path.split('/').slice(1).filter((s) => s.length)
 
   let pointer = tree
   let parent = null
 
   if (segments[0] === 'trash') {
-    return [{}, {}]
+    return
   }
 
-  // continue traversing down the tree while there are still segements to go
+  // continue traversing down the tree while there are still segments to go
   while ((pointer || {}).nodeType === 'branch' && segments.length) {
     parent = pointer
     pointer = pointer.children[segments.shift()]
+  }
+
+  if (!pointer) return
+  
+  // if the path points to a file within a playlist
+  if (getMeta(pointer.id).tags.includes('playlist') && segments.length === 1) {
+    const playlistInfo = await getPlaylist(pointer.id)
+    const playlistFileId = playlistInfo.find(fileId => getMeta(fileId).slug === segments[0])
+
+    if (playlistFileId) {
+      const {id} = getMeta(playlistFileId)
+      const grandparent = parent
+      parent = pointer
+      pointer = {
+        id,
+        // generate breadcrumb based on playlist's path
+        breadcrumb: parent.breadcrumb.concat({id: parent.id})
+      }
+    }
   }
 
   // if we are going to view a directory, switch to the home doc where possible
@@ -96,6 +118,7 @@ function retrieveDataForPath(path, tree) {
   // return the leaf and its immediate branch
   return [pointer || {}, parent]
 }
+
 
 function prepareContextualData(data, url, breadcrumb, parent, slug) {
   const breadcrumbInfo = breadcrumb.map(({id}) => getMeta(id))

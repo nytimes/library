@@ -10,18 +10,14 @@ const {page1} = require('../fixtures/driveListing')
 
 describe('Search', () => {
   describe('when not Google authenticated', () => {
-    let oldAuth
     before(() => {
-      oldAuth = google.auth.getApplicationDefault
-      google.auth.getApplicationDefault = () => {
-        return Promise.reject(Error('Auth error'))
-      }
+      sinon.stub(google.auth, 'getApplicationDefault').returns(Error('Auth error'))
     })
 
     after(() => {
-      google.auth.getApplicationDefault = oldAuth
+      google.auth.getApplicationDefault.restore()
     })
-
+    
     it('should return an error', async () => {
       await search.run('test')
         .catch((err) => {

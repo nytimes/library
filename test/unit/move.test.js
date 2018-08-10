@@ -87,15 +87,13 @@ describe('Move files', () => {
     after(() => cache.purge({url: newUrl, modified: nextModified()}).catch(() => {}))
 
     describe('when not Google authenticated', () => {
-      let oldAuth
       before(() => {
-        oldAuth = google.auth.getApplicationDefault
-        google.auth.getApplicationDefault = () => {
-          return Promise.reject(Error('Auth error'))
-        }
+        sinon.stub(google.auth, 'getApplicationDefault').rejects(Error('Auth error'))
       })
 
-      after(() => { google.auth.getApplicationDefault = oldAuth })
+      after(() => {
+        google.auth.getApplicationDefault.restore()
+      })
 
       it('should return an error', async () => {
         await move.moveFile('test')

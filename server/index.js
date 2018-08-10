@@ -9,6 +9,7 @@ const {middleware: cache, purge} = require('./cache')
 const userInfo = require('./routes/userInfo')
 const pages = require('./routes/pages')
 const categories = require('./routes/categories')
+const playlists = require('./routes/playlists')
 const readingHistory = require('./routes/readingHistory')
 const errorPages = require('./routes/errors')
 const {getMeta, getAllRoutes} = require('./list')
@@ -83,6 +84,7 @@ app.use(cache)
 
 // category pages will be cache busted when their last updated timestamp changes
 app.use(categories)
+app.use(playlists)
 
 postload.forEach((middleware) => app.use(middleware))
 
