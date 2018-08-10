@@ -11,7 +11,7 @@
           <%- include ../partials/sectionList %>
         <% } %>
         <% if (locals.siblings && siblings.length) { %>
-        <%# include ../partials/siblingList %>
+        <%- include('../partials/siblingList', {kicker: template('folder.siblingList.heading')}) %>
         <% } %>
       </div>
 

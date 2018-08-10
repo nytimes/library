@@ -7,7 +7,7 @@
     <%- include ../partials/nav %>
     <div class="g-body" id="playlist-page">
       <div class="g-left-panel">
-        <%- include('../partials/siblingList') %>
+        <%- include('../partials/siblingList', {kicker: template('playlist.siblingList.heading', playlistName)}) %>
       </div>
       <div class="g-main-content">
         <% if (locals.content) { %>

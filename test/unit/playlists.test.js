@@ -23,7 +23,6 @@ describe('Playlists', () => {
       it('should throw an error', async () => {
         await getPlaylist('test')
           .catch((err) => {
-            console.log(err)
             expect(err).to.exist.and.be.an.instanceOf(Error)
           })
       })
