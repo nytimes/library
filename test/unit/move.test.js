@@ -4,8 +4,6 @@ const {expect} = require('chai')
 const {google} = require('googleapis')
 const sinon = require('sinon')
 const moment = require('moment')
-// TODO: remove once cache is promisified
-const {promisify} = require('util')
 
 const list = require('../../server/list')
 const move = require('../../server/move')
@@ -71,8 +69,7 @@ describe('Move files', () => {
       const {path: destPath} = list.getMeta(destination)
       newPath = `${destPath}/${slug}`
 
-      const addToCache = promisify(cache.add)
-      await addToCache(fileId, nextModified(), path, html)
+      await cache.add(fileId, nextModified(), path, html)
     })
 
     beforeEach(async () => {
@@ -86,11 +83,12 @@ describe('Move files', () => {
       }
     })
 
-    after(async () => cache.purge({url: newUrl, modified: nextModified()}))
+    // in error tests, this will throw "not found", so quiet errors.
+    after(() => cache.purge({url: newUrl, modified: nextModified()}).catch(() => {}))
 
     describe('when not Google authenticated', () => {
       before(() => {
-        sinon.stub(google.auth, 'getApplicationDefault').returns(Error('Auth error'))
+        sinon.stub(google.auth, 'getApplicationDefault').rejects(Error('Auth error'))
       })
 
       after(() => {
@@ -157,9 +155,7 @@ describe('Move files', () => {
       describe('when specified file id has no associated html stored in cache', () => {
         before(() => {
           const getCacheStub = sinon.stub(cache, 'get')
-          getCacheStub.callsFake((path, cb) => {
-            cb(null, [{html: null}])
-          })
+          getCacheStub.callsFake((path) => [{html: null}])
         })
         after(() => sinon.restore())
 
@@ -171,11 +167,12 @@ describe('Move files', () => {
 
       describe('when cache errors', () => {
         before(async () => {
-          const addToCache = promisify(cache.add)
-          await addToCache(fileId, nextModified(), path, html)
+          await cache.add(fileId, nextModified(), path, html)
 
           const addToCacheStub = sinon.stub(cache, 'add')
-          addToCacheStub.callsFake((id, modified, newurl, html, cb) => cb(Error('Add to cache error')))
+          addToCacheStub.callsFake((id, modified, newurl, html) => {
+            return Promise.reject(new Error('Add to cache error'))
+          })
         })
 
         after(() => sinon.restore())
