@@ -41,7 +41,7 @@ async function handlePage(req, res) {
       res.redirect(result)
     })
   }
-  
+
   if (page === 'categories' || page === 'index') {
     const tree = await getTree()
     const categories = buildDisplayCategories(tree)
@@ -66,8 +66,7 @@ function buildDisplayCategories(tree) {
     .sort(sortDocs)
     .map((category) => {
       category.children = Object.values(category.children || {}).map(({id}) => {
-        const {prettyName: name, path, resourceType, sort, tags, slug} = getMeta(id)
-        const url = tags.includes('playlist') ? `/playlist/${slug}` : path
+        const {prettyName: name, path: url, resourceType, sort} = getMeta(id)
         return { name, resourceType, url, sort }
       }).sort(sortDocs)
       return category

@@ -137,12 +137,13 @@ function prepareContextualData(playlistMeta, values, breadcrumb) {
     })
 
   const children = values.map(docId => {
-    const meta = getMeta(docId)
+    const {prettyName, slug, mimeType, folder, webViewLink, resourceType} = getMeta(docId)
     return {
-      sort: meta.prettyName,
-      name: meta.prettyName,
-      url: meta.path,
-      editLink: meta.mimeType === 'text/html' ? meta.folder.webViewLink : meta.webViewLink,
+      sort: prettyName,
+      name: prettyName,
+      url: `${path}/${slug}`,
+      editLink: mimeType === 'text/html' ? folder.webViewLink : webViewLink,
+      resourceType: resourceType
     }
   })
 

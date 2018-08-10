@@ -6,20 +6,7 @@
     <%- include ../partials/header %>
     <%- include ../partials/nav %>
     <div class="g-body">
-      <div class="g-left-panel">
-        <% if (locals.sections && locals.sections.length) { %>
-          <%- include ../partials/sectionList %>
-        <% } %>
-        <% if (locals.siblings && siblings.length) { %>
-        <%# include ../partials/siblingList %>
-        <% } %>
-      </div>
-
       <div class="g-main-content">
-        <% if (locals.content) { %>
-        <%- content %>
-        <% } %>
-
         <% if (locals.children && children.length) { %>
         <%- include('../partials/childrenList', {children, kicker: template('playlist.childrenList.kicker', title)}) %>
         <% } %>
