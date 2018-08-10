@@ -13,7 +13,7 @@ describe('Playlists', () => {
   describe('getPlaylist() in list.js', () => {
     describe('when not Google authenticated', () => {
       before(() => {
-        sinon.stub(google.auth, 'getApplicationDefault').returns(Error('Auth error'))
+        sinon.stub(google.auth, 'getApplicationDefault').rejects(Error('Auth error'))
       })
 
       after(() => {
