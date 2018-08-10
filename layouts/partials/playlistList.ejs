@@ -1,5 +1,5 @@
 <ul class="sibling">
-  <div class="sibling-kicker"><%- template('playlist.siblingList.heading', title) %></div>
+  <div class="sibling-kicker"><%- template('playlist.siblingList.heading', playlistName) %></div>
   <% playlistData.forEach((link) => { %>
     <% const type = link.nodeType === 'branch' ? 'folder' : 'file' %>
     <li class="type-<%= type %>">

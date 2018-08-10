@@ -24,7 +24,9 @@ describe('Playlist route handling', () => {
             .expect(200)
             .then((res) => {
               console.log(res.text)
-              expect(res.text).to.include('Article dnEcn Playlist')
+              expect(res.text).to.include('Article caBsa Playlist')
+              expect(res.text).to.include('<li class="type-file">')
+              expect(res.text).to.include('<a class="content-link" href="/top-level-article-2/article-ailbi/article-cabsa/article-etse"')
             })
   })
 
@@ -34,8 +36,8 @@ describe('Playlist route handling', () => {
             .expect(200)
             .then((res) => {
               console.log(res.text)
+              expect(res.text).to.include('Article caBsa Playlist')
               expect(res.text).to.include('<h1 class="visually-hidden">Default Playlist template</h1>')
-
             })
   })
 

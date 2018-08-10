@@ -45,7 +45,7 @@ async function handlePlaylist(req, res) {
     const {html, originalRevision, sections} = await fetchDoc(id, resourceType, req)
     const revisionData = originalRevision.data
     const payload = fetchByline(html, revisionData.lastModifyingUser.displayName)
-    const playlistPageData = await preparePlaylistPage(data, req.path, parent)
+    const playlistPageData = await preparePlaylistPage(data, req.path, parentMeta)
 
     // render as a playlist
     return res.render(`pages/playlists`, Object.assign({}, playlistPageData, { // TODO: prepare data, streamline this handleCategory function
@@ -114,7 +114,8 @@ async function preparePlaylistPage(data, url, parent) {
     playlistData,
     parentLinks,
     previous,
-    next
+    next,
+    playlistName: parent.prettyName
   }
 }
 
