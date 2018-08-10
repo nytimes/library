@@ -45,16 +45,16 @@ async function retrieveDataForPath(path, tree) {
       return
     }
 
-    if (playlistFileId) {
-      const {id} = getMeta(playlistFileId)
-      const grandparent = parent
-      parent = pointer
-      pointer = {
-        id,
-        // generate breadcrumb based on playlist's path
-        breadcrumb: parent.breadcrumb.concat({id: parent.id})
-      }
-    } else return
+    if (!playlistFileId) return 
+    
+    const {id} = getMeta(playlistFileId)
+    const grandparent = parent
+    parent = pointer
+    pointer = {
+      id,
+      // generate breadcrumb based on playlist's path
+      breadcrumb: parent.breadcrumb.concat({id: parent.id})
+    }
   }
 
   // if we are going to view a directory, switch to the home doc where possible

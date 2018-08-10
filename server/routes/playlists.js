@@ -111,7 +111,7 @@ async function preparePlaylistPage(data, url, parent) {
   const next = playlistLinks[i + 1] ? `${basePath}/${getMeta(playlistLinks[i + 1]).slug}` : ''
 
   return {
-    playlistData,
+    siblings: playlistData,
     parentLinks,
     previous,
     next,
