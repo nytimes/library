@@ -27,12 +27,12 @@ async function setAuthClient() {
   return inflight('auth', async () => {
     // In Heroku environment, set GOOGLE_APPLICATION_CREDENTIALS as auth json object to be parsed
     try {
-      const keys = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS)
-      authClient = nodeAuth.fromJSON(keys)
-    } catch (err) {
-      log.info('Couldn\'t get auth client credentials', err.message)
       const {credential} = await google.auth.getApplicationDefault()
       authClient = credential
+    } catch (err) {
+      log.info('Couldn\'t get auth client credentials', err.message)
+      const keys = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS)
+      authClient = nodeAuth.fromJSON(keys)
     }
 
     if (authClient.createScopedRequired && authClient.createScopedRequired()) {
