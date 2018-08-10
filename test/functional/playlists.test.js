@@ -22,19 +22,30 @@ describe('Playlist route handling', () => {
     return request(app)
             .get(`${playlistPath}/article-dnecn`)
             .expect(200)
-            .then((res) => expect(res.text).to.contain('<div class="sibling-kicker">Article dnEcn Playlist</div>'))
+            .then((res) => {
+              console.log(res.text)
+              expect(res.text).to.include('Article dnEcn Playlist')
+            })
   })
 
   it('should query a playlist', () => {
     return request(app)
             .get(`${playlistPath}`)
             .expect(200)
-            .then((res) => expect(res.text).to.contain('<h1 class="visually-hidden">Default Playlist template</h1>'))
+            .then((res) => {
+              console.log(res.text)
+              expect(res.text).to.include('<h1 class="visually-hidden">Default Playlist template</h1>')
+
+            })
   })
 
   it('should return a 404 requesting nonexistent playlist page', () => {
     return request(app)
             .get(`${playlistPath}/fjfaklfjdalkf`)
             .expect(404)
+            .then(res => {
+              console.log(res.text)
+              expect(res.text).include('404')
+            })
   })
 })
