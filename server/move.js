@@ -1,6 +1,5 @@
 'use strict'
 const {google} = require('googleapis')
-const {promisify} = require('util')
 
 const log = require('./logger')
 const list = require('./list')
@@ -71,21 +70,19 @@ exports.moveFile = async (id, destination, driveType = 'team') => {
 
   // fake the drive updating immediately by manually copying cache
   const data = await Promise.all(oldUrls.map((url) => {
-    const getCache = promisify(cache.get)
-    return getCache(url).catch((err) => log.error('Error getting cache', err))
-  }))
+    return cache.get(url)
+  })).catch((err) => { log.warn('Error gettng cached URLs', err) })
 
   // cache stores urls and page data, make sure to find actual data object for page
   const hasHtml = data.filter(({html}) => html && html.length)
   if (!hasHtml.length) return '/'
 
   const {docId, modified, html} = hasHtml[0]
-  const addToCache = promisify(cache.add)
 
-  return addToCache(docId, modified, newUrl, html).then(() => {
+  return cache.add(docId, modified, newUrl, html).then(() => {
     return newUrl
   }).catch((err) => {
-    log.error('Error adding new url to cache', err)
+    log.warn(`Failed saving new cache data for ${newUrl}`, err)
     return '/'
   })
 }

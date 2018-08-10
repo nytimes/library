@@ -6,7 +6,6 @@
     "@google-cloud/datastore": "^1.4.1",
     "assert": "^1.4.1",
     "async": "^2.4.1",
-    "bluebird": "^3.5.1",
     "cache-manager": "^2.4.0",
     "chai": "^4.0.2",
     "cheerio": "^1.0.0-rc.1",

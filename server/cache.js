@@ -1,7 +1,7 @@
 'use strict'
 
-const async = require('async')
 const moment = require('moment')
+const middlewareRouter = require('express-promise-router')()
 
 const log = require('./logger')
 const {requireWithFallback} = require('./utils')
@@ -12,8 +12,9 @@ const cache = requireWithFallback('cache/store')
 const noCacheDelay = parseInt(process.env.EDIT_CACHE_DELAY, 10) || 60 * 60
 
 exports.get = cache.get // expose the ability to retreive cache data internally
+
 // detects purge requests and serves cached responses when available
-exports.middleware = (req, res, next) => {
+middlewareRouter.use(async (req, res) => {
   // handle the purge request if purge or edit params are present
   const {purge, edit, ignore} = req.query
   if (purge || edit) {
@@ -23,152 +24,127 @@ exports.middleware = (req, res, next) => {
       url: req.path,
       editEmail: email,
       ignore: overrides
-    }, (err) => {
-      if (err) {
-        log.warn(`Cache purge failed for ${req.path}`, err)
-        return next(err)
-      }
-      res.end('OK')
+    }).then(() => res.end('OK')).catch((err) => {
+      log.warn(`Cache purge failed for ${req.path}`, err)
+      throw err
     })
   }
 
   // otherwise consult cache for stored html
-  cache.get(req.path, (err, data) => {
-    if (req.useBeta) {
-      log.info('Skipping cache for beta API')
-      return next()
-    }
+  const data = await cache.get(req.path)
 
-    if (err) {
-      log.warn(`Failed retrieving cache for ${req.path}`, err)
-      return next() // silently proceed in the stack
-    }
+  if (req.useBeta) {
+    log.info('Skipping cache for beta API')
+    return 'next'
+  }
 
-    const {html, redirectUrl, id} = data || {}
-    if (redirectUrl) {
-      return res.redirect(redirectUrl)
-    }
+  const {html, redirectUrl, id} = data || {}
+  if (redirectUrl) return res.redirect(redirectUrl)
 
-    // if no html was returned proceed to next middleware
-    if (!html) return next()
+  // if no html was returned proceed to next middleware
+  if (!html) return 'next'
 
-    // attach doc id to the request for reading history tracking
-    res.locals.docId = id
+  // attach doc id to the request for reading history tracking
+  res.locals.docId = id
+  log.info(`CACHE HIT ${req.path}.`)
+  res.end(html)
+})
 
-    log.info(`CACHE HIT ${req.path}.`)
-    res.end(html)
-  })
-}
+exports.middleware = middlewareRouter
 
-exports.add = (id, newModified, path, html, cb = () => {}) => {
-  if (!newModified) return cb(new Error('Refusing to store new item without modified time.'))
+exports.add = async (id, newModified, path, html) => {
+  if (!newModified) throw new Error('Refusing to store new item without modified time.')
 
-  cache.get(path, (err, data) => {
-    if (err) {
-      log.warn(`Failed saving cache data for ${path}`, err)
-      return cb(err)
-    }
-
-    const {modified, noCache, html: oldHtml} = data || {}
-    // don't store any items over noCache entries
-    if (noCache) return cb()// refuse to cache any items that are being edited
-    // if there was previous data and it is not older than the new data, don't do anything
-    if (oldHtml && modified && !isNewer(modified, newModified)) return cb()// nothing to do if data is current
-    // store new data in the cache
-    cache.set(path, {html, modified: newModified, id}, (err) => {
-      if (err) log.warn(`Failed saving new cache data for ${path}`, err)
-      cb(err)
-    })
-  })
+  const data = await cache.get(path)
+  const {modified, noCache, html: oldHtml} = data || {}
+  // don't store any items over noCache entries
+  if (noCache) return // refuse to cache any items that are being edited
+  // if there was previous data and it is not older than the new data, don't do anything
+  if (oldHtml && modified && !isNewer(modified, newModified)) return // nothing to do if data is current
+  // store new data in the cache
+  return cache.set(path, {html, modified: newModified, id})
 }
 
 // redirects when a url changes
 // should we expose a cb here for testing?
-exports.redirect = (path, newPath, modified, cb = () => {}) => {
-  cache.get(path, (err, data) => {
-    const {noCache, redirectUrl} = data || {}
+exports.redirect = async (path, newPath, modified) => {
+  const data = await cache.get(path)
+  const {noCache, redirectUrl} = data || {}
 
-    // since we run multiple pods, we don't need to set the redirect more than once
-    if (redirectUrl === newPath) return cb(new Error('Already configured that redirect'))
+  // since we run multiple pods, we don't need to set the redirect more than once
+  if (redirectUrl === newPath) throw new Error('Already configured that redirect')
 
-    log.info(`ADDING REDIRECT: ${path} => ${newPath}`)
-    if (err) log.warn(`Failed retrieving data for redirect of ${path}`)
+  log.info(`ADDING REDIRECT: ${path} => ${newPath}`)
 
-    const preventCacheReason = noCache ? 'redirect_detected' : null
-    async.parallel([
-      (cb) => {
-        // store redirect url at current location
-        cache.set(path, {redirectUrl: newPath}, (err) => {
-          if (err) log.warn(`Failed setting redirect for ${path} => ${newPath}`, err)
-          cb(err)
-        })
-      },
-      (cb) => {
-        // purge the cache on the destination to eliminate old redirects
-        // we should ignore redirects at the new location
-        // @TODO: why do we need to pass 'modified' as an ignore param here?
-        purgeCache({
-          url: newPath,
-          modified,
-          editEmail: preventCacheReason,
-          ignore: ['redirect', 'missing', 'modified']
-        }, (err) => {
-          if (err && err.message !== 'Not found') log.warn(`Failed purging redirect destination ${newPath}`, err)
-          cb(err)
-        })
-      }
-    ], cb)
+  await cache.set(path, {redirectUrl: newPath}).catch((err) => {
+    if (err) log.warn(`Failed setting redirect for ${path} => ${newPath}`, err)
+    return err
+  })
+
+  const preventCacheReason = noCache ? 'redirect_detected' : null
+  return purgeCache({
+    url: newPath,
+    modified,
+    editEmail: preventCacheReason,
+    ignore: ['redirect', 'missing', 'modified']
+  }).catch((err) => {
+    if (err && err.message !== 'Not found') log.warn(`Failed purging redirect destination ${newPath}`, err)
+    throw err
   })
 }
 
 // expose the purgeCache method externally so that list can call while building tree
 exports.purge = purgeCache
 
-function purgeCache({url, modified, editEmail, ignore}, cb = () => {}) {
+async function purgeCache({url, modified, editEmail, ignore}) {
   modified = modified || moment().subtract(1, 'hour').utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
 
   const overrides = ignore && Array.isArray(ignore) ? new Set(ignore) : new Set().add(ignore)
   const shouldIgnore = (type) => overrides.has(type) || overrides.has('all') || overrides.has('1')
 
-  if (!url) return cb(Error(`Can't purge cache without url! Given url was ${url}`))
+  if (!url) throw new Error(`Can't purge cache without url! Given url was ${url}`)
 
-  cache.get(url, (err, data) => {
-    if (err) log.warn(`Received error while trying to retrieve existing cache for purge of ${url}`, err)
-    // compare current cache entry data vs this request
-    const {redirectUrl, noCache, html, modified: oldModified, purgeId: lastPurgeId} = data || {}
+  const data = await cache.get(url)
+  // compare current cache entry data vs this request
+  const {redirectUrl, noCache, html, modified: oldModified, purgeId: lastPurgeId} = data || {}
 
-    if (redirectUrl && !shouldIgnore('redirect')) return cb(new Error('Unauthorized'))
-    // edit is considered its own override for everything but redirect
-    if (editEmail && editEmail.includes('@')) { // @TODO cleanup this hack
-      log.info(`CACHE PURGE PERSIST for ${noCacheDelay}s (${editEmail}): ${url}`)
-      return cache.set(url, {noCache: true}, {ttl: noCacheDelay}, cb)
-    }
+  if (redirectUrl && !shouldIgnore('redirect')) throw new Error('Unauthorized')
+  // edit is considered its own override for everything but redirect
 
-    // try and dedupe extra requests from multiple pods (tidier logs)
-    const purgeId = `${modified}-${editEmail || ''}-${ignore}`
-    if (purgeId === lastPurgeId && !shouldIgnore('all')) return cb(new Error(`Same purge id as previous request ${purgeId}`))
-    // by default, don't try to purge empty
-    if (!html && !shouldIgnore('missing')) return cb(new Error('Not found'))
-    // by default, don't purge a noCache entry
-    if (noCache && !shouldIgnore('editing')) return cb(new Error('Unauthorized'))
-    // by default, don't purge when the modification time is not fresher than previous
-    if (!isNewer(oldModified, modified) && !shouldIgnore('modified')) return cb(new Error('No purge of fresh content'))
+  if (editEmail && editEmail.includes('@')) { // @TODO cleanup this hack
+    log.info(`CACHE PURGE PERSIST for ${noCacheDelay}s (${editEmail}): ${url}`)
+    return cache.set(url, {noCache: true}, {ttl: noCacheDelay})
+  }
 
-    // if we passed all the checks, determine all ancestor links and purge
-    const segments = url.split('/').map((segment, i, segments) => {
-      return segments.slice(0, i).concat([segment]).join('/')
-    }).filter((s) => s.length) // don't allow purging empty string
+  const purgeId = `${modified}-${editEmail || ''}-${ignore}`
 
-    // call the callback when all segments have been purged
-    async.parallel(segments.map((path) => {
-      return (cb) => {
-        log.info(`CACHE PURGE ${path} FROM CHANGE AT ${url}`)
-        // there is an edge here where a homepage upstream was being edited and already not in cache.
-        // we need to get the cache entries for all of these in case and not purge them to account for that edge
-        cache.set(path, {modified, purgeId}, cb)
-      }
-    }), cb)
-  })
+  // if attempting to purge /trash but nothing has changed, skip.
+  if (purgeId === lastPurgeId && url === '/trash') return
+
+  // const isTrashed = url.split('/')[1] === 'trash'
+  // try and dedupe extra requests from multiple pods (tidier logs)
+  if (purgeId === lastPurgeId && !shouldIgnore('all')) throw new Error(`Same purge id as previous request ${purgeId} for ${url}`)
+  // by default, don't try to purge empty
+  if (!html && !shouldIgnore('missing')) throw new Error('Not found')
+  // by default, don't purge a noCache entry
+  if (noCache && !shouldIgnore('editing')) throw new Error('Unauthorized')
+  // by default, don't purge when the modification time is not fresher than previous
+  if (!isNewer(oldModified, modified) && !shouldIgnore('modified')) throw new Error(`No purge of fresh content for ${url}`)
+
+  // if we passed all the checks, determine all ancestor links and purge
+  const segments = url.split('/').map((segment, i, segments) => {
+    return segments.slice(0, i).concat([segment]).join('/')
+  }).filter((s) => s.length) // don't allow purging empty string
+
+  // call the callback when all segments have been purged
+  return Promise.all(
+    segments.map((path) => {
+      log.info(`CACHE PURGE ${path} FROM CHANGE AT ${url}`)
+      // there is an edge here where a homepage upstream was being edited and already not in cache.
+      // we need to get the cache entries for all of these in case and not purge them to account for that edge
+      cache.set(path, {modified, purgeId})
+    })
+  )
 }
 
 function isNewer(oldModified, newModified) {

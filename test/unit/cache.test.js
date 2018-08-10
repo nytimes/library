@@ -2,16 +2,14 @@
 
 const request = require('supertest')
 const assert = require('assert')
-const bluebird = require('bluebird')
 const moment = require('moment')
 const express = require('express')
 
 const {f} = require('../utils')
 const cache = require('../../server/cache')
-const {purgeAsync, addAsync, redirectAsync, middleware} = bluebird.promisifyAll(cache)
 
 const server = express()
-server.use(middleware)
+server.use(cache.middleware)
 
 const sampleEntry = {
   id: 'some_id',
@@ -27,8 +25,8 @@ const nextModified = () => {
   return moment(modified).add(count, 'days').format()
 }
 
-const purgeCache = () => purgeAsync({url: path, modified: nextModified(), ignore: 'all'})
-const addCache = () => addAsync(id, nextModified(), path, html)
+const purgeCache = () => cache.purge({url: path, modified: nextModified(), ignore: 'all'})
+const addCache = () => cache.add(id, nextModified(), path, html)
 const getCache = (url = path) => request(server).get(url)
 
 // can we run against cache explicitly?
@@ -37,12 +35,12 @@ describe('The cache', f((mocha) => {
     beforeEach(f((mocha) => purgeCache))
 
     it('should not save if no modification time is passed', f((mocha) => {
-      return addAsync(id, null, path, html)
+      return cache.add(id, null, path, html)
         .catch((err) => assert(err, 'an error is returned'))
     }))
 
     it('should save successfully with valid data', f((mocha) => {
-      return addAsync(id, nextModified(), path, html) // no error is returned
+      return cache.add(id, nextModified(), path, html) // no error is returned
     }))
   }))
 
@@ -52,7 +50,7 @@ describe('The cache', f((mocha) => {
     it('should succeed via the purge method', f((mocha) => {
       return getCache()
         .expect(200)
-        .then(() => purgeAsync({url: path, modified: nextModified()}))
+        .then(() => cache.purge({url: path, modified: nextModified()}))
         .then(() => getCache().expect(404))
     }))
 
@@ -83,7 +81,7 @@ describe('The cache', f((mocha) => {
     }))
 
     it('should not be returned when empty', f((mocha) => {
-      return purgeAsync({ url: path, modified: nextModified() })
+      return cache.purge({ url: path, modified: nextModified() })
         .then(() => getCache().expect(404))
     }))
   }))
@@ -93,7 +91,7 @@ describe('The cache', f((mocha) => {
 
     it('should save redirects when valid', f((mocha) => {
       const newPath = '/parent/sample-entry-2'
-      return redirectAsync(path, newPath, modified)
+      return cache.redirect(path, newPath, modified)
         // check the redirect saved
         .then(() => getCache().expect(302).expect('Location', newPath))
         // and that cache was purged at the destination
