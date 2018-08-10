@@ -23,7 +23,6 @@ describe('Playlist route handling', () => {
             .get(`${playlistPath}/article-dnecn`)
             .expect(200)
             .then((res) => {
-              console.log(res.text)
               expect(res.text).to.include('Article caBsa Playlist')
               expect(res.text).to.include('<li class="type-file">')
               expect(res.text).to.include('<a class="content-link" href="/top-level-article-2/article-ailbi/article-cabsa/article-etse"')
@@ -35,9 +34,9 @@ describe('Playlist route handling', () => {
             .get(`${playlistPath}`)
             .expect(200)
             .then((res) => {
-              console.log(res.text)
               expect(res.text).to.include('Article caBsa Playlist')
               expect(res.text).to.include('<h1 class="visually-hidden">Default Playlist template</h1>')
+              expect(res.text).to.include('<a class="content-link" href="/top-level-article-2/article-ailbi/article-cabsa/article-etse"')
             })
   })
 
@@ -45,9 +44,6 @@ describe('Playlist route handling', () => {
     return request(app)
             .get(`${playlistPath}/fjfaklfjdalkf`)
             .expect(404)
-            .then(res => {
-              console.log(res.text)
-              expect(res.text).include('404')
-            })
+            .then(res => expect(res.text).include('404'))
   })
 })
