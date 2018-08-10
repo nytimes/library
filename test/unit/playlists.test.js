@@ -10,20 +10,14 @@ const {getPlaylist, getTree, getMeta} = require('../../server/list')
 /* eslint-disable no-unused-expressions */
 
 describe('Playlists', () => {
-
   describe('getPlaylist() in list.js', () => {
-    beforeEach(() => {
-    })
-    
     describe('when not Google authenticated', () => {
-      let oldAuth
       before(() => {
-        oldAuth = google.auth.getApplicationDefault
-        google.auth.getApplicationDefault = () => Promise.reject(Error('Auth error'))
+        sinon.stub(google.auth, 'getApplicationDefault').returns(Error('Auth error'))
       })
 
       after(() => {
-        google.auth.getApplicationDefault = oldAuth
+        google.auth.getApplicationDefault.restore()
       })
 
       it('should throw an error', async () => {

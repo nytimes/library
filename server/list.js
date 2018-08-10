@@ -333,7 +333,7 @@ function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
     } else {
       // should we be calling purge every time?
       // basically we are just calling purge because we don't know the last modified
-      cache.purge({url: newItem.url, modified: newItem.modifiedTime})
+      cache.purge({url: newItem.path, modified: newItem.modifiedTime})
     }
   })
 }

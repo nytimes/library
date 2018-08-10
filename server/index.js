@@ -65,7 +65,6 @@ app.use((req, res, next) => {
 
 // a utility route that can be used to purge everything in the current tree
 app.get('/cache-purge-everything', (req, res, next) => {
-  console.log('in cache-purge-everything')
   const urls = Array.from(getAllRoutes())
 
   async.parallelLimit(urls.map((url) => {

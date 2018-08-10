@@ -15,7 +15,7 @@ const userInfo = {
 const playlistPath = '/top-level-article-2/article-ailbi/article-cabsa'
 
 describe('Playlist route handling', () => {
-  beforeEach(async () => sinon.stub(app.request, 'session').value({passport: {user: userInfo}}))
+  beforeEach(() => sinon.stub(app.request, 'session').value({passport: {user: userInfo}}))
   afterEach(() => sinon.restore())
 
   it('should query a playlist page', () => {
