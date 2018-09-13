@@ -21,7 +21,7 @@ async function handleCategory(req, res) {
   const {meta, parent, data} = await parseUrl(req.path)
 
   if (!meta || !data) return 'next'
-  
+
   const {resourceType, tags, id} = meta
   const {breadcrumb} = data
 
@@ -29,7 +29,7 @@ async function handleCategory(req, res) {
   const template = `categories/${layout}`
 
   const parentMeta = getMeta(parent.id)
-  if (tags.includes('playlist') || (parentMeta && parentMeta.tags.includes('playlist'))) { 
+  if (tags.includes('playlist') || (parentMeta && parentMeta.tags.includes('playlist'))) {
     return 'next'
   }
 
@@ -46,7 +46,7 @@ async function handleCategory(req, res) {
     id,
     template: stringTemplate
   })
-  
+
   // if this is a folder, just render from the generic data
   if (resourceType === 'folder') {
     return res.render(template, baseRenderData, (err, html) => {

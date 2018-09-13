@@ -1,8 +1,7 @@
 
-# gcloud datastore create-indexes ./datastore_indexes.yml --project ***REMOVED***
+# gcloud datastore create-indexes ./index.yml --project your-gcp-project-here
 
 indexes:
-
 - kind: LibraryView
   properties:
   - name: userId
