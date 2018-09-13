@@ -9,8 +9,7 @@ const {getAuth} = require('./auth')
 const log = require('./logger')
 const {stringTemplate} = require('./utils')
 
-const formatterV3 = require('./formatter')
-const formatterV4 = require('./formatter-beta')
+const formatter = require('./formatter')
 
 const supportedTypes = new Set(['document', 'spreadsheet', 'text/html'])
 
@@ -32,9 +31,6 @@ exports.slugify = (text = '') => {
 }
 
 exports.fetchDoc = async (id, resourceType, req) => {
-  if (req.useBeta) log.debug('Using beta formatter')
-  const formatter = req.useBeta ? formatterV4 : formatterV3
-
   const auth = await getAuth()
 
   const [html, originalRevision] = await fetch({id, resourceType, req}, auth)
@@ -83,13 +79,6 @@ async function fetchHTMLForId(id, resourceType, req, drive) {
 
   if (resourceType === 'text/html') {
     return fetchHTML(drive, id)
-  }
-
-  if (req.useBeta) {
-    const betaDiscovery = `***REMOVED***${process.env.API_KEY}`
-    const docs = await google.discoverAPI(betaDiscovery)
-    const {data} = await docs.documents.get({name: `documents/${id}`})
-    return data
   }
 
   const {data} = await drive.files.export({

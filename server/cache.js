@@ -33,11 +33,6 @@ middlewareRouter.use(async (req, res) => {
   // otherwise consult cache for stored html
   const data = await cache.get(req.path)
 
-  if (req.useBeta) {
-    log.info('Skipping cache for beta API')
-    return 'next'
-  }
-
   const {html, redirectUrl, id} = data || {}
   if (redirectUrl) return res.redirect(redirectUrl)
 

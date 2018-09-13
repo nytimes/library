@@ -33,11 +33,6 @@ app.use(userAuth)
 
 preload.forEach((middleware) => app.use(middleware))
 
-app.use((req, res, next) => {
-  req.useBeta = process.env.BETA_API === 'true' || Object.keys(req.query).includes('beta')
-  next()
-})
-
 app.use(userInfo)
 
 // serve all files in the public folder

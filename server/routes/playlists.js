@@ -4,9 +4,8 @@ const router = require('express-promise-router')()
 
 const moment = require('moment')
 
-const {getAuth} = require('../auth')
 const log = require('../logger')
-const {getMeta, getTree, getPlaylist} = require('../list')
+const {getMeta, getPlaylist} = require('../list')
 const {fetchDoc, cleanName, fetchByline} = require('../docs')
 const {stringTemplate} = require('../utils')
 const {parseUrl} = require('../urlParser')
@@ -23,7 +22,7 @@ async function handlePlaylist(req, res) {
   const {breadcrumb} = data
 
   // if the page is a playlist, render playlist overview
-  if (tags.includes('playlist')) { //TODO: render with playlist view
+  if (tags.includes('playlist')) { // TODO: render with playlist view
     log.info('Getting playlist')
     const playlistIds = await getPlaylist(id)
 
@@ -49,7 +48,7 @@ async function handlePlaylist(req, res) {
 
     // render as a playlist
     return res.render(`pages/playlists`, Object.assign({}, playlistPageData, { // TODO: prepare data, streamline this handleCategory function
-      template: stringTemplate, 
+      template: stringTemplate,
       content: payload.html,
       byline: payload.byline,
       createdBy: revisionData.lastModifyingUser.displayName,
@@ -83,12 +82,12 @@ async function preparePlaylistPage(data, url, parent) {
 
   const playlistLinks = await getPlaylist(parent.id, url)
   const basePath = url.split('/').slice(0, -1).join('/')
-  const playlistData = playlistLinks.map(id => {
+  const playlistData = playlistLinks.map((id) => {
     const {prettyName, slug, nodeType} = getMeta(id)
     return {
       url: `${basePath}/${slug}`,
-      id, 
-      name: prettyName, 
+      id,
+      name: prettyName,
       slug,
       nodeType
     }
@@ -135,7 +134,7 @@ function prepareContextualData(playlistMeta, values, breadcrumb) {
       }
     })
 
-  const children = values.map(docId => {
+  const children = values.map((docId) => {
     const {prettyName, slug, mimeType, folder, webViewLink, resourceType} = getMeta(docId)
     return {
       sort: prettyName,
@@ -153,4 +152,3 @@ function prepareContextualData(playlistMeta, values, breadcrumb) {
     parentLinks
   }
 }
-
