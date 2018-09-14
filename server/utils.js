@@ -36,10 +36,6 @@ exports.sortDocs = (a, b) => {
 // file of the same name in the server dir
 exports.requireWithFallback = (attemptPath) => {
   const baseDir = path.join(__dirname, '..')
-  // only test against prod paths
-  if (process.env.NODE_ENV === 'test') { // @TODO: Remove this before public launch
-    return require(path.join(baseDir, 'server', attemptPath))
-  }
   try {
     return require(path.join(baseDir, 'custom', attemptPath))
   } catch (e) {
