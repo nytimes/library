@@ -415,13 +415,7 @@
 // Playlist Page
 //------------------------------------------------------------------------------
 
-#playlist-page {
-  #previous {
-    font-size: 50px;
-  }
-
-  #next {
-    font-size: 50px;
-    float: right;
-  }
+.playlist-navigation {
+  display: flex;;
+  justify-content: space-between;
 }

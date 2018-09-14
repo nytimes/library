@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<%- include('../partials/head', {title}) %>
+
+<body>
+  <h1 class="visually-hidden">Default template</h1>
+  <%- include('../partials/header', {title}) %>
+  <%- include ../partials/nav %>
+  <div class="g-body" id="playlist-page">
+    <p class="playlist-navigation">
+      <!-- include the text of the next item here? -->
+      <a id="previous" href="<%- previous.url %>">
+        <%- template('playlist.nav.previous') %>
+        <%= previous.name %></a>
+      <a id="next" href="<%- next.url %>">
+        <%= next.name %>
+        <%- template('playlist.nav.next') %></a>
+    </p>
+    <div class="g-left-panel">
+      <%- include('../partials/siblingList', {kicker: template('playlist.siblingList.heading', playlistName)}) %>
+    </div>
+    <div class="g-main-content">
+      <% if (locals.content) { %>
+      <%- content %>
+      <% } %>
+      <p class="playlist-navigation">
+          <!-- include the text of the next item here? -->
+        <a id="previous" href="<%- previous.url %>"><%- template('playlist.nav.previous') %> <%= previous.name %></a>
+        <a id="next" href="<%- next.url %>"><%= next.name %> <%- template('playlist.nav.next') %></a>
+      </p>
+    </div>
+    <%- include('../partials/footer', { pageType: 'playlist' }) %>
+  </div>
+</body>
+
+</html>

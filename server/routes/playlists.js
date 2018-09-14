@@ -29,7 +29,7 @@ async function handlePlaylist(req, res) {
     // TODO: consolidate/refactor this function
     const playlistOverviewData = preparePlaylistOverview(meta, playlistIds, breadcrumb)
 
-    return res.render(`playlists/default`, playlistOverviewData, (err, html) => {
+    return res.render(`playlists`, playlistOverviewData, (err, html) => {
       if (err) throw err
       res.end(html)
     })
@@ -47,7 +47,7 @@ async function handlePlaylist(req, res) {
     const playlistPageData = await preparePlaylistPage(data, req.path, parentMeta)
 
     // render as a playlist
-    return res.render(`pages/playlists`, Object.assign({}, playlistPageData, { // TODO: prepare data, streamline this handleCategory function
+    return res.render(`playlists/leaf`, Object.assign({}, playlistPageData, { // TODO: prepare data, streamline this handleCategory function
       template: stringTemplate,
       content: payload.html,
       byline: payload.byline,
@@ -77,7 +77,7 @@ function preparePlaylistOverview(playlistMeta, values, breadcrumb) {
 }
 
 async function preparePlaylistPage(data, url, parent) {
-  const {id, breadcrumb} = data
+  const {id: currentId, breadcrumb} = data
   const breadcrumbInfo = breadcrumb.map(({id}) => getMeta(id))
 
   const playlistLinks = await getPlaylist(parent.id, url)
@@ -87,6 +87,7 @@ async function preparePlaylistPage(data, url, parent) {
     return {
       url: `${basePath}/${slug}`,
       id,
+      isCurrent: currentId === id,
       name: prettyName,
       slug,
       nodeType
@@ -94,20 +95,24 @@ async function preparePlaylistPage(data, url, parent) {
   })
 
   const parentLinks = url
-  .split('/')
-  .slice(1, -1) // ignore the base empty string and self
-  .map((segment, i, arr) => {
-    return {
-      url: `/${arr.slice(0, i + 1).join('/')}`,
-      name: cleanName(breadcrumbInfo[i].name),
-      editLink: breadcrumbInfo[i].webViewLink
-    }
-  })
+    .split('/')
+    .slice(1, -1) // ignore the base empty string and self
+    .map((segment, i, arr) => {
+      return {
+        url: `/${arr.slice(0, i + 1).join('/')}`,
+        name: cleanName(breadcrumbInfo[i].name),
+        editLink: breadcrumbInfo[i].webViewLink
+      }
+    })
 
   // get paths for previous and next item in playlist
-  const i = playlistLinks.indexOf(id)
-  const previous = playlistLinks[i - 1] ? `${basePath}/${getMeta(playlistLinks[i - 1]).slug}` : ''
-  const next = playlistLinks[i + 1] ? `${basePath}/${getMeta(playlistLinks[i + 1]).slug}` : ''
+  const defaultNav = {
+    url: parent.path,
+    name: `Back to ${parent.prettyName}`
+  }
+  const i = playlistLinks.indexOf(currentId)
+  const next = playlistData[i + 1] || defaultNav
+  const previous = playlistData[i - 1] || defaultNav
 
   return {
     siblings: playlistData,

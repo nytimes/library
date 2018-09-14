@@ -152,14 +152,16 @@
           border-bottom: none;
         }
 
-        a {
+        a,
+        strong {
           padding: 3px 5px;
           color: $gray-20;
-
-          &:hover {
-            color: $accent;
-          }
         }
+
+        a:hover {
+          color: $accent;
+        }
+
       }
     }
 
@@ -200,9 +202,13 @@
   }
 
   .g-main-content {
+    border-top: 5px solid $gray-60;
+  }
+  
+  .playlist-navigation,
+  .g-main-content {
     max-width: 600px;
     margin: 0px auto 0 auto;
-    border-top: 5px solid $gray-60;
     padding: 10px 0px;
     word-break: break-word; // force break on very long lines without spaces
 
