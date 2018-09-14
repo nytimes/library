@@ -67,7 +67,7 @@ functions. These functions must be valid middleware with params
 `(res, req, next)`.
 
 `preload` exports will be added to the beginning of the request cycle, while
-`postload`
+`postload` exports are added near the end.
 
 
 ## Cache Client

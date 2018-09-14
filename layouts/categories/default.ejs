@@ -8,11 +8,13 @@
     <div class="g-body">
       <div class="g-left-panel">
         <% if (locals.sections && locals.sections.length) { %>
+          <!-- is this TOC -->
           <%- include ../partials/sectionList %>
         <% } %>
-        <% if (locals.siblings && siblings.length) { %>
+        <!-- Hide sibling docs on normal pages -->
+        <!-- <% if (locals.siblings && siblings.length) { %>
         <%- include('../partials/siblingList', {kicker: template('folder.siblingList.heading')}) %>
-        <% } %>
+        <% } %> -->
       </div>
 
       <div class="g-main-content">

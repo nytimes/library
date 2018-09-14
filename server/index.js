@@ -6,14 +6,15 @@ const async = require('async')
 const csp = require('helmet-csp')
 
 const {middleware: cache, purge} = require('./cache')
+const {getMeta, getAllRoutes} = require('./list')
+const {allMiddleware, requireWithFallback} = require('./utils')
 const userInfo = require('./routes/userInfo')
 const pages = require('./routes/pages')
 const categories = require('./routes/categories')
 const playlists = require('./routes/playlists')
 const readingHistory = require('./routes/readingHistory')
 const errorPages = require('./routes/errors')
-const {getMeta, getAllRoutes} = require('./list')
-const {allMiddleware, requireWithFallback} = require('./utils')
+
 const userAuth = requireWithFallback('userAuth')
 const customCsp = requireWithFallback('csp')
 
@@ -61,12 +62,16 @@ app.use((req, res, next) => {
   next()
 })
 
+// consider how we could limit this
+
 // a utility route that can be used to purge everything in the current tree
 app.get('/cache-purge-everything', (req, res, next) => {
+  // maybe check against list of users here?
   const urls = Array.from(getAllRoutes())
 
+  // update this route
   async.parallelLimit(urls.map((url) => {
-    return (cb) => purge({url, ignore: 'all'}, cb)
+    return (cb) => purge({ url, ignore: 'all' }, cb)
   }), 10, (err, data) => {
     if (err) return next(err)
 
@@ -85,6 +90,6 @@ postload.forEach((middleware) => app.use(middleware))
 
 // error handler for rendering the 404 and 500 pages, must go last
 app.use(errorPages)
-app.listen(process.env.PORT || 3000)
+app.listen(parseInt(process.env.PORT || '3000', 10))
 
 module.exports = app

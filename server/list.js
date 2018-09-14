@@ -84,7 +84,7 @@ async function updateTree() {
 function getOptions(id) {
   const fields = 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)'
 
-  if (driveType === 'shared') {
+  if (driveType === 'folder') {
     return {
       q: id.map((id) => `'${id}' in parents`).join(' or '),
       fields
@@ -128,7 +128,7 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentId
   }
 
   // If there are no more pages and this is not a shared folder, return completed list
-  if (driveType !== 'shared') return combined
+  if (driveType !== 'folder') return combined
 
   // Continue searching if shared folder, since API only returns contents of the immediate parent folder
   // Find folders that have not yet been searched

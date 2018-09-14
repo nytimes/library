@@ -56,7 +56,7 @@ APPROVED_DOMAINS="nytimes.com,dailypennsylvanian.com" # comma separated list of 
 SESSION_SECRET=supersecretvalue
 
 # Google drive Configuration
-DRIVE_TYPE=team # or shared, if using a folder instead of a team drive
+DRIVE_TYPE=team # or folder, if using a folder instead of a team drive
 DRIVE_ID=0123456ABCDEF # the ID of your team's drive
 ```
 
