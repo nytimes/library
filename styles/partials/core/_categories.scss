@@ -212,6 +212,10 @@
     padding: 10px 0px;
     word-break: break-word; // force break on very long lines without spaces
 
+    table {
+      word-break: keep-all; // don't word break inside tables
+    }
+
     p, ul, li, dt, dd {
       font-family: $font-sans;
       font-weight: 300;
