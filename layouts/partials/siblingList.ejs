@@ -5,7 +5,6 @@
   <% siblings.forEach((link) => { %>
     <% const type = link.nodeType === 'branch' ? 'folder' : 'file' %>
     <li class="type-<%= type %>">
-      <!-- condition here for if we are on the current page -->
       <% const icon = type === 'folder' ? 'fa-folder' : 'fa-file-o'; %>
       <i class="fa foldericon <%= icon %>" aria-hidden="true"></i>
       <% if (link.isCurrent) { %>

@@ -41,7 +41,9 @@ exports.requireWithFallback = (attemptPath) => {
   try {
     return require(customPath)
   } catch (err) {
-    log.debug(`Failed pulling in custom file ${attemptPath} @ ${customPath}. Error was:`, err)
+    // if the file exists but we failed to pull it in, log that error at a warning level
+    const level = fs.existsSync(customPath) ? 'warn' : 'debug'
+    log[level](`Failed pulling in custom file ${attemptPath} @ ${customPath}. Error was:`, err)
     return require(serverPath)
   }
 }
