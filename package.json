@@ -11,7 +11,7 @@
     "cheerio": "^1.0.0-rc.1",
     "deepmerge": "^2.1.1",
     "ejs": "^2.5.6",
-    "express": "^4.16.3",
+    "express": "^4.16.4",
     "express-promise-router": "^3.0.3",
     "express-session": "^1.15.6",
     "google-auth-library": "^1.6.1",
