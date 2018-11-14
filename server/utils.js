@@ -36,10 +36,13 @@ exports.sortDocs = (a, b) => {
 // file of the same name in the server dir
 exports.requireWithFallback = (attemptPath) => {
   const baseDir = path.join(__dirname, '..')
+  const customPath = path.join(baseDir, 'custom', attemptPath)
+  const serverPath = path.join(baseDir, 'server', attemptPath)
   try {
-    return require(path.join(baseDir, 'custom', attemptPath))
-  } catch (e) {
-    return require(path.join(baseDir, 'server', attemptPath))
+    return require(customPath)
+  } catch (err) {
+    log.debug(`Failed pulling in custom file ${attemptPath} @ ${customPath}. Error was:`, err)
+    return require(serverPath)
   }
 }
 
