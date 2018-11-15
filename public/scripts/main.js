@@ -4,12 +4,14 @@ $(document).ready(function() {
   var $html = $('html')
 
   $("pre").html(function (index, html) {
-      return html.replace(/^(.*)$/mg, [
+    return html.split(/\r?\n/).map(function(line) {
+      return [
         '<div class="line">',
           '<div class="line-number"><!-- placeholder --></div>',
-          '<span class="line-content">$1</span></span>',
+          '<span class="line-content">'+line+'</span></span>',
         '</div>'
-    ].join(''))
+      ].join('');
+    }).join('');
   });
 
   // make TOC sticky
