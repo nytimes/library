@@ -337,7 +337,7 @@ function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
       // basically we are just calling purge because we don't know the last modified
       cache.purge({url: newItem.path, modified: newItem.modifiedTime}).catch((err) => {
         // Ignore errors if not found or no fresh content, just allow the purge to stop
-        if (err && !(err.message.includes('Not found') || err.message.includes('No purge of fresh content'))) log.warn('Cache purging error', err)
+        if (err && !(err.message.includes('Not found') || err.message.includes('No purge of fresh content'))) log.warn(`Cache purging error for ${newItem.path}`, err)
       })
     }
   })

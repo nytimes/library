@@ -106,12 +106,12 @@
   }
 
   a:visited {
-      color: $accent;
+      color: $accent-light;
   }
 
   a:link {
       text-decoration: none;
-      color: $accent;
+      color: $accent-light;
   }
 }
 
@@ -386,7 +386,7 @@
       .docs-folder {
         display: inline-block;
         margin-right: 4px;
-        background: $gray-60;
+        background: $gray-80;
         color: $gray-30;
         padding: 3px 4px;
         font-weight: 400;

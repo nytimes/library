@@ -215,7 +215,7 @@
         h3 {
           font-weight: normal;
           font-size: 14px;
-          color: $gray-35;
+          color: $main-homepage-text-color;
           margin: 15px 0;
 
           @include tablet{
@@ -294,20 +294,20 @@
     }
 
     .help-text {
-      color: $gray-35;
+      color: $main-homepage-text-color;
       font-size: 14px;
       line-height: 21px;
       letter-spacing: 0;
       text-align: left;
 
       a {
-        color: $gray-35;
-        border-bottom: 1px solid $gray-35;
+        color: $main-homepage-text-color;
+        border-bottom: 1px solid $main-homepage-text-color;
         padding-bottom: 1px;
 
         &:hover {
-          color: $gray-50;
-          border-bottom: 1px solid $gray-50;
+          color: $gray-80;
+          border-bottom: 1px solid $gray-80;
           text-decoration: none;
         }
       }

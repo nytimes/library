@@ -97,9 +97,9 @@ function prepareContextualData(data, url, breadcrumb, parent, slug) {
       }
     })
 
-  const {id} = breadcrumb.length ? breadcrumb[breadcrumb.length - 1] : data
+  const {id, originalId} = breadcrumb.length ? breadcrumb[breadcrumb.length - 1] : data
   return {
-    parentId: id,
+    parentId: originalId || id,
     parentLinks,
     siblings: siblingLinks,
     children: childrenLinks
