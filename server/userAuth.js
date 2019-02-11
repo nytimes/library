@@ -53,12 +53,12 @@ router.use((req, res, next) => {
   const isDev = process.env.NODE_ENV === 'development'
   const authenticated = req.isAuthenticated()
 
-  if (isDev || (authenticated && domains.has(req.session.passport.user._json.domain))) {
+  if (isDev || (authenticated && domains.has(req.session.passport.user.emails[0].value.split('@')[1]))) {
     setUserInfo(req)
     return next()
   }
 
-  if (authenticated && !domains.has(req.session.passport.user._json.domain)) {
+  if (authenticated && !domains.has(req.session.passport.user.emails[0].value.split('@')[1])) {
     return next(Error('Unauthorized'))
   }
 
