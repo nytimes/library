@@ -55,8 +55,8 @@ const middlewares = fs.existsSync(path.join(__dirname, '../custom/middleware')) 
 exports.allMiddleware = middlewares.reduce((m, item) => {
   const {preload, postload} = require(path.join(__dirname, `../custom/middleware/${item}`))
   return {
-    preload: preload ? m.preload.concat(preload) : preload,
-    postload: postload ? m.postload.concat(postload) : postload
+    preload: preload ? m.preload.concat(preload) : m.preload,
+    postload: postload ? m.postload.concat(postload) : m.postload
   }
 }, {
   preload: [], postload: []
