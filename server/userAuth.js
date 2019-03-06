@@ -3,7 +3,7 @@
 const passport = require('passport')
 const session = require('express-session')
 const md5 = require('md5')
-const GoogleStrategy = require('passport-google-oauth2')
+const GoogleStrategy = require('passport-google-oauth20')
 
 const log = require('./logger')
 const {stringTemplate: template} = require('./utils')
@@ -15,6 +15,7 @@ passport.use(new GoogleStrategy.Strategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: '/auth/redirect',
+  userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo',
   passReqToCallback: true
 }, (request, accessToken, refreshToken, profile, done) => done(null, profile)))
 
@@ -34,7 +35,7 @@ passport.deserializeUser((obj, done) => done(null, obj))
 
 router.get('/login', passport.authenticate('google', {
   scope: [
-    'https://www.googleapis.com/auth/plus.profile.emails.read',
+    'https://www.googleapis.com/auth/userinfo.email',
     'https://www.googleapis.com/auth/userinfo.profile'
   ],
   prompt: 'select_account'
