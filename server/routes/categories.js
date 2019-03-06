@@ -17,7 +17,7 @@ module.exports = router
 const categories = getTemplates('categories')
 async function handleCategory(req, res) {
   log.info(`GET ${req.path}`)
-  // TODO: consider putting this in middleware
+  // FIXME: consider putting this in middleware and save on req
   const {meta, parent, data} = await parseUrl(req.path)
 
   if (!meta || !data) return 'next'

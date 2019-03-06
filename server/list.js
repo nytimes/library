@@ -155,8 +155,9 @@ function produceTree(files, firstParent) {
     const {parents, id, name} = resource
 
     // prepare data for the individual file and store later for reference
-    const prettyName = docs.cleanName(name) // @TODO remove circular dependency,
-    const slug = docs.slugify(prettyName) // it is causing issues with tests, etc
+    // FIXME: consider how to remove circular dependency here.
+    const prettyName = docs.cleanName(name)
+    const slug = docs.slugify(prettyName)
     const tagString = (name.match(/\|\s*([^|]+)$/i) || [])[1] || ''
     const tags = tagString.split(',')
       .map((t) => t.trim().toLowerCase())
@@ -267,7 +268,7 @@ function addPaths(byId) {
     return {
       folder: Object.assign({}, parent, parentInfo), // make sure folder contains path
       topLevelFolder: hasParent ? parentInfo.folder : Object.assign({}, item),
-      //TODO: make path array for all paths it could live in
+      // FIXME: we should eventually support multiple paths that documents could live in
       path: renderInLibrary ? libraryPath : drivePath
     }
   }
@@ -314,7 +315,7 @@ function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
       const item = isTrashed(oldItem) ? newItem : oldItem
       const {path, modifiedTime} = item
       const action = isTrashed(oldItem) ? 'Added' : 'Removed'
-      // @TODO: This does not restore deleted documents which are undone to the same location
+      // FIXME: This does not restore deleted documents which are undone to the same location
       return cache.purge({
         url: path,
         modified: modifiedTime,

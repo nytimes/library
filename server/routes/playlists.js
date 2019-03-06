@@ -22,11 +22,11 @@ async function handlePlaylist(req, res) {
   const {breadcrumb} = data
 
   // if the page is a playlist, render playlist overview
-  if (tags.includes('playlist')) { // TODO: render with playlist view
+  if (tags.includes('playlist')) {
     log.info('Getting playlist')
     const playlistIds = await getPlaylist(id)
 
-    // TODO: consolidate/refactor this function
+    // FIXME: consolidate/refactor this function
     const playlistOverviewData = preparePlaylistOverview(meta, playlistIds, breadcrumb)
 
     return res.render(`playlists`, playlistOverviewData, (err, html) => {
@@ -47,7 +47,7 @@ async function handlePlaylist(req, res) {
     const playlistPageData = await preparePlaylistPage(data, req.path, parentMeta)
 
     // render as a playlist
-    return res.render(`playlists/leaf`, Object.assign({}, playlistPageData, { // TODO: prepare data, streamline this handleCategory function
+    return res.render(`playlists/leaf`, Object.assign({}, playlistPageData, {
       template: stringTemplate,
       content: payload.html,
       byline: payload.byline,

@@ -106,7 +106,8 @@ async function purgeCache({url, modified, editEmail, ignore}) {
   if (redirectUrl && !shouldIgnore('redirect')) throw new Error('Unauthorized')
   // edit is considered its own override for everything but redirect
 
-  if (editEmail && editEmail.includes('@')) { // @TODO cleanup this hack
+  // FIXME: this should be more robust
+  if (editEmail && editEmail.includes('@')) {
     log.info(`CACHE PURGE PERSIST for ${noCacheDelay}s (${editEmail}): ${url}`)
     return cache.set(url, {noCache: true}, {ttl: noCacheDelay})
   }
