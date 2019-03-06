@@ -22,6 +22,8 @@ custom/
 └── userAuth.js        // authentication middleware overrides
 ```
 
+A `custom` directory demo is [available on GitHub](https://github.com/newsdev/library-custom-demo). 
+
 ## Styles
 Sass variable overrides can be placed in `custom/styles/_theme.scss`. This allows
 for setting custom values for colors and fonts across the entire application. An
