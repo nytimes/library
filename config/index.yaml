@@ -1,10 +1,23 @@
-
-# gcloud datastore create-indexes ./index.yml --project your-gcp-project-here
+# gcloud datastore indexes create ./index.yaml --project your-gcp-project-here
 
 indexes:
-- kind: LibraryView
+- kind: LibraryViewDoc
   properties:
   - name: userId
-    direction: asc
   - name: viewCount
+    direction: desc
+- kind: LibraryViewDoc
+  properties:
+  - name: userId
+  - name: lastViewedAt
+    direction: desc
+- kind: LibraryViewTeam
+  properties:
+  - name: userId
+  - name: viewCount
+    direction: desc
+- kind: LibraryViewTeam
+  properties:
+  - name: userId
+  - name: lastViewedAt
     direction: desc

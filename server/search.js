@@ -13,7 +13,7 @@ exports.run = async (query, driveType = 'team') => {
 
   const drive = google.drive({version: 'v3', auth: authClient})
 
-  if (driveType === 'shared') {
+  if (driveType === 'folder') {
     folderIds = await getAllFolders({drive})
   }
 
@@ -89,7 +89,7 @@ async function getAllFolders({nextPageToken: pageToken, drive, parentIds = [driv
 function getOptions(query, folderIds, driveType) {
   const fields = '*'
 
-  if (driveType === 'shared') {
+  if (driveType === 'folder') {
     const parents = folderIds.map((id) => `'${id}' in parents`).join(' or ')
     return {
       q: `(${parents}) AND fullText contains ${JSON.stringify(query)} AND mimeType != 'application/vnd.google-apps.folder' AND trashed = false`,

@@ -48,7 +48,7 @@ exports.moveFile = async (id, destination, driveType = 'team') => {
     ...baseOptions
   }
 
-  const options = driveType === 'shared' ? baseOptions : teamOptions
+  const options = driveType === 'folder' ? baseOptions : teamOptions
   await drive.files.update(options)
 
   const oldUrls = parents.map((id) => {
