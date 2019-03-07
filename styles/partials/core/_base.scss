@@ -1,7 +1,7 @@
 // Basic Styling
 //------------------------------------------------------------------------------
 body {
-  font-family: $font-sans;
+  font-family: $font-headline;
   font-weight: 100;
   margin: 0;
   padding: 0;
@@ -19,7 +19,7 @@ pre {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: $font-sans;
+  font-family: $font-headline;
   margin-top: 45px;
   margin-bottom: 20px;
 }
@@ -68,7 +68,7 @@ button:focus {
   line-height: 18px;
   font-weight: 300;
   font-style: normal;
-  font-family: $font-sans;
+  font-family: $font-headline;
   background-color: transparent;
   border-radius: 3px;
   transition: background-color 0.3s;
@@ -116,17 +116,17 @@ button:focus {
   margin: 10px 0 0 0;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
-  background-color: $gray-25;
-  border: 1px solid $gray-25;
+  background-color: $btn-homepage-background;
+  border: 1px solid $btn-homepage-border;
   border-radius: 0;
-  color: $btn-default-text-color;
+  color: $main-page-btn-color;
   -webkit-box-shadow: 2.5px 2.5px 0px -1px $accent-dark;
   -moz-box-shadow: 2.5px 2.5px 0px -1px $accent-dark;
   box-shadow: 2.5px 2.5px 0px -1px $accent-dark;
   padding: 5px 12px;
 
   &:hover {
-    background: $accent-dark;
+    background: $elem-link-accent;
     color: $white;
     -webkit-box-shadow: 3px 3px 0px 0px $gray-25;
     -moz-box-shadow: 3px 3px 0px 0px $gray-25;
@@ -140,7 +140,7 @@ button:focus {
   line-height: 20px;
   font-weight: 400;
   font-style: normal;
-  font-family: $font-sans;
+  font-family: $font-headline;
   background-color: transparent;
   transition: background-color 0.3s;
   display: inline-block;
@@ -165,7 +165,7 @@ button:focus {
   border: none;
   text-decoration: underline;
   background: transparent;
-  color: $gray-60;
+  color: $nav-text-color;
   font-size: 13px;
   line-height: 29px;
 

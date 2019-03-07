@@ -8,7 +8,7 @@
   left: 0;
   width: 100vw;
   z-index: 1000000090;
-  color: $main-homepage-icon-color;
+  color: $elem-link-color;
 
   .container {
     position: relative;
@@ -39,7 +39,7 @@
         padding: 4px 0 0 15px;
         vertical-align: top;
         border-left: 1px solid rgba(255, 255, 255, 0.35);
-        color: $main-homepage-text-color;
+        color: $main-homepage-icon-border;
         font-family: $font-branding;
         font-size: 18px;
         text-transform: none;
@@ -48,7 +48,7 @@
         line-height: 26px;
 
         a:link, a:visited {
-          color: $gray-80;
+          color: $elem-link-color;
         }
         a:hover {
           color: $accent;
@@ -135,7 +135,7 @@
     line-height: 30px;
     font-weight: 400;
     font-style: normal;
-    font-family: $font-sans;
+    font-family: $font-headline;
     background-color: transparent;
     transition: background-color 0.3s;
     display: inline-block;
@@ -220,14 +220,14 @@
 #user-profile {
   a.btn-user-whole {
     &:link, &:visited {
-      color: $main-homepage-icon-color;
+      color: $elem-link-color;
       font-size: 15px;
       letter-spacing: 0.25px;
       padding: 17px 15px 16px 15px;
     }
     &:hover, &:active, &:target {
       text-decoration: none;
-      background: $gray-30;
+      background: $elem-active-link-color;
 
       button.btn-user-initial {
         background: $black;
