@@ -18,6 +18,6 @@ $gray-90      : #f7f7f7;
 
 $offwhite: #ececec;
 $accent: #F09898;
-$accent-light: $accent * 1.4;
+$accent-light: #{$accent} * 1.4;
 $accent-lightest: #FCF6F6;
-$accent-dark: $accent * 0.85;
+$accent-dark: #{$accent} * 0.85;
