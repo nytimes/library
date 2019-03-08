@@ -257,7 +257,7 @@
     font-size: 14px;
     -webkit-font-smoothing: antialiased;
     text-indent: -1px;
-    background: $gray-70;
+    background: $btn-user-initial;
     color: $gray-30;
     margin-right: 5px;
     line-height: 0px;
@@ -386,7 +386,8 @@
       .docs-folder {
         display: inline-block;
         margin-right: 4px;
-        background: $gray-80;
+        // background: if($light, $gray-60, $gray-80);
+        background: $elem-link-color; // gray-50 and grey-80
         color: $gray-30;
         padding: 3px 4px;
         font-weight: 400;

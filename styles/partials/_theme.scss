@@ -4,7 +4,7 @@
 @import url('https://fonts.googleapis.com/css?family=Alfa+Slab+One|Open+Sans:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese');
 
 $font-branding: helvetica, arial, sans-serif;
-$font-headline: $helvetica;
+$font-headline: helvetica, arial, sans-serif;
 
 // Colors
 //------------------------------------------------------------------------------
@@ -24,6 +24,7 @@ $btn-default-background-hover: $accent;
 $btn-default-border: $black;
 $btn-default-text-color: $black;
 $btn-default-text-hover: $black;
+$btn-user-initial: $gray-50;
 $elem-link-color: $gray-50;
 $elem-active-link-color: $gray-50;
 $elem-link-accent: $accent;

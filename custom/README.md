@@ -32,22 +32,29 @@ example theme file could look like this:
 @import url('https://fonts.googleapis.com/css?family=Alfa+Slab+One|Open+Sans:400,400i,700,700i&subset=latin-ext');
 
  // Example Light Theme
-$branding:                     "Alpha Slab One", cursive;
-$sans:                         "Open Sans", arial, helvetica, sans-serif;
-$masthead-background:          $gray-10;
-$main-homepage-background:     $white;
-$main-homepage-text-color:     $black;
-$main-homepage-icon-color:     $black;
-$search-container-background:  #e6e2e2;
-$search-container-hover:       $gray-70;
-$btn-homepage-background:      $white;
-$btn-homepage-border:          $black;
-$btn-default-background:       $white;
-$btn-default-background-hover: $accent;
-$btn-default-border:           $black;
-$btn-default-text-color:       $black;
-$btn-default-text-hover:       $black;
-```
+ $font-branding:                "Alpha Slab One", cursive;
+ $font-headline:                "Open Sans", arial, helvetica, sans-serif;
+ $masthead-background:          $gray-10;
+ $main-homepage-background:     $white;
+ $main-homepage-icon-color:     $black;
+ $main-homepage-icon-border:    $black;
+ $main-page-text-color:         $gray-35;
+ $main-page-btn-color:          $gray-45;
+ $search-container-background:  #e6e2e2;
+ $search-container-hover:       $gray-70;
+ $btn-homepage-background:      $white;
+ $btn-homepage-border:          $black;
+ $btn-default-background:       $white;
+ $btn-default-background-hover: $accent;
+ $btn-default-border:           $black;
+ $btn-default-text-color:       $black;
+ $btn-default-text-hover:       $black;
+ $btn-user-initial:             $gray-50;
+ $elem-link-color:              $gray-50;
+ $elem-active-link-color:       $gray-50;
+ $elem-link-accent:             $accent;
+ $nav-text-color:               $gray-40;
+ ```
 
 
 If you would like to use the default theme but want to override some styling,

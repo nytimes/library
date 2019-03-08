@@ -65,7 +65,7 @@ $(document).ready(function() {
   function addElements(data, elementAttributes) {
     var $target = $('#me .popup');
 
-    if (data.length == 0) {
+    if (!data || data.length == 0) {
       if (elementAttributes.emptyText) {
         $target.append("<p>" + elementAttributes.emptyText + "</p>");
       }
