@@ -7,21 +7,28 @@ const moment = require('moment')
 
 const log = require('../logger')
 const {getMeta} = require('../list')
+const {getAuth} = require('../auth')
 
-const datastoreClient = getDatastoreClient()
+let datastoreClient
+
 // Middleware to record views into Cloud Datastore
 // express-promsie-router will call next() if the return value is 'next'.
 router.use(async (req, res) => {
-  if (datastoreClient) {
-    req.on('end', () => {
-      if (res.locals.docId) {
-        const docMeta = getMeta(res.locals.docId)
-        const userInfo = req.userInfo
-        if (!docMeta || !userInfo) return
-        recordView(docMeta, userInfo, datastoreClient)
-      }
-    })
+  if (datastoreClient === null) return 'next'
+
+  if (!datastoreClient) {
+    datastoreClient = await getDatastoreClient()
   }
+
+  req.on('end', () => {
+    if (!res.locals.docId) return
+
+    const docMeta = getMeta(res.locals.docId)
+    const userInfo = req.userInfo
+    if (!docMeta || !userInfo) return
+
+    recordView(docMeta, userInfo, datastoreClient)
+  })
 
   return 'next'
 })
@@ -44,7 +51,7 @@ async function fetchHistory(userInfo, historyType, queryLimit) {
   const limit = (parseInt(queryLimit, 10) || 5)
   // include a bit extra that we will filter out based on other criteria later
   const datastoreLimit = Math.ceil(limit * 1.5)
-  const client = getDatastoreClient()
+  const client = await getDatastoreClient()
 
   if (!client) return {}
 
@@ -92,14 +99,24 @@ function expandResults(results) {
     return result
   })
 }
-function getDatastoreClient() {
+
+async function getDatastoreClient() {
   const projectId = process.env.GCP_PROJECT_ID
   if (!projectId) {
     log.warn('No GCP_PROJECT_ID provided! Will not connect to GCloud Datastore!')
     return null
   }
 
-  return datastore({ projectId })
+  // because auth credentials may be passed in multiple ways, recycle pathway used by main auth logic
+  const {email, key} = await getAuth()
+
+  return datastore({
+    projectId,
+    credentials: {
+      client_email: email,
+      private_key: key
+    }
+  })
 }
 
 function recordView(docMeta, userInfo, datastoreClient) {

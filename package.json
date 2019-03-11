@@ -52,7 +52,7 @@
     "start": "node server/index.js",
     "build": "node-sass --include-path custom/styles --include-path styles/partials --source-map public/css/style.css.map --source-map-contents styles/style.scss public/css/style.css",
     "debug": "node -r dotenv/config --inspect --debug-brk server/index.js",
-    "watch": "concurrently \"nodemon --inspect -r dotenv/config -e js,ejs server/index.js\" \"nodemon -e scss --watch styles --watch custom/styles -x npm run build\"",
+    "watch": "concurrently \"nodemon --inspect=0.0.0.0 -r dotenv/config -e js,ejs server/index.js\" \"nodemon -e scss --watch styles --watch custom/styles -x npm run build\"",
     "test": "NODE_ENV=test mocha test/**/*.test.js -r ./test/utils/bootstrap.js --recursive --exit",
     "test:cover": "NODE_ENV=test nyc --include=server/** --reporter=html --reporter=text mocha test/**/*.test.js -r ./test/utils/bootstrap.js --recursive --exit",
     "lint": "eslint ./server"
