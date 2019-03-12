@@ -6,7 +6,6 @@ branding:
   name: Library
   prettyName: Team Library
   org: Your Organization
-  # orgDomain: 
   icon: /assets/images/icon-logo.svg
   favicon: /assets/images/icon-logo.svg
 
@@ -14,7 +13,8 @@ branding:
 landing:
   tagline: One place for your organization's documents.
   viewAll: View All
-  quickLink: Get Started.
+  quickLink: <a href="/get-started">Get Started.</a>
+
 
 # partials/footer
 footer:
