@@ -398,7 +398,7 @@
   .folder {
 
     i {
-      color: (#{$accent-light} * 0.5) + #{$gray-20};
+      color: mix(darken($accent-light, 15%), $gray-20, 50%);
     }
 
     &.active {

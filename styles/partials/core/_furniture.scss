@@ -227,7 +227,7 @@
     }
     &:hover, &:active, &:target {
       text-decoration: none;
-      background: $elem-active-link-color;
+      background: darken($elem-active-link-color, 30%);
 
       button.btn-user-initial {
         background: $black;
