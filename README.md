@@ -84,6 +84,8 @@ Use this button to quickly deploy to Heroku:
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/newsdev/nyt-library/)
 
+To set your app's `GOOGLE_APPLICATION_CREDENTIALS`, `GOOGLE_CLIENT_ID`, and `GOOGLE_CLIENT_SECRET` in Heroku, [set up a Google service account](https://console.cloud.google.com/iam-admin/serviceaccounts) and [OAuth 2.0 client](https://developers.google.com/identity/protocols/OAuth2). Add *<your-heroku-app-url\>.com* as an authorized domain in the general OAuth consent screen setup and then add *http://<your-heroku-app-url\>.com/auth/redirect* as the callback url in the OAuth credential setup itself. Set up your service account with API access to Drive and Cloud Datastore.
+
 If you wish to deploy Library with customizations, create a git repo with the files you would like to include. Set the `CUSTOMIZATION_GIT_REPO` environment variable to the cloning URL. Files in the repo and packages specified in the `package.json` will be included in your library installation.
 
 ### Using Docker
