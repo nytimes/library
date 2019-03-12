@@ -41,7 +41,7 @@
 
   .attribution {
     p {
-      font-family: $font-headline;
+      font-family: $font-sans;
       font-size: 13px;
       color: $nav-text-color;
       margin: 0;
@@ -118,7 +118,7 @@
     }
 
     .section-kicker, .sibling-kicker {
-      font-family: $font-headline;
+      font-family: $font-sans;
       font-weight: 600;
       text-transform: capitalize;
       color: $black;
@@ -217,7 +217,7 @@
     }
 
     p, ul, li, dt, dd {
-      font-family: $font-headline;
+      font-family: $font-sans;
       font-weight: 300;
       font-size: 1rem;
       line-height: 1.4;
@@ -483,7 +483,7 @@
     }
 
     p {
-      font-family: $font-headline;
+      font-family: $font-sans;
       font-weight: 300;
       font-size: 14px;
       line-height: 18px;
