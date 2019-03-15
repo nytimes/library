@@ -5,13 +5,18 @@
   "repository": "https://github.com/newsdev/nyt-library",
   "env": {
     "GOOGLE_APPLICATION_CREDENTIALS": {
-      "description": "Your Google service account credentials in JSON format. Create one here: https://console.cloud.google.com/iam-admin/serviceaccounts?_ga=***REMOVED***",
+      "description": "This should always be `parse_json`.",
+      "required": true,
+      "value": "parse_json"
+    },
+    "GOOGLE_APPLICATION_JSON": {
+      "description": "Your Google service account credentials in JSON format. Create one here: https://console.cloud.google.com/iam-admin/serviceaccounts",
       "required": true
     },
     "DRIVE_TYPE": {
-      "description": "Set this value to `shared` if your documents are in a shared folder or `team` for a team drive.",
+      "description": "Set this value to `folder` if your documents are in a shared folder or `team` for a team drive.",
       "required": true,
-      "value": "shared"
+      "value": "folder"
     },
     "DRIVE_ID": {
       "description": "Your Google Drive ID.",
@@ -40,7 +45,7 @@
       "description": "A git with the contents of your 'custom' directory for automatic deployment."
     },
     "NPM_TOKEN": {
-      "description": "Enter an NPM token if you are using private modules",
+      "description": "Enter an NPM token if you are using private modules.",
       "required": false
     }
   }
