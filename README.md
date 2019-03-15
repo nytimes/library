@@ -1,4 +1,4 @@
-NYT Library [![CircleCI](https://circleci.com/gh/newsdev/nyt-library/tree/master.svg?style=svg&circle-***REMOVED***)](https://circleci.com/gh/newsdev/nyt-library/tree/master)
+Library
 ========
 
 A collaborative newsroom documentation site, powered by Google Docs.
@@ -26,14 +26,14 @@ A collaborative newsroom documentation site, powered by Google Docs.
 
 ## Demo Site & User Guide
 
-A working (read only) demo of Library is available **TKTK**. The site contains
+A working (read only) demo of Library is available at http://nyt-library-demo.herokuapp.com. The site contains
 instructions for how to get the most out of Library.
 
 ## Development Workflow
 
 1. Clone and `cd` into the repo:
 
-   `git clone git@github.com:newsdev/nyt-library.git && cd nyt-library`
+   `git clone git@github.com:nytimes/library.git && cd library`
 
 
 2. From the Google API console, create or select a project, then create a service account with the Cloud Datastore User role. It should have API access to Drive and Cloud Datastore. Store these credentials in `server/.auth.json`.
@@ -73,7 +73,7 @@ The HTML parsing tests are based on the [Supported Formats doc](https://docs.goo
 
 ## Customization
 Styles, text, middleware, caching logic, and middleware can be customized to
-match the branding of your organization. This is covered in the [customization readme](https://github.com/newsdev/nyt-library/blob/master/custom/README.md).
+match the branding of your organization. This is covered in the [customization readme](https://github.com/nytimes/library/blob/master/custom/README.md).
 
 
 ## Deploying the app
@@ -95,7 +95,7 @@ build phase. If you create a repo with the contents of your `custom` folder, you
 could deploy library from that repo with a Dockerfile like the following:
 
 ```Dockerfile
-FROM TK-DOCKER-BASE-IMAGE
+FROM nytimes/library
 
 # copy custom files to library's custom repo
 COPY . ./custom/

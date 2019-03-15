@@ -89,7 +89,7 @@ directory. This file must export an object with the methods
 - `get(key, callback)`, where `callback` takes `(err, value)`
 
 ## Authentication
-By default, Library uses Google oAuth and [`passport ](http://www.passportjs.org/) to authenticate users. Different authentication systems can be used by overriding `custom/userAuth.js`, and can easily be implemented using
+By default, Library uses Google oAuth and [`passport`](http://www.passportjs.org/) to authenticate users. Different authentication systems can be used by overriding `custom/userAuth.js`, and can easily be implemented using
 a different [`passport` strategy](http://www.passportjs.org/packages/) that fits
 needs of your organization.
 
