@@ -198,7 +198,6 @@ function produceTree(files, firstParent) {
       byParent[parentId] = parent
     })
 
-
     return [byParent, byId, tagIds]
   }, [{}, {}, {}])
 
@@ -280,7 +279,7 @@ async function retrievePlaylistData(id) {
   const response = await sheets.spreadsheets.values.get({spreadsheetId: id, range: 'A1:A100'})
 
   // format data from api response
-  const playlistIds = response.data.values.slice(1).map(link => {
+  const playlistIds = response.data.values.slice(1).map((link) => {
     const id = url.parse(link[0]).pathname.split('/')[3]
     return id
   })

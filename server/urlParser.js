@@ -1,16 +1,13 @@
 'use strict'
 
-const {getTree, getPlaylist, getMeta, getDocsInfo} = require('./list')
+const {getTree, getPlaylist, getMeta} = require('./list')
 
 exports.parseUrl = async (path) => {
   const segments = path.split('/')
   const tree = await getTree()
   const [data, parent] = await retrieveDataForPath(path, tree) || []
   const {id} = data || {}
-  
-  const root = segments[1]
   const meta = getMeta(id) || {}
-
 
   return {meta, data, parent}
 }
@@ -40,15 +37,14 @@ async function retrieveDataForPath(path, tree) {
 
     // use try/catch here because user could enter inaccessible/incorrect links in the spreadsheet
     try {
-      playlistFileId = playlistInfo.find(fileId => getMeta(fileId).slug === segments[0])
+      playlistFileId = playlistInfo.find((fileId) => getMeta(fileId).slug === segments[0])
     } catch (err) {
       return
     }
 
-    if (!playlistFileId) return 
-    
+    if (!playlistFileId) return
+
     const {id} = getMeta(playlistFileId)
-    const grandparent = parent
     parent = pointer
     pointer = {
       id,
