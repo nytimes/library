@@ -1,8 +1,8 @@
 {
   "name": "Library on Heroku",
   "description": "One place for your organization's documents.",
-  "logo": "https://github.com/nytimes/library/blob/master/public/images/library.ico",
-  "repository": "https://github.com/nytimes/library",
+  "logo": "https://int.nyt.com/assets/library/icon-logo.png",
+  "repository": "https://github.com/newsdev/library-opensource",
   "env": {
     "GOOGLE_APPLICATION_CREDENTIALS": {
       "description": "This should always be `parse_json`.",
@@ -20,8 +20,7 @@
     },
     "DRIVE_ID": {
       "description": "Your Google Drive ID.",
-      "required": true,
-      "value": "***REMOVED***"
+      "required": true
     },
     "GOOGLE_CLIENT_ID": {
       "description": "Your Google OAuth2 Client ID. Create one here: https://developers.google.com/identity/protocols/OAuth2",
