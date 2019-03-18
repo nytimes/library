@@ -65,7 +65,7 @@ describe('Move files', () => {
 
     before(async () => {
       const {path: oldPath, slug} = list.getMeta(fileId)
-      path = `${oldPath}/${slug}`
+      path = oldPath
       const {path: destPath} = list.getMeta(destination)
       newPath = `${destPath}/${slug}`
 

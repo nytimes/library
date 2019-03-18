@@ -1,6 +1,7 @@
 'use strict'
 
 let counter = 1
+let dateCounter = 1500
 const driveId = 'b1ae9c8be6c34aa155f157207a0c840e'
 
 module.exports = {
@@ -30,54 +31,57 @@ function sampleFiles() {
       name: `Test Folder ${f} | team`,
       id: `TestFolder${f}`,
       parents: [ driveId ],
-      webViewLink: `https://pretend/google/url/TestFolder${f}`
+      webViewLink: `https://pretend/google/url/TestFolder${f}`,
     }),
     (i, f) => ({
       mimeType: 'application/vnd.google-apps.document',
-      name: f <= 1 ? `Test ${i}` : `Home article ${i} for test folder ${f} | home`,
-      id: `Test${i}`,
-      parents: [ `TestFolder${f}` ],
-      createdTime: '2018-04-27T15:19:39.975Z',
-      modifiedTime: '2018-04-27T15:25:45.204Z',
-      webViewLink: `https://pretend/google/url/Test${i}`,
-      lastModifyingUser: {
-        kind: 'drive#user',
-        displayName: 'Foo Bar',
-        me: false
-      }
+      name: f <= 1 ? `Test ${i}` : `Home article ${i} for test folder ${f} | home`
     }),
     (i, f) => ({
       mimeType: 'application/vnd.google-apps.document',
-      name: `Test ${i} | hidden`,
-      id: `Test${i}`,
-      parents: [`TestFolder${f}`],
-      webViewLink: `https://pretend/google/url/Test${i}`
+      name: `Test ${i} | hidden`
     }),
     (i, f) => ({
       mimeType: 'application/vnd.google-apps.document',
-      name: `Article 1 in test folder ${f}`,
-      id: `Test${i}`,
-      parents: [`TestFolder${f}`],
-      webViewLink: `https://pretend/google/url/Test${i}`
+      name: `Article 1 in test folder ${f}`
     }),
     (i, f) => ({
       mimeType: 'application/vnd.google-apps.document',
-      name: `Article 2 in test folder ${f} | tagtest`,
-      id: `Test${i}`,
-      parents: [`TestFolder${f}`],
-      webViewLink: `https://pretend/google/url/Test${i}`
+      name: `Article 2 in test folder ${f} | tagtest`
     }),
     (i, f) => ({
       mimeType: 'application/vnd.google-apps.spreadsheet',
-      name: `Test ${i} | playlist`,
-      id: `Test${i}`,
-      parents: [`TestFolder${f}`],
-      webViewLink: `https://pretend/google/url/Test${i}`
+      name: `Test ${i} | playlist`
     })
   ].map((fn, i) => {
-    return fn(counter + i, counter)
+    const id = counter + i
+    const folder = counter
+    return {
+      ...baseInfo(id, folder),
+      ...fn(counter + i, counter)
+    }
   })
 
   counter += files.length
   return files
+}
+
+function baseInfo(i, f) {
+  return {
+    id: `Test${i}`,
+    parents: [`TestFolder${f}`],
+    webViewLink: `https://pretend/google/url/Test${i}`,
+    lastModifyingUser: {
+      kind: 'drive#user',
+      displayName: 'Foo Bar',
+      me: false
+    },
+    createdTime: getTime(),
+    modifiedTime: getTime()
+  }
+}
+
+function getTime() {
+  dateCounter += 1
+  return new Date(dateCounter * 10e8).toISOString()
 }
