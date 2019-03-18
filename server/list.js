@@ -321,7 +321,7 @@ function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
         editEmail: `item${action}`,
         ignore: ['missing', 'modified']
       }).catch((err) => {
-        log.warn('Error purging trashed item cache', err)
+        log.debug('Error purging trashed item cache', err)
       })
     }
 
