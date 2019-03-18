@@ -1,6 +1,6 @@
 {
-  "name": "nyt-docs",
-  "description": "Docs generated from files in google drive",
+  "name": "nyt-library",
+  "description": "A collaborative newsroom documentation site, powered by Google Docs.",
   "main": "server/index.js",
   "dependencies": {
     "@google-cloud/datastore": "^1.4.1",
@@ -59,15 +59,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/newsdev/nyt-docs.git"
+    "url": "git+https://github.com/nytimes/library.git"
   },
-  "author": "NYT",
+  "author": "The New York Times",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/newsdev/nyt-docs/issues"
+    "url": "https://github.com/nytimes/library/issues"
   },
   "engines": {
-    "node": "8.11.3"
+    "node": ">= 8.11.3"
   },
-  "homepage": "https://github.com/newsdev/nyt-docs#readme"
+  "homepage": "https://github.com/nytimes/library#readme"
 }

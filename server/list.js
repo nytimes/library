@@ -18,7 +18,7 @@ let currentTree = null // current route data by slug
 let docsInfo = {} // doc info by id
 let tags = {} // tags to doc id
 let driveBranches = {} // map of id to nodes
-let playlistInfo = {} // playlist info by id
+const playlistInfo = {} // playlist info by id
 
 exports.getTree = async () => {
   if (currentTree) return currentTree
@@ -336,8 +336,16 @@ function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
       // should we be calling purge every time?
       // basically we are just calling purge because we don't know the last modified
       cache.purge({url: newItem.path, modified: newItem.modifiedTime}).catch((err) => {
+        if (!err) return
+
+        // Duplicate purge errors should be logged at debug level only
+        if (err.message.includes('Same purge id as previous')) return log.debug(`Ignoring duplicate cache purge for ${newItem.path}`, err)
+
         // Ignore errors if not found or no fresh content, just allow the purge to stop
-        if (err && !(err.message.includes('Not found') || err.message.includes('No purge of fresh content'))) log.warn(`Cache purging error for ${newItem.path}`, err)
+        if (err.message.includes('Not found') || err.message.includes('No purge of fresh content')) return
+
+        // Log all other cache purge errors as warnings
+        log.warn(`Cache purging error for ${newItem.path}`, err)
       })
     }
   })
