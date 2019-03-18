@@ -39,6 +39,7 @@ instructions for how to get the most out of Library.
 2. From the Google API console, create or select a project, then create a service account with the Cloud Datastore User role. It should have API access to Drive and Cloud Datastore. Store these credentials in `server/.auth.json`.
 
    - To use oAuth, you will also need to create oAuth credentials.
+   - To use the Cloud Datastore API for reading history, you will need to add in your `GCP_PROJECT_ID`.
 
 3. Install dependencies:
 
@@ -51,6 +52,7 @@ NODE_ENV=development # node environment
 # Google oAuth credentials
 GOOGLE_CLIENT_ID=123456-abcdefg.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=abcxyz12345
+GCP_PROJECT_ID=library-demo-1234
 APPROVED_DOMAINS="nytimes.com,dailypennsylvanian.com" # comma separated list of approved access domains.
 SESSION_SECRET=supersecretvalue
 

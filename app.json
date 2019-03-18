@@ -1,8 +1,8 @@
 {
   "name": "Library on Heroku",
   "description": "One place for your organization's documents.",
-  "logo": "https://***REMOVED***",
-  "repository": "https://github.com/newsdev/nyt-library",
+  "logo": "https://github.com/nytimes/library/blob/master/public/images/library.ico",
+  "repository": "https://github.com/nytimes/library",
   "env": {
     "GOOGLE_APPLICATION_CREDENTIALS": {
       "description": "This should always be `parse_json`.",
@@ -30,6 +30,10 @@
     "GOOGLE_CLIENT_SECRET": {
       "description": "Your Google OAuth2 Client Secret.",
       "required": true
+    },
+    "GCP_PROJECT_ID": {
+      "description": "The Google project ID you're using Cloud Datastore with. Not needed if you choose not to use Cloud Datastore.",
+      "required": false
     },
     "APPROVED_DOMAINS": {
       "description": "Include approved email domains.",
