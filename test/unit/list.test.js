@@ -19,24 +19,22 @@ describe('Tree', () => {
 
   it('should have top level children', async () => {
     const {children} = await list.getTree()
-    expect(children).to.include.keys('top-level-document-1', 'top-level-folder', 'test-folder')
+    expect(children).to.include.keys('test-folder-1', 'test-folder-7', 'test-folder-13')
   })
 
   it('should correctly parse tags', () => {
-    expect(list.getTagged('home')).to.include('174d31f319c2787f5e42e4d0eed83fe7')
-    expect(list.getTagged('hidden')).to.include('0d6c4b7036c9e852996ac5c23239e9a3')
+    expect(list.getTagged('home')).to.include('Test8')
+    expect(list.getTagged('hidden')).to.include('Test15')
   })
 
   it('should correctly report children', () => {
-    const {children} = list.getChildren('f2f9987da7aef80de3733bbe882e6b1e')
-    expect(children.length).to.equal(6)
+    const {children} = list.getChildren('TestFolder7')
+    expect(children.length).to.equal(4)
     expect(children).to.include(
-      '981cd74318b6350f8054319c8d0d0a92',
-      '1872a6e4df263f9bb9c1004c3bda1530',
-      '38a019f9ec84049959ee617a04298c0b',
-      '70a03c7ef29818a00645afe981369c5c',
-      'da5a966305a1272dde641f28f73b0e13',
-      '1a25f79c96a4f06f102af0d3ae774896'
+      'Test9',
+      'Test10',
+      'Test11',
+      'Test12'
     )
   })
 

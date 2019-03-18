@@ -12,7 +12,7 @@ const userInfo = {
   _json: {domain: 'test.com'}
 }
 
-const playlistPath = '/top-level-article-2/article-ailbi/article-cabsa'
+const playlistPath = '/test-folder-7/test-12'
 
 describe('Playlist route handling', () => {
   beforeEach(() => sinon.stub(app.request, 'session').value({passport: {user: userInfo}}))
@@ -20,12 +20,12 @@ describe('Playlist route handling', () => {
 
   it('should query a playlist page', () => {
     return request(app)
-            .get(`${playlistPath}/article-dnecn`)
+            .get(`${playlistPath}/test-3`)
             .expect(200)
             .then((res) => {
-              expect(res.text).to.include('Article caBsa Playlist')
+              expect(res.text).to.include('Test 12 Playlist')
               expect(res.text).to.include('<li class="type-file">')
-              expect(res.text).to.include('<a class="content-link" href="/top-level-article-2/article-ailbi/article-cabsa/article-etse"')
+              expect(res.text).to.include(`<a class="content-link" href="${playlistPath}/article-1-in-test-folder-1"`)
             })
   })
 
@@ -34,9 +34,9 @@ describe('Playlist route handling', () => {
             .get(`${playlistPath}`)
             .expect(200)
             .then((res) => {
-              expect(res.text).to.include('Article caBsa Playlist')
+              expect(res.text).to.include('Article 1 in test folder 1')
               expect(res.text).to.include('<h1 class="visually-hidden">Default Playlist template</h1>')
-              expect(res.text).to.include('<a class="content-link" href="/top-level-article-2/article-ailbi/article-cabsa/article-etse"')
+              expect(res.text).to.include(`<a class="content-link" href="${playlistPath}/article-1-in-test-folder-1"`)
             })
   })
 

@@ -41,7 +41,7 @@ describe('Search', () => {
       })
 
       it('should query for folders', async () => {
-        await search.run('test', 'shared')
+        await search.run('test', 'folder')
         const queryString = "mimeType = 'application/vnd.google-apps.folder'"
         expect(listFilesSpy.args[0][0].q).to.include(queryString)
       })
@@ -59,7 +59,7 @@ describe('Search', () => {
             }
           }
         }
-        await search.run('test', 'shared')
+        await search.run('test', 'folder')
       })
 
       it('should not query for folders', () => {

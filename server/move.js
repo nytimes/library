@@ -74,7 +74,7 @@ exports.moveFile = async (id, destination, driveType = 'team') => {
   })).catch((err) => { log.warn('Error gettng cached URLs', err) })
 
   // cache stores urls and page data, make sure to find actual data object for page
-  const hasHtml = data.filter(({html}) => html && html.length)
+  const hasHtml = data.filter(({html} = {}) => html && html.length)
   if (!hasHtml.length) return '/'
 
   const {docId, modified, html} = hasHtml[0]

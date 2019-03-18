@@ -5,19 +5,19 @@
       "userId": "10",
       "lastViewedAt": "2018-07-25T21:15:27.429Z",
       "viewCount": 8,
-      "documentId": "8135b90bcc7085a0daa231d9a1109b5c"
+      "documentId": "Test2"
     },
     {
       "email": "test.user@nytimes.com",
       "userId": "10",
       "lastViewedAt": "2018-07-25T20:45:37.014Z",
       "viewCount": 36,
-      "documentId": "88ca5e30ddb527b4e6266deeef78bff7"
+      "documentId": "Test3"
     },
     {
       "lastViewedAt": "2018-07-25T20:23:08.840Z",
       "viewCount": 10,
-      "documentId": "b5a16aaa74bd7e3354f87bd4fa531010",
+      "documentId": "Test4",
       "email": "test.user@nytimes.com",
       "userId": "10"
     },
@@ -26,7 +26,7 @@
       "userId": "10",
       "lastViewedAt": "2018-07-25T20:15:03.458Z",
       "viewCount": 1,
-      "documentId": "e2536944549231810b2863405fca90ca"
+      "documentId": "Test5"
     }
     ],
     {
@@ -40,12 +40,12 @@
       "userId": "10",
       "lastViewedAt": "2018-07-25T19:50:46.280Z",
       "viewCount": 236,
-      "teamId": "a370ee8b7d07b9d2d144740083f9dd10"
+      "teamId": "TestFolder7"
     },
     {
       "lastViewedAt": "2018-06-29T16:45:55.455Z",
       "viewCount": 55,
-      "teamId": "6478ec336324a91b837acf752d7babc4",
+      "teamId": "TestFolder13",
       "email": "test.user@nytimes.com",
       "userId": "10"
     },

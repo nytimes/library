@@ -8,12 +8,12 @@ const moment = require('moment')
 const list = require('../../server/list')
 const move = require('../../server/move')
 const cache = require('../../server/cache')
-const {page1} = require('../fixtures/driveListing')
+const {page1, page2} = require('../fixtures/driveListing')
 
 const folderType = 'application/vnd.google-apps.folder'
 const sampleFile = {
   fileId: page1.data.files.find((file) => file.mimeType !== folderType).id,
-  destination: page1.data.files.find((file) => file.mimeType === folderType).id,
+  destination: page2.data.files.find((file) => file.mimeType === folderType).id,
   html: '<html><h1>Test file </h1></html>'
 }
 
@@ -127,7 +127,7 @@ describe('Move files', () => {
 
     describe('in shared drive', () => {
       it('should use shared drive options with drive api', async () => {
-        newUrl = await move.moveFile(fileId, destination, 'shared')
+        newUrl = await move.moveFile(fileId, destination, 'folder')
         const options = updateSpy.args[0][0]
 
         expect(updateSpy.calledOnce).to.be.true  // eslint-disable-line no-unused-expressions
