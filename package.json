@@ -1,5 +1,6 @@
 {
   "name": "nyt-library",
+  "version": "1.0.0",
   "description": "A collaborative newsroom documentation site, powered by Google Docs.",
   "main": "server/index.js",
   "dependencies": {
