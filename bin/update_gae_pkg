@@ -4,20 +4,21 @@ const fs = require('fs')
 const path = require('path')
 
 const pkgPath = path.join(__dirname, '../package.json')
-// load the custom pkg json
+// load the custom/package.json
 let customPkg = { dependencies: {} }
 try {
   customPkg = require('../custom/package.json')
 } catch (err) {
-  console.warn('Could not load custom Pkg, aborting', err)
-  process.exit(1)
+  console.warn('Could not load custom package.json, will use default Library config', err)
 }
 // load the normal pkg json
 const pkg = require(pkgPath)
 
 const {dotenv} = pkg.devDependencies
+
 // update the start config to use .env, add as normal dep
 pkg.scripts.start = `node -r dotenv/config server/index`
 pkg.dependencies = Object.assign({}, pkg.dependencies, {dotenv}, customPkg.dependencies)
 
+// write the updates package.json to disk
 fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 4))
