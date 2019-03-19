@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
+if [[ -f ./.env ]];
+  then
+    echo "sourcing env vars"
+    source ./.env
+fi
 
 echo "Checking for CUSTOMIZATION_GIT_REPO environment variable..."
-
 if ! [[ -z ${CUSTOMIZATION_GIT_REPO} ]];
   then
     echo "Cloning custom repo...";
