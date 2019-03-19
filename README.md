@@ -81,16 +81,19 @@ A sample customization repo is provided at [nytimes/library-customization-exampl
 
 
 ## Deploying the app
-
-### Using Heroku
-
-Use this button to quickly deploy to Heroku:
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://nyti.ms/2CrT2y2)
-
-To set your app's `GOOGLE_APPLICATION_JSON`, `GOOGLE_CLIENT_ID`, and `GOOGLE_CLIENT_SECRET` in Heroku, [set up a Google service account](https://console.cloud.google.com/iam-admin/serviceaccounts) and [OAuth 2.0 client](https://developers.google.com/identity/protocols/OAuth2). Add *<your-heroku-app-url\>.com* as an authorized domain in the general OAuth consent screen setup and then add *http://<your-heroku-app-url\>.com/auth/redirect* as the callback url in the OAuth credential setup itself. Set up your service account with API access to Drive and Cloud Datastore.
+Wherever you deploy Library, you'll likely want to [set up a Google service account](https://console.cloud.google.com/iam-admin/serviceaccounts) and [OAuth 2.0 client](https://developers.google.com/identity/protocols/OAuth2) Set up your service account with API access to Drive and Cloud Datastore.
 
 If you wish to deploy Library with customizations, create a git repo with the files you would like to include. Set the `CUSTOMIZATION_GIT_REPO` environment variable to the cloning URL. Files in the repo and packages specified in the `package.json` will be included in your library installation.
+
+### with Heroku
+
+This button can quickly deploy to Heroku:
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://nyti.ms/2CrT2y2)
+
+Set your app's `GOOGLE_APPLICATION_JSON`, `GOOGLE_CLIENT_ID`, and `GOOGLE_CLIENT_SECRET` with values from the service account and Oauth client. Add *<your-heroku-app-url\>.com* as an authorized domain in the general OAuth consent screen setup and then add *http://<your-heroku-app-url\>.com/auth/redirect* as the callback url in the OAuth credential setup itself. 
+
+### with Google App Engine
+You can also deploy Library to GAE, using the included `app.yaml`. Note that you will need to enable billing on your GCP project in order to use Google App Engine. More detailed instructions are provided on the [demo site](https://nyt-library-demo.herokuapp.com/get-started/deploying-library-google-app-engine).
 
 ### Using Docker
 Library can be used as a base image for deployment using Docker. This allows you
