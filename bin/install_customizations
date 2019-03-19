@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 if [[ -f ./.env ]];
   then
-    echo "sourcing env vars"
+    echo "sourcing environment variables from .env"
     source ./.env
 fi
 
@@ -9,7 +9,7 @@ echo "Checking for CUSTOMIZATION_GIT_REPO environment variable..."
 if ! [[ -z ${CUSTOMIZATION_GIT_REPO} ]];
   then
     echo "Cloning custom repo...";
-    # remove cusotm to allow for cloning to that directory name
+    # remove custom to allow for cloning to that directory name
     rm -r ./custom;
     git clone $CUSTOMIZATION_GIT_REPO custom;
     echo "Installing custom packages...";
