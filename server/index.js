@@ -2,11 +2,10 @@
 const path = require('path')
 
 const express = require('express')
-const async = require('async')
 const csp = require('helmet-csp')
 
-const {middleware: cache, purge} = require('./cache')
-const {getMeta, getAllRoutes} = require('./list')
+const {middleware: cache} = require('./cache')
+const {getMeta} = require('./list')
 const {allMiddleware, requireWithFallback} = require('./utils')
 const userInfo = require('./routes/userInfo')
 const pages = require('./routes/pages')
@@ -60,23 +59,6 @@ app.use(readingHistory.middleware)
 app.use((req, res, next) => {
   res.set('Cache-Control', 'no-cache')
   next()
-})
-
-// consider how we could limit this
-
-// a utility route that can be used to purge everything in the current tree
-app.get('/cache-purge-everything', (req, res, next) => {
-  // maybe check against list of users here?
-  const urls = Array.from(getAllRoutes())
-
-  // update this route
-  async.parallelLimit(urls.map((url) => {
-    return (cb) => purge({ url, ignore: 'all' }, cb)
-  }), 10, (err, data) => {
-    if (err) return next(err)
-
-    res.end('OK')
-  })
 })
 
 app.use(pages)
