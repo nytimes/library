@@ -1,4 +1,4 @@
-Library
+Library [![Build Status](https://travis-ci.org/nytimes/library.svg?branch=master)](https://travis-ci.org/nytimes/library)
 ========
 
 A collaborative newsroom documentation site, powered by Google Docs.
