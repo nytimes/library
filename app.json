@@ -2,7 +2,7 @@
   "name": "Library on Heroku",
   "description": "One place for your organization's documents.",
   "logo": "https://int.nyt.com/assets/library/icon-logo.png",
-  "repository": "https://github.com/newsdev/library-opensource",
+  "repository": "https://github.com/nytimes/library",
   "env": {
     "GOOGLE_APPLICATION_CREDENTIALS": {
       "description": "This should always be `parse_json`.",

@@ -26,7 +26,7 @@ A collaborative newsroom documentation site, powered by Google Docs.
 
 ## Demo Site & User Guide
 
-A working (read only) demo of Library is available at http://nyt-library-demo.herokuapp.com. The site contains
+A working (read only) demo of Library is available at https://nyt-library-demo.herokuapp.com. The site contains
 instructions for how to get the most out of Library.
 
 ## Development Workflow
@@ -84,7 +84,7 @@ match the branding of your organization. This is covered in the [customization r
 
 Use this button to quickly deploy to Heroku:
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/newsdev/library-opensource/)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/nytimes/library/)
 
 To set your app's `GOOGLE_APPLICATION_JSON`, `GOOGLE_CLIENT_ID`, and `GOOGLE_CLIENT_SECRET` in Heroku, [set up a Google service account](https://console.cloud.google.com/iam-admin/serviceaccounts) and [OAuth 2.0 client](https://developers.google.com/identity/protocols/OAuth2). Add *<your-heroku-app-url\>.com* as an authorized domain in the general OAuth consent screen setup and then add *http://<your-heroku-app-url\>.com/auth/redirect* as the callback url in the OAuth credential setup itself. Set up your service account with API access to Drive and Cloud Datastore.
 
