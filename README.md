@@ -13,6 +13,7 @@ A collaborative newsroom documentation site, powered by Google Docs.
 - [Customization](#customization)
 - [Deploying the app](#deploying-the-app)
   - [Using Heroku](#using-heroku)
+  - [Using Google App Engine](#using-google-app-engine)
   - [Using Docker](#using-docker)
   - [Standard Deployment](#standard-deployment)
 - [App structure](#app-structure)
