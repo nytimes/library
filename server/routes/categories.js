@@ -18,7 +18,7 @@ const categories = getTemplates('categories')
 async function handleCategory(req, res) {
   log.info(`GET ${req.path}`)
   // FIXME: consider putting this in middleware and save on req
-  const {meta, parent, data} = await parseUrl(req.path)
+  const {meta, parent, data, root} = await parseUrl(req.path)
 
   if (!meta || !data) return 'next'
 
@@ -60,7 +60,7 @@ async function handleCategory(req, res) {
   // for docs, fetch the html and then combine with the base data
   const {html, originalRevision, sections} = await fetchDoc(id, resourceType, req)
   res.locals.docId = data.id // we need this for history later
-  const revisionData = originalRevision.data
+  const revisionData = originalRevision.data || { lastModifyingUser: {} }
   const payload = fetchByline(html, revisionData.lastModifyingUser.displayName)
   res.render(template, Object.assign({}, baseRenderData, {
     content: payload.html,

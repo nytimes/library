@@ -4,12 +4,13 @@ const {getTree, getPlaylist, getMeta} = require('./list')
 
 exports.parseUrl = async (path) => {
   const segments = path.split('/')
+  const root = segments[1]
   const tree = await getTree()
   const [data, parent] = await retrieveDataForPath(path, tree) || []
   const {id} = data || {}
   const meta = getMeta(id) || {}
 
-  return {meta, data, parent}
+  return {meta, data, parent, root}
 }
 
 async function retrieveDataForPath(path, tree) {
