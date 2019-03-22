@@ -25,6 +25,12 @@ describe('Docs', () => {
       expect(cleanName('foo.txt')).equals('foo')
       expect(cleanName('nytimes.com.txt')).equals('nytimes.com')
     })
+
+    it('should not remove numbers when no text in the document name', () => {
+      expect(cleanName('2018')).equals('2018')
+      expect(cleanName('3/28')).equals('3/28')
+      expect(cleanName('3-28-2018')).equals('3-28-2018')
+    })
   })
 
   describe('Slugification', () => {
