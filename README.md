@@ -131,7 +131,7 @@ Library is a standard node app, so it can be deployed just about anywhere. If yo
 ### Server
 The main entry point to the app is `index.js`.
 
-This file contains the a express server which will respond to requests for docs
+This file contains the express server which will respond to requests for docs
 in the configured team drive or shared folder. Additionally, it contains logic
 about issuing 404s and selecting the template to use based on the path.
 
@@ -145,7 +145,7 @@ These files are compiled to CSS and placed in `public/css`.
 ### Doc parsing
 Doc HTML fetch and parsing is handled by `docs.js`. `fetchDoc` takes the ID of a
 Google doc and a callback, then passes the HTML of the document into the
-callback once it has ben downloaded and processed.
+callback once it has been downloaded and processed.
 
 ### Listing the drive
 Traversing the contents of the NYT Docs folder is handled by `list.js`. There
