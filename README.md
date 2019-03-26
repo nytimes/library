@@ -75,7 +75,7 @@ You can run functional and unit tests, which test HTML parsing and routing logic
 The HTML parsing tests are based on the [Supported Formats doc](https://docs.google.com/document/d/12bUE9b4_aF_IfhxCLdHApN8KKXwa4gQUCGkHzt1FyRI/edit).  To download a fresh copy of the HTML after making edits, run `node test/utils/updateSupportedFormats.js`.
 
 ## Customization
-Styles, text, middleware, caching logic, and middleware can be customized to
+Styles, text, caching logic, and middleware can be customized to
 match the branding of your organization. This is covered in the [customization readme](https://github.com/nytimes/library/blob/master/custom/README.md).
 
 A sample customization repo is provided at [nytimes/library-customization-example](https://github.com/nytimes/library-customization-example).
