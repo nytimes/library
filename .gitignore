@@ -13,3 +13,4 @@ coverage
 .vscode
 custom/
 !custom/README.md
+server/.auth.json
