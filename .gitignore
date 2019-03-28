@@ -8,7 +8,8 @@ yarn-error.log*
 dump.rdb
 coverage
 .nyc_output
-coverage
 .eslintcache
 .npmrc*
 .vscode
+custom/
+!custom/README.md
