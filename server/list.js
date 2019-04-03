@@ -20,10 +20,9 @@ let tags = {} // tags to doc id
 let driveBranches = {} // map of id to nodes
 const playlistInfo = {} // playlist info by id
 
-exports.getTree = async () => {
-  if (currentTree) return currentTree
-  await updateTree()
-}
+// normally return the cached tree data
+// if it does not exist yet, return a promise for the new tree
+exports.getTree = () => currentTree || updateTree()
 
 // exposes docs metadata
 exports.getMeta = (id) => {
