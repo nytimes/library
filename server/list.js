@@ -122,7 +122,9 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentId
     return fetchAllFiles({
       nextPageToken,
       listSoFar: combined,
-      drive
+      drive,
+      parentIds,
+      driveType
     })
   }
 
