@@ -102,7 +102,7 @@ function getOptions(id) {
   }
 }
 
-async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentIds = [driveId], driveType = 'team', drive} = {}) {
+async function fetchAllFiles({nextPageToken: pageToken, nextListSoFar: listSoFar = [], nextParentIds: parentIds = [driveId], driveType = 'team', drive} = {}) {
   const options = getOptions(parentIds)
 
   if (pageToken) {
@@ -115,35 +115,38 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentId
   const {data} = await drive.files.list(options)
 
   const {files, nextPageToken} = data
-  const combined = listSoFar.concat(files)
+  const nextListSoFar = listSoFar.concat(files)
 
   // If there is more data the API has not returned for the query, the request needs to continue
   if (nextPageToken) {
     return fetchAllFiles({
+      drive,
+      driveType,
+      nextListSoFar,
       nextPageToken,
-      listSoFar: combined,
-      drive
+      nextParentIds: parentIds,
     })
   }
 
   // If there are no more pages and this is not a shared folder, return completed list
-  if (driveType !== 'folder') return combined
+  if (driveType !== 'folder') return nextListSoFar
 
   // Continue searching if shared folder, since API only returns contents of the immediate parent folder
   // Find folders that have not yet been searched
-  const folders = combined.filter((item) =>
+  const folders = nextListSoFar.filter((item) =>
     item.mimeType === 'application/vnd.google-apps.folder' && parentIds.includes(item.parents[0]))
 
   if (folders.length > 0) {
     return fetchAllFiles({
-      listSoFar: combined,
       drive,
-      parentIds: folders.map((folder) => folder.id),
-      driveType
+      driveType,
+      nextListSoFar,
+      nextPageToken,
+      nextParentIds: folders.map((folder) => folder.id),
     })
   }
 
-  return combined
+  return nextListSoFar
 }
 
 function produceTree(files, firstParent) {
