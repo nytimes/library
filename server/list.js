@@ -102,20 +102,20 @@ function getOptions(id) {
   }
 }
 
-async function fetchAllFiles({nextPageToken: pageToken, nextListSoFar: listSoFar = [], nextParentId: parentId = driveId, nextParentName: parentName = 'root', driveType = 'team', drive} = {}) {
+async function fetchAllFiles({nextPageToken: pageToken, nextParentId: parentId = driveId, nextParentName: parentName = 'root', driveType = 'team', drive} = {}) {
   const options = getOptions(parentId)
 
   if (pageToken) {
     options.pageToken = pageToken
   }
 
-  log.debug(`searching for files > ${listSoFar.length} in "${parentName}"`)
+  log.debug(`searching for files in "${parentName}"`)
 
   // Gets files in single folder (shared) or files listed in single page of response (team)
   const {data} = await drive.files.list(options)
 
   const {files, nextPageToken} = data
-  const sublist = []
+  const children = []
 
   if (driveType === 'folder') {
     // Continue searching if shared folder, since API only returns contents of the immediate parent folder
@@ -123,36 +123,31 @@ async function fetchAllFiles({nextPageToken: pageToken, nextListSoFar: listSoFar
     const folders = files.filter((item) =>
       item.mimeType === 'application/vnd.google-apps.folder' && parentId === item.parents[0])
 
-    if (folders.length > 0) {
-      // Avoid Promise.all to avoid hitting google API rate limits
-      await folders.reduce((acc, folder) => {
-        return acc.then((files) => fetchAllFiles({
-          drive,
-          driveType: 'folder',
-          sublist,
-          nextPageToken,
-          nextParentId: folder.id,
-          nextParentName: folder.name
-        }).then((newFiles) => files.concat(newFiles)))
-      }, Promise.resolve([]))
-    }
+    // Avoid Promise.all to avoid hitting google API rate limits
+    const sublist = await folders.reduce((acc, folder) => {
+      return acc.then((subfiles) => fetchAllFiles({
+        drive,
+        driveType: 'folder',
+        nextPageToken,
+        nextParentId: folder.id,
+        nextParentName: folder.name
+      }).then((newFiles) => subfiles.concat(newFiles)))
+    }, Promise.resolve([]))
+    children.push(...sublist)
   }
 
-  const nextListSoFar = listSoFar.concat(files).concat(sublist)
-
   // If there is more data the API has not returned for the query, the request needs to continue
-  if (nextPageToken) {
-    return fetchAllFiles({
+  return files.concat(children).concat(
+    nextPageToken
+    ? await fetchAllFiles({
       drive,
       driveType,
-      nextListSoFar,
       nextPageToken,
       nextParentId: parentId,
       nextParentName: parentName
     })
-  }
-
-  return nextListSoFar
+    : []
+  )
 }
 
 function produceTree(files, firstParent) {
