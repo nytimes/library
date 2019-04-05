@@ -124,7 +124,7 @@ async function fetchAllFiles({nextPageToken: pageToken, nextListSoFar: listSoFar
       driveType,
       nextListSoFar,
       nextPageToken,
-      nextParentIds: parentIds,
+      nextParentIds: parentIds
     })
   }
 
@@ -142,7 +142,7 @@ async function fetchAllFiles({nextPageToken: pageToken, nextListSoFar: listSoFar
       driveType,
       nextListSoFar,
       nextPageToken,
-      nextParentIds: folders.map((folder) => folder.id),
+      nextParentIds: folders.map((folder) => folder.id)
     })
   }
 
