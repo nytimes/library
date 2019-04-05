@@ -25,7 +25,7 @@ exports.run = async (query, driveType = 'team') => {
 
   const fileMetas = files
     .map((file) => { return list.getMeta(file.id) || {} })
-    .filter(({path, tags}) => (path || '').split('/')[1] !== 'trash' && !tags.includes('hidden'))
+    .filter(({path, tags}) => (path || '').split('/')[1] !== 'trash' && !(tags || []).includes('hidden'))
 
   return fileMetas
 }
