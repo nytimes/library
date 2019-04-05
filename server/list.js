@@ -85,7 +85,7 @@ function getOptions(id) {
 
   if (driveType === 'folder') {
     return {
-      q: id.map((id) => `'${id}' in parents`).join(' or '),
+      q: `'${id}' in parents`,
       fields
     }
   }
@@ -102,20 +102,43 @@ function getOptions(id) {
   }
 }
 
-async function fetchAllFiles({nextPageToken: pageToken, nextListSoFar: listSoFar = [], nextParentIds: parentIds = [driveId], driveType = 'team', drive} = {}) {
-  const options = getOptions(parentIds)
+async function fetchAllFiles({nextPageToken: pageToken, nextListSoFar: listSoFar = [], nextParentId: parentId = driveId, nextParentName: parentName = 'root', driveType = 'team', drive} = {}) {
+  const options = getOptions(parentId)
 
   if (pageToken) {
     options.pageToken = pageToken
   }
 
-  log.debug(`searching for files > ${listSoFar.length}`)
+  log.debug(`searching for files > ${listSoFar.length} in "${parentName}"`)
 
   // Gets files in single folder (shared) or files listed in single page of response (team)
   const {data} = await drive.files.list(options)
 
   const {files, nextPageToken} = data
-  const nextListSoFar = listSoFar.concat(files)
+  const sublist = []
+
+  if (driveType === 'folder') {
+    // Continue searching if shared folder, since API only returns contents of the immediate parent folder
+    // Find folders that have not yet been searched
+    const folders = files.filter((item) =>
+      item.mimeType === 'application/vnd.google-apps.folder' && parentId === item.parents[0])
+
+    if (folders.length > 0) {
+      // Avoid Promise.all to avoid hitting google API rate limits
+      await folders.reduce((acc, folder) => {
+        return acc.then((files) => fetchAllFiles({
+          drive,
+          driveType: 'folder',
+          sublist,
+          nextPageToken,
+          nextParentId: folder.id,
+          nextParentName: folder.name
+        }).then((newFiles) => files.concat(newFiles)))
+      }, Promise.resolve([]))
+    }
+  }
+
+  const nextListSoFar = listSoFar.concat(files).concat(sublist)
 
   // If there is more data the API has not returned for the query, the request needs to continue
   if (nextPageToken) {
@@ -124,25 +147,8 @@ async function fetchAllFiles({nextPageToken: pageToken, nextListSoFar: listSoFar
       driveType,
       nextListSoFar,
       nextPageToken,
-      nextParentIds: parentIds
-    })
-  }
-
-  // If there are no more pages and this is not a shared folder, return completed list
-  if (driveType !== 'folder') return nextListSoFar
-
-  // Continue searching if shared folder, since API only returns contents of the immediate parent folder
-  // Find folders that have not yet been searched
-  const folders = nextListSoFar.filter((item) =>
-    item.mimeType === 'application/vnd.google-apps.folder' && parentIds.includes(item.parents[0]))
-
-  if (folders.length > 0) {
-    return fetchAllFiles({
-      drive,
-      driveType,
-      nextListSoFar,
-      nextPageToken,
-      nextParentIds: folders.map((folder) => folder.id)
+      nextParentId: parentId,
+      nextParentName: parentName
     })
   }
 
