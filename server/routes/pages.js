@@ -66,9 +66,11 @@ function buildDisplayCategories(tree) {
     .sort(sortDocs)
     .map((category) => {
       category.children = Object.values(category.children || {}).map(({id}) => {
-        const {prettyName: name, path: url, resourceType, sort} = getMeta(id)
-        return { name, resourceType, url, sort }
-      }).sort(sortDocs)
+        const {prettyName: name, path: url, resourceType, sort, tags} = getMeta(id)
+        return { name, resourceType, url, sort, tags }
+      })
+      .filter(({ tags }) => !tags.includes('hidden'))
+      .sort(sortDocs)
       return category
     })
 
