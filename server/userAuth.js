@@ -52,25 +52,37 @@ router.get('/auth/redirect', passport.authenticate('google'), (req, res) => {
 
 router.use((req, res, next) => {
   const isDev = process.env.NODE_ENV === 'development'
-  const authenticated = req.isAuthenticated()
 
-  const passportUser = (req.session.passport || {}).user || {}
-  const [{value: userEmail = ''} = {}] = passportUser.emails || []
-  const [userDomain] = userEmail.split('@').slice(-1)
-
-  if (isDev || (authenticated && domains.has(userDomain)) || (authenticated && domains.has(userEmail))) {
+  if (isDev) {
     setUserInfo(req)
     return next()
   }
-
-  if (authenticated && !domains.has(userDomain)) {
-    return next(Error('Unauthorized'))
+  if (req.isAuthenticated()) {
+    isAuthorized(req)
+    return next()
   }
-
   log.info('User not authenticated')
   req.session.authRedirect = req.path
   res.redirect('/login')
 })
+
+function isAuthorized(req) {
+  const passportUser = (req.session.passport || {}).user || {}
+  const [{value: userEmail = ''} = {}] = passportUser.emails || []
+  const [userDomain] = userEmail.split('@').slice(-1)
+  const checkRegexEmail = (() => {
+    let domainsArray = [...domains]
+    for (let d in domainsArray) {
+      if (userDomain.match(domainsArray[d])) return true;
+    }
+  })()
+  if ((domains.has(userDomain)) ||
+        domains.has(userEmail) ||
+        checkRegexEmail) {
+    setUserInfo(req)
+  }
+  else return next(Error('Unauthorized'))
+}
 
 function setUserInfo(req) {
   if (process.env.NODE_ENV === 'development') {
