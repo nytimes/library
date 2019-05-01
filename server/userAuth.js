@@ -58,7 +58,7 @@ router.use((req, res, next) => {
   const [{value: userEmail = ''} = {}] = passportUser.emails || []
   const [userDomain] = userEmail.split('@').slice(-1)
 
-  if (isDev || (authenticated && domains.has(userDomain))) {
+  if (isDev || (authenticated && domains.has(userDomain)) || (authenticated && domains.has(userEmail))) {
     setUserInfo(req)
     return next()
   }
