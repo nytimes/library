@@ -38,6 +38,15 @@ describe('Authentication', () => {
           assert.equal(res.text, 'Found. Redirecting to /login')
         })
     })
+
+    it('should not redirect to login for static asset requests', () => {
+      return request(app)
+        .get('/assets/css/style.css')
+        .expect(200)
+        .then((res) => {
+          assert.equal(res.headers['content-type'], 'text/css; charset=UTF-8')
+        })
+    })
   })
 
   describe('when logged in', () => {

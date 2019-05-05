@@ -28,15 +28,11 @@ app.get('/healthcheck', (req, res) => {
   res.send('OK')
 })
 
-app.use(csp({directives: customCsp}))
 app.use(userAuth)
 
 preload.forEach((middleware) => app.use(middleware))
 
 app.use(userInfo)
-
-// serve all files in the public folder
-app.use('/assets', express.static(path.join(__dirname, '../public')))
 
 // strip trailing slashes from URLs
 app.get(/(.+)\/$/, (req, res, next) => {
@@ -72,6 +68,15 @@ postload.forEach((middleware) => app.use(middleware))
 
 // error handler for rendering the 404 and 500 pages, must go last
 app.use(errorPages)
-app.listen(parseInt(process.env.PORT || '3000', 10))
 
-module.exports = app
+// instantiate a top-level express instance that will
+//  1. handle static asset requests, skipping auth and other non-CSP middleware
+//  2. delegate all other requests to the main app
+const server = express()
+server.use(csp({directives: customCsp}))
+server.use('/assets', express.static(path.join(__dirname, '../public')))
+server.use('/', app)
+
+server.listen(parseInt(process.env.PORT || '3000', 10))
+
+module.exports = server
