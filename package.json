@@ -21,7 +21,7 @@
     "lodash": "^4.17.11",
     "md5": "^2.2.1",
     "moment": "^2.24.0",
-    "node-sass": "^4.11.0",
+    "node-sass": "^4.12.0",
     "passport": "^0.4.0",
     "passport-google-oauth20": "^1.0.0",
     "pretty": "^2.0.0",
