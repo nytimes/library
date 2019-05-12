@@ -1,6 +1,6 @@
 {
   "name": "library",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A collaborative newsroom documentation site, powered by Google Docs.",
   "main": "server/index.js",
   "dependencies": {
@@ -17,11 +17,11 @@
     "google-auth-library": "^3.1.1",
     "googleapis": "^37.2.0",
     "helmet-csp": "^2.7.1",
-    "js-yaml": "^3.12.2",
+    "js-yaml": "^3.13.1",
     "lodash": "^4.17.11",
     "md5": "^2.2.1",
     "moment": "^2.24.0",
-    "node-sass": "^4.11.0",
+    "node-sass": "^4.12.0",
     "passport": "^0.4.0",
     "passport-google-oauth20": "^1.0.0",
     "pretty": "^2.0.0",
