@@ -10,8 +10,13 @@ const app = require('../../server/index')
 const userInfo = {
   emails: [{value: 'test.user@test.com'}],
   id: '10',
-  userId: '10',
-  _json: {domain: 'test.com'}
+  userId: '10'
+}
+
+const uniqueUser = {
+  emails: [{value: 'unique@baz.com'}],
+  id: '11',
+  userId: '11'
 }
 
 describe('Authentication', () => {
@@ -37,6 +42,36 @@ describe('Authentication', () => {
           assert(res.redirect)
           assert.equal(res.text, 'Found. Redirecting to /login')
         })
+    })
+  })
+
+  describe('when logging in', () => {
+    before(() => {
+      sinon.stub(app.request, 'session').value({passport: {user: uniqueUser}})
+      sinon.stub(express.request, 'user').value(uniqueUser)
+      sinon.stub(express.request, 'userInfo').value(uniqueUser)
+      sinon.stub(process.env, 'APPROVED_DOMAINS').value('(.* )?az.com')
+    })
+    after(() => sinon.restore())
+
+    it('should check for regex domains', () => {
+      return request(app)
+        .get('/')
+        .expect(200)
+    })
+
+    before(() => {
+      sinon.stub(app.request, 'session').value({passport: {user: uniqueUser}})
+      sinon.stub(express.request, 'user').value(uniqueUser)
+      sinon.stub(express.request, 'userInfo').value(uniqueUser)
+      sinon.stub(process.env, 'APPROVED_DOMAINS').value('unique@baz.com')
+    })
+    after(() => sinon.restore())
+
+    it('should check for individual emails', () => {
+      return request(app)
+        .get('/')
+        .expect(200)
     })
   })
 
