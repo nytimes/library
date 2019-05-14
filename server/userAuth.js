@@ -72,8 +72,8 @@ function isAuthorized(user) {
   const [{value: userEmail = ''} = {}] = user.emails || []
   const [userDomain] = userEmail.split('@').slice(-1)
   const checkRegexEmail = (() => {
-    let domainsArray = [...domains]
-    for (let d in domainsArray) {
+    const domainsArray = [...domains]
+    for (const d in domainsArray) {
       if (userDomain.match(domainsArray[d])) return true
     }
   })()

@@ -46,12 +46,7 @@ describe('Authentication', () => {
   })
 
   describe('when logging in', () => {
-    before(() => {
-      sinon.stub(app.request, 'session').value({passport: {user: uniqueUser}})
-      sinon.stub(express.request, 'user').value(uniqueUser)
-      sinon.stub(express.request, 'userInfo').value(uniqueUser)
-      sinon.stub(process.env, 'APPROVED_DOMAINS').value('(.* )?az.com')
-    })
+    before(() => sinon.stub(process.env, 'APPROVED_DOMAINS').value('(.* )?st.com'))
     after(() => sinon.restore())
 
     it('should check for regex domains', () => {
@@ -60,18 +55,27 @@ describe('Authentication', () => {
         .expect(200)
     })
 
-    before(() => {
-      sinon.stub(app.request, 'session').value({passport: {user: uniqueUser}})
-      sinon.stub(express.request, 'user').value(uniqueUser)
-      sinon.stub(express.request, 'userInfo').value(uniqueUser)
-      sinon.stub(process.env, 'APPROVED_DOMAINS').value('unique@baz.com')
-    })
+    before(() => sinon.stub(process.env, 'APPROVED_DOMAINS').value('test.user@test.com'))
     after(() => sinon.restore())
 
     it('should check for individual emails', () => {
       return request(app)
         .get('/')
         .expect(200)
+    })
+
+    before(() => {
+      sinon.stub(app.request, 'session').value({passport: {user: uniqueUser}})
+      sinon.stub(express.request, 'user').value(uniqueUser)
+      sinon.stub(express.request, 'userInfo').value(uniqueUser)
+      sinon.stub(process.env, 'APPROVED_DOMAINS').value('test.com')
+    })
+    after(() => sinon.restore())
+
+    it('should reject unauthorized users', () => {
+      return request(app)
+        .get('/')
+        .expect(403)
     })
   })
 
