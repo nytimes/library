@@ -2,6 +2,8 @@
   <div class="container">
     <%- include branding %>
     <%- include breadcrumb %>
-    <%- include userTools %>
+    <% if (!locals.inlineAssets) { %>
+      <%- include userTools %>
+    <% } %>
   </div>
 </header>

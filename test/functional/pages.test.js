@@ -90,5 +90,16 @@ describe('Server responses', () => {
           expect(res.text).to.include('Home article 8 for test folder 7')
         })
     })
+
+    it('should render an inline <style> tag and no JS on error pages', () => {
+      return request(app)
+        .get('/this-route-does-not-exist')
+        .expect(404)
+        .then((res) => {
+          expect(res.text).to.match(/<style type="text\/css">[^<]/i)
+          expect(res.text).to.not.include('<link href="/assets')
+          expect(res.text).to.not.include('<script src="/assets')
+        })
+    })
   })
 })
