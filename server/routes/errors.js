@@ -2,8 +2,7 @@
 
 const log = require('../logger')
 const {stringTemplate} = require('../utils')
-const path = require('path')
-const {inlineProtectedAsset} = require('../assetInliner');
+const {inlineProtectedAsset} = require('../assetInliner')
 
 // Base64-encode the branding images and inline the essential CSS, so that even
 // when a user is not authenticated and thus can't request static assets, error

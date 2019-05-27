@@ -6,7 +6,7 @@ const path = require('path')
 
 // Inline local assets, which are usually behind the app’s authentication
 // For non-local images, just return the original path.
-exports.inlineProtectedAsset = assetPath => {
+exports.inlineProtectedAsset = (assetPath) => {
   // if the path starts with `/assets`, look in the app’s public directory
   const publicPath = assetPath.replace(/^\/assets/, '/public')
 
@@ -25,5 +25,5 @@ const encoders = {
     const src = `data:${mimeType};base64,${data}`
     return src
   },
-  'text/css': path => fs.readFileSync(path).toString()
+  'text/css': (path) => fs.readFileSync(path).toString()
 }
