@@ -1,0 +1,18 @@
+.masthead .user-tools {
+  display: none;
+}
+
+#branding-heading-link {
+  display: block;
+  overflow: hidden;
+  width: 33px;
+  background-size: cover;
+  height: 0;
+  padding-bottom: 23px;
+  background-image: data-url(template("branding.icon"));
+  background-repeat: no-repeat;
+  background-position: left center;
+  margin: 3px 0 0 -5px;
+  text-indent: -999em;
+  filter: invert(100%) brightness(80%);
+}

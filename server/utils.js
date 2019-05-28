@@ -4,6 +4,7 @@ const path = require('path')
 const yaml = require('js-yaml')
 const {get: deepProp} = require('lodash')
 const merge = require('deepmerge')
+const mime = require('mime-types')
 
 const log = require('./logger')
 
@@ -96,4 +97,18 @@ exports.stringTemplate = (configPath, ...args) => {
   }
 
   return ''
+}
+
+exports.imageToDataURL = (imagePath) => {
+  // if the path starts with `/assets`, look in the app’s public directory
+  const publicPath = imagePath.replace(/^\/assets/, '/public')
+
+  const mimeType = mime.lookup(path.posix.basename(publicPath))
+  const fullPath = path.join(__dirname, '..', publicPath)
+  // return the original path if there is no local readable file
+  if (!(mimeType && fs.existsSync(fullPath))) return imagePath
+
+  const data = fs.readFileSync(fullPath, { encoding: 'base64' })
+  const src = `data:${mimeType};base64,${data}`
+  return src
 }

@@ -1,0 +1,37 @@
+#!/usr/bin/env node
+
+const sass = require('node-sass')
+const fs = require('fs')
+const path = require('path')
+const {stringTemplate, imageToDataURL} = require('../server/utils')
+
+const outFile = 'layouts/partials/inlineStyles.ejs'
+
+const sassOutput = sass.renderSync({
+  file: 'styles/inline.scss',
+  includePaths: [
+    'custom/styles',
+    'styles/partials',
+  ],
+  outFile,
+  outputStyle: 'compressed',
+  functions: {
+    'template($key)': key => {
+      return new sass.types.String(stringTemplate(key.getValue()))
+    },
+    'data-url($path)': (assetPath) => {
+      return new sass.types.String(
+        `url(${imageToDataURL(assetPath.getValue())})`
+      )
+    },
+  },
+})
+
+const favicon = imageToDataURL(stringTemplate('branding.favicon'))
+
+fs.writeFileSync(path.join(__dirname, '..', outFile), `
+  <style type="text/css">
+  ${sassOutput.css}
+  </style>
+  <link rel="shortcut icon" type="image/x-icon" href="${favicon}" />
+`)

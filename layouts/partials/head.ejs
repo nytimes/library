@@ -1,3 +1,4 @@
+
 <head>
   <meta charset="utf-8">
   <meta id="meta" name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,11 +8,10 @@
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
 
-  <% if (locals.inlineAssets) { %>
-    <style type="text/css"><%- inlineAssets['css'] %></style>
-    <link rel="shortcut icon" href="<%- inlineAssets['branding.favicon'] %>" type="image/x-icon" />
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <% if (locals.useInlineStyles) { %>
+    <%- include inlineStyles %>
   <% } else { %>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js"></script>
     <script src="/assets/scripts/main.js" charset="utf-8"></script>
     <!-- styles -->
