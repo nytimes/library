@@ -71,3 +71,8 @@ This is enforced by `eslint`. You can check your code by running `npm run lint`
 - Favor destructuring over dot notation when only accessing a few properties from an
   import.
 - Favor arrow functions for lambdas unless access to the `this` context is required.
+
+# Contributing Documentation
+To add to or change any documentation in the [Library Demo](https://nyt-library-demo.herokuapp.com), please [propose a file change](https://help.github.com/en/articles/editing-files-in-another-users-repository) to this document. Change the file by adding your name to the list of contributors below. Then, in the pull request body, add your documentation changes/additions as well as a link to the page in the demo you wish to change *or* the title of the page you'd like to add.
+
+## Document Contributors
