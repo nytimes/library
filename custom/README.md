@@ -36,6 +36,7 @@ example theme file could look like this:
  // Example Light Theme
  $font-branding:                "Alpha Slab One", cursive;
  $font-headline:                "Open Sans", arial, helvetica, sans-serif;
+ $font-sans:                    "Open Sans", sans-serif;
  $masthead-background:          $gray-10;
  $main-homepage-background:     $white;
  $main-homepage-icon-color:     $black;
