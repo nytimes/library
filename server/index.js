@@ -25,12 +25,11 @@ const {preload, postload} = allMiddleware
 // and redirect urls if it sees indications that the request
 // passed through a proxy and was originally sent using https
 if ('TRUST_PROXY' in process.env) {
-  if (process.env.TRUST_PROXY.toUpperCase() === "TRUE"){
+  if (process.env.TRUST_PROXY.toUpperCase() === 'TRUE') {
     // console.log('TRUST_PROXY environment variable set to true, enabling "trust proxy" in app')
-    app.enable("trust proxy")
+    app.enable('trust proxy')
   }
 }
-
 
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, '../layouts'))
@@ -89,6 +88,5 @@ app.use(errorPages)
 if (process.env.NODE_ENV !== 'test') {
   app.listen(parseInt(process.env.PORT || '3000', 10))
 }
-
 
 module.exports = app
