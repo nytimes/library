@@ -21,6 +21,17 @@ const app = express()
 
 const {preload, postload} = allMiddleware
 
+// The trust proxy flag tells the app to use https for links
+// and redirect urls if it sees indications that the request
+// passed through a proxy and was originally sent using https
+if ('TRUST_PROXY' in process.env) {
+  if (process.env.TRUST_PROXY.toUpperCase() === "TRUE"){
+    // console.log('TRUST_PROXY environment variable set to true, enabling "trust proxy" in app')
+    app.enable("trust proxy")
+  }
+}
+
+
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, '../layouts'))
 
@@ -72,6 +83,12 @@ postload.forEach((middleware) => app.use(middleware))
 
 // error handler for rendering the 404 and 500 pages, must go last
 app.use(errorPages)
-app.listen(parseInt(process.env.PORT || '3000', 10))
+
+// If we are testing, we don't need to listen on port 3000
+
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(parseInt(process.env.PORT || '3000', 10))
+}
+
 
 module.exports = app

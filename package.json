@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "concurrently": "^3.6.1",
+    "decache": "^4.5.1",
     "dotenv": "^4.0.0",
     "eslint": "^3.19.0",
     "eslint-config-standard": "^10.2.1",
