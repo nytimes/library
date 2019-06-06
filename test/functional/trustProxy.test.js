@@ -47,7 +47,7 @@ describe('Trust Proxy', () => {
     //app.server.close()
   })
 
-  describe('when trust proxy env is not true', () => {
+  describe('when trust proxy env is set to true', () => {
     before(() => sinon.stub(express.request, 'isAuthenticated').returns(false))
     beforeEach(() => decache('../../server/index'))
     after(() => sinon.restore())
