@@ -81,10 +81,12 @@ function normalizeHtml(html) {
 
       const decoded = qs.unescape(redirectUrl)
       const [isDoc, docId] = decoded.match(/docs\.google\.com.+\/d\/([^/]+)/i) || []
+      const [deepLink = ''] = decoded.match(/(?<=#heading=)([^/]+)/i) || []
 
       const {path: libraryPath} = isDoc ? list.getMeta(docId) || {} : {}
+      const libraryDeepLink = deepLink && libraryPath ? `${libraryPath}#${deepLink}` : libraryPath
 
-      $(el).attr('href', libraryPath || decoded)
+      $(el).attr('href', libraryDeepLink || decoded)
     }
 
     return el
