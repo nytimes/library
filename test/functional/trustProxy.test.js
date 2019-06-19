@@ -20,7 +20,7 @@ describe('Trust Proxy', () => {
     after(() => sinon.restore())
     // app moved inside tests so that it can be recreated later with different
     // environment variables setup.
-    var app = require('../../server/index')
+    const app = require('../../server/index')
 
 
     it('redirect should be for http with no headers', () => {
@@ -59,7 +59,7 @@ describe('Trust Proxy', () => {
 
     it('redirect should be for http with no headers', () => {
       process.env.TRUST_PROXY = "true"
-      var app = require('../../server/index')
+      const app = require('../../server/index')
       return request(app)
         .get('/login')
         .expect(302) // expect user to be found
@@ -71,7 +71,7 @@ describe('Trust Proxy', () => {
 
     it('redirect should be for https with headers and env set', () => {
       process.env.TRUST_PROXY = "true"
-      var app = require('../../server/index.js')
+      const app = require('../../server/index.js')
       return request(app)
         .get('/login')
         .set('X-Forwarded-Proto', 'https')
