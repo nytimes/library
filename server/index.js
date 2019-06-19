@@ -83,9 +83,9 @@ postload.forEach((middleware) => app.use(middleware))
 // error handler for rendering the 404 and 500 pages, must go last
 app.use(errorPages)
 
-// If we are testing, we don't need to listen on port 3000
+// If we are called directly, listen on port 3000, otherwise don't
 
-if (process.env.NODE_ENV !== 'test') {
+if (require.main === module) {
   app.listen(parseInt(process.env.PORT || '3000', 10))
 }
 
