@@ -15,11 +15,12 @@ landing:
   viewAll: View All
   quickLink: <a href="/get-started">Get Started.</a>
   modules:
-    # - tag: team
-    #   label: Find by team
-    #   style: button
+    - tag: team
+      label: Find by team
+      style: button
     - tag: featured
       label: Useful Docs
+      style: docs
 
 
 # partials/footer

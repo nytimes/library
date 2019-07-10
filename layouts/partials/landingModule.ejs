@@ -3,7 +3,7 @@ const {tag, label, items, style} = locals
 const itemsLimited = items.slice(0, 6)
 %>
 
-<div class="<%= tag %>-cat-container">
+<div class="cat-container <%= tag %>-cat-container style-<%= style %>">
   <h3><%= label %></h3>
   <ul class="<%= tag %>-cat-list">
     <% itemsLimited.forEach((item) => { 

@@ -75,7 +75,7 @@ function getConfig() {
 
   if (customExists) {
     const customConfig = yaml.load(fs.readFileSync(path.join(__dirname, '../custom/strings.yaml')), 'utf8') || {}
-    config = merge(config, customConfig)
+    config = merge(config, customConfig, {arrayMerge: (config, custom) => custom || config})
   }
 
   return config
