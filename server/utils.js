@@ -59,8 +59,8 @@ exports.allMiddleware = middlewares.reduce((m, item) => {
     postload: postload ? m.postload.concat(postload) : m.postload
   }
 }, {
-    preload: [], postload: []
-  })
+  preload: [], postload: []
+})
 
 const config = getConfig()
 function getConfig() {
