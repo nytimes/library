@@ -2,7 +2,7 @@
 const fs = require('fs')
 const path = require('path')
 const yaml = require('js-yaml')
-const {get: deepProp} = require('lodash')
+const { get: deepProp } = require('lodash')
 const merge = require('deepmerge')
 
 const log = require('./logger')
@@ -53,14 +53,14 @@ const middlewares = fs.existsSync(path.join(__dirname, '../custom/middleware')) 
 
 // create object with preload and postload middleware functions
 exports.allMiddleware = middlewares.reduce((m, item) => {
-  const {preload, postload} = require(path.join(__dirname, `../custom/middleware/${item}`))
+  const { preload, postload } = require(path.join(__dirname, `../custom/middleware/${item}`))
   return {
     preload: preload ? m.preload.concat(preload) : m.preload,
     postload: postload ? m.postload.concat(postload) : m.postload
   }
 }, {
-  preload: [], postload: []
-})
+    preload: [], postload: []
+  })
 
 const config = getConfig()
 function getConfig() {
@@ -79,6 +79,10 @@ function getConfig() {
   }
 
   return config
+}
+
+exports.getConfig = (configPath) => {
+  return deepProp(config, configPath)
 }
 
 exports.stringTemplate = (configPath, ...args) => {
