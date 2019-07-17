@@ -2,7 +2,7 @@
   <%- include search %>
   <% if (locals.title) { %>
   <% if (locals.duplicate) { %>
-    <%- include('../partials/warning', {message: template('warning.duplicateDoc')}) %>
+    <%- include('../partials/warning', {message: locals.resourceType === 'document' ? template('warning.duplicateDoc') : template('warning.duplicateFolder') }) %>
   <% } %>
   <h1 class="headline"><%= title %></h1>
   <div class="kicker">

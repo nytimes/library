@@ -239,8 +239,8 @@ function buildTreeFromData(rootParent, previousData, breadcrumb) {
       // recurse building up breadcrumb
       memo.children[slug] = buildTreeFromData(id, previousData, nextCrumb)
     } else {
-      log.debug(`Folder ${parentInfo.name} contains multiple files with slug ${slug}`)
-      // flag duplicate documents so that a warning can be displayed
+      log.debug(`Folder ${parentInfo.name} contains duplicate resources with slug ${slug}`)
+      // flag duplicate resources so that a warning can be displayed
       memo.children[slug].duplicate = true
     }
 
