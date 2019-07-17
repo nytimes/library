@@ -65,7 +65,7 @@ Make sure to remove all comments after the `DRIVE_TYPE` and `DRIVE_ID` vars.
 
 5. Start the app:
 
-   `npm run build && npm run watch`
+   `npm run dev`
 
 The app should now be running at `localhost:3000`. Note that Library requires Node v8 or higher.
 
@@ -91,7 +91,7 @@ If you wish to deploy Library with customizations, create a git repo with the fi
 This button can quickly deploy to Heroku:
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://nyti.ms/2CrT2y2)
 
-Set your app's `GOOGLE_APPLICATION_JSON`, `GOOGLE_CLIENT_ID`, and `GOOGLE_CLIENT_SECRET` with values from the service account and Oauth client. Add *<your-heroku-app-url\>.com* as an authorized domain in the general OAuth consent screen setup and then add *http://<your-heroku-app-url\>.com/auth/redirect* as the callback url in the OAuth credential setup itself. 
+Set your app's `GOOGLE_APPLICATION_JSON`, `GOOGLE_CLIENT_ID`, and `GOOGLE_CLIENT_SECRET` with values from the service account and Oauth client. Add *<your-heroku-app-url\>.com* as an authorized domain in the general OAuth consent screen setup and then add *http://<your-heroku-app-url\>.com/auth/redirect* as the callback url in the OAuth credential setup itself.
 
 ### Using Google App Engine
 You can also deploy Library to GAE, using the included `app.yaml`. Note that you will need to enable billing on your GCP project in order to use Google App Engine. More detailed instructions are provided on the [demo site](https://nyt-library-demo.herokuapp.com/get-started/deploying-library-google-app-engine).
