@@ -111,12 +111,12 @@ describe('Reading History', () => {
           const recentIds = recentlyViewed.map((obj) => obj.teamId)
           const mostIds = mostViewed.map((obj) => obj.teamId)
           expect(recentIds).to.include(
-            'TestFolder7',
-            'TestFolder13'
+            'TestFolder9',
+            'TestFolder17'
           )
           expect(mostIds).to.include(
-            'TestFolder7',
-            'TestFolder13'
+            'TestFolder9',
+            'TestFolder17'
           )
         })
     })
@@ -129,14 +129,14 @@ describe('Reading History', () => {
         .then((res) => {
           const {recentlyViewed} = res.body
           const {team} = recentlyViewed.filter(({teamId}) => {
-            return teamId === 'TestFolder7'
+            return teamId === 'TestFolder9'
           })[0]
-          expect(team.id).equals('TestFolder7')
-          expect(team.name).equals('Test Folder 7 | team')
-          expect(team.prettyName).equals('Test Folder 7')
+          expect(team.id).equals('TestFolder9')
+          expect(team.name).equals('Test Folder 9 | team')
+          expect(team.prettyName).equals('Test Folder 9')
           expect(team.mimeType).equals('application/vnd.google-apps.folder')
           expect(team.tags).to.include('team')
-          expect(team.slug).equals('test-folder-7')
+          expect(team.slug).equals('test-folder-9')
         })
     })
   })

@@ -80,3 +80,7 @@ error:
     heading: Uh oh, that's a 500.
     message: Perhaps try to search for something else instead?
 
+# warning messages
+warning:
+  duplicateDoc: "Warning: Multiple documents in this folder share the same name as this document. Only one of the documents will be accesible through Library."
+

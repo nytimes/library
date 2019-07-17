@@ -66,6 +66,7 @@ async function handleCategory(req, res) {
     content: payload.html,
     byline: payload.byline,
     createdBy: revisionData.lastModifyingUser.displayName,
+    duplicate: data.duplicate,
     sections
   }), (err, html) => {
     if (err) throw err

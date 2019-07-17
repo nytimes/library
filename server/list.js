@@ -235,8 +235,14 @@ function buildTreeFromData(rootParent, previousData, breadcrumb) {
     const {slug} = docsInfo[id]
     const nextCrumb = breadcrumb ? breadcrumb.concat({ id: rootParent, slug: parentInfo.slug }) : []
 
-    // recurse building up breadcrumb
-    memo.children[slug] = buildTreeFromData(id, previousData, nextCrumb)
+    if (!memo.children[slug]) {
+      // recurse building up breadcrumb
+      memo.children[slug] = buildTreeFromData(id, previousData, nextCrumb)
+    } else {
+      log.debug(`Folder ${parentInfo.name} contains multiple files with slug ${slug}`)
+      // flag duplicate documents so that a warning can be displayed
+      memo.children[slug].duplicate = true
+    }
 
     return memo
   }, Object.assign({}, parentNode, { children: {} }))
