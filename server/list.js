@@ -70,10 +70,17 @@ async function updateTree() {
 
     currentTree = produceTree(files, driveId)
 
-    const count = Object.values(docsInfo)
-      .filter((f) => f.resourceType !== 'folder')
-      .length
+    const fileNames = Object.values(docsInfo)
+      .filter((f) => f.resourceType !== 'folder') // may want to exclude more
+      .map((f) => f.prettyName || f.name)
 
+    // for testing, delete me later
+    cache.add('ALL_FILENAMES', new Date(), 'ALL_FILENAMES', fileNames).then(async () => {
+      const fn = await cache.get('ALL_FILENAMES')
+      console.log(fn.html)
+    })
+
+    const count = fileNames.length
     log.debug(`Current file count in drive: ${count}`)
 
     return currentTree

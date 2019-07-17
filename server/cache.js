@@ -13,6 +13,11 @@ const noCacheDelay = parseInt(process.env.EDIT_CACHE_DELAY, 10) || 60 * 60
 
 exports.get = cache.get // expose the ability to retreive cache data internally
 
+middlewareRouter.get('/filename-listing', async (req, res) => {
+    const names = await cache.get('ALL_FILENAMES')
+    return res.send(names)
+})
+
 // detects purge requests and serves cached responses when available
 middlewareRouter.use(async (req, res) => {
   // handle the purge request if purge or edit params are present

@@ -128,7 +128,7 @@
     width: calc(100% - 20px);
   }
 
-  #search-box {
+  input {
     -webkit-appearance: none;
     border-radius: 0;
     font-size: 16px;
@@ -170,6 +170,19 @@
       outline: none;
       opacity: 1;
     }
+  }
+
+  .twitter-typeahead {
+    display: inline !important;
+  }
+
+  .tt-menu {
+    width: 100%;
+    background-color: beige;
+  }
+
+  .tt-cursor {
+    background-color: $accent-light;
   }
 
   .icon{

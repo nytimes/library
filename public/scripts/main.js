@@ -35,6 +35,29 @@ $(document).ready(function() {
     }
   }
 
+  function populateFilenameStorage() {
+    var currentList = JSON.parse(localStorage.getItem('filenames'))
+    console.log('got', currentList);
+    if (currentList && currentList.modified) {
+      console.log('checking list');
+      // If the filenames have already been updated today, don't update
+      // TODO: make this logic actually check days.
+      var modifiedDate = new Date(currentList.modified)
+      if (modifiedDate.getDay() === new Date().getDay()) return
+    }
+    $.ajax({ method: 'GET', url: '/filename-listing', json: true }).always(function(data) {
+      console.log(data);
+      localStorage.setItem('filenames', JSON.stringify(data))
+    })
+  }
+
+  function getFilenameStorage() {
+    console.log('sending', JSON.parse(localStorage.getItem('filenames')).html);
+    return JSON.parse(localStorage.getItem('filenames')).html
+  }
+
+  $html.one('focus', '#search-box', populateFilenameStorage);
+
   function populateUserHistoryData() {
     $.ajax({
       method: 'GET',
@@ -101,6 +124,33 @@ $(document).ready(function() {
     $target.append(fullSection);
   }
 
+
+  function filenameMatcher(q, cb) {
+    // an array that will be populated with substring matches
+    var matches = [];
+
+    // regex used to determine if a string contains the substring `q`
+    var substrRegex = new RegExp(q, 'i');
+
+    var strs = getFilenameStorage()
+    // iterate through the pool of strings and for any string that
+    // contains the substring `q`, add it to the `matches` array
+    $.each(strs, (i, str) => {
+      if (substrRegex.test(str)) {
+        matches.push(str)
+      }
+    })
+
+    cb(matches)
+  }
+
+  // setup typeahead
+  $('#search-box').typeahead({
+    hilight: true
+  }, {
+    name: 'documents',
+    source: filenameMatcher
+  })
 })
 
 function personalizeHomepage(userId) {
