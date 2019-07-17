@@ -71,6 +71,8 @@ DRIVE_ID=0123456ABCDEF # the ID of your team's drive or shared folder. The strin
 ```
 Make sure to remove all comments after the `DRIVE_TYPE` and `DRIVE_ID` vars.
 
+**Be careful!** Setting NODE_ENV to `development` changes the built in behaviors for site authentication to allow accounts other than those in the APPROVED_DOMAINS list. **Never use NODE_ENV=development for your deployed site, only locally.**
+
 5. Start the app:
 
    `npm run build && npm run watch`
