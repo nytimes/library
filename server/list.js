@@ -241,7 +241,7 @@ function buildTreeFromData(rootParent, previousData, breadcrumb) {
     } else {
       log.debug(`Folder ${parentInfo.name} contains duplicate resources with slug ${slug}`)
       // flag duplicate resources so that a warning can be displayed
-      memo.children[slug].duplicate = true
+      memo.children[slug].isDuplicate = true
     }
 
     return memo

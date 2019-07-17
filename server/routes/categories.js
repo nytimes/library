@@ -23,7 +23,7 @@ async function handleCategory(req, res) {
   if (!meta || !data) return 'next'
 
   const {resourceType, tags, id} = meta
-  const {breadcrumb, duplicate} = data
+  const {breadcrumb, isDuplicate} = data
 
   const layout = categories.has(root) ? root : 'default'
   const template = `categories/${layout}`
@@ -45,7 +45,7 @@ async function handleCategory(req, res) {
     editLink: meta.mimeType === 'text/html' ? meta.folder.webViewLink : meta.webViewLink,
     id,
     template: stringTemplate,
-    duplicate,
+    isDuplicate,
     resourceType
   })
 
