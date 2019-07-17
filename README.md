@@ -65,7 +65,7 @@ Make sure to remove all comments after the `DRIVE_TYPE` and `DRIVE_ID` vars.
 
 5. Start the app:
 
-   `npm run dev`
+   `npm run watch`
 
 The app should now be running at `localhost:3000`. Note that Library requires Node v8 or higher.
 
