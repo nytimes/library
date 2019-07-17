@@ -14,6 +14,13 @@ landing:
   tagline: One place for your organization's documents.
   viewAll: View All
   quickLink: <a href="/get-started">Get Started.</a>
+  modules:
+    - tag: team
+      label: Find by team
+      style: button
+    - tag: featured
+      label: Useful Docs
+      style: docs
 
 
 # partials/footer

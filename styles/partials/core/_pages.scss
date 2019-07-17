@@ -205,8 +205,7 @@
         display: flex;
     	}
 
-      .featured-cat-container,
-      .teams-cat-container {
+      .cat-container {
         flex: 0 50%;
         // margin-top: -7px;
         margin-bottom: 40px;
@@ -232,47 +231,48 @@
           list-style-type: none;
         }
 
-      }
-
-      .teams-cat-container {
-        ul {
-          // margin-top: -10px;
-          margin-bottom: 25px;
-
-          li {
-            display: inline-block;
-
-            @include tablet{
-          		display: block;
-          	}
-            @include desktop{
-          		display: block;
-          	}
-          }
-        }
-      }
-
-      .featured-cat-list {
-        padding-left: 7px;
-        a {
-          color: $btn-default-text-color;
-          -webkit-font-smoothing: antialiased;
-        }
-        li {
-          margin-bottom: 7px;
-          position: relative;
-
-          &:last-of-type {
-            &:before {
-              display: none;
+        &.style-button {
+          ul {
+            // margin-top: -10px;
+            margin-bottom: 25px;
+  
+            li {
+              display: inline-block;
+  
+              @include tablet{
+                display: block;
+              }
+              @include desktop{
+                display: block;
+              }
             }
           }
+        }
 
-          .fa {
-            color: $main-homepage-icon-color;
-            margin-right: 7px;
-            font-size: 14px;
-            line-height: 18px;
+        &.style-docs {
+          ul {
+            padding-left: 7px;
+            a {
+              color: $btn-default-text-color;
+              -webkit-font-smoothing: antialiased;
+            }
+            li {
+              margin-bottom: 7px;
+              position: relative;
+    
+              &:last-of-type {
+                &:before {
+                  display: none;
+                }
+              }
+    
+              .fa {
+                color: $main-homepage-icon-color;
+                margin-right: 7px;
+                font-size: 14px;
+                line-height: 18px;
+              }
+            }
           }
         }
       }

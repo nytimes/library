@@ -1,0 +1,36 @@
+<%
+const {tag, label, items, style} = locals
+const itemsLimited = items.slice(0, 6)
+%>
+
+<div class="cat-container <%= tag %>-cat-container style-<%= style %>">
+  <h3><%= label %></h3>
+  <ul class="<%= tag %>-cat-list">
+    <% itemsLimited.forEach((item) => { 
+      if (style === 'button') { %>
+        <li data-<%= tag %>-id="<%= item.id %>"><a class="button btn-cat" href="<%= item.path %>"><%= item.prettyName %></a></li>
+      <% } else {
+        const type = item.resourceType 
+        const iconMap = {
+          document: 'file-o',
+          spreadsheet: 'table',
+          'text/html': 'file-o',
+          folder: 'folder',
+          presentation: 'clone',
+          image: 'picture-o',
+          video: 'video-camera',
+          pdf: 'file-pdf-o'
+        }
+        const iconName = iconMap[type] || 'external-link'
+        const className = `fa-${iconName}` %>
+        <li>
+          <i class="fa foldericon <%= className %>" aria-hidden="true"></i>
+          <a href="<%= item.path %>"><%= item.prettyName %></a>
+        </li>
+    <% }
+    }) 
+    if (tag === 'featured') { %>
+      <li><a class="button btn-homepage" href="/categories"><%- template('landing.viewAll') %></a></li>
+    <% } %>
+  </ul>
+</div>
