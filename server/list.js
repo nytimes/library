@@ -241,10 +241,8 @@ function buildTreeFromData(rootParent, previousData, breadcrumb) {
     } else {
       log.warn(`Folder ${parentInfo.name} contains duplicate resources with slug ${slug}`)
       const { name } = docsInfo[id]
-      // record duplicate resources so that a warning can be displayed
-      memo.children[slug].duplicates = memo.children[slug].duplicates
-        ? [...memo.children[slug].duplicates, name]
-        : [name]
+      const previousDupes = memo.children[slug].duplicates || []
+      memo.children[slug].duplicates = previousDupes.concat(name)
     }
 
     return memo

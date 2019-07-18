@@ -45,7 +45,7 @@ async function handleCategory(req, res) {
     editLink: meta.mimeType === 'text/html' ? meta.folder.webViewLink : meta.webViewLink,
     id,
     template: stringTemplate,
-    duplicateNames: duplicates ? duplicates.join(', ') : ''
+    duplicates
   })
 
   // if this is a folder, just render from the generic data

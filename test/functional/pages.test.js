@@ -101,8 +101,10 @@ describe('Server responses', () => {
           expect(res.text).to.include('Last edited by <span class="author">Foo Bar</span>')
           expect(res.text).to.include('Article 3 in test folder 9')
           expect(res.text).to.include(
-            `<div class="warning">\n  Warning: Multiple resources in this folder share the same ` +
-            `name: Article 3 in test folder 9. Only one will be accesible through Library.\n</div>`
+            '<div class="warning">\n  Warning: Multiple resources in ' +
+            '<a href="https://drive.google.com/drive/u/0/folders/TestFolder9" target="_blank">' +
+            'this folder</a> share the same name: Article 3 in test folder 9. Only one will be ' +
+            'accesible through Library.\n</div>'
           )
         })
     })
