@@ -82,6 +82,5 @@ error:
 
 # warning messages
 warning:
-  duplicateDoc: "Warning: Multiple documents in this folder share the same name as this document. Only one of the documents will be accesible through Library."
-  duplicateFolder: "Warning: Multiple folders in this folder share the same name as this folder. Only one of the folders will be accesible through Library."
+  duplicate: !!js/function (names) => `Multiple resources in this folder share the same name${':' + ' ' + names}. Only one will be accesible through Library.`
 

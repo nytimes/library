@@ -1,8 +1,8 @@
 <div class="g-upper-body">
   <%- include search %>
   <% if (locals.title) { %>
-  <% if (locals.isDuplicate) { %>
-    <%- include('../partials/warning', {message: locals.resourceType === 'document' ? template('warning.duplicateDoc') : template('warning.duplicateFolder') }) %>
+  <% if (locals.duplicateNames) { %>
+    <%- include('../partials/warning', {message: template('warning.duplicate', locals.duplicateNames) }) %>
   <% } %>
   <h1 class="headline"><%= title %></h1>
   <div class="kicker">

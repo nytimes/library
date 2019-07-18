@@ -239,9 +239,12 @@ function buildTreeFromData(rootParent, previousData, breadcrumb) {
       // recurse building up breadcrumb
       memo.children[slug] = buildTreeFromData(id, previousData, nextCrumb)
     } else {
-      log.debug(`Folder ${parentInfo.name} contains duplicate resources with slug ${slug}`)
-      // flag duplicate resources so that a warning can be displayed
-      memo.children[slug].isDuplicate = true
+      log.warn(`Folder ${parentInfo.name} contains duplicate resources with slug ${slug}`)
+      const { name } = docsInfo[id]
+      // record duplicate resources so that a warning can be displayed
+      memo.children[slug].duplicates = memo.children[slug].duplicates
+        ? [...memo.children[slug].duplicates, name]
+        : [name]
     }
 
     return memo
