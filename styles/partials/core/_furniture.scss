@@ -128,26 +128,42 @@
     width: calc(100% - 20px);
   }
 
-  input {
-    -webkit-appearance: none;
+
+  .tt-menu {
+    width: 100%;
+    background-color: $search-container-background;
+    border-color: $gray-30;
+    border-style: solid;
+    border-width: 0 1px 1px 1px;
+  }
+
+  .tt-suggestion {
+    padding: 10px 15px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    &:hover {
+      background-color: $accent-light;
+    }
+  }
+
+  .tt-cursor {
+    background-color: $accent-light;
+  }
+
+  .twitter-typeahead {
+    position: absolute;
+    height: 50px;
     border-radius: 0;
-    font-size: 16px;
-    line-height: 30px;
-    font-weight: 400;
-    font-style: normal;
-    font-family: $font-sans;
     background-color: transparent;
     transition: background-color 0.3s;
     display: inline-block;
-    padding: 7px 10px;
     border: 1px solid $gray-40;
-    -webkit-font-smoothing: antialiased;
     -webkit-box-shadow: 5px 5px 0px 0px $gray-25;;
     -moz-box-shadow: 5px 5px 0px 0px $gray-25;;
     box-shadow: 5px 5px 0px 0px $gray-25;;
     color: $black;
     float: left;
-    padding-left: 15px;
     width: calc(100% - 20px);
     -webkit-transition: background .55s ease;
     -moz-transition: background .55s ease;
@@ -158,40 +174,39 @@
     &:focus,
     &:active {
       outline: none;
+      background:  $accent-lightest;
     }
   }
 
-  &:hover,
-  &:focus,
-  &:active {
+  .tt-hint {
+    color: $gray-35;
+    background-color: transparent !important;
+  }
+
+  #search-box, .tt-hint {
     outline: none;
-    background:  $accent-lightest;
-    .icon {
-      outline: none;
-      opacity: 1;
-    }
-  }
-
-  .twitter-typeahead {
-    display: inline !important;
-  }
-
-  .tt-menu {
-    width: 100%;
-    background-color: beige;
-  }
-
-  .tt-cursor {
-    background-color: $accent-light;
+    font-size: 16px;
+    line-height: 30px;
+    font-weight: 400;
+    font-style: normal;
+    font-family: $font-sans;
+    border: none;
+    padding-left: 15px;
+    width: calc(100% - 20px);
+    height: 100%;
+    -webkit-appearance: none;
+    -webkit-font-smoothing: antialiased;
   }
 
   .icon{
+    position: absolute;
+    z-index: 10;
     border: none;
     background: $accent;
     height: 46px;
     width: 50px;
     color: $white;
-    opacity: 0;
+    opacity: 1;
     font-size: 12pt;
     cursor: pointer;
     margin-left: -50px;
