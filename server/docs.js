@@ -16,7 +16,7 @@ const supportedTypes = new Set(['document', 'spreadsheet', 'text/html'])
 exports.cleanName = (name = '') => {
   return name
     .trim()
-    // eslint-disable-next-line
+    // eslint-disable-next-line no-useless-escape
     .replace(/^(\d+[-–—_\s]*)([^\d\/\-^\s]+)/, '$2') // remove leading numbers and delimiters
     .replace(/\s*\|\s*([^|]+)$/i, '')
     .replace(/\W+home$/i, '')
