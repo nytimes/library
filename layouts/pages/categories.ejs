@@ -19,44 +19,25 @@
           let y = document.getElementsByClassName("children-container")
           let numButtons = 0
           for (i = 0; i < x.length; i++) { 
-            console.log('print i', i)
-            if (x[i].clientHeight > 100) { 
+            if (x[i].clientHeight > 300) { 
               y[i].innerHTML = y[i].innerHTML + "<button class=\"myButton\"/>"
               numButtons = numButtons + 1;
             }
             if (document.getElementsByClassName('myButton').length > 0){
             let button = document.getElementsByClassName('myButton')[numButtons-1];
-            console.log('heyoo', document.getElementsByClassName('myButton'))
-            button.addEventListener('click', function(e) {
-              console.log('This should happen once')
-              let show = false
+            console.log("Nothing", button)
+            button.onclick = function(e) {
+              console.log("Only once")
               if (button.previousSibling.previousSibling.className == "kid"){
-                console.log('button was clicked', button);
-                console.log('does this work?', button.previousSibling.previousSibling)
-                show = true
-                // button.previousSibling.previousSibling.setAttribute('class', 'kid-show');
-              }
-              else {
-                console.log('we missed it')
-                show = false;
-              }
-              // else if (button.previousSibling.previousSibling.className == "kid-show"){
-              //   button.previousSibling.previousSibling.setAttribute('class', 'kid');
-              // }
-              if (show) {
-                button.previousSibling.previousSibling.setAttribute('class', 'kid-show')
+                button.previousSibling.previousSibling.setAttribute('class', 'kid-show');
                 button.setAttribute('class', 'myButton-show')
-                console.log("It should show something")
-                return
               }
               else {
-                button.previousSibling.previousSibling.setAttribute('class', 'kid')
+                button.previousSibling.previousSibling.setAttribute('class', 'kid');
                 button.setAttribute('class', 'myButton')
-                console.log("Less is more")
               }
-              e.stopPropagation();
-              e.preventDefault();
-            });
+            };
+            console.log("somthing")
             }
           }
         </script>

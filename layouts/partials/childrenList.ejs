@@ -8,8 +8,6 @@
   <% } %>
   <div class="kid">
   <ul class="children">
-    <% const maxList =  3 %>
-    <% let counter = 0 %>
     <% console.log('yuh yeh', children[0]) %>
     <% children.forEach((link) => { %>
       <% const type = link.resourceType %>
@@ -30,7 +28,6 @@
         %>
         <i class="fa foldericon <%= className %>" aria-hidden="true"></i>
         <a class="content-link" href="<%- link.url %>" ><%= link.name %></a>
-        <% counter = counter + 1%>
       </li>
     <% }) %>
   </ul>
