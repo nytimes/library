@@ -1,6 +1,9 @@
 <div class="g-upper-body">
   <%- include search %>
   <% if (locals.title) { %>
+  <% if (locals.duplicates) { %>
+    <%- include('../partials/warning', {message: template('warning.duplicate', locals.duplicates, locals.parentId) }) %>
+  <% } %>
   <h1 class="headline"><%= title %></h1>
   <div class="kicker">
     <div class="attribution">

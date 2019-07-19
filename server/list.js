@@ -235,8 +235,15 @@ function buildTreeFromData(rootParent, previousData, breadcrumb) {
     const {slug} = docsInfo[id]
     const nextCrumb = breadcrumb ? breadcrumb.concat({ id: rootParent, slug: parentInfo.slug }) : []
 
-    // recurse building up breadcrumb
-    memo.children[slug] = buildTreeFromData(id, previousData, nextCrumb)
+    if (!memo.children[slug]) {
+      // recurse building up breadcrumb
+      memo.children[slug] = buildTreeFromData(id, previousData, nextCrumb)
+    } else {
+      log.warn(`Folder ${parentInfo.name} contains duplicate resources with slug ${slug}`)
+      const { name } = docsInfo[id]
+      const previousDupes = memo.children[slug].duplicates || []
+      memo.children[slug].duplicates = previousDupes.concat(name)
+    }
 
     return memo
   }, Object.assign({}, parentNode, { children: {} }))

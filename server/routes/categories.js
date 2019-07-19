@@ -23,7 +23,7 @@ async function handleCategory(req, res) {
   if (!meta || !data) return 'next'
 
   const {resourceType, tags, id} = meta
-  const {breadcrumb} = data
+  const {breadcrumb, duplicates} = data
 
   const layout = categories.has(root) ? root : 'default'
   const template = `categories/${layout}`
@@ -44,7 +44,8 @@ async function handleCategory(req, res) {
     createdAt: moment(meta.createdTime).fromNow(),
     editLink: meta.mimeType === 'text/html' ? meta.folder.webViewLink : meta.webViewLink,
     id,
-    template: stringTemplate
+    template: stringTemplate,
+    duplicates
   })
 
   // if this is a folder, just render from the generic data

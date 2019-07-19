@@ -12,7 +12,7 @@ const userInfo = {
   _json: {domain: 'test.com'}
 }
 
-const playlistPath = '/test-folder-7/test-12'
+const playlistPath = '/test-folder-9/test-14'
 
 describe('Playlist route handling', () => {
   beforeEach(() => sinon.stub(app.request, 'session').value({passport: {user: userInfo}}))
@@ -23,7 +23,7 @@ describe('Playlist route handling', () => {
             .get(`${playlistPath}/test-3`)
             .expect(200)
             .then((res) => {
-              expect(res.text).to.include('Test 12 Playlist')
+              expect(res.text).to.include('Test 14 Playlist')
               expect(res.text).to.include('<li class="type-file">')
               expect(res.text).to.include(`<a class="content-link" href="${playlistPath}/article-1-in-test-folder-1"`)
             })

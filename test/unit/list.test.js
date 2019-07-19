@@ -19,22 +19,23 @@ describe('Tree', () => {
 
   it('should have top level children', async () => {
     const {children} = await list.getTree()
-    expect(children).to.include.keys('test-folder-1', 'test-folder-7', 'test-folder-13')
+    expect(children).to.include.keys('test-folder-1', 'test-folder-9', 'test-folder-17')
   })
 
   it('should correctly parse tags', () => {
-    expect(list.getTagged('home')).to.include('Test8')
-    expect(list.getTagged('hidden')).to.include('Test15')
+    expect(list.getTagged('home')).to.include('Test10')
+    expect(list.getTagged('hidden')).to.include('Test11')
   })
 
   it('should correctly report children', () => {
-    const {children} = list.getChildren('TestFolder7')
-    expect(children.length).to.equal(4)
+    const {children} = list.getChildren('TestFolder9')
+    expect(children.length).to.equal(6)
     expect(children).to.include(
-      'Test9',
-      'Test10',
-      'Test11',
-      'Test12'
+      'Test12',
+      'Test13',
+      'Test14',
+      'Test15',
+      'Test16'
     )
   })
 
