@@ -103,7 +103,7 @@ describe('Server responses', () => {
           expect(res.text).to.include(
             '<div class="warning">\n  Warning: Multiple resources in ' +
             '<a href="https://drive.google.com/drive/u/0/folders/TestFolder9" target="_blank">' +
-            'this folder</a> share the same name: Article 3 in test folder 9. Only one will be ' +
+            'this folder</a> share the same name&#58; Article 3 in test folder 9. Only one will be ' +
             'accesible through Library.\n</div>'
           )
         })
