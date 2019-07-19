@@ -338,20 +338,29 @@
     border-top: 0;
     justify-content: center;
 
-    ::-webkit-scrollbar {
-      -webkit-appearance: none;
-      width: 7px;
-    }
-    ::-webkit-scrollbar-thumb {
-      border-radius: 4px;
-      background-color: rgba(0,0,0,.5);
-      -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
-    }
+    // ::-webkit-scrollbar {
+    //   -webkit-appearance: none;
+    //   width: 7px;
+    // }
+    // ::-webkit-scrollbar-thumb {
+    //   border-radius: 4px;
+    //   background-color: rgba(0,0,0,.5);
+    //   -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+    // }
 
+    .kid{
+      max-height: 20vh;
+      overflow-y: hidden;
+      padding-left: 10px;
+      // overflow-x: visible;
+    }
+    .kid-show{
+      padding-left: 10px;
+    }
 
     .children-container {
-      max-height: 40vh;
-      overflow: scroll;
+      // max-height: 20vh;
+      // overflow: hidden;
       margin: 0 12px 30px 12px;
       padding: 25px;
       border: 1px solid $gray-60;

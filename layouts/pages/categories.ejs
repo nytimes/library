@@ -14,6 +14,28 @@
         <%- include('../partials/childrenList', {kicker: category.prettyName, children: category.children, link: category.path}) %>
       <% }) %>
       </div>
+      <script>
+          let x = document.getElementsByClassName("children")
+          let y = document.getElementsByClassName("children-container")
+          let numButtons = 0
+          for (i = 0; i < x.length; i++) { 
+            console.log('print i', i)
+            if (x[i].clientHeight > 100) { 
+              y[i].innerHTML = y[i].innerHTML + "<button class=\"myButton\" style=\"padding: 10px 0;text-align: center;\"> See More </button>"
+              numButtons = numButtons + 1;
+            }
+            if (document.getElementsByClassName('myButton').length > 0){
+            let button = document.getElementsByClassName('myButton')[numButtons-1];
+            console.log('heyoo', document.getElementsByClassName('myButton'))
+            button.addEventListener('click', function(e) {
+              button.style.color = "blue"
+              console.log('button was clicked', button);
+              console.log('does this work?', button.previousSibling.previousSibling)
+              button.previousSibling.previousSibling.setAttribute('class', 'kid-show');
+            });
+            }
+          }
+        </script>
       <%- include('../partials/footer', { pageType: 'category_index' }) %>
     </div>
   </body>
