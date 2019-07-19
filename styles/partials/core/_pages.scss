@@ -349,7 +349,7 @@
     // }
 
     .kid{
-      max-height: 20vh;
+      max-height: 300px;
       overflow-y: hidden;
       padding-left: 10px;
       // overflow-x: visible;
@@ -358,9 +358,48 @@
       padding-left: 10px;
     }
 
+    .myButton-show,
+    .myButton {
+      margin: 10px 0 0 0;
+    -webkit-font-smoothing: antialiased;
+    font-size: 14px;
+    background-color: white;
+    border: 1px solid #404040;
+    border-radius: 0;
+    color: black;
+    -webkit-box-shadow: 2.5px 2.5px 0px -1px $gray-25;
+    -moz-box-shadow: 2.5px 2.5px 0px -1px $gray-25;
+    box-shadow: 2.5px 2.5px 0px -1px $gray-25;
+    padding: 5px 12px;
+        // background-color: $gray-60;
+        // border: none;
+        // color: white;
+        // padding: 5px;
+        // text-align: center;
+        // text-decoration: none;
+        // display: inline-block;
+        // font-size: 16px;
+        // margin: 4px 2px;
+        cursor: pointer;
+        // text-align: center;
+    }
+
+    .myButton-show:hover,
+    .myButton:hover {
+      background-color: $gray-60;
+    }
+
+    .myButton:before {
+      content: "See more ";
+    }
+
+    .myButton-show:before {
+      content: "See less ";
+    }
+
     .children-container {
       // max-height: 20vh;
-      // overflow: hidden;
+      overflow: visible;
       margin: 0 12px 30px 12px;
       padding: 25px;
       border: 1px solid $gray-60;

@@ -21,17 +21,41 @@
           for (i = 0; i < x.length; i++) { 
             console.log('print i', i)
             if (x[i].clientHeight > 100) { 
-              y[i].innerHTML = y[i].innerHTML + "<button class=\"myButton\" style=\"padding: 10px 0;text-align: center;\"> See More </button>"
+              y[i].innerHTML = y[i].innerHTML + "<button class=\"myButton\"/>"
               numButtons = numButtons + 1;
             }
             if (document.getElementsByClassName('myButton').length > 0){
             let button = document.getElementsByClassName('myButton')[numButtons-1];
             console.log('heyoo', document.getElementsByClassName('myButton'))
             button.addEventListener('click', function(e) {
-              button.style.color = "blue"
-              console.log('button was clicked', button);
-              console.log('does this work?', button.previousSibling.previousSibling)
-              button.previousSibling.previousSibling.setAttribute('class', 'kid-show');
+              console.log('This should happen once')
+              let show = false
+              if (button.previousSibling.previousSibling.className == "kid"){
+                console.log('button was clicked', button);
+                console.log('does this work?', button.previousSibling.previousSibling)
+                show = true
+                // button.previousSibling.previousSibling.setAttribute('class', 'kid-show');
+              }
+              else {
+                console.log('we missed it')
+                show = false;
+              }
+              // else if (button.previousSibling.previousSibling.className == "kid-show"){
+              //   button.previousSibling.previousSibling.setAttribute('class', 'kid');
+              // }
+              if (show) {
+                button.previousSibling.previousSibling.setAttribute('class', 'kid-show')
+                button.setAttribute('class', 'myButton-show')
+                console.log("It should show something")
+                return
+              }
+              else {
+                button.previousSibling.previousSibling.setAttribute('class', 'kid')
+                button.setAttribute('class', 'myButton')
+                console.log("Less is more")
+              }
+              e.stopPropagation();
+              e.preventDefault();
             });
             }
           }
