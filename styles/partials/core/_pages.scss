@@ -338,17 +338,17 @@
     border-top: 0;
     justify-content: center;
 
-    .kid{
+    .children-view{
       max-height: 300px;
       overflow-y: hidden;
       padding-left: 10px;
     }
-    .kid-show{
+    .children-view-show{
       padding-left: 10px;
     }
 
-    .myButton-show,
-    .myButton {
+    .seeMore-button-show,
+    .seeMore-button {
       margin: 10px 0 0 0;
       -webkit-font-smoothing: antialiased;
       font-size: 14px;
@@ -363,21 +363,20 @@
       cursor: pointer;
     }
 
-    .myButton-show:hover,
-    .myButton:hover {
+    .seeMore-button-show:hover,
+    .seeMore-button:hover {
       background-color: $gray-60;
     }
 
-    .myButton:before {
+    .seeMore-button:before {
       content: "See more ";
     }
 
-    .myButton-show:before {
+    .seeMore-button-show:before {
       content: "See less ";
     }
 
     .children-container {
-      // max-height: 20vh;
       overflow: visible;
       margin: 0 12px 30px 12px;
       padding: 25px;
