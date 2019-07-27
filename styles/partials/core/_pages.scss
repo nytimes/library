@@ -122,8 +122,7 @@
 
     .search-container {
       clear: both;
-      // width: calc(100vw - 60px);
-      // background: $search-container-background;
+      width: calc(100vw - 60px);
       padding: 0px 6px 0 0;
 
       @include tablet{

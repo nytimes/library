@@ -74,10 +74,14 @@ async function updateTree() {
       .filter((f) => f.resourceType !== 'folder') // may want to exclude more
       .map((f) => f.prettyName || f.name)
 
-    // for testing, delete me later
-    cache.add('ALL_FILENAMES', new Date(), 'ALL_FILENAMES', fileNames).then(async () => {
-      const fn = await cache.get('ALL_FILENAMES')
-      console.log(fn.html)
+    // Add filename listing
+    cache.get('ALL_FILENAMES').then(async (data) => {
+      if (!data || JSON.stringify(data.html) !== JSON.stringify(fileNames)) {
+        console.log('Adding new files to file listing')
+        cache.add('ALL_FILENAMES', new Date(), 'ALL_FILENAMES', fileNames)
+      }
+    }).catch((err) => {
+      console.error(err)
     })
 
     const count = fileNames.length
