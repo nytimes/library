@@ -130,11 +130,13 @@
 
 
   .tt-menu {
-    width: 100%;
-    background-color: $search-container-background;
-    border-color: $gray-30;
+    background-color: inherit;
+    border-color: $gray-40;
     border-style: solid;
     border-width: 0 1px 1px 1px;
+    // compensate for border
+    width: 100%;
+    left: -1px !important;
   }
 
   .tt-suggestion {
@@ -159,6 +161,7 @@
     transition: background-color 0.3s;
     display: inline-block;
     border: 1px solid $gray-40;
+    background: $white;
     -webkit-box-shadow: 5px 5px 0px 0px $gray-25;;
     -moz-box-shadow: 5px 5px 0px 0px $gray-25;;
     box-shadow: 5px 5px 0px 0px $gray-25;;
@@ -199,12 +202,14 @@
   }
 
   .icon{
-    position: absolute;
+    position: relative;
     z-index: 10;
     border: none;
     background: $accent;
-    height: 46px;
+    height: 50px;
     width: 50px;
+    top: 1px; // compensate for top border
+    right: 1px; // compensate for right border
     color: $white;
     opacity: 1;
     font-size: 12pt;
