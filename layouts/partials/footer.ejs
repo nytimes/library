@@ -66,6 +66,19 @@
     $('.btn-user-initial').text(initials.join(''));
   }
 
+  // ajax for latest filenames, req will 304 and serve cache if unchanged
+  $.ajax({
+    method: 'GET',
+    url: '/filename-listing',
+    json: true
+  }).always(function(data, _, xhr) {
+    localStorage.setItem('filenames', JSON.stringify(data))
+  })
+
+  function getFilenameStorage() {
+    return JSON.parse(localStorage.getItem('filenames')).html
+  }
+
   $(document).on('click', '#edit-button', function () {
     $.ajax({
       method: 'GET',

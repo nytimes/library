@@ -35,29 +35,6 @@ $(document).ready(function() {
     }
   }
 
-  function populateFilenameStorage() {
-    // var currentList = JSON.parse(localStorage.getItem('filenames'))
-    // console.log('got', currentList);
-    // if (currentList && currentList.modified) {
-    //   console.log('checking list');
-    //   // If the filenames have already been updated today, don't update
-    //   // TODO: make this logic actually check days.
-    //   var modifiedDate = new Date(currentList.modified)
-    //   if (modifiedDate.getDay() === new Date().getDay()) return
-    // }
-    $.ajax({ method: 'GET', url: '/filename-listing', json: true }).always(function(data, _, xhr) {
-      console.log(xhr.status, data);
-      localStorage.setItem('filenames', JSON.stringify(data))
-    })
-  }
-
-  function getFilenameStorage() {
-    console.log('sending', JSON.parse(localStorage.getItem('filenames')).html);
-    return JSON.parse(localStorage.getItem('filenames')).html
-  }
-
-  $html.one('focus', '#search-box', populateFilenameStorage);
-
   function populateUserHistoryData() {
     $.ajax({
       method: 'GET',
