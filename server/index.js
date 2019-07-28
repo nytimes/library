@@ -23,7 +23,6 @@ const {preload, postload} = allMiddleware
 
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, '../layouts'))
-app.enable('etag')
 
 app.get('/healthcheck', (req, res) => {
   res.send('OK')

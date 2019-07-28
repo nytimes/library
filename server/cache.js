@@ -15,9 +15,7 @@ exports.get = cache.get // expose the ability to retreive cache data internally
 
 middlewareRouter.get('/filename-listing', async (req, res) => {
   const cached = await cache.get('ALL_FILENAMES')
-  const lastModified = new Date(cached.modified).toISOString()
-  res.header('Cache-Control', 'private, must-revalidate')
-  res.header('Last-Modified', lastModified)
+  res.header('Cache-Control', 'public, max-age=3600')
   return res.send(cached)
 })
 
