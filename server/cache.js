@@ -13,7 +13,7 @@ const noCacheDelay = parseInt(process.env.EDIT_CACHE_DELAY, 10) || 60 * 60
 
 exports.get = cache.get // expose the ability to retreive cache data internally
 
-middlewareRouter.get('/filename-listing', async (req, res) => {
+middlewareRouter.get('/filename-listing.json', async (req, res) => {
   const cached = await cache.get('ALL_FILENAMES')
   res.header('Cache-Control', 'public, must-revalidate') // override no-cache
   return res.send(cached)

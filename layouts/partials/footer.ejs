@@ -69,7 +69,7 @@
   // ajax for latest filenames, req will 304 and serve cache if unchanged
   $.ajax({
     method: 'GET',
-    url: '/filename-listing',
+    url: '/filename-listing.json',
     json: true
   }).always(function(data, _, xhr) {
     localStorage.setItem('filenames', JSON.stringify(data))

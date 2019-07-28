@@ -143,6 +143,7 @@
     padding: 10px 15px;
     text-overflow: ellipsis;
     overflow: hidden;
+    cursor: pointer;
 
     &:hover {
       background-color: $accent-light;
