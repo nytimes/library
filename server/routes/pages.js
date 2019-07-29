@@ -5,8 +5,8 @@ const move = require('../move')
 
 const router = require('express-promise-router')()
 
-const {getTree, getMeta, getTagged} = require('../list')
-const {getTemplates, sortDocs, stringTemplate} = require('../utils')
+const { getTree, getMeta, getTagged } = require('../list')
+const { getTemplates, sortDocs, stringTemplate, getConfig } = require('../utils')
 
 router.get('/', handlePage)
 router.get('/:page', handlePage)
@@ -23,18 +23,18 @@ async function handlePage(req, res) {
   if (!pages.has(page)) return 'next'
 
   const template = `pages/${page}`
-  const {q, id, dest} = req.query
+  const { q, id, dest } = req.query
   if (page === 'search' && q) {
     return search.run(q, driveType).then((results) => {
-      res.render(template, {q, results, template: stringTemplate})
+      res.render(template, { q, results, template: stringTemplate })
     })
   }
 
   if (page === 'move-file' && id) {
     if (!dest) {
       const folders = await move.getFolders(id)
-      const {prettyName, parents} = getMeta(id)
-      return res.render(template, {prettyName, folders, id, parents, template: stringTemplate})
+      const { prettyName, parents } = getMeta(id)
+      return res.render(template, { prettyName, folders, id, parents, template: stringTemplate })
     }
 
     return move.moveFile(id, dest, driveType).then((result) => {
@@ -45,11 +45,11 @@ async function handlePage(req, res) {
   if (page === 'categories' || page === 'index') {
     const tree = await getTree()
     const categories = buildDisplayCategories(tree)
-    res.render(template, {...categories, template: stringTemplate})
+    res.render(template, { ...categories, template: stringTemplate })
     return
   }
 
-  res.render(template, {template: stringTemplate})
+  res.render(template, { template: stringTemplate })
 }
 
 function buildDisplayCategories(tree) {
@@ -62,25 +62,27 @@ function buildDisplayCategories(tree) {
   // Ignore pages at the root of the site on the category page
   const all = categories
     .map((c) => Object.assign({}, c, getMeta(c.id)))
-    .filter(({resourceType, tags, isTrashCan}) => resourceType === 'folder' && !tags.includes('hidden') && !isTrashCan)
+    .filter(({ resourceType, tags, isTrashCan }) => resourceType === 'folder' && !tags.includes('hidden') && !isTrashCan)
     .sort(sortDocs)
     .map((category) => {
-      category.children = Object.values(category.children || {}).map(({id}) => {
-        const {prettyName: name, path: url, resourceType, sort, tags} = getMeta(id)
+      category.children = Object.values(category.children || {}).map(({ id }) => {
+        const { prettyName: name, path: url, resourceType, sort, tags } = getMeta(id)
         return { name, resourceType, url, sort, tags }
       })
-      .filter(({ tags }) => !tags.includes('hidden'))
-      .sort(sortDocs)
+        .filter(({ tags }) => !tags.includes('hidden'))
+        .sort(sortDocs)
       return category
     })
 
-  const teams = getTagged('team')
-    .map(getMeta)
-    .sort(sortDocs)
+  const modulesConfig = getConfig('landing.modules') || []
 
-  const featured = getTagged('featured')
-    .map(getMeta)
-    .sort(sortDocs)
+  const modules = modulesConfig.map((module) => {
+    const items = getTagged(module.tag)
+      .map(getMeta)
+      .sort(sortDocs)
 
-  return {all, teams, featured}
+    return { ...module, items }
+  })
+
+  return { all, modules }
 }

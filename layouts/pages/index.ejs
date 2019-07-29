@@ -18,41 +18,14 @@
         <%- include('../partials/search', {style: 'homepage', focus: 'autofocus', msgOnFocus: template('search.placeholder')}) %>
 
         <div class="featured-cat">
-          <div class="teams-cat-container">
-            <h3>Find by Team</h3>
-            <ul class="teams-cat-list">
-              <% teams.slice(0, 6).forEach((team) => { %>
-                <li data-team-id="<%= team.id %>"><a class="button btn-cat" href="<%= team.path %>"><%= team.prettyName %></a></li>
-              <% }) %>
-            </ul>
-          </div>
-          <div class="featured-cat-container">
-            <h3>Useful Docs</h3>
-            <ul class="featured-cat-list">
-              <% featured.forEach((doc) => { %>
-                <% const type = doc.resourceType %>
-                <li>
-                  <%
-                  const iconMap = {
-                    document: 'file-o',
-                    spreadsheet: 'table',
-                    'text/html': 'file-o',
-                    folder: 'folder',
-                    presentation: 'clone',
-                    image: 'picture-o',
-                    video: 'video-camera',
-                    pdf: 'file-pdf-o'
-                  }
-                  const iconName = iconMap[type] || 'external-link'
-                  const className = `fa-${iconName}`
-                  %>
-                  <i class="fa foldericon <%= className %>" aria-hidden="true"></i>
-                  <a href="<%= doc.path %>"><%= doc.prettyName %></a>
-                </li>
-              <% }) %>
-              <li><a class="button btn-homepage" href="/categories"><%- template('landing.viewAll') %></a></li>
-            </ul>
-          </div>
+          <% if (modules.length) { 
+            modules.forEach((module, i, all) => {
+          %>
+            <%- include('../partials/landingModule', module) %>
+          <%  })  
+          } else { %>
+          <!-- Eventually we might display a warning here about why this space is empty. -->
+          <% } %>
         </div>
 
       </div>
