@@ -169,25 +169,20 @@ function refreshHistory(localStorageKey, type, cb) {
 }
 
 function seeMoreButton() {
-  const x = document.getElementsByClassName('children')
-  const y = document.getElementsByClassName('children-container')
-  let numButtons = 0
-  for (let i = 0; i < x.length; i++) {
-    if (x[i].clientHeight > 300) {
-      y[i].innerHTML = y[i].innerHTML + '<button class="seeMore-button">See More </button>'
-      numButtons = numButtons + 1
-    }
-  }
-  if (document.getElementsByClassName('seeMore-button').length > 0) {
-    const button = document.getElementsByClassName('seeMore-button')[numButtons - 1]
-    button.onclick = function (e) {
-      if (button.previousSibling.previousSibling.className === 'children-view hide') {
-        button.previousSibling.previousSibling.classList.remove('hide')
-        button.innerHTML = 'See Less'
-      } else {
-        button.previousSibling.previousSibling.classList.add('hide')
-        button.innerHTML = 'See More'
-      }
-    }
-  }
+  $('.children-view').each((_, el) => {
+    var $el = $(el)
+    var $content = $el.find('.children')
+    if ($el.height() >= $content.height()) return
+
+    $el.parent().append('<button class="seeMore-button">See more</button>')
+  })
+
+  $('#category-page').on('click', '.seeMore-button', (el) => {
+    var $button = $(el.currentTarget)
+    var text = $button.hasClass('show') ? 'See more' : 'See less'
+
+    $button.toggleClass('show')
+    $button.parent().find('.children-view').toggleClass('hide')
+    $button.html(text)
+  })
 }
