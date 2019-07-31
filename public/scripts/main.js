@@ -168,6 +168,8 @@ function refreshHistory(localStorageKey, type, cb) {
   })
 }
 
+// Adds a See More button for category containers with content
+// that overflows a max height set in the css
 function seeMoreButton() {
   $('.children-view').each((_, el) => {
     var $el = $(el)
