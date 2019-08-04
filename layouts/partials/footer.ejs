@@ -68,7 +68,8 @@
 
   // ajax for latest filenames, req will 304 and serve cache if unchanged
   var lastFilenameFetch = getFilenameStorage()
-  if (new Date().getTime() - lastFilenameFetch.lastFetched > 600000) { // 10 min
+  var now = new Date().getTime()
+  if (!lastFilenameFetch || now - lastFilenameFetch.lastFetched > 600000) { // 10 min
     $.ajax({
       method: 'GET',
       url: '/filename-listing.json',
