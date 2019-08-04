@@ -5,7 +5,7 @@ const assert = require('assert')
 const moment = require('moment')
 const express = require('express')
 
-const {f, allFilenames} = require('../utils')
+const {f} = require('../utils')
 const cache = require('../../server/cache')
 
 const server = express()
@@ -77,16 +77,6 @@ describe('The cache', f((mocha) => {
         .expect(200)
         .then((res) => {
           assert.equal(res.text, html, 'the returned html should match what was cached')
-        })
-    }))
-
-    it('should contain a complete filename listing', f((mocha) => {
-      return getCache('/filename-listing.json')
-        .expect(200)
-        .then((res) => {
-          const { html } = res.body
-          assert(Array.isArray(html), 'cached file listing should be an array')
-          assert.deepEqual(html, allFilenames, 'cached file listing should contian all files')
         })
     }))
 

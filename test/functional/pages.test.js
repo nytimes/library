@@ -3,6 +3,7 @@
 const request = require('supertest')
 const {expect} = require('chai')
 const sinon = require('sinon')
+const {allFilenames} = require('../utils')
 
 const app = require('../../server/index')
 
@@ -88,6 +89,19 @@ describe('Server responses', () => {
           expect(res.text).to.include('By <span class="author">John Smith</span>')
           expect(res.text).to.include('Last edited by <span class="author">Foo Bar</span>')
           expect(res.text).to.include('Home article 8 for test folder 7')
+        })
+    })
+  })
+
+  describe('that return JSON', () => {
+    it('should contain a complete filename listing', () => {
+      return request(app)
+      .get('/filename-listing.json')
+        .expect(200)
+        .then((res) => {
+          const { filenames } = res.body
+          expect(Array.isArray(filenames), 'cached file listing should be an array')
+          expect(filenames).to.equal(allFilenames)
         })
     })
   })

@@ -109,7 +109,7 @@ $(document).ready(function() {
     // regex used to determine if a string contains the substring `q`
     var substrRegex = new RegExp(q, 'i');
 
-    var strs = getFilenameStorage()
+    var strs = getFilenameStorage().filenames
     // iterate through the pool of strings and for any string that
     // contains the substring `q`, add it to the `matches` array
     $.each(strs, (i, str) => {

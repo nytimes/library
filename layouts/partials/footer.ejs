@@ -67,16 +67,20 @@
   }
 
   // ajax for latest filenames, req will 304 and serve cache if unchanged
-  $.ajax({
-    method: 'GET',
-    url: '/filename-listing.json',
-    json: true
-  }).always(function(data, _, xhr) {
-    localStorage.setItem('filenames', JSON.stringify(data))
-  })
+  var lastFilenameFetch = getFilenameStorage()
+  if (new Date().getTime() - lastFilenameFetch.lastFetched > 600000) { // 10 min
+    $.ajax({
+      method: 'GET',
+      url: '/filename-listing.json',
+      json: true
+    }).always(function(data, _, xhr) {
+      data.lastFetched = new Date().getTime()
+      localStorage.setItem('filenames', JSON.stringify(data))
+    })
+  }
 
   function getFilenameStorage() {
-    return JSON.parse(localStorage.getItem('filenames')).html
+    return JSON.parse(localStorage.getItem('filenames'))
   }
 
   $(document).on('click', '#edit-button', function () {
