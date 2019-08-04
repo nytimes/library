@@ -13,7 +13,7 @@ describe('Tree', () => {
   it('should contain top level items', async () => {
     const tree = await list.getTree()
     expect(tree).to.include.keys(
-      'breadcrumb', 'children', 'home', 'id', 'nodeType', 'sort'
+      'breadcrumb', 'children', 'home', 'id', 'nodeType', 'sort', 'prettyName'
     )
   })
 

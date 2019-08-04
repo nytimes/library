@@ -12,9 +12,7 @@ router.get('/', handlePage)
 router.get('/:page', handlePage)
 
 router.get('/filename-listing.json', async (req, res) => {
-  // const cached = await cache.get('ALL_FILENAMES')
   res.header('Cache-Control', 'public, must-revalidate') // override no-cache
-  // return res.send(cached)
   const tree = await getTree()
   res.json({filenames: buildFilenameListing(tree)})
 })
@@ -61,14 +59,16 @@ async function handlePage(req, res) {
 }
 
 function buildFilenameListing(tree) {
-  const names = []
   if (!tree.children) return []
+  const names = []
   Object.keys(tree.children).map((key) => {
     const fileObj = tree.children[key]
-    if (fileObj.nodeType === 'branch') names.push(...buildFilenameListing(fileObj))
-    if (fileObj.nodeType === 'leaf') names.push(fileObj.prettyName)
+    const { nodeType, prettyName, home, homePrettyName } = fileObj
+    if (nodeType === 'branch') names.push(...buildFilenameListing(fileObj))
+    // leaves and "home" files of branches are searchable files
+    if (nodeType === 'leaf') names.push(prettyName)
+    if (home) names.push(homePrettyName)
   })
-  console.log('RETURNING')
   return names
 }
 

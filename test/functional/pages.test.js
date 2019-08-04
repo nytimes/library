@@ -101,7 +101,7 @@ describe('Server responses', () => {
         .then((res) => {
           const { filenames } = res.body
           expect(Array.isArray(filenames), 'cached file listing should be an array')
-          expect(filenames).to.equal(allFilenames)
+          expect(filenames).to.include(...allFilenames)
         })
     })
   })

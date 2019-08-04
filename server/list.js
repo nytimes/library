@@ -74,16 +74,6 @@ async function updateTree() {
       .filter((f) => f.resourceType !== 'folder') // may want to exclude more
       .map((f) => f.prettyName || f.name)
 
-    // Add filename listing
-    cache.get('ALL_FILENAMES').then(async (data) => {
-      if (!data || JSON.stringify(data.html) !== JSON.stringify(fileNames)) {
-        console.log('Adding new files to file listing')
-        cache.add('ALL_FILENAMES', new Date(), 'ALL_FILENAMES', fileNames)
-      }
-    }).catch((err) => {
-      console.error(err)
-    })
-
     const count = fileNames.length
     log.debug(`Current file count in drive: ${count}`)
 
@@ -204,6 +194,7 @@ function produceTree(files, firstParent) {
         parent.children.push(id)
       } else {
         parent.home = id
+        parent.homePrettyName = docs.cleanName(name)
         byId[id].isHome = true
       }
 
@@ -223,13 +214,14 @@ function produceTree(files, firstParent) {
 
 // do we care about parent ids? maybe not?
 function buildTreeFromData(rootParent, previousData, breadcrumb) {
-  const {children, home} = driveBranches[rootParent] || {}
+  const {children, home, homePrettyName} = driveBranches[rootParent] || {}
   const parentInfo = docsInfo[rootParent] || {}
 
   const parentNode = {
     nodeType: children ? 'branch' : 'leaf',
     prettyName: parentInfo.prettyName,
     home,
+    homePrettyName,
     id: rootParent,
     breadcrumb,
     sort: parentInfo ? determineSort(parentInfo.name) : Infinity // some number here that could be used to sort later
