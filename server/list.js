@@ -228,6 +228,7 @@ function buildTreeFromData(rootParent, previousData, breadcrumb) {
 
   const parentNode = {
     nodeType: children ? 'branch' : 'leaf',
+    prettyName: parentInfo.prettyName,
     home,
     id: rootParent,
     breadcrumb,

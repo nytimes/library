@@ -11,6 +11,14 @@ const { getTemplates, sortDocs, stringTemplate, getConfig } = require('../utils'
 router.get('/', handlePage)
 router.get('/:page', handlePage)
 
+router.get('/filename-listing.json', async (req, res) => {
+  // const cached = await cache.get('ALL_FILENAMES')
+  res.header('Cache-Control', 'public, must-revalidate') // override no-cache
+  // return res.send(cached)
+  const tree = await getTree()
+  res.json({filenames: buildFilenameListing(tree)})
+})
+
 module.exports = router
 
 const pages = getTemplates('pages')
@@ -50,6 +58,18 @@ async function handlePage(req, res) {
   }
 
   res.render(template, { template: stringTemplate })
+}
+
+function buildFilenameListing(tree) {
+  const names = []
+  if (!tree.children) return []
+  Object.keys(tree.children).map((key) => {
+    const fileObj = tree.children[key]
+    if (fileObj.nodeType === 'branch') names.push(...buildFilenameListing(fileObj))
+    if (fileObj.nodeType === 'leaf') names.push(fileObj.prettyName)
+  })
+  console.log('RETURNING')
+  return names
 }
 
 function buildDisplayCategories(tree) {
