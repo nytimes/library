@@ -12,6 +12,14 @@
   //   margin: 80px auto 30px auto;
   // }
 
+  .warning {
+    margin-top: 10px;
+    background-color: $gray-50;
+    color: $black;
+    padding: 15px;
+    font-size: 14px;
+  }
+
   h1.headline {
     font-family: $font-headline;
     font-size: 36px;

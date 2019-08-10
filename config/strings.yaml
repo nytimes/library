@@ -87,3 +87,7 @@ error:
     heading: Uh oh, that's a 500.
     message: Perhaps try to search for something else instead?
 
+# warning messages
+warning:
+  duplicate: !!js/function (names, folderId) => `Multiple resources in <a href="https://drive.google.com/drive/u/0/folders/${folderId}" target="_blank">this folder</a> share the same name&#58; ${names.join(', ')}. Only one will be accesible through Library.`
+
