@@ -5,7 +5,7 @@ const move = require('../move')
 
 const router = require('express-promise-router')()
 
-const { getTree, getMeta, getTagged } = require('../list')
+const { getTree, getFilenames, getMeta, getTagged } = require('../list')
 const { getTemplates, sortDocs, stringTemplate, getConfig } = require('../utils')
 
 router.get('/', handlePage)
@@ -13,8 +13,8 @@ router.get('/:page', handlePage)
 
 router.get('/filename-listing.json', async (req, res) => {
   res.header('Cache-Control', 'public, must-revalidate') // override no-cache
-  const tree = await getTree()
-  res.json({filenames: buildFilenameListing(tree)})
+  const filenames = await getFilenames()
+  res.json({filenames: filenames})
 })
 
 module.exports = router
@@ -56,20 +56,6 @@ async function handlePage(req, res) {
   }
 
   res.render(template, { template: stringTemplate })
-}
-
-function buildFilenameListing(tree) {
-  if (!tree.children) return []
-  const names = []
-  Object.keys(tree.children).map((key) => {
-    const fileObj = tree.children[key]
-    const { nodeType, prettyName, home, homePrettyName } = fileObj
-    if (nodeType === 'branch') names.push(...buildFilenameListing(fileObj))
-    // leaves and "home" files of branches are searchable files
-    if (nodeType === 'leaf') names.push(prettyName)
-    if (home) names.push(homePrettyName)
-  })
-  return names
 }
 
 function buildDisplayCategories(tree) {

@@ -74,8 +74,10 @@
       method: 'GET',
       url: '/filename-listing.json',
       json: true
-    }).always(function(data, _, xhr) {
-      data.lastFetched = new Date().getTime()
+    }).always(function({filenames}, _, xhr) {
+      var lastFetched = new Date().getTime()
+      var uniqueNames = new $.unique(filenames)
+      var data = {lastFetched: lastFetched, filenames: uniqueNames}
       localStorage.setItem('filenames', JSON.stringify(data))
     })
   }

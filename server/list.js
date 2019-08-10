@@ -15,6 +15,7 @@ const driveType = process.env.DRIVE_TYPE
 const driveId = process.env.DRIVE_ID
 
 let currentTree = null // current route data by slug
+let currentFilenames = null // current list of filenames for typeahead
 let docsInfo = {} // doc info by id
 let tags = {} // tags to doc id
 let driveBranches = {} // map of id to nodes
@@ -22,7 +23,8 @@ const playlistInfo = {} // playlist info by id
 
 // normally return the cached tree data
 // if it does not exist yet, return a promise for the new tree
-exports.getTree = () => currentTree || updateTree()
+exports.getTree = () => currentTree || updateTree().tree
+exports.getFilenames = () => currentFilenames || updateTree().filenames
 
 // exposes docs metadata
 exports.getMeta = (id) => {
@@ -68,16 +70,18 @@ async function updateTree() {
     const drive = google.drive({version: 'v3', auth: authClient})
     const files = await fetchAllFiles({drive, driveType})
 
-    currentTree = produceTree(files, driveId)
+    const updatedData = produceTree(files, driveId)
+    const { tree, filenames } = updatedData
+    currentTree = tree
+    currentFilenames = filenames
 
-    const fileNames = Object.values(docsInfo)
-      .filter((f) => f.resourceType !== 'folder') // may want to exclude more
-      .map((f) => f.prettyName || f.name)
+    const count = Object.values(docsInfo)
+      .filter((f) => f.resourceType !== 'folder')
+      .length
 
-    const count = fileNames.length
     log.debug(`Current file count in drive: ${count}`)
 
-    return currentTree
+    return updatedData
   })
 }
 
@@ -153,8 +157,9 @@ function produceTree(files, firstParent) {
   // maybe group into folders first?
   // then build out tree, by traversing top down
   // keep in mind that files can have multiple parents
+  const fileNames = []
   const [byParent, byId, tagIds] = files.reduce(([byParent, byId, tagIds], resource) => {
-    const {parents, id, name} = resource
+    const {parents, id, name, mimeType} = resource
 
     // prepare data for the individual file and store later for reference
     // FIXME: consider how to remove circular dependency here.
@@ -165,10 +170,12 @@ function produceTree(files, firstParent) {
       .map((t) => t.trim().toLowerCase())
       .filter((t) => t.length > 0)
 
+    if (!mimeType.includes('folder')) fileNames.push(prettyName)
+
     byId[id] = Object.assign({}, resource, {
       prettyName,
       tags,
-      resourceType: cleanResourceType(resource.mimeType),
+      resourceType: cleanResourceType(mimeType),
       sort: determineSort(name),
       slug,
       isTrashCan: slug === 'trash' && parents.includes(driveId)
@@ -194,7 +201,6 @@ function produceTree(files, firstParent) {
         parent.children.push(id)
       } else {
         parent.home = id
-        parent.homePrettyName = docs.cleanName(name)
         byId[id].isHome = true
       }
 
@@ -209,7 +215,8 @@ function produceTree(files, firstParent) {
   tags = tagIds
   docsInfo = addPaths(byId) // update our outer cache w/ data including path information
   driveBranches = byParent
-  return buildTreeFromData(firstParent, {info: oldInfo, tree: oldBranches})
+  const tree = buildTreeFromData(firstParent, {info: oldInfo, tree: oldBranches})
+  return {tree: tree, filenames: fileNames}
 }
 
 // do we care about parent ids? maybe not?
