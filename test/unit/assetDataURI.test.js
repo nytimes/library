@@ -1,7 +1,7 @@
 'use strict'
 
 const {assert} = require('chai')
-const {assetDataURI, config} = require('../../server/utils')
+const {assetDataURI} = require('../../server/utils')
 
 describe('assetDataURI', () => {
   it('base64-encodes images from the public directory', async function() {
