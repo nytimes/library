@@ -1,0 +1,18 @@
+// When serving error pages, the app inlines the styles below instead of
+// including the main stylesheet via a <link> tag. This makes it possible to
+// style error pages for logged-out visitors. (The main stylesheet is behind
+// the authentication layer.)
+
+// top level templating values that can be overridden
+@import "vars";
+@import "theme";
+
+// core layout styles rarely overridden
+@import "core/mixins";
+@import "core/base";
+@import "core/furniture";
+@import "core/pages";
+@import "core/errata";
+
+// final stylesheet with any additional styles for custom logic
+@import "custom";
