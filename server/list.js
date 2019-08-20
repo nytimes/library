@@ -23,8 +23,8 @@ const playlistInfo = {} // playlist info by id
 
 // normally return the cached tree data
 // if it does not exist yet, return a promise for the new tree
-exports.getTree = () => currentTree || updateTree().tree
-exports.getFilenames = () => currentFilenames || updateTree().filenames
+exports.getTree = () => currentTree || updateTree().then(({tree}) => tree)
+exports.getFilenames = () => currentFilenames || updateTree().then(({filenames}) => filenames)
 
 // exposes docs metadata
 exports.getMeta = (id) => {
