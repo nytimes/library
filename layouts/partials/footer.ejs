@@ -74,9 +74,11 @@
       method: 'GET',
       url: '/filename-listing.json',
       json: true
-    }).always(function({filenames}, _, xhr) {
+    }).then(function(data, textStatus, xhr) {
+      if (xhr.status !== 200) return; // if ajax fails, continue with old listing
+
       var lastFetched = new Date().getTime()
-      var uniqueNames = new $.unique(filenames)
+      var uniqueNames = new $.unique(data.filenames)
       var data = {lastFetched: lastFetched, filenames: uniqueNames}
       localStorage.setItem('filenames', JSON.stringify(data))
     })
