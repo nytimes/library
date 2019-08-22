@@ -157,8 +157,7 @@ function produceTree(files, firstParent) {
   // maybe group into folders first?
   // then build out tree, by traversing top down
   // keep in mind that files can have multiple parents
-  const fileNames = []
-  const [byParent, byId, tagIds] = files.reduce(([byParent, byId, tagIds], resource) => {
+  const [byParent, byId, tagIds, fileNames] = files.reduce(([byParent, byId, tagIds, fileNames], resource) => {
     const {parents, id, name, mimeType} = resource
 
     // prepare data for the individual file and store later for reference
@@ -207,8 +206,8 @@ function produceTree(files, firstParent) {
       byParent[parentId] = parent
     })
 
-    return [byParent, byId, tagIds]
-  }, [{}, {}, {}])
+    return [byParent, byId, tagIds, fileNames]
+  }, [{}, {}, {}, []])
 
   const oldInfo = docsInfo
   const oldBranches = driveBranches
