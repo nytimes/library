@@ -108,9 +108,9 @@ function formatCode(html) {
     return `<pre type="${codeType}">${formatCodeContent(content)}</pre>`
   })
 
-  // Replace single backticks with <tt>
+  // Replace single backticks with <code>
   html = html.replace(/`(.+?)`/g, (match, content) => {
-    return `<tt>${formatCodeContent(content)}</tt>`
+    return `<code>${formatCodeContent(content)}</code>`
   })
 
   html = html.replace(/&lt;%-(.+)%&gt;/g, (match, content) => {
