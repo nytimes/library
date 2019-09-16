@@ -419,10 +419,17 @@
       }
     }
 
-    tt {
+    code {
       background: $accent-lightest;
       color: $accent-dark;
-      padding: 2px 5px;
+      padding: 1px 0px;
+      margin: 0 4px;
+      -webkit-box-shadow: 4px 0px 0px $accent-lightest, -4px 0px 0px $accent-lightest;
+      -moz-box-shadow: 4px 0px 0px $accent-lightest, -4px 0px 0px $accent-lightest;
+      box-shadow: 4px 0px 0px $accent-lightest, -4px 0px 0px $accent-lightest;
+      -webkit-box-decoration-break: clone;
+      -moz-box-decoration-break: clone;
+      box-decoration-break: clone;
     }
   }
 
