@@ -71,18 +71,13 @@ router.use((req, res, next) => {
 function isAuthorized(user) {
   const [{value: userEmail = ''} = {}] = user.emails || []
   const [userDomain] = userEmail.split('@').slice(-1)
-  const checkRegexEmail = (() => {
-    const domainsArray = [...domains]
-    for (const d in domainsArray) {
-      if (userDomain.match(domainsArray[d])) return true
+  const checkRegexEmail = () => {
+    const domainsArray = Array.from(domains)
+    for (const domain of domainsArray) {
+      if (userDomain.match(domain)) return true
     }
-  })()
-
-  if ((domains.has(userDomain)) ||
-        domains.has(userEmail) ||
-        checkRegexEmail) {
-    return true
   }
+  return domains.has(userDomain) || domains.has(userEmail) || checkRegexEmail()
 }
 
 function setUserInfo(req) {
