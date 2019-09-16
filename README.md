@@ -8,6 +8,8 @@ A collaborative newsroom documentation site, powered by Google Docs.
 **Table of Contents**
 
 - [Demo Site & User Guide](#demo-site--user-guide)
+- [Contacting us](#contacting-us)
+- [Questions](#questions)
 - [Development Workflow](#development-workflow)
   - [Tests](#tests)
 - [Customization](#customization)
@@ -27,8 +29,14 @@ A collaborative newsroom documentation site, powered by Google Docs.
 
 ## Demo Site & User Guide
 
-A working (read only) demo of Library is available at https://nyt-library-demo.herokuapp.com. The site contains
-instructions for how to get the most out of Library.
+Documentation about how to get started with Library is hosted as a working (read only) demo on Heroku. Consult the site for more detailed instructions than this readme about how to get the most out of Library: https://nyt-library-demo.herokuapp.com. 
+
+## Contacting us
+
+Love Library? Let us know by [joining our Google Group](https://groups.google.com/forum/#!forum/nyt-library-community) and dropping us a line. You'll also stay up to date with the latest Library features via our release notes, which get sent to this list.
+
+## Questions
+If you have questions about how to get your copy of Library up and running, [join our Google Group](https://groups.google.com/forum/#!forum/nyt-library-community)) and let us know what you're running into. We also keep an eye on the #proj-library channel in the News Nerdery Slack. We'll do our best to answer your questions.
 
 ## Development Workflow
 
@@ -63,9 +71,11 @@ DRIVE_ID=0123456ABCDEF # the ID of your team's drive or shared folder. The strin
 ```
 Make sure to remove all comments after the `DRIVE_TYPE` and `DRIVE_ID` vars.
 
+**Be careful!** Setting NODE_ENV to `development` changes the built in behaviors for site authentication to allow accounts other than those in the APPROVED_DOMAINS list. **Never use NODE_ENV=development for your deployed site, only locally.**
+
 5. Start the app:
 
-   `npm run build && npm run watch`
+   `npm run watch`
 
 The app should now be running at `localhost:3000`. Note that Library requires Node v8 or higher.
 
@@ -86,12 +96,14 @@ Wherever you deploy Library, you'll likely want to [set up a Google service acco
 
 If you wish to deploy Library with customizations, create a git repo with the files you would like to include. Set the `CUSTOMIZATION_GIT_REPO` environment variable to the cloning URL. Files in the repo and packages specified in the `package.json` will be included in your library installation.
 
+For more detailed instructions, consult the Getting Started section of the demo site: https://nyt-library-demo.herokuapp.com/get-started
+
 ### Using Heroku
 
 This button can quickly deploy to Heroku:
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://nyti.ms/2CrT2y2)
 
-Set your app's `GOOGLE_APPLICATION_JSON`, `GOOGLE_CLIENT_ID`, and `GOOGLE_CLIENT_SECRET` with values from the service account and Oauth client. Add *<your-heroku-app-url\>.com* as an authorized domain in the general OAuth consent screen setup and then add *http://<your-heroku-app-url\>.com/auth/redirect* as the callback url in the OAuth credential setup itself. 
+Set your app's `GOOGLE_APPLICATION_JSON`, `GOOGLE_CLIENT_ID`, and `GOOGLE_CLIENT_SECRET` with values from the service account and Oauth client. Add *<your-heroku-app-url\>.com* as an authorized domain in the general OAuth consent screen setup and then add *http://<your-heroku-app-url\>.com/auth/redirect* as the callback url in the OAuth credential setup itself.
 
 ### Using Google App Engine
 You can also deploy Library to GAE, using the included `app.yaml`. Note that you will need to enable billing on your GCP project in order to use Google App Engine. More detailed instructions are provided on the [demo site](https://nyt-library-demo.herokuapp.com/get-started/deploying-library-google-app-engine).

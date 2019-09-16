@@ -52,7 +52,15 @@ function sampleFiles() {
     (i, f) => ({
       mimeType: 'application/vnd.google-apps.spreadsheet',
       name: `Test ${i} | playlist`
-    })
+    }),
+    (i, f) => ({
+      mimeType: 'application/vnd.google-apps.document',
+      name: `Article 3 in test folder ${f}`
+    }),
+    (i, f) => ({
+      mimeType: 'application/vnd.google-apps.document',
+      name: `Article 3 in test folder ${f}`
+    }),
   ].map((fn, i) => {
     const id = counter + i
     const folder = counter
