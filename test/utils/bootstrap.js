@@ -11,7 +11,7 @@ process.env.DRIVE_ID = 'b1ae9c8be6c34aa155f157207a0c840e'
 process.env.GOOGLE_CLIENT_ID = 'abc123'
 process.env.GOOGLE_CLIENT_SECRET = 'abc123'
 process.env.SESSION_SECRET = 'abc123'
-process.env.APPROVED_DOMAINS = 'test.com'
+process.env.APPROVED_DOMAINS = 'test.com, (.*)?ar.org, demo.user@demo.site.edu'
 process.env.GCP_PROJECT_ID = 'fake-project'
 const userInfo = {
   emails: [{value: 'test.user@test.com'}],
