@@ -1,55 +1,63 @@
 'use strict'
 
 const fs = require('fs')
+const {promisify} = require('util')
 const log = require('../logger')
 const {stringTemplate, assetDataURI} = require('../utils')
 
 let assetCache
+const readFileAsync = promisify(fs.readFile)
 
 // Because asset requests are authenticated, we inline the images and CSS
 // that we need to serve to logged-out users, e.g. on the auth error page.
-function loadInlineAssets() {
-  if (assetCache) return new Promise((resolve) => resolve(assetCache))
+async function loadInlineAssets() {
+  if (assetCache) return assetCache
 
   const assets = {}
-  const assetPromises = ['branding.icon', 'branding.favicon'].map((key) => {
+
+  // Load the core stylesheet.
+  // If want to add support for base64-encoding background-image URLs,
+  // we could augment this function with a regex that replaces each URL pattern
+  // in public/css/errors.css with the result of a call to assetDataURI()
+  const cssLoader = async () => {
+    const css = await readFileAsync('public/css/errors.css')
+    assets.css = css.toString()
+  }
+
+  const assetLoaders = ['branding.icon', 'branding.favicon'].map((key) => {
     // Load essential images as base64 data-URIs
-    return new Promise((resolve, reject) => {
-      assetDataURI(stringTemplate(key)).then((img) => {
+    const loader = async () => {
+      try {
+        const img = await assetDataURI(stringTemplate(key))
         assets[key] = img
-        resolve()
-      }).catch((err) => {
-        // It's okay for users to have deleted these keys,
-        // but other errors should throw
-        if (err.code === 'ENOENT') { resolve(err) } else { throw err }
-      })
-    })
-  }).concat(
-    // Load the core stylesheet
-    new Promise((resolve, reject) => {
-      fs.readFile('public/css/errors.css', (err, data) => {
-        if (err) throw err
-        assets.css = data.toString()
-        resolve()
-      })
-    })
-  )
-
-  return new Promise((resolve, reject) => {
-    Promise.all(assetPromises).then(() => {
-      assets.stringTemplate = (key, ...args) => {
-        return assets[key] || stringTemplate(key, ...args)
+      } catch (err) {
+        // It's okay for users to reference non-local or non-existent files
+        // here, but any other error should throw.
+        if (err.code !== 'ENOENT') throw err
       }
-      // Store the inlined assets in memory for subsequent requests
-      assetCache = assets
+    }
+    return loader()
+  }).concat(cssLoader())
 
-      resolve(assetCache)
-    })
-  })
+  assets.stringTemplate = (key, ...args) => {
+    return assets[key] || stringTemplate(key, ...args)
+  }
+
+  try {
+    await Promise.all(assetLoaders)
+    // Store the inlined assets in memory for subsequent requests
+    assetCache = assets
+  } catch (error) {
+    log.warn(`Error ${error.code} inlining assets!`)
+    log.info(error)
+    log.info('Falling back to linked assets instead')
+  }
+
+  return assets
 }
 
 // generic error handler to return error pages to user
-module.exports = (err, req, res, next) => {
+module.exports = async (err, req, res, next) => {
   const messages = {
     'Not found': 404,
     'Unauthorized': 403
@@ -57,11 +65,10 @@ module.exports = (err, req, res, next) => {
 
   const code = messages[err.message] || 500
   log.error(`Serving an error page for ${req.url}`, err)
-  return loadInlineAssets().then((inline) => {
-    res.status(code).render(`errors/${code}`, {
-      inlineCSS: inline.css,
-      err,
-      template: inline.stringTemplate
-    })
+  const inlined = await loadInlineAssets()
+  res.status(code).render(`errors/${code}`, {
+    inlineCSS: inlined.css,
+    err,
+    template: inlined.stringTemplate
   })
 }
