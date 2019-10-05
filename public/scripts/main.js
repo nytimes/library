@@ -101,7 +101,6 @@ $(document).ready(function() {
     $target.append(fullSection);
   }
 
-
   function filenameMatcher(q, cb) {
     const substrRegex = new RegExp(q, 'i')
     const filenames = getFilenameStorage().filenames
