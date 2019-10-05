@@ -5,11 +5,17 @@ const move = require('../move')
 
 const router = require('express-promise-router')()
 
-const { getTree, getMeta, getTagged } = require('../list')
+const { getTree, getFilenames, getMeta, getTagged } = require('../list')
 const { getTemplates, sortDocs, stringTemplate, getConfig } = require('../utils')
 
 router.get('/', handlePage)
 router.get('/:page', handlePage)
+
+router.get('/filename-listing.json', async (req, res) => {
+  res.header('Cache-Control', 'public, must-revalidate') // override no-cache
+  const filenames = await getFilenames()
+  res.json({filenames: filenames})
+})
 
 module.exports = router
 

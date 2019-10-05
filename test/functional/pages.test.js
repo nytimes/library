@@ -3,6 +3,7 @@
 const request = require('supertest')
 const {expect} = require('chai')
 const sinon = require('sinon')
+const {allFilenames} = require('../utils')
 
 const app = require('../../server/index')
 
@@ -117,6 +118,20 @@ describe('Server responses', () => {
           expect(res.text).to.match(/<style type="text\/css">[^<]/i)
           expect(res.text).to.not.include('<link href="/assets')
           expect(res.text).to.not.include('<script src="/assets')
+        })
+    })
+  })
+
+  describe('that return JSON', () => {
+    it('should contain a complete filename listing', () => {
+      return request(app)
+      .get('/filename-listing.json')
+        .expect(200)
+        .then((res) => {
+          const { filenames } = res.body
+          expect(Array.isArray(filenames), 'cached file listing should be an array')
+          expect(filenames).to.include(...allFilenames)
+          expect(filenames.length).to.equal(allFilenames.length)
         })
     })
   })
