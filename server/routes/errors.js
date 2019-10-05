@@ -27,7 +27,7 @@ function loadInlineAssets() {
   }).concat(
     // Load the core stylesheet
     new Promise((resolve, reject) => {
-      fs.readFile('public/errors.css', (err, data) => {
+      fs.readFile('public/css/errors.css', (err, data) => {
         if (err) throw err
         assets.css = data.toString()
         resolve()
