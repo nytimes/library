@@ -1,34 +1,34 @@
-$(document).ready(() => {
-  const $window = $(window)
-  const $document = $(document)
-  const $html = $('html')
+$(document).ready(function() {
+  var $window = $(window)
+  var $document = $(document)
+  var $html = $('html')
 
-  $('pre').html((index, html) => {
-    return html.split(/\r?\n/).map((line) => {
+  $("pre").html(function (index, html) {
+    return html.split(/\r?\n/).map(function(line) {
       return [
         '<div class="line">',
-        '<div class="line-number"><!-- placeholder --></div>',
-        '<span class="line-content">' + line + '</span></span>',
+          '<div class="line-number"><!-- placeholder --></div>',
+          '<span class="line-content">'+line+'</span></span>',
         '</div>'
-      ].join('')
-    }).join('')
-  })
+      ].join('');
+    }).join('');
+  });
 
   // make TOC sticky
-  const $toc = $('.g-left-panel')
+  var $toc = $(".g-left-panel");
   if ($toc.length) {
-    const stickyTop = $toc.offset().top - 100
-    $window.on('scroll', () => {
-      ($window.scrollTop() >= stickyTop) ? $toc.addClass('d-fixed') : $toc.removeClass('d-fixed')
-    })
+    var stickyTop = $toc.offset().top - 100;
+    $window.on('scroll', function(){
+      ($window.scrollTop() >= stickyTop) ? $toc.addClass('d-fixed') : $toc.removeClass('d-fixed');
+    });
   }
 
   $window.on('hashchange', correctHashScroll)
   correctHashScroll()
 
   function correctHashScroll() {
-    const currentScroll = $document.scrollTop()
-    const mastheadHeight = $('#masthead').outerHeight() + 15 // extra padding
+    var currentScroll = $document.scrollTop();
+    var mastheadHeight = $('#masthead').outerHeight() + 15; // extra padding
     if (window.location.hash && currentScroll > mastheadHeight) {
       console.log('reducing scroll from ' + currentScroll)
       $document.scrollTop(currentScroll - mastheadHeight)
@@ -43,68 +43,66 @@ $(document).ready(() => {
         limit: 4
       },
       json: true
-    }).always((data) => {
-      const recentlyViewed = data.recentlyViewed
-      const mostViewed = data.mostViewed
+    }).always(function(data) {
+      var recentlyViewed = data.recentlyViewed;
+      var mostViewed = data.mostViewed;
 
       addElements(recentlyViewed, {
         name: 'Recently Viewed',
         emptyText: "You've viewed no stories!"
-      })
+      });
 
       addElements(mostViewed, {
         name: 'Most Viewed'
-      })
+      });
 
-      $('#me .popup .fa-spinner').remove()
+      $('#me .popup .fa-spinner').remove();
     })
   }
 
-  $html.one('mouseenter', '.user-tools', populateUserHistoryData)
+  $html.one('mouseenter', '.user-tools', populateUserHistoryData);
 
   function addElements(data, elementAttributes) {
-    const $target = $('#me .popup')
+    var $target = $('#me .popup');
 
     if (!data || data.length == 0) {
       if (elementAttributes.emptyText) {
-        $target.append('<p>' + elementAttributes.emptyText + '</p>')
+        $target.append("<p>" + elementAttributes.emptyText + "</p>");
       }
-      return
+      return;
     }
 
-    const items = data.map((el) => {
-      const item = el.doc
-      const folder = (item.folder || {}).prettyName || '' // lets not try to show a folder if there isn't one
-      const path = item.path ? item.path : '#'
+    var items = data.map(function(el) {
+      var item = el.doc;
+      var folder = (item.folder || {}).prettyName || ''; // lets not try to show a folder if there isn't one
+      var path = item.path ? item.path : '#';
       return [
-        '<li>',
+      '<li>',
         '<a href="' + path + '">',
-        '<p class="docs-title">' + item.prettyName + '</p>',
-        '<p class="docs-attr">',
-        '<span class="docs-folder">' + folder + '</span>',
-        '<span class="timestamp">(' + el.lastViewed + ')</span>',
-        '</p>',
-        '</a>',
-        '</li>'
+          '<p class="docs-title">' + item.prettyName + '</p>',
+          '<p class="docs-attr">',
+            '<span class="docs-folder">' + folder + '</span>',
+            '<span class="timestamp">(' + el.lastViewed + ')</span>',
+          '</p>',
+         '</a>',
+      '</li>'
       // use .join() to turn to html string
       ].join('')
-    })
+    });
 
-    const className = elementAttributes.name.toLowerCase().replace(' ', '-') + '-content'
+    var className = elementAttributes.name.toLowerCase().replace(' ', '-') + '-content';
 
-    const fullSection = [
-      '<h3>' + elementAttributes.name + '</h3>',
-      "<ul class='" + className + "'>" + items.join('') + '</ul>'
-    ].join('')
+    var fullSection = [
+      "<h3>" + elementAttributes.name + "</h3>",
+      "<ul class='" + className + "'>" + items.join('') + "</ul>"
+    ].join('');
 
      // perform all the DOM manipulation as a single operation
-    $target.append(fullSection)
+    $target.append(fullSection);
   }
 
-  function filenameMatcher(q, cb) {
-    // an array that will be populated with substring matches
 
-    // regex used to determine if a string contains the substring `q`
+  function filenameMatcher(q, cb) {
     const substrRegex = new RegExp(q, 'i')
     const filenames = getFilenameStorage().filenames
     cb(filenames.filter((str) => substrRegex.test(str)))
@@ -120,11 +118,12 @@ $(document).ready(() => {
 })
 
 function personalizeHomepage(userId) {
+
   // Personalize the team listing on the left.
   // Most-frequently-visited teams are inserted at the top, then padded with default entries.
-  fetchHistory('teams', userId, (data) => {
-    const expectedLength = $('.teams-cat-list li').length
-    const items = data.mostViewed.map((el) => {
+  fetchHistory('teams', userId, function(data) {
+    var expectedLength = $('.teams-cat-list li').length
+    var items = data.mostViewed.map(function(el) {
       // kill existing elements that on the mostViewed list to avoid dupes
       $('ul.teams-cat-list li[data-team-id="' + el.team.id + '"]').detach()
 
@@ -157,14 +156,14 @@ function personalizeHomepage(userId) {
 }
 
 function fetchHistory(type, userId, cb) {
-  const key = 'libraryHistory:' + userId + ':' + type
-  let data
+  var key = "libraryHistory:" + userId + ':' + type
+  var data
 
-  if (data = localStorage.getItem(key)) {
+  if(data = localStorage.getItem(key)) {
     data = JSON.parse(data)
 
     // refresh localStorage data in the background if it's older than an hour
-    if (!data.ts || new Date(data.ts) < (new Date() - 60 * 60 * 1000)) {
+    if(!data.ts || new Date(data.ts) < (new Date() - 60 * 60 * 1000)) {
       refreshHistory(key, type)
     }
 
@@ -176,9 +175,9 @@ function fetchHistory(type, userId, cb) {
 
 function refreshHistory(localStorageKey, type, cb) {
   $.ajax('/reading-history/' + type + '.json?limit=5', {
-    success: function (data) {
+    success: function(data) {
       localStorage.setItem(localStorageKey, JSON.stringify({ ts: new Date(), history: data }))
-      if (cb) { return cb(data) }
+      if(cb) { return cb(data) }
     }
   })
 }
@@ -186,17 +185,17 @@ function refreshHistory(localStorageKey, type, cb) {
 // Adds a See More button for category containers with content
 // that overflows a max height set in the css
 function seeMoreButton() {
-  $('.children-view').each((_, el) => {
-    const $el = $(el)
-    const $content = $el.find('.children')
+  $('.children-view').each(function (_, el) {
+    var $el = $(el)
+    var $content = $el.find('.children')
     if ($el.height() >= $content.height()) return
 
     $el.parent().append('<button class="seeMore-button">See more</button>')
   })
 
-  $('#category-page').on('click', '.seeMore-button', (el) => {
-    const $button = $(el.currentTarget)
-    const text = $button.hasClass('show') ? 'See more' : 'See less'
+  $('#category-page').on('click', '.seeMore-button', function (el) {
+    var $button = $(el.currentTarget)
+    var text = $button.hasClass('show') ? 'See more' : 'See less'
 
     $button.toggleClass('show')
     $button.parent().find('.children-view').toggleClass('hide')
