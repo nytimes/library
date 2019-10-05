@@ -101,6 +101,19 @@ $(document).ready(function() {
     $target.append(fullSection);
   }
 
+  function filenameMatcher(q, cb) {
+    const substrRegex = new RegExp(q, 'i')
+    const filenames = getFilenameStorage().filenames
+    cb(filenames.filter((str) => substrRegex.test(str)))
+  }
+
+  // setup typeahead
+  $('#search-box').typeahead({
+    hilight: true
+  }, {
+    name: 'documents',
+    source: filenameMatcher
+  })
 })
 
 function personalizeHomepage(userId) {
