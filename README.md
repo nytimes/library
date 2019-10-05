@@ -41,7 +41,7 @@ Love Library? Let us know by [joining our Google Group](https://groups.google.co
 
 Here are some of the organizations using Library so far.
 
-[MarketWatch](https://www.marketwatch.com/)
+[Marketplace](https://www.marketplace.org/)
 
 [The New York Times](http://nytimes.com)
 
