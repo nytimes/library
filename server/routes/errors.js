@@ -1,12 +1,9 @@
 'use strict'
 
-const fs = require('fs')
-const {promisify} = require('util')
 const log = require('../logger')
-const {stringTemplate, assetDataURI} = require('../utils')
+const {assetDataURI, readFileAsync, stringTemplate} = require('../utils')
 
 let assetCache
-const readFileAsync = promisify(fs.readFile)
 
 // Because asset requests are authenticated, we inline the images and CSS
 // that we need to serve to logged-out users, e.g. on the auth error page.

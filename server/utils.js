@@ -1,6 +1,7 @@
 'use strict'
 const fs = require('fs')
 const path = require('path')
+const {promisify} = require('util')
 const yaml = require('js-yaml')
 const { get: deepProp } = require('lodash')
 const merge = require('deepmerge')
@@ -103,18 +104,16 @@ exports.stringTemplate = (configPath, ...args) => {
   return ''
 }
 
-exports.assetDataURI = (filePath) => {
+const readFileAsync = promisify(fs.readFile)
+exports.readFileAsync = readFileAsync
+exports.assetDataURI = async (filePath) => {
   // If the path starts with `/assets`, look in the app’s public directory
   const publicPath = filePath.replace(/^\/assets/, '/public')
 
   const mimeType = mime.lookup(path.posix.basename(publicPath))
   const fullPath = path.join(__dirname, '..', publicPath)
 
-  return new Promise((resolve, reject) => {
-    fs.readFile(fullPath, { encoding: 'base64' }, (err, data) => {
-      if (err) reject(err)
-      const src = `data:${mimeType};base64,${data}`
-      resolve(src)
-    })
-  })
+  const data = await readFileAsync(fullPath, { encoding: 'base64' })
+  const src = `data:${mimeType};base64,${data}`
+  return src
 }
