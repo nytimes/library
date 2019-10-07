@@ -34,8 +34,9 @@ async function handlePage(req, res) {
     return search.run(q, driveType).then((results) => {
       // special rule for the autocomplete case, go directly to the item if we find it.
       if (autocomplete) {
-        const targetItem = results.find((i) => i.prettyName === q)
-        if (targetItem) return res.redirect(targetItem.path)
+        // filter here first to make sure only _one_ document exists with this exact name
+        const exactMatches = results.filter((i) => i.prettyName === q)
+        if (exactMatches.length === 1) return res.redirect(exactMatches[0].path)
       }
 
       res.render(template, { q, results, template: stringTemplate })
