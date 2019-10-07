@@ -29,9 +29,15 @@ async function handlePage(req, res) {
   if (!pages.has(page)) return 'next'
 
   const template = `pages/${page}`
-  const { q, id, dest } = req.query
+  const { q, id, dest, autocomplete } = req.query
   if (page === 'search' && q) {
     return search.run(q, driveType).then((results) => {
+      // special rule for the autocomplete case, go directly to the item if we find it.
+      if (autocomplete) {
+        const targetItem = results.find((i) => i.prettyName === q)
+        if (targetItem) return res.redirect(targetItem.path)
+      }
+
       res.render(template, { q, results, template: stringTemplate })
     })
   }
