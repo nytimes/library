@@ -34,7 +34,7 @@ exports.inspectHttp = () => {
 exports.allFilenames = [].concat(...Object.keys(listing).map((pageName, i) => {
   // map each mock page listing to an array of non-folder file names, strip tags
   return listing[pageName].data.files.reduce((acc, {mimeType, name}) => {
-    if (!mimeType.includes('folder')) acc.push(name.split(' | ')[0])
+    if (!mimeType.includes('folder') && !name.includes('| hidden')) acc.push(name.split(' | ')[0])
     return acc
   }, [])
 }))
