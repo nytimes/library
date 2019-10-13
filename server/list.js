@@ -154,9 +154,8 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentId
 }
 
 function produceTree(files, firstParent) {
-  // maybe group into folders first?
-  // then build out tree, by traversing top down
-  // keep in mind that files can have multiple parents
+  // NB: technically files can have multiple parents
+  // may be worth filtering here based on metadata info.
   const [byParent, byId, tagIds, fileNames] = files.reduce(([byParent, byId, tagIds, fileNames], resource) => {
     const {parents, id, name, mimeType} = resource
 
@@ -169,7 +168,7 @@ function produceTree(files, firstParent) {
       .map((t) => t.trim().toLowerCase())
       .filter((t) => t.length > 0)
 
-    if (!mimeType.includes('folder')) fileNames.push(prettyName)
+    if (!mimeType.includes('folder') && !tags.includes('hidden')) fileNames.push(prettyName)
 
     byId[id] = Object.assign({}, resource, {
       prettyName,
@@ -218,7 +217,6 @@ function produceTree(files, firstParent) {
   return {tree: tree, filenames: fileNames}
 }
 
-// do we care about parent ids? maybe not?
 function buildTreeFromData(rootParent, previousData, breadcrumb) {
   const {children, home, homePrettyName} = driveBranches[rootParent] || {}
   const parentInfo = docsInfo[rootParent] || {}
@@ -351,7 +349,6 @@ function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
     if (oldItem && newItem.path !== oldItem.path) {
       cache.redirect(oldItem.path, newItem.path, newItem.modifiedTime)
     } else {
-      // should we be calling purge every time?
       // basically we are just calling purge because we don't know the last modified
       cache.purge({url: newItem.path, modified: newItem.modifiedTime}).catch((err) => {
         if (!err) return
