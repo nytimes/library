@@ -71,7 +71,7 @@ DRIVE_ID=0123456ABCDEF # the ID of your team's drive or shared folder. The strin
 ```
 Make sure to remove all comments after the `DRIVE_TYPE` and `DRIVE_ID` vars.
 
-Ensure you share your target drive or folder is shared with the email associated with your service account.
+Ensure you share your base drive or folder with the email address associated with the service account created in step 2.
 
 **Be careful!** Setting NODE_ENV to `development` changes the built in behaviors for site authentication to allow accounts other than those in the APPROVED_DOMAINS list. **Never use NODE_ENV=development for your deployed site, only locally.**
 
