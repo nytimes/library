@@ -6,6 +6,7 @@ const yaml = require('js-yaml')
 const { get: deepProp } = require('lodash')
 const merge = require('deepmerge')
 const mime = require('mime-types')
+const moment = require('moment')
 
 const log = require('./logger')
 
@@ -121,4 +122,12 @@ exports.assetDataURI = async (filePath) => {
   const data = await readFileAsync(fullPath, { encoding: 'base64' })
   const src = `data:${mimeType};base64,${data}`
   return src
+}
+
+// returns a formatted date string to be used in bylines
+// if the date passed is more than a year in the past, returns 'on [MMMM D, YYYY]'
+// if more recent than that, returns 'x [time] ago' (ex. '9 days ago')
+exports.bylineDateString = (date) => {
+  const momentDate = moment(date)
+  return moment().diff(momentDate, 'years') > 1 ? `on ${momentDate.format('MMMM D, YYYY')}` : momentDate.fromNow()
 }

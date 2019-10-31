@@ -9,42 +9,14 @@
     <div class="attribution">
       <p>
         <% if (locals.byline) { %>
-          Created by <span class="author"><%= locals.byline %></span> <span class="created-at" data-created-at="<%= createdAt %>"></span>.
-          <!-- display created at time as from now (if less than a year ago) or date (if more) -->
-          <script>
-          (function () {
-            var createdAt = $('.created-at')
-            var utcCreated = createdAt.data('created-at')
-            var createdMoment = moment(utcCreated)
-            createdAt.html(moment().diff(createdMoment, 'years') > 1 ? `on ${createdMoment.format('MMMM D, YYYY')}` : createdMoment.fromNow())
-          })()
-          </script>
+          Created by <span class="author"><%= locals.byline %></span> <%= createdAt %>.
         <% } else if (locals.createdBy && !locals.byline) { %>
-          Created by <span class="author"><%= createdBy %></span> <span class="created-at" data-created-at="<%= createdAt %>"></span>.
-          <!-- display created at time as from now (if less than a year ago) or date (if more) -->
-          <script>
-          (function () {
-            var createdAt = $('.created-at')
-            var utcCreated = createdAt.data('created-at')
-            var createdMoment = moment(utcCreated)
-            createdAt.html(moment().diff(createdMoment, 'years') > 1 ? `on ${createdMoment.format('MMMM D, YYYY')}` : createdMoment.fromNow())
-          })()
-          </script>
+          Created by <span class="author"><%= createdBy %></span> <%= createdAt %>.
         <% } %>
         <% if (locals.lastUpdatedBy) { %>
           <%# just encode the last updated date as data property to make relative time work for cache %>
-          </p>
-          <p>
-            Last edited by <span class="author"><%= lastUpdatedBy %></span> <span class="last-updated" data-last-updated="<%= modifiedAt %>"></span>.</p>
-            <!-- populate last updated time -->
-            <script>
-            (function () {
-              var $lastUpdated = $('.last-updated')
-              var utcUpdated = $lastUpdated.data('last-updated')
-              var updatedMoment = moment(utcUpdated)
-              $lastUpdated.html(updatedMoment.fromNow())
-            })()
-            </script>
+          </p><p>
+            Last edited by <span class="author"><%= lastUpdatedBy %></span> <%= modifiedAt %>.</p>
         <% } %>
       </p>
     </div>

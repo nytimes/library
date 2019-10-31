@@ -1,14 +1,12 @@
 'use strict'
 
-const moment = require('moment')
-
 const router = require('express-promise-router')()
 
 const cache = require('../cache')
 const log = require('../logger')
 const {getMeta} = require('../list')
 const {fetchDoc, cleanName, fetchByline} = require('../docs')
-const {getTemplates, sortDocs, stringTemplate} = require('../utils')
+const {getTemplates, sortDocs, stringTemplate, bylineDateString} = require('../utils')
 const {parseUrl} = require('../urlParser')
 
 router.get('*', handleCategory)
@@ -40,8 +38,8 @@ async function handleCategory(req, res) {
     url: req.path,
     title: meta.prettyName,
     lastUpdatedBy: (meta.lastModifyingUser || {}).displayName,
-    modifiedAt: meta.modifiedTime,
-    createdAt: meta.createdTime,
+    modifiedAt: bylineDateString(meta.modifiedTime),
+    createdAt: bylineDateString(meta.createdTime),
     editLink: meta.mimeType === 'text/html' ? meta.folder.webViewLink : meta.webViewLink,
     id,
     template: stringTemplate,
