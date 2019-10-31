@@ -65,10 +65,11 @@ function preparePlaylistOverview(playlistMeta, values, breadcrumb) {
     template: stringTemplate,
     url: playlistMeta.path,
     title: playlistMeta.prettyName,
-    modifiedAt: bylineDateString(playlistMeta.modifiedTime),
+    modifiedAt: playlistMeta.modifiedTime,
     lastUpdatedBy: (playlistMeta.lastModifyingUser || {}).displayName,
-    createdAt: bylineDateString(playlistMeta.createdTime),
-    editLink: playlistMeta.mimeType === 'text/html' ? playlistMeta.folder.webViewLink : playlistMeta.webViewLink
+    createdAt: playlistMeta.createdTime,
+    editLink: playlistMeta.mimeType === 'text/html' ? playlistMeta.folder.webViewLink : playlistMeta.webViewLink,
+    bylineDateString
   })
 
   return renderData

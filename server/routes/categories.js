@@ -38,12 +38,13 @@ async function handleCategory(req, res) {
     url: req.path,
     title: meta.prettyName,
     lastUpdatedBy: (meta.lastModifyingUser || {}).displayName,
-    modifiedAt: bylineDateString(meta.modifiedTime),
-    createdAt: bylineDateString(meta.createdTime),
+    modifiedAt: meta.modifiedTime,
+    createdAt: meta.createdTime,
     editLink: meta.mimeType === 'text/html' ? meta.folder.webViewLink : meta.webViewLink,
     id,
     template: stringTemplate,
-    duplicates
+    duplicates,
+    bylineDateString
   })
 
   // if this is a folder, just render from the generic data
