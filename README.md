@@ -47,8 +47,6 @@ Here are some of the organizations using Library so far.
 
 [Northwestern University Knight Lab](https://knightlab.northwestern.edu)
 
-[SRCCON 2019](https://2019.srccon.org/)
-
 [WBEZ](https://www.wbez.org)
 
 
