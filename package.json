@@ -1,6 +1,6 @@
 {
   "name": "library",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A collaborative newsroom documentation site, powered by Google Docs.",
   "main": "server/index.js",
   "dependencies": {
@@ -20,6 +20,7 @@
     "js-yaml": "^3.13.1",
     "lodash": "^4.17.14",
     "md5": "^2.2.1",
+    "mime-types": "^2.1.24",
     "moment": "^2.24.0",
     "node-sass": "^4.12.0",
     "passport": "^0.4.0",
@@ -50,11 +51,13 @@
   },
   "scripts": {
     "start": "node server/index.js",
-    "build": "node-sass --include-path custom/styles --include-path styles/partials --source-map public/css/style.css.map --source-map-contents styles/style.scss public/css/style.css",
+    "build:main": "node-sass --include-path custom/styles --include-path styles/partials --source-map public/css/style.css.map --source-map-contents styles/style.scss public/css/style.css",
+    "build:inline": "node-sass --include-path custom/styles --include-path styles/partials styles/errors.scss public/css/errors.css",
+    "build": "npm run build:main && npm run build:inline",
     "debug": "node -r dotenv/config --inspect --debug-brk server/index.js",
     "watch": "npm run build && concurrently \"nodemon --inspect=0.0.0.0 -r dotenv/config -e js,ejs server/index.js\" \"nodemon -e scss --watch styles --watch custom/styles -x npm run build\"",
-    "test": "NODE_ENV=test mocha test/**/*.test.js -r ./test/utils/bootstrap.js --recursive --exit",
-    "test:cover": "NODE_ENV=test nyc --include=server/** --reporter=html --reporter=text mocha test/**/*.test.js -r ./test/utils/bootstrap.js --recursive --exit",
+    "test": "NODE_ENV=test PORT=3001 mocha test/**/*.test.js -r ./test/utils/bootstrap.js --recursive --exit",
+    "test:cover": "NODE_ENV=test PORT=3001 nyc --include=server/** --reporter=html --reporter=text mocha test/**/*.test.js -r ./test/utils/bootstrap.js --recursive --exit",
     "lint": "eslint ./server",
     "gcp-build": "./bin/install_customizations && npm run build && ./bin/update_gae_pkg"
   },

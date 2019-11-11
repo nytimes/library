@@ -3,6 +3,7 @@
 const {expect} = require('chai')
 
 const list = require('../../server/list')
+const {allFilenames} = require('../utils')
 
 describe('Tree', () => {
   it('should successfully be able to fetch a tree', async () => {
@@ -13,7 +14,7 @@ describe('Tree', () => {
   it('should contain top level items', async () => {
     const tree = await list.getTree()
     expect(tree).to.include.keys(
-      'breadcrumb', 'children', 'home', 'id', 'nodeType', 'sort'
+      'breadcrumb', 'children', 'home', 'id', 'nodeType', 'sort', 'prettyName'
     )
   })
 
@@ -43,5 +44,17 @@ describe('Tree', () => {
     const routes = list.getAllRoutes()
     expect(routes).to.exist // eslint-disable-line no-unused-expressions
     expect(routes).to.not.be.empty // eslint-disable-line no-unused-expressions
+  })
+})
+
+describe('Filename Listing', () => {
+  it('should successfully be able to fetch filenames', async () => {
+    const filenames = await list.getFilenames()
+    expect(filenames).to.exist // eslint-disable-line no-unused-expressions
+  })
+
+  it('should contain all filenames in drive', async () => {
+    const filenames = await list.getFilenames()
+    expect(filenames).to.include(...allFilenames)
   })
 })

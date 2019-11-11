@@ -1,9 +1,11 @@
 'use strict'
 const fs = require('fs')
 const path = require('path')
+const {promisify} = require('util')
 const yaml = require('js-yaml')
 const { get: deepProp } = require('lodash')
 const merge = require('deepmerge')
+const mime = require('mime-types')
 
 const log = require('./logger')
 
@@ -100,4 +102,23 @@ exports.stringTemplate = (configPath, ...args) => {
   }
 
   return ''
+}
+
+// When we stop supporting Node 8, let's drop promisify for fs.promises.readFile
+const readFileAsync = promisify(fs.readFile)
+exports.readFileAsync = readFileAsync
+exports.assetDataURI = async (filePath) => {
+  // If the path starts with `/assets`, look in the app’s public directory
+  const publicPath = filePath.replace(/^\/assets/, '/public')
+
+  // We're using path.posix.basename instead of just path.basename here, because
+  // publicPath is definitely formatted in the POSIX style, and we want
+  // consistent output across *nix and Windows. For reference:
+  // https://nodejs.org/api/path.html#path_windows_vs_posix
+  const mimeType = mime.lookup(path.posix.basename(publicPath))
+  const fullPath = path.join(__dirname, '..', publicPath)
+
+  const data = await readFileAsync(fullPath, { encoding: 'base64' })
+  const src = `data:${mimeType};base64,${data}`
+  return src
 }

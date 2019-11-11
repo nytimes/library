@@ -128,57 +128,96 @@
     width: calc(100% - 20px);
   }
 
-  #search-box {
-    -webkit-appearance: none;
-    border-radius: 0;
+
+  .tt-menu {
+    background-color: inherit;
+    border-color: $gray-40;
+    border-style: solid;
+    border-width: 0 1px 1px 1px;
+    // compensate for border
+    width: 100%;
+    left: -1px !important;
+  }
+
+  .tt-suggestion {
+    padding: 10px 15px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $accent-light;
+    }
+  }
+
+  .tt-cursor {
+    background-color: $accent-light;
+  }
+
+  .twitter-typeahead {
+    font-style: normal;
+    font-family: $font-sans;
     font-size: 16px;
     line-height: 30px;
     font-weight: 400;
-    font-style: normal;
-    font-family: $font-sans;
-    background-color: transparent;
+    position: relative;
+    width: calc(100% - 65px);
+    height: 50px;
     transition: background-color 0.3s;
     display: inline-block;
-    padding: 7px 10px;
     border: 1px solid $gray-40;
-    -webkit-font-smoothing: antialiased;
+    background: $white;
     -webkit-box-shadow: 5px 5px 0px 0px $gray-25;;
     -moz-box-shadow: 5px 5px 0px 0px $gray-25;;
     box-shadow: 5px 5px 0px 0px $gray-25;;
     color: $black;
     float: left;
-    padding-left: 15px;
     width: calc(100% - 20px);
     -webkit-transition: background .55s ease;
     -moz-transition: background .55s ease;
     -ms-transition: background .55s ease;
     -o-transition: background .55s ease;
     transition: background .55s ease;
+    padding-left: 15px;
+    -webkit-font-smoothing: antialiased;
+
     &:hover,
     &:focus,
     &:active {
       outline: none;
+      background:  $accent-lightest;
+    }
+
+
+    .tt-hint {
+      color: $gray-30;
+      background-color: transparent !important;
+      outline: none;
+      border: none;
+      -webkit-appearance: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    // to account for case where typeahead fails to load
+    .twitter-typeahead.tt-input {
+      box-shadow: none;
+      border: none;
+      padding-left: 0;
     }
   }
 
-  &:hover,
-  &:focus,
-  &:active {
-    outline: none;
-    background:  $accent-lightest;
-    .icon {
-      outline: none;
-      opacity: 1;
-    }
-  }
 
   .icon{
+    position: relative;
+    z-index: 10;
     border: none;
     background: $accent;
-    height: 46px;
+    height: 50px;
     width: 50px;
+    top: 1px; // compensate for top border
+    right: 1px; // compensate for right border
     color: $white;
-    opacity: 0;
+    opacity: 1;
     font-size: 12pt;
     cursor: pointer;
     margin-left: -50px;

@@ -15,6 +15,7 @@ const driveType = process.env.DRIVE_TYPE
 const driveId = process.env.DRIVE_ID
 
 let currentTree = null // current route data by slug
+let currentFilenames = null // current list of filenames for typeahead
 let docsInfo = {} // doc info by id
 let tags = {} // tags to doc id
 let driveBranches = {} // map of id to nodes
@@ -22,7 +23,8 @@ const playlistInfo = {} // playlist info by id
 
 // normally return the cached tree data
 // if it does not exist yet, return a promise for the new tree
-exports.getTree = () => currentTree || updateTree()
+exports.getTree = () => currentTree || updateTree().then(({tree}) => tree)
+exports.getFilenames = () => currentFilenames || updateTree().then(({filenames}) => filenames)
 
 // exposes docs metadata
 exports.getMeta = (id) => {
@@ -68,7 +70,10 @@ async function updateTree() {
     const drive = google.drive({version: 'v3', auth: authClient})
     const files = await fetchAllFiles({drive, driveType})
 
-    currentTree = produceTree(files, driveId)
+    const updatedData = produceTree(files, driveId)
+    const { tree, filenames } = updatedData
+    currentTree = tree
+    currentFilenames = filenames
 
     const count = Object.values(docsInfo)
       .filter((f) => f.resourceType !== 'folder')
@@ -76,7 +81,7 @@ async function updateTree() {
 
     log.debug(`Current file count in drive: ${count}`)
 
-    return currentTree
+    return updatedData
   })
 }
 
@@ -149,11 +154,10 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentId
 }
 
 function produceTree(files, firstParent) {
-  // maybe group into folders first?
-  // then build out tree, by traversing top down
-  // keep in mind that files can have multiple parents
-  const [byParent, byId, tagIds] = files.reduce(([byParent, byId, tagIds], resource) => {
-    const {parents, id, name} = resource
+  // NB: technically files can have multiple parents
+  // may be worth filtering here based on metadata info.
+  const [byParent, byId, tagIds, fileNames] = files.reduce(([byParent, byId, tagIds, fileNames], resource) => {
+    const {parents, id, name, mimeType} = resource
 
     // prepare data for the individual file and store later for reference
     // FIXME: consider how to remove circular dependency here.
@@ -164,10 +168,12 @@ function produceTree(files, firstParent) {
       .map((t) => t.trim().toLowerCase())
       .filter((t) => t.length > 0)
 
+    if (!mimeType.includes('folder') && !tags.includes('hidden')) fileNames.push(prettyName)
+
     byId[id] = Object.assign({}, resource, {
       prettyName,
       tags,
-      resourceType: cleanResourceType(resource.mimeType),
+      resourceType: cleanResourceType(mimeType),
       sort: determineSort(name),
       slug,
       isTrashCan: slug === 'trash' && parents.includes(driveId)
@@ -199,25 +205,27 @@ function produceTree(files, firstParent) {
       byParent[parentId] = parent
     })
 
-    return [byParent, byId, tagIds]
-  }, [{}, {}, {}])
+    return [byParent, byId, tagIds, fileNames]
+  }, [{}, {}, {}, []])
 
   const oldInfo = docsInfo
   const oldBranches = driveBranches
   tags = tagIds
   docsInfo = addPaths(byId) // update our outer cache w/ data including path information
   driveBranches = byParent
-  return buildTreeFromData(firstParent, {info: oldInfo, tree: oldBranches})
+  const tree = buildTreeFromData(firstParent, {info: oldInfo, tree: oldBranches})
+  return {tree: tree, filenames: fileNames}
 }
 
-// do we care about parent ids? maybe not?
 function buildTreeFromData(rootParent, previousData, breadcrumb) {
-  const {children, home} = driveBranches[rootParent] || {}
+  const {children, home, homePrettyName} = driveBranches[rootParent] || {}
   const parentInfo = docsInfo[rootParent] || {}
 
   const parentNode = {
     nodeType: children ? 'branch' : 'leaf',
+    prettyName: parentInfo.prettyName,
     home,
+    homePrettyName,
     id: rootParent,
     breadcrumb,
     sort: parentInfo ? determineSort(parentInfo.name) : Infinity // some number here that could be used to sort later
@@ -341,7 +349,6 @@ function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
     if (oldItem && newItem.path !== oldItem.path) {
       cache.redirect(oldItem.path, newItem.path, newItem.modifiedTime)
     } else {
-      // should we be calling purge every time?
       // basically we are just calling purge because we don't know the last modified
       cache.purge({url: newItem.path, modified: newItem.modifiedTime}).catch((err) => {
         if (!err) return

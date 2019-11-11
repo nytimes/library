@@ -3,12 +3,12 @@
     <% const placeholder = template('search.placeholder')%>
     <% const focus = locals.focus || '' %>
     <% const msgOnFocus = placeholder || '' %>
-    <input <%= focus %> id="search-box" type="text" name="q" value="<%= locals.q %>" placeholder="<%- placeholder %>" />
+    <input <%= focus %> id="search-box" class="twitter-typeahead" type="text" name="q" value="<%= locals.q %>" placeholder="<%- placeholder %>" />
     <button class="icon"><i class="fa fa-search"></i></button>
   </form>
 
   <% const style = locals.style || 'plaintext' %>
-  <div class="additional-menus <%= style %>"">
+  <div class="additional-menus <%= style %>">
     <a href="/categories"><button type="button" class="button btn-<%= style %>"><%- template('landing.viewAll') %></button></a>
     <%# <a href="#"><button type="button" class="btn-plaintext">Onboarding Guide</button></a>%>
   </div>

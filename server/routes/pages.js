@@ -5,11 +5,17 @@ const move = require('../move')
 
 const router = require('express-promise-router')()
 
-const { getTree, getMeta, getTagged } = require('../list')
+const { getTree, getFilenames, getMeta, getTagged } = require('../list')
 const { getTemplates, sortDocs, stringTemplate, getConfig } = require('../utils')
 
 router.get('/', handlePage)
 router.get('/:page', handlePage)
+
+router.get('/filename-listing.json', async (req, res) => {
+  res.header('Cache-Control', 'public, must-revalidate') // override no-cache
+  const filenames = await getFilenames()
+  res.json({filenames: filenames})
+})
 
 module.exports = router
 
@@ -23,9 +29,16 @@ async function handlePage(req, res) {
   if (!pages.has(page)) return 'next'
 
   const template = `pages/${page}`
-  const { q, id, dest } = req.query
+  const { q, id, dest, autocomplete } = req.query
   if (page === 'search' && q) {
     return search.run(q, driveType).then((results) => {
+      // special rule for the autocomplete case, go directly to the item if we find it.
+      if (autocomplete) {
+        // filter here first to make sure only _one_ document exists with this exact name
+        const exactMatches = results.filter((i) => i.prettyName === q)
+        if (exactMatches.length === 1) return res.redirect(exactMatches[0].path)
+      }
+
       res.render(template, { q, results, template: stringTemplate })
     })
   }

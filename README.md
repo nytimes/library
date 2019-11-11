@@ -31,7 +31,7 @@ A collaborative newsroom documentation site, powered by Google Docs.
 
 ## Demo Site & User Guide
 
-Documentation about how to get started with Library is hosted as a working (read only) demo on Heroku. Consult the site for more detailed instructions than this readme about how to get the most out of Library: https://nyt-library-demo.herokuapp.com. 
+Documentation about how to get started with Library is hosted as a working (read only) demo on Heroku. Consult the site for more detailed instructions than this readme about how to get the most out of Library: https://nyt-library-demo.herokuapp.com.
 
 ## Contacting us
 
@@ -92,6 +92,8 @@ DRIVE_TYPE=team # or folder, if using a folder instead of a team drive
 DRIVE_ID=0123456ABCDEF # the ID of your team's drive or shared folder. The string of random numbers and letters at the end of your team drive or folder url.
 ```
 Make sure to remove all comments after the `DRIVE_TYPE` and `DRIVE_ID` vars.
+
+Ensure you share your base drive or folder with the email address associated with the service account created in step 2.
 
 **Be careful!** Setting NODE_ENV to `development` changes the built in behaviors for site authentication to allow accounts other than those in the APPROVED_DOMAINS list. **Never use NODE_ENV=development for your deployed site, only locally.**
 

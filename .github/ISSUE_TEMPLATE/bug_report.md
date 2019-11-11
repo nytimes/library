@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 ### Context (Environment)
-<!-- Operating system platform and version, Node version, etc. -->
+<!-- Operating system platform and version, Node version, whether your instance uses a drive or folder, etc. -->
 
 ### Expected Behavior
 
