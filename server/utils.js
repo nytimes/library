@@ -130,6 +130,7 @@ exports.assetDataURI = async (filePath) => {
 // this is passed in the render objects to make sure cached dates aren't incorrect
 exports.bylineDateString = (date) => {
   const momentDate = moment(date)
+  // handle the case where date is undefined or otherwise not valid
   if (!momentDate.isValid()) return ''
   return moment().diff(momentDate, 'years') > 1 ? ` on ${momentDate.format('MMMM D, YYYY')}` : ` ${momentDate.fromNow()}`
 }
