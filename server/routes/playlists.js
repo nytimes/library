@@ -51,7 +51,8 @@ async function handlePlaylist(req, res) {
       byline: payload.byline,
       createdBy: revisionData.lastModifyingUser.displayName,
       sections,
-      title: meta.prettyName
+      title: meta.prettyName,
+      bylineDateString
     }), (err, html) => {
       if (err) throw err
       res.end(html)

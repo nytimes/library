@@ -9,13 +9,13 @@
     <div class="attribution">
       <p>
         <% if (locals.byline) { %>
-          Created by <span class="author"><%= locals.byline %></span> <%= bylineDateString(createdAt) %>.
+          Created by <span class="author"><%= byline %></span><%= bylineDateString(locals.createdAt) %>.
         <% } else if (locals.createdBy && !locals.byline) { %>
-          Created by <span class="author"><%= createdBy %></span> <%= bylineDateString(createdAt) %>.
+          Created by <span class="author"><%= createdBy %></span><%= bylineDateString(locals.createdAt) %>.
         <% } %>
         <% if (locals.lastUpdatedBy) { %>
           </p><p>
-            Last edited by <span class="author"><%= lastUpdatedBy %></span> <%= bylineDateString(modifiedAt) %>.</p>
+            Last edited by <span class="author"><%= lastUpdatedBy %></span> <%= bylineDateString(locals.modifiedAt) %>.</p>
         <% } %>
       </p>
     </div>
