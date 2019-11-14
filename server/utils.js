@@ -6,7 +6,6 @@ const yaml = require('js-yaml')
 const { get: deepProp } = require('lodash')
 const merge = require('deepmerge')
 const mime = require('mime-types')
-const moment = require('moment')
 
 const log = require('./logger')
 
