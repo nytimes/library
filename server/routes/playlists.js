@@ -5,7 +5,7 @@ const router = require('express-promise-router')()
 const log = require('../logger')
 const {getMeta, getPlaylist} = require('../list')
 const {fetchDoc, cleanName, fetchByline} = require('../docs')
-const {stringTemplate, bylineDateString} = require('../utils')
+const {stringTemplate} = require('../utils')
 const {parseUrl} = require('../urlParser')
 
 router.get('*', handlePlaylist)
@@ -51,8 +51,7 @@ async function handlePlaylist(req, res) {
       byline: payload.byline,
       createdBy: revisionData.lastModifyingUser.displayName,
       sections,
-      title: meta.prettyName,
-      bylineDateString
+      title: meta.prettyName
     }), (err, html) => {
       if (err) throw err
       res.end(html)
@@ -69,8 +68,7 @@ function preparePlaylistOverview(playlistMeta, values, breadcrumb) {
     modifiedAt: playlistMeta.modifiedTime,
     lastUpdatedBy: (playlistMeta.lastModifyingUser || {}).displayName,
     createdAt: playlistMeta.createdTime,
-    editLink: playlistMeta.mimeType === 'text/html' ? playlistMeta.folder.webViewLink : playlistMeta.webViewLink,
-    bylineDateString
+    editLink: playlistMeta.mimeType === 'text/html' ? playlistMeta.folder.webViewLink : playlistMeta.webViewLink
   })
 
   return renderData

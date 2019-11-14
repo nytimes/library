@@ -123,14 +123,3 @@ exports.assetDataURI = async (filePath) => {
   const src = `data:${mimeType};base64,${data}`
   return src
 }
-
-// returns a formatted date string to be used in bylines
-// if the date passed is more than a year in the past, returns 'on [MMMM D, YYYY]'
-// if more recent than that, returns 'x [time] ago' (ex. '9 days ago')
-// this is passed in the render objects to make sure cached dates aren't incorrect
-exports.bylineDateString = (date) => {
-  const momentDate = moment(date)
-  // handle the case where date is undefined or otherwise not valid
-  if (!momentDate.isValid()) return ''
-  return moment().diff(momentDate, 'years') > 1 ? ` on ${momentDate.format('MMMM D, YYYY')}` : ` ${momentDate.fromNow()}`
-}

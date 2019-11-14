@@ -6,7 +6,7 @@ const cache = require('../cache')
 const log = require('../logger')
 const {getMeta} = require('../list')
 const {fetchDoc, cleanName, fetchByline} = require('../docs')
-const {getTemplates, sortDocs, stringTemplate, bylineDateString} = require('../utils')
+const {getTemplates, sortDocs, stringTemplate} = require('../utils')
 const {parseUrl} = require('../urlParser')
 
 router.get('*', handleCategory)
@@ -43,8 +43,7 @@ async function handleCategory(req, res) {
     editLink: meta.mimeType === 'text/html' ? meta.folder.webViewLink : meta.webViewLink,
     id,
     template: stringTemplate,
-    duplicates,
-    bylineDateString
+    duplicates
   })
 
   // if this is a folder, just render from the generic data
