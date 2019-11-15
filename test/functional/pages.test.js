@@ -86,7 +86,7 @@ describe('Server responses', () => {
         .expect(200)
         .then((res) => {
           expect(res.text).to.include('<h1 class="headline">Home article 10 for test folder 9</h1>')
-          expect(res.text).to.include('Created by <span class="author">John Smith</span>')
+          expect(res.text).to.include('By <span class="author">John Smith</span>')
           expect(res.text).to.include('Last edited by <span class="author">Foo Bar</span>')
           expect(res.text).to.include('Home article 10 for test folder 9')
         })
@@ -98,7 +98,7 @@ describe('Server responses', () => {
         .expect(200)
         .then((res) => {
           expect(res.text).to.include('<h1 class="headline">Article 3 in test folder 9</h1>')
-          expect(res.text).to.include('Created by <span class="author">John Smith</span>')
+          expect(res.text).to.include('By <span class="author">John Smith</span>')
           expect(res.text).to.include('Last edited by <span class="author">Foo Bar</span>')
           expect(res.text).to.include('Article 3 in test folder 9')
           expect(res.text).to.include(
