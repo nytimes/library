@@ -11,6 +11,7 @@
         <% if (locals.byline) { %>
           By <span class="author"><%= byline %></span>.
         <% } else if (locals.createdBy && !locals.byline) { %>
+          <%# encode the dates as data properties to make relative time work for cache %>
           Created by <span class="author"><%= createdBy %></span><span class="date" data-date="<%= locals.createdAt %>"></span>.
         <% } %>
         <% if (locals.lastUpdatedBy) { %>
