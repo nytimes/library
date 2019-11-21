@@ -114,13 +114,12 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentId
     options.pageToken = pageToken
   }
 
-  log.debug(`searching for files > ${listSoFar.length}`)
-
   // Gets files in single folder (shared) or files listed in single page of response (team)
   const {data} = await drive.files.list(options)
 
   const {files, nextPageToken} = data
-  const combined = listSoFar.concat(files)
+  const validFiles = files.filter((fileInfo) => fileInfo !== {})
+  const combined = listSoFar.concat(validFiles)
 
   // If there is more data the API has not returned for the query, the request needs to continue
   if (nextPageToken) {
@@ -138,19 +137,22 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentId
 
   // Continue searching if shared folder, since API only returns contents of the immediate parent folder
   // Find folders that have not yet been searched
-  const folders = combined.filter((item) =>
+  const folderIds = combined.filter((item) =>
     item.mimeType === 'application/vnd.google-apps.folder' && parentIds.includes(item.parents[0]))
+    .map((folder) => folder.id)
 
-  if (folders.length > 0) {
-    return fetchAllFiles({
-      listSoFar: combined,
+  const maxQueryTerms = 150
+  let subtreeFiles = []
+  while (folderIds.length > 0) {
+    const folderPartition = folderIds.splice(0, maxQueryTerms)
+    const partitionFiles = await fetchAllFiles({
       drive,
-      parentIds: folders.map((folder) => folder.id),
+      parentIds: folderPartition,
       driveType
     })
+    subtreeFiles = subtreeFiles.concat(partitionFiles)
   }
-
-  return combined
+  return combined.concat(subtreeFiles)
 }
 
 function produceTree(files, firstParent) {
