@@ -13,6 +13,7 @@ const docs = require('./docs')
 
 const driveType = process.env.DRIVE_TYPE
 const driveId = process.env.DRIVE_ID
+const MAX_QUERY_TERMS = 150 // max query terms allowed by google in a search request
 
 let currentTree = null // current route data by slug
 let currentFilenames = null // current list of filenames for typeahead
@@ -118,7 +119,7 @@ async function fetchAllFiles({nextPageToken: pageToken, parentIds = [driveId], d
   const {data} = await drive.files.list(options)
 
   const {files, nextPageToken} = data
-  const childFiles = files
+  const levelItems = files
 
   // If there is more data the API has not returned for the query, the request needs to continue
   if (nextPageToken) {
@@ -128,22 +129,22 @@ async function fetchAllFiles({nextPageToken: pageToken, parentIds = [driveId], d
       parentIds,
       driveType
     })
-    return childFiles.concat(nextPageFiles)
+    log.debug(`next page files and folders: ${nextPageFiles.length}`)
+    return levelItems.concat(nextPageFiles)
   }
 
   // If there are no more pages and this is not a shared folder, return completed list
-  if (driveType !== 'folder') return childFiles
+  if (driveType !== 'folder') return levelItems
 
   // Continue searching if shared folder, since API only returns contents of the immediate parent folder
   // Find folders that have not yet been searched
-  const folderIds = childFiles.filter((item) =>
+  const folderIds = levelItems.filter((item) =>
     item.mimeType === 'application/vnd.google-apps.folder' && parentIds.includes(item.parents[0]))
     .map((folder) => folder.id)
 
-  const maxQueryTerms = 150
   const folderPartitions = []
   while (folderIds.length > 0) {
-    folderPartitions.push(folderIds.splice(0, maxQueryTerms))
+    folderPartitions.push(folderIds.splice(0, MAX_QUERY_TERMS))
   }
   const partitionPromises = folderPartitions.map((partition) =>
     fetchAllFiles({
@@ -153,8 +154,9 @@ async function fetchAllFiles({nextPageToken: pageToken, parentIds = [driveId], d
     })
   )
   const partitionList = await Promise.all(partitionPromises)
-  const subtreeFiles = [].concat.apply([], partitionList)
-  return childFiles.concat(subtreeFiles)
+  const itemsSoFar = levelItems.concat([].concat.apply([], partitionList))
+  log.debug(`all files and folders under this level: ${itemsSoFar.length}`)
+  return itemsSoFar
 }
 
 function produceTree(files, firstParent) {
