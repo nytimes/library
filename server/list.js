@@ -142,16 +142,19 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentId
     .map((folder) => folder.id)
 
   const maxQueryTerms = 150
-  let subtreeFiles = []
+  const folderPartitions = []
   while (folderIds.length > 0) {
-    const folderPartition = folderIds.splice(0, maxQueryTerms)
-    const partitionFiles = await fetchAllFiles({
+    folderPartitions.push(folderIds.splice(0, maxQueryTerms))
+  }
+  const partitionPromises = folderPartitions.map((partition) =>
+    fetchAllFiles({
       drive,
-      parentIds: folderPartition,
+      parentIds: partition,
       driveType
     })
-    subtreeFiles = subtreeFiles.concat(partitionFiles)
-  }
+  )
+  const partitionList = await Promise.all(partitionPromises)
+  const subtreeFiles = [].concat.apply([], partitionList)
   return combined.concat(subtreeFiles)
 }
 
