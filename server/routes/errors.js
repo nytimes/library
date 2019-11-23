@@ -65,6 +65,7 @@ module.exports = async (err, req, res, next) => {
   const inlined = await loadInlineAssets()
   res.status(code).render(`errors/${code}`, {
     inlineCSS: inlined.css,
+    isDev: process.env.NODE_ENV === 'development',
     err,
     template: inlined.stringTemplate
   })

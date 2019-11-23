@@ -8,6 +8,9 @@
         <div class="tagline">
           <h1><%- template('error.500.heading') %></h1>
           <p><%- template('error.500.message') %></p>
+          <% if (locals.isDev && locals.err && locals.err.message) { %>
+            <p><strong>Error:</strong> <%- locals.err.message %></p>
+          <% } %>
         </div>
         <%- include('../partials/search', {style: 'homepage'}) %>
       </div>

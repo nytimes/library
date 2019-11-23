@@ -1,6 +1,6 @@
 const messages = require('./messages')
 
-const isDev = process.env.NODE_ENV === 'development'
+// For now, this should just throw for things that would stop the app from booting.
 
 module.exports = () => {
   const {envMessages} = messages

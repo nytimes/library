@@ -44,8 +44,11 @@ exports.requireWithFallback = (attemptPath) => {
     return require(customPath)
   } catch (err) {
     // if the file exists but we failed to pull it in, log that error at a warning level
-    const level = fs.existsSync(customPath) ? 'warn' : 'debug'
-    log[level](`Failed pulling in custom file ${attemptPath} @ ${customPath}. Error was:`, err)
+    // with no stacktrace.
+    const fileExists = fs.existsSync(customPath)
+    const level = fileExists ? 'warn' : 'debug'
+    const toLog = fileExists ? err : 'No override file given.'
+    log[level](`Failed pulling in custom file ${attemptPath} @ ${customPath}. Error was:`, toLog)
     return require(serverPath)
   }
 }
