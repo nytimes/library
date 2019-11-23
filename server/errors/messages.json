@@ -1,0 +1,7 @@
+{
+  "envMessages": {
+    "noApprovedDomains": "No approved domains set. Add an APPROVED_DOMAINS environment variable.",
+    "noDriveType": "No DRIVE_TYPE env variable set. Please set it to 'team' or 'folder'.",
+    "noDriveID": "No DRIVE_ID env variable set. Set this environment variable and restart the app."
+  }
+}
