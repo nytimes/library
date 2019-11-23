@@ -57,6 +57,7 @@ async function handlePage(req, res) {
 
   if (page === 'categories' || page === 'index') {
     const tree = await getTree()
+    if (!tree.children) throw new Error('No files found. Ensure your DRIVE_ID is correct and that your service account email is shared with your drive or folder.')
     const categories = buildDisplayCategories(tree)
     res.render(template, { ...categories, template: stringTemplate })
     return
