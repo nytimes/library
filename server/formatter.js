@@ -135,11 +135,11 @@ function checkForTableOfContents($, aTags) {
 }
 
 function convertYoutubeUrl(content) {
-  //convert youtube url into embeded
-  var youtubeUrl = /(>(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?(.+?)<)/g;
-  var replacement = '><iframe width="560" height="315" src="https://www.youtube.com/embed/$2" frameborder="0" allowfullscreen></iframe><';
-  content = content.replace(youtubeUrl,replacement)
-  return  content
+  // convert youtube url into embeded
+  const youtubeUrl = /(>(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?(.+?)<)/g
+  const replacement = '><iframe width="560" height="315" src="https://www.youtube.com/embed/$2" frameborder="0" allowfullscreen></iframe><'
+  content = content.replace(youtubeUrl, replacement)
+  return content
 }
 
 exports.getProcessedHtml = (src) => {
