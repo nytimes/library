@@ -4,7 +4,7 @@ const qs = require('querystring')
 const unescape = require('unescape')
 const list = require('./list')
 
-const allowInlineCode = (process.env.ALLOW_INLINE_CODE || '').toLowerCase() === 'true'
+const allowInlineCode = (process.env.ALLOW_INLINE_CODE || 'true').toLowerCase() === 'true'
 // this is getting a little long, maybe tweak so that we do subtasks separately
 function normalizeHtml(html) {
   // scrub all &nbsp;s (if there is a &nbsp; in a code block it will be escaped)
@@ -134,8 +134,17 @@ function checkForTableOfContents($, aTags) {
   /(\d+$)/mg.test($(aTags[1]).text()) // the second link should contain only a number
 }
 
+function convertYoutubeUrl(content) {
+  //convert youtube url into embeded
+  var youtubeUrl = /(>(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?(.+?)<)/g;
+  var replacement = '><iframe width="560" height="315" src="https://www.youtube.com/embed/$2" frameborder="0" allowfullscreen></iframe><';
+  content = content.replace(youtubeUrl,replacement)
+  return  content
+}
+
 exports.getProcessedHtml = (src) => {
   let html = normalizeHtml(src)
+  html = convertYoutubeUrl(html)
   html = formatCode(html)
   html = pretty(html)
   return html
