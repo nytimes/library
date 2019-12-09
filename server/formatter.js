@@ -4,7 +4,7 @@ const qs = require('querystring')
 const unescape = require('unescape')
 const list = require('./list')
 
-const allowInlineCode = (process.env.ALLOW_INLINE_CODE || 'true').toLowerCase() === 'true'
+const allowInlineCode = (process.env.ALLOW_INLINE_CODE || '').toLowerCase() === 'true'
 // this is getting a little long, maybe tweak so that we do subtasks separately
 function normalizeHtml(html) {
   // scrub all &nbsp;s (if there is a &nbsp; in a code block it will be escaped)
