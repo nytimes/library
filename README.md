@@ -9,6 +9,8 @@ A collaborative newsroom documentation site, powered by Google Docs.
 
 - [Demo Site & User Guide](#demo-site--user-guide)
 - [Contacting us](#contacting-us)
+- [Community](#community)
+- [Contributing](#contributing)
 - [Questions](#questions)
 - [Development Workflow](#development-workflow)
   - [Tests](#tests)
@@ -35,7 +37,25 @@ Documentation about how to get started with Library is hosted as a working (read
 
 Love Library? Let us know by [joining our Google Group](https://groups.google.com/forum/#!forum/nyt-library-community) and dropping us a line. You'll also stay up to date with the latest Library features via our release notes, which get sent to this list.
 
+## Community
+
+Here are some of the organizations using Library so far.
+
+[Marketplace](https://www.marketplace.org/)
+
+[The New York Times](http://nytimes.com)
+
+[Northwestern University Knight Lab](https://knightlab.northwestern.edu)
+
+[WBEZ](https://www.wbez.org)
+
+
+## Contributing
+
+See [CONTRIBUTING.md](https://github.com/nytimes/library/blob/master/CONTRIBUTING.md) for information on how to contribute code and/or documentation on GitHub or on the [demo site](https://nyt-library-demo.herokuapp.com).
+
 ## Questions
+
 If you have questions about how to get your copy of Library up and running, [join our Google Group](https://groups.google.com/forum/#!forum/nyt-library-community)) and let us know what you're running into. We also keep an eye on the #proj-library channel in the News Nerdery Slack. We'll do our best to answer your questions.
 
 ## Development Workflow
