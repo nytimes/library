@@ -84,7 +84,7 @@ functions. These functions must be valid middleware with params
 By default, Library uses an in-memory cache. A custom cache client can be written
 to be used in its place.
 
-A custom cache client can used by placing a `store.js` file in the `custom/cache`
+A custom cache client can be used by placing a `store.js` file in the `custom/cache`
 directory. This file must export an object with the methods
 - `set(key, value, callback)`, where `callback` takes `(err, success)`
 - `get(key, callback)`, where `callback` takes `(err, value)`
