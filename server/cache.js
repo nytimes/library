@@ -33,8 +33,7 @@ middlewareRouter.use(async (req, res) => {
 
   // otherwise consult cache for stored html
   const data = await cache.get(req.path)
-  const {html, redirectUrl, id} = data || {}
-  /* if (redirectUrl) return res.redirect(redirectUrl)  */  //remove redirect
+  const {html, id} = data || {}
 
   // if no html was returned proceed to next middleware
   if (!html) return 'next'
@@ -73,7 +72,7 @@ async function purgeCache({url, modified, editEmail, ignore}) {
 
   const data = await cache.get(url)
   // compare current cache entry data vs this request
-  const {redirectUrl, noCache, html, modified: oldModified, purgeId: lastPurgeId} = data || {}
+  const {noCache, html, modified: oldModified, purgeId: lastPurgeId} = data || {}
 
   // FIXME: this should be more robust
   if (editEmail && editEmail.includes('@')) {
