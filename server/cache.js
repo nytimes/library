@@ -60,35 +60,6 @@ exports.add = async (id, newModified, path, html) => {
   return cache.set(path, {html, modified: newModified, id})
 }
 
-/*
-// redirects when a url changes
-// should we expose a cb here for testing?
-exports.redirect = async (path, newPath, modified) => {
-  const data = await cache.get(path)
-  const {noCache, redirectUrl} = data || {}
-
-  // since we run multiple pods, we don't need to set the redirect more than once
-  if (redirectUrl === newPath) throw new Error('Already configured that redirect')
-
-  log.info(`ADDING REDIRECT: ${path} => ${newPath}`)
-
-  await cache.set(path, {redirectUrl: newPath}).catch((err) => {
-    if (err) log.warn(`Failed setting redirect for ${path} => ${newPath}`, err)
-    return err
-  })
-
-  const preventCacheReason = noCache ? 'redirect_detected' : null
-  return purgeCache({
-    url: newPath,
-    modified,
-    editEmail: preventCacheReason,
-    ignore: ['redirect', 'missing', 'modified']
-  }).catch((err) => {
-    if (err && err.message !== 'Not found') log.warn(`Failed purging redirect destination ${newPath}`, err)
-    throw err
-  })
-} */
-
 // expose the purgeCache method externally so that list can call while building tree
 exports.purge = purgeCache
 
@@ -103,9 +74,6 @@ async function purgeCache({url, modified, editEmail, ignore}) {
   const data = await cache.get(url)
   // compare current cache entry data vs this request
   const {redirectUrl, noCache, html, modified: oldModified, purgeId: lastPurgeId} = data || {}
-
-  /* if (redirectUrl && !shouldIgnore('redirect')) throw new Error('Unauthorized')
-  // edit is considered its own override for everything but redirect    */
 
   // FIXME: this should be more robust
   if (editEmail && editEmail.includes('@')) {
@@ -128,7 +96,6 @@ async function purgeCache({url, modified, editEmail, ignore}) {
   // by default, don't purge when the modification time is not fresher than previous
   if (!isNewer(oldModified, modified) && !shouldIgnore('modified')) throw new Error(`No purge of fresh content for ${url}`)
 
-  /*  purge for those ancestor links no longer needed
   // if we passed all the checks, determine all ancestor links and purge
   const segments = url.split('/').map((segment, i, segments) => {
     return segments.slice(0, i).concat([segment]).join('/')
@@ -142,7 +109,7 @@ async function purgeCache({url, modified, editEmail, ignore}) {
       // we need to get the cache entries for all of these in case and not purge them to account for that edge
       cache.set(path, {modified, purgeId})
     })
-  ) */
+  )
 }
 
 function isNewer(oldModified, newModified) {

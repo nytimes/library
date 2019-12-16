@@ -345,24 +345,19 @@ function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
     const hasHome = newItem && (driveBranches[newItem.id] || {}).home
     if (hasHome) return
 
-    // if this existed before and the path changed, issue redirects
-    if (oldItem && newItem.path !== oldItem.path) {
-      cache.redirect(oldItem.path, newItem.path, newItem.modifiedTime)
-    } else {
-      // basically we are just calling purge because we don't know the last modified
-      cache.purge({url: newItem.path, modified: newItem.modifiedTime}).catch((err) => {
-        if (!err) return
+    // basically we are just calling purge because we don't know the last modified
+    cache.purge({url: newItem.path, modified: newItem.modifiedTime}).catch((err) => {
+      if (!err) return
 
-        // Duplicate purge errors should be logged at debug level only
-        if (err.message.includes('Same purge id as previous')) return log.debug(`Ignoring duplicate cache purge for ${newItem.path}`, err)
+      // Duplicate purge errors should be logged at debug level only
+      if (err.message.includes('Same purge id as previous')) return log.debug(`Ignoring duplicate cache purge for ${newItem.path}`, err)
 
-        // Ignore errors if not found or no fresh content, just allow the purge to stop
-        if (err.message.includes('Not found') || err.message.includes('No purge of fresh content')) return
+      // Ignore errors if not found or no fresh content, just allow the purge to stop
+      if (err.message.includes('Not found') || err.message.includes('No purge of fresh content')) return
 
-        // Log all other cache purge errors as warnings
-        log.warn(`Cache purging error for ${newItem.path}`, err)
-      })
-    }
+      // Log all other cache purge errors as warnings
+      log.warn(`Cache purging error for ${newItem.path}`, err)
+    })
   })
 }
 
