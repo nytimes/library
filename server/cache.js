@@ -17,6 +17,7 @@ exports.get = cache.get // expose the ability to retreive cache data internally
 middlewareRouter.use(async (req, res) => {
   // handle the purge request if purge or edit params are present
   const {purge, edit, ignore} = req.query
+  console.log("display req requery:",req.query)
   if (purge || edit) {
     const {email} = edit ? req.userInfo : {}
     const overrides = ignore ? ignore.split(',') : null
@@ -32,9 +33,7 @@ middlewareRouter.use(async (req, res) => {
 
   // otherwise consult cache for stored html
   const data = await cache.get(req.path)
-
-  const {html, redirectUrl, id} = data || {}
-  if (redirectUrl) return res.redirect(redirectUrl)
+  const {html, id} = data || {}
 
   // if no html was returned proceed to next middleware
   if (!html) return 'next'
@@ -60,34 +59,6 @@ exports.add = async (id, newModified, path, html) => {
   return cache.set(path, {html, modified: newModified, id})
 }
 
-// redirects when a url changes
-// should we expose a cb here for testing?
-exports.redirect = async (path, newPath, modified) => {
-  const data = await cache.get(path)
-  const {noCache, redirectUrl} = data || {}
-
-  // since we run multiple pods, we don't need to set the redirect more than once
-  if (redirectUrl === newPath) throw new Error('Already configured that redirect')
-
-  log.info(`ADDING REDIRECT: ${path} => ${newPath}`)
-
-  await cache.set(path, {redirectUrl: newPath}).catch((err) => {
-    if (err) log.warn(`Failed setting redirect for ${path} => ${newPath}`, err)
-    return err
-  })
-
-  const preventCacheReason = noCache ? 'redirect_detected' : null
-  return purgeCache({
-    url: newPath,
-    modified,
-    editEmail: preventCacheReason,
-    ignore: ['redirect', 'missing', 'modified']
-  }).catch((err) => {
-    if (err && err.message !== 'Not found') log.warn(`Failed purging redirect destination ${newPath}`, err)
-    throw err
-  })
-}
-
 // expose the purgeCache method externally so that list can call while building tree
 exports.purge = purgeCache
 
@@ -101,10 +72,7 @@ async function purgeCache({url, modified, editEmail, ignore}) {
 
   const data = await cache.get(url)
   // compare current cache entry data vs this request
-  const {redirectUrl, noCache, html, modified: oldModified, purgeId: lastPurgeId} = data || {}
-
-  if (redirectUrl && !shouldIgnore('redirect')) throw new Error('Unauthorized')
-  // edit is considered its own override for everything but redirect
+  const {noCache, html, modified: oldModified, purgeId: lastPurgeId} = data || {}
 
   // FIXME: this should be more robust
   if (editEmail && editEmail.includes('@')) {
