@@ -4,7 +4,6 @@ const moment = require('moment')
 
 const router = require('express-promise-router')()
 
-const cache = require('../cache')
 const log = require('../logger')
 const {getMeta} = require('../list')
 const {fetchDoc, cleanName} = require('../docs')
@@ -53,24 +52,21 @@ async function handleCategory(req, res) {
   if (resourceType === 'folder') {
     return res.render(template, baseRenderData, (err, html) => {
       if (err) throw err
-
-      cache.add(id, meta.modifiedTime, req.path, html)
       res.end(html)
     })
   }
 
   // for docs, fetch the html and then combine with the base data
-  const {html, byline, originalRevision, sections} = await fetchDoc(id, resourceType, req)
+  const {html, byline, createdBy, sections} = await fetchDoc(id, resourceType, req)
   res.locals.docId = data.id // we need this for history later
-  const revisionData = originalRevision.data || { lastModifyingUser: {} }
+
   res.render(template, Object.assign({}, baseRenderData, {
     content: html,
-    byline: byline,
-    createdBy: revisionData.lastModifyingUser.displayName,
+    byline,
+    createdBy,
     sections
   }), (err, html) => {
     if (err) throw err
-    cache.add(id, meta.modifiedTime, req.path, html)
     res.end(html)
   })
 }

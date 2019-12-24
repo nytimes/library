@@ -17,7 +17,7 @@ exports.get = cache.get // expose the ability to retreive cache data internally
 middlewareRouter.use(async (req, res) => {
   // handle the purge request if purge or edit params are present
   const {purge, edit, ignore} = req.query
-  console.log('display req requery:', req.query)
+
   if (purge || edit) {
     const {email} = edit ? req.userInfo : {}
     const overrides = ignore ? ignore.split(',') : null
@@ -31,32 +31,22 @@ middlewareRouter.use(async (req, res) => {
     })
   }
 
-  // otherwise consult cache for stored html
-  const data = await cache.get(req.path)
-  const {html, id} = data || {}
-
-  // if no html was returned proceed to next middleware
-  if (!html) return 'next'
-
-  // attach doc id to the request for reading history tracking
-  res.locals.docId = id
-  log.info(`CACHE HIT ${req.path}.`)
-  res.end(html)
+  return 'next'
 })
 
 exports.middleware = middlewareRouter
 
-exports.add = async (id, newModified, path, html) => {
+exports.add = async (id, newModified, path, content) => {
   if (!newModified) throw new Error('Refusing to store new item without modified time.')
 
   const data = await cache.get(path)
-  const {modified, noCache, html: oldHtml} = data || {}
+  const {modified, noCache, content: oldContent} = data || {}
   // don't store any items over noCache entries
   if (noCache) return // refuse to cache any items that are being edited
   // if there was previous data and it is not older than the new data, don't do anything
-  if (oldHtml && modified && !isNewer(modified, newModified)) return // nothing to do if data is current
+  if (oldContent && modified && !isNewer(modified, newModified)) return // nothing to do if data is current
   // store new data in the cache
-  return cache.set(path, {html, modified: newModified, id})
+  return cache.set(path, {content, modified: newModified, id})
 }
 
 // expose the purgeCache method externally so that list can call while building tree

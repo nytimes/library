@@ -197,9 +197,6 @@ function fetchSections(html) {
   return nested
 }
 
-// TODO: Ditch these exports, run tests through formatter
-exports.fetchByline = fetchByline
-
 function getProcessedHtml(src) {
   let html = normalizeHtml(src)
   html = formatCode(html)
@@ -209,12 +206,14 @@ function getProcessedHtml(src) {
 
 exports.getProcessedDocAttributes = (driveDoc) => {
   // document information
+  // TODO: guard against null revision data?
   const [originalHtml, {data: revisionData}] = driveDoc
   // clean and prettify the HTML
   const processedHtml = getProcessedHtml(originalHtml)
   // crawl processed html for the bylines and sections
   const sections = fetchSections(processedHtml)
-  const {byline, html} = fetchByline(processedHtml, revisionData.lastModifyingUser.displayName)
+  const createdBy = revisionData.lastModifyingUser.displayName
+  const {byline, html} = fetchByline(processedHtml, createdBy)
 
-  return {html, byline, sections}
+  return {html, byline, createdBy, sections}
 }

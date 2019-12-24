@@ -5,11 +5,11 @@ const cheerio = require('cheerio')
 const slugify = require('slugify')
 const xlsx = require('xlsx')
 
-const {getAuth} = require('./auth')
-const log = require('./logger')
-const {stringTemplate} = require('./utils')
-
+const cache = require('./cache')
 const formatter = require('./formatter')
+const log = require('./logger')
+const {getAuth} = require('./auth')
+const {stringTemplate} = require('./utils')
 
 const supportedTypes = new Set(['document', 'spreadsheet', 'text/html'])
 
@@ -32,14 +32,23 @@ exports.slugify = (text = '') => {
 }
 
 exports.fetchDoc = async (id, resourceType, req) => {
+  const data = await cache.get(req.path)
+  if (data && data.content) {
+    console.log(`CACHE HIT ${req.path}`)
+    return data.content
+  }
+
   const auth = await getAuth()
 
   const driveDoc = await fetch({id, resourceType, req}, auth)
   const originalRevision = driveDoc[1]
-  // if no modification information, stub it in.
-  if (!originalRevision.data) originalRevision.data = { lastModifyingUser: {} }
-  const {html, byline, sections} = formatter.getProcessedDocAttributes(driveDoc)
-  return {html, byline, originalRevision, sections, template: stringTemplate}
+
+  const {html, byline, createdBy, sections} = formatter.getProcessedDocAttributes(driveDoc)
+  const payload = {html, byline, createdBy, sections}
+
+  // cache only information from document body
+  cache.add(id, originalRevision.data.modifiedTime, req.path, payload)
+  return payload
 }
 
 async function fetchHTMLForId(id, resourceType, req, drive) {
