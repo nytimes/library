@@ -3,8 +3,6 @@
 const {expect} = require('chai')
 
 const {cleanName, slugify, fetchDoc} = require('../../server/docs')
-// TODO: Move these tests
-const {fetchByline} = require('../../server/formatter')
 
 describe('Docs', () => {
   describe('Name Cleaner', () => {
@@ -46,24 +44,6 @@ describe('Docs', () => {
 
     it('should strip spacing', () => {
       expect(slugify('  slugify-  me please ')).equals('slugify-me-please')
-    })
-  })
-
-  describe('Fetching Byline', () => {
-    it('should return reglar byline if none in HTML', () => {
-      const {byline} = fetchByline('<p></p>', 'Ben Koski')
-      expect(byline).equals('Ben Koski')
-    })
-
-    it('should return a byline if present in HTML', () => {
-      const {byline} = fetchByline('<p>By John Smith</p>', 'Ben Koski')
-      expect(byline).equals('John Smith')
-    })
-
-    it('should return byline override if present in document', () => {
-      const {byline} = fetchByline('<p>I am standing by Port Authority</p>', 'Ben Koski')
-      expect(byline).to.not.equals('Port Authority')
-      expect(byline).equals('Ben Koski')
     })
   })
 

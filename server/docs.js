@@ -36,9 +36,9 @@ exports.fetchDoc = async (id, resourceType, req) => {
 
   const driveDoc = await fetch({id, resourceType, req}, auth)
   const originalRevision = driveDoc[1]
-  const {html, byline} = formatter.getProcessedDocAttributes(driveDoc)
-  const sections = getSections(html)
-  // maybe we should pull out headers here
+  // if no modification information, stub it in.
+  if (!originalRevision.data) originalRevision.data = { lastModifyingUser: {} }
+  const {html, byline, sections} = formatter.getProcessedDocAttributes(driveDoc)
   return {html, byline, originalRevision, sections, template: stringTemplate}
 }
 
@@ -142,37 +142,4 @@ async function fetchHTML(drive, id) {
     alt: 'media'
   })
   return data
-}
-
-function getSections(html) {
-  const $ = cheerio.load(html)
-  const headers = ['h1', 'h2']
-    .map((h) => `body ${h}`)
-    .join(', ')
-
-  const ordered = $(headers).map((i, el) => {
-    const tag = el.name
-    const $el = $(el)
-    const name = $el.text()
-    const url = `#${$el.attr('id')}`
-    return {
-      name,
-      url,
-      level: parseInt(tag.slice(-1), 10)
-    }
-  }).toArray()
-
-  // take our ordered sections and turn them into appropriately nested headings
-  const nested = ordered.reduce((memo, heading) => {
-    const tail = memo.slice(-1)[0]
-    const extended = Object.assign({}, heading, {subsections: []})
-    if (!tail || heading.level <= tail.level) {
-      return memo.concat(extended)
-    }
-
-    tail.subsections.push(heading)
-    return memo
-  }, [])
-
-  return nested
 }

@@ -164,23 +164,57 @@ function fetchByline(html, creatorOfDoc) {
   }
 }
 
+function fetchSections(html) {
+  const $ = cheerio.load(html)
+  const headers = ['h1', 'h2']
+    .map((h) => `body ${h}`)
+    .join(', ')
+
+  const ordered = $(headers).map((i, el) => {
+    const tag = el.name
+    const $el = $(el)
+    const name = $el.text()
+    const url = `#${$el.attr('id')}`
+    return {
+      name,
+      url,
+      level: parseInt(tag.slice(-1), 10)
+    }
+  }).toArray()
+
+  // take our ordered sections and turn them into appropriately nested headings
+  const nested = ordered.reduce((memo, heading) => {
+    const tail = memo.slice(-1)[0]
+    const extended = Object.assign({}, heading, {subsections: []})
+    if (!tail || heading.level <= tail.level) {
+      return memo.concat(extended)
+    }
+
+    tail.subsections.push(heading)
+    return memo
+  }, [])
+
+  return nested
+}
+
 // TODO: Ditch these exports, run tests through formatter
 exports.fetchByline = fetchByline
 
-exports.getProcessedHtml = (src) => {
+function getProcessedHtml(src) {
   let html = normalizeHtml(src)
   html = formatCode(html)
   html = pretty(html)
   return html
 }
 
-exports.getProcessedDocAttributes = (doc) => {
-  const [originalHtml, originalRevision] = doc
-  const revisionData = originalRevision.data || { lastModifyingUser: {} }
-
-  const processedHtml = module.exports.getProcessedHtml(originalHtml)
-
+exports.getProcessedDocAttributes = (driveDoc) => {
+  // document information
+  const [originalHtml, {data: revisionData}] = driveDoc
+  // clean and prettify the HTML
+  const processedHtml = getProcessedHtml(originalHtml)
+  // crawl processed html for the bylines and sections
+  const sections = fetchSections(processedHtml)
   const {byline, html} = fetchByline(processedHtml, revisionData.lastModifyingUser.displayName)
 
-  return {html, byline}
+  return {html, byline, sections}
 }
