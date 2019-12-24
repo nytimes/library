@@ -4,6 +4,8 @@ const qs = require('querystring')
 const unescape = require('unescape')
 const list = require('./list')
 
+/* Your one stop shop for all your document processing needs. */
+
 const allowInlineCode = (process.env.ALLOW_INLINE_CODE || '').toLowerCase() === 'true'
 // this is getting a little long, maybe tweak so that we do subtasks separately
 function normalizeHtml(html) {
@@ -134,9 +136,51 @@ function checkForTableOfContents($, aTags) {
   /(\d+$)/mg.test($(aTags[1]).text()) // the second link should contain only a number
 }
 
+function fetchByline(html, creatorOfDoc) {
+  let byline = creatorOfDoc
+  const $ = cheerio.load(html, {xmlMode: true}) // prevent wrapping html tags, see cheerio/issues/1031
+
+  // Iterates through all p tags to find byline
+  $('p').each((index, p) => {
+    // don't search any empty p tags
+    if (p.children.length < 1) return
+
+    // regex that checks for byline
+    const r = /^by.+[^.\n]$/mig
+    if (r.test(p.children[0].data)) {
+      byline = p.children[0].data
+      // Removes the word "By"
+      byline = byline.slice(3)
+      $(p).remove()
+    }
+
+    // only check the first p tag
+    return false
+  })
+
+  return {
+    html: $.html(),
+    byline
+  }
+}
+
+// TODO: Ditch these exports, run tests through formatter
+exports.fetchByline = fetchByline
+
 exports.getProcessedHtml = (src) => {
   let html = normalizeHtml(src)
   html = formatCode(html)
   html = pretty(html)
   return html
+}
+
+exports.getProcessedDocAttributes = (doc) => {
+  const [originalHtml, originalRevision] = doc
+  const revisionData = originalRevision.data || { lastModifyingUser: {} }
+
+  const processedHtml = module.exports.getProcessedHtml(originalHtml)
+
+  const {byline, html} = fetchByline(processedHtml, revisionData.lastModifyingUser.displayName)
+
+  return {html, byline}
 }

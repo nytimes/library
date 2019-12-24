@@ -7,7 +7,7 @@ const router = require('express-promise-router')()
 const cache = require('../cache')
 const log = require('../logger')
 const {getMeta} = require('../list')
-const {fetchDoc, cleanName, fetchByline} = require('../docs')
+const {fetchDoc, cleanName} = require('../docs')
 const {getTemplates, sortDocs, stringTemplate} = require('../utils')
 const {parseUrl} = require('../urlParser')
 
@@ -15,6 +15,7 @@ router.get('*', handleCategory)
 module.exports = router
 
 const categories = getTemplates('categories')
+
 async function handleCategory(req, res) {
   log.info(`GET ${req.path}`)
   // FIXME: consider putting this in middleware and save on req
@@ -59,13 +60,12 @@ async function handleCategory(req, res) {
   }
 
   // for docs, fetch the html and then combine with the base data
-  const {html, originalRevision, sections} = await fetchDoc(id, resourceType, req)
+  const {html, byline, originalRevision, sections} = await fetchDoc(id, resourceType, req)
   res.locals.docId = data.id // we need this for history later
   const revisionData = originalRevision.data || { lastModifyingUser: {} }
-  const payload = fetchByline(html, revisionData.lastModifyingUser.displayName)
   res.render(template, Object.assign({}, baseRenderData, {
-    content: payload.html,
-    byline: payload.byline,
+    content: html,
+    byline: byline,
     createdBy: revisionData.lastModifyingUser.displayName,
     sections
   }), (err, html) => {

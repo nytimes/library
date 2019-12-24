@@ -2,7 +2,9 @@
 
 const {expect} = require('chai')
 
-const {cleanName, slugify, fetchByline, fetchDoc} = require('../../server/docs')
+const {cleanName, slugify, fetchDoc} = require('../../server/docs')
+// TODO: Move these tests
+const {fetchByline} = require('../../server/formatter')
 
 describe('Docs', () => {
   describe('Name Cleaner', () => {

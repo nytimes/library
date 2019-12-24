@@ -6,7 +6,7 @@ const moment = require('moment')
 
 const log = require('../logger')
 const {getMeta, getPlaylist} = require('../list')
-const {fetchDoc, cleanName, fetchByline} = require('../docs')
+const {fetchDoc, cleanName} = require('../docs')
 const {stringTemplate} = require('../utils')
 const {parseUrl} = require('../urlParser')
 
@@ -41,16 +41,15 @@ async function handlePlaylist(req, res) {
     log.info('Getting page in playlist')
 
     // process data
-    const {html, originalRevision, sections} = await fetchDoc(id, resourceType, req)
+    const {html, byline, originalRevision, sections} = await fetchDoc(id, resourceType, req)
     const revisionData = originalRevision.data
-    const payload = fetchByline(html, revisionData.lastModifyingUser.displayName)
     const playlistPageData = await preparePlaylistPage(data, req.path, parentMeta)
 
     // render as a playlist
     return res.render(`playlists/leaf`, Object.assign({}, playlistPageData, {
       template: stringTemplate,
-      content: payload.html,
-      byline: payload.byline,
+      content: html,
+      byline: byline,
       createdBy: revisionData.lastModifyingUser.displayName,
       sections,
       title: meta.prettyName

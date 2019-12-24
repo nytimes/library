@@ -34,39 +34,12 @@ exports.slugify = (text = '') => {
 exports.fetchDoc = async (id, resourceType, req) => {
   const auth = await getAuth()
 
-  const [html, originalRevision] = await fetch({id, resourceType, req}, auth)
-  const processedHtml = formatter.getProcessedHtml(html)
+  const driveDoc = await fetch({id, resourceType, req}, auth)
+  const originalRevision = driveDoc[1]
+  const {html, byline} = formatter.getProcessedDocAttributes(driveDoc)
   const sections = getSections(html)
   // maybe we should pull out headers here
-  return {html: processedHtml, originalRevision, sections, template: stringTemplate}
-}
-
-exports.fetchByline = (html, creatorOfDoc) => {
-  let byline = creatorOfDoc
-  const $ = cheerio.load(html)
-
-  // Iterates through all p tags to find byline
-  $('p').each((index, p) => {
-    // don't search any empty p tags
-    if (p.children.length < 1) return
-
-    // regex that checks for byline
-    const r = /^by.+[^.\n]$/mig
-    if (r.test(p.children[0].data)) {
-      byline = p.children[0].data
-      // Removes the word "By"
-      byline = byline.slice(3)
-      $(p).remove()
-    }
-
-    // only check the first p tag
-    return false
-  })
-
-  return {
-    byline,
-    html: $.html()
-  }
+  return {html, byline, originalRevision, sections, template: stringTemplate}
 }
 
 async function fetchHTMLForId(id, resourceType, req, drive) {
