@@ -71,7 +71,7 @@ async function updateTree() {
     const files = await fetchAllFiles({drive, driveType})
 
     const updatedData = produceTree(files, driveId)
-    const { tree, filenames } = updatedData
+    const {tree, filenames} = updatedData
     currentTree = tree
     currentFilenames = filenames
 
@@ -241,20 +241,20 @@ function buildTreeFromData(rootParent, previousData, breadcrumb) {
   // we have to assemble these paths differently
   return children.reduce((memo, id) => {
     const {slug} = docsInfo[id]
-    const nextCrumb = breadcrumb ? breadcrumb.concat({ id: rootParent, slug: parentInfo.slug }) : []
+    const nextCrumb = breadcrumb ? breadcrumb.concat({id: rootParent, slug: parentInfo.slug}) : []
 
     if (!memo.children[slug]) {
       // recurse building up breadcrumb
       memo.children[slug] = buildTreeFromData(id, previousData, nextCrumb)
     } else {
       log.warn(`Folder ${parentInfo.name} contains duplicate resources with slug ${slug}`)
-      const { name } = docsInfo[id]
+      const {name} = docsInfo[id]
       const previousDupes = memo.children[slug].duplicates || []
       memo.children[slug].duplicates = previousDupes.concat(name)
     }
 
     return memo
-  }, Object.assign({}, parentNode, { children: {} }))
+  }, Object.assign({}, parentNode, {children: {} }))
 }
 
 function addPaths(byId) {
@@ -323,30 +323,12 @@ function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
     const newItem = docsInfo[id]
     const oldItem = lastInfo[id]
 
-    // since we have a "trash" folder we need to account
-    // for both missing items and "trashed" items
-    const isTrashed = (item) => !item || item.path.split('/')[1] === 'trash'
-    if (!isFirstRun && (isTrashed(newItem) || isTrashed(oldItem))) {
-      const item = isTrashed(oldItem) ? newItem : oldItem
-      const {path, modifiedTime} = item
-      const action = isTrashed(oldItem) ? 'Added' : 'Removed'
-      // FIXME: This does not restore deleted documents which are undone to the same location
-      return cache.purge({
-        url: path,
-        modified: modifiedTime,
-        editEmail: `item${action}`,
-        ignore: ['missing', 'modified']
-      }).catch((err) => {
-        log.debug('Error purging trashed item cache', err)
-      })
-    }
-
     // don't allow direct purges updates for folders with a home file
     const hasHome = newItem && (driveBranches[newItem.id] || {}).home
     if (hasHome) return
 
     // basically we are just calling purge because we don't know the last modified
-    cache.purge({url: newItem.path, modified: newItem.modifiedTime}).catch((err) => {
+    cache.purge({id, modified: newItem.modifiedTime}).catch((err) => {
       if (!err) return
 
       // Duplicate purge errors should be logged at debug level only

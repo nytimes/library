@@ -3,7 +3,6 @@ const {google} = require('googleapis')
 
 const log = require('./logger')
 const list = require('./list')
-const cache = require('./cache')
 const {getAuth} = require('./auth')
 const {sortDocs, stringTemplate} = require('./utils')
 

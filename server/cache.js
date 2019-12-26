@@ -5,6 +5,7 @@ const middlewareRouter = require('express-promise-router')()
 
 const log = require('./logger')
 const {requireWithFallback} = require('./utils')
+const {parseUrl} = require('./urlParser')
 
 const cache = requireWithFallback('cache/store')
 
@@ -21,8 +22,10 @@ middlewareRouter.use(async (req, res) => {
   if (purge || edit) {
     const {email} = edit ? req.userInfo : {}
     const overrides = ignore ? ignore.split(',') : null
+    const {meta} = await parseUrl(req.path)
+
     return purgeCache({
-      url: req.path,
+      id: meta.id,
       editEmail: email,
       ignore: overrides
     }).then(() => res.end('OK')).catch((err) => {
@@ -52,53 +55,40 @@ exports.add = async (id, newModified, content) => {
 // expose the purgeCache method externally so that list can call while building tree
 exports.purge = purgeCache
 
-async function purgeCache({url, modified, editEmail, ignore}) {
+async function purgeCache({id, modified, editEmail, ignore}) {
   modified = modified || moment().subtract(1, 'hour').utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
 
   const overrides = ignore && Array.isArray(ignore) ? new Set(ignore) : new Set().add(ignore)
   const shouldIgnore = (type) => overrides.has(type) || overrides.has('all') || overrides.has('1')
 
-  if (!url) throw new Error(`Can't purge cache without url! Given url was ${url}`)
+  if (!id) throw new Error(`Can't purge cache without a document id! Given id was ${id}`)
 
-  const data = await cache.get(url)
+  const data = await cache.get(id)
+
+  if (!data) return // if no currently cached item, don't attempt to purge
+
   // compare current cache entry data vs this request
   const {noCache, html, modified: oldModified, purgeId: lastPurgeId} = data || {}
 
   // FIXME: this should be more robust
   if (editEmail && editEmail.includes('@')) {
-    log.info(`CACHE PURGE PERSIST for ${noCacheDelay}s (${editEmail}): ${url}`)
-    return cache.set(url, {noCache: true}, {ttl: noCacheDelay})
+    log.info(`CACHE PURGE PERSIST for ${noCacheDelay}s (${editEmail}): ${id}`)
+    return cache.set(id, {noCache: true}, {ttl: noCacheDelay})
   }
 
   const purgeId = `${modified}-${editEmail || ''}-${ignore}`
 
-  // if attempting to purge /trash but nothing has changed, skip.
-  if (purgeId === lastPurgeId && url === '/trash') return
-
-  // const isTrashed = url.split('/')[1] === 'trash'
   // try and dedupe extra requests from multiple pods (tidier logs)
-  if (purgeId === lastPurgeId && !shouldIgnore('all')) throw new Error(`Same purge id as previous request ${purgeId} for ${url}`)
+  if (purgeId === lastPurgeId && !shouldIgnore('all')) throw new Error(`Same purge id as previous request ${purgeId} for docId ${id}`)
   // by default, don't try to purge empty
   if (!html && !shouldIgnore('missing')) throw new Error('Not found')
   // by default, don't purge a noCache entry
   if (noCache && !shouldIgnore('editing')) throw new Error('Unauthorized')
   // by default, don't purge when the modification time is not fresher than previous
-  if (!isNewer(oldModified, modified) && !shouldIgnore('modified')) throw new Error(`No purge of fresh content for ${url}`)
+  if (!isNewer(oldModified, modified) && !shouldIgnore('modified')) throw new Error(`No purge of fresh content for docId ${id}`)
 
-  // if we passed all the checks, determine all ancestor links and purge
-  const segments = url.split('/').map((segment, i, segments) => {
-    return segments.slice(0, i).concat([segment]).join('/')
-  }).filter((s) => s.length) // don't allow purging empty string
-
-  // call the callback when all segments have been purged
-  return Promise.all(
-    segments.map((path) => {
-      log.info(`CACHE PURGE ${path} FROM CHANGE AT ${url}`)
-      // there is an edge here where a homepage upstream was being edited and already not in cache.
-      // we need to get the cache entries for all of these in case and not purge them to account for that edge
-      cache.set(path, {modified, purgeId})
-    })
-  )
+  // if all checks pass, purge
+  cache.set(id, {modified, purgeId})
 }
 
 function isNewer(oldModified, newModified) {
