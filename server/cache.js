@@ -36,17 +36,17 @@ middlewareRouter.use(async (req, res) => {
 
 exports.middleware = middlewareRouter
 
-exports.add = async (id, newModified, path, content) => {
+exports.add = async (id, newModified, content) => {
   if (!newModified) throw new Error('Refusing to store new item without modified time.')
 
-  const data = await cache.get(path)
+  const data = await cache.get(id)
   const {modified, noCache, content: oldContent} = data || {}
   // don't store any items over noCache entries
   if (noCache) return // refuse to cache any items that are being edited
   // if there was previous data and it is not older than the new data, don't do anything
   if (oldContent && modified && !isNewer(modified, newModified)) return // nothing to do if data is current
   // store new data in the cache
-  return cache.set(path, {content, modified: newModified, id})
+  return cache.set(id, {content, modified: newModified, id})
 }
 
 // expose the purgeCache method externally so that list can call while building tree

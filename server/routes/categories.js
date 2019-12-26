@@ -56,9 +56,9 @@ async function handleCategory(req, res) {
     })
   }
 
+  res.locals.docId = data.id // we need this for history later
   // for docs, fetch the html and then combine with the base data
   const {html, byline, createdBy, sections} = await fetchDoc(id, resourceType, req)
-  res.locals.docId = data.id // we need this for history later
 
   res.render(template, Object.assign({}, baseRenderData, {
     content: html,

@@ -32,7 +32,7 @@ exports.slugify = (text = '') => {
 }
 
 exports.fetchDoc = async (id, resourceType, req) => {
-  const data = await cache.get(req.path)
+  const data = await cache.get(id)
   if (data && data.content) {
     console.log(`CACHE HIT ${req.path}`)
     return data.content
@@ -47,7 +47,7 @@ exports.fetchDoc = async (id, resourceType, req) => {
   const payload = {html, byline, createdBy, sections}
 
   // cache only information from document body
-  cache.add(id, originalRevision.data.modifiedTime, req.path, payload)
+  cache.add(id, originalRevision.data.modifiedTime, payload)
   return payload
 }
 
@@ -77,7 +77,7 @@ async function fetchOriginalRevisions(id, resourceType, req, drive) {
 
   if (!revisionSupported.has(resourceType)) {
     log.info(`Revision data not supported for ${resourceType}:${id}`)
-    return {data: { lastModifyingUser: {} }} // return mock/empty revision object
+    return {data: {lastModifyingUser: {} } } // return mock/empty revision object
   }
   return drive.revisions.get({
     fileId: id,
@@ -85,7 +85,7 @@ async function fetchOriginalRevisions(id, resourceType, req, drive) {
     fields: '*'
   }).catch((err) => {
     log.warn(`Failed retrieving revision data for ${resourceType}:${id}. Error was:`, err)
-    return {data: { lastModifyingUser: {} }} // return mock/empty revision object
+    return {data: {lastModifyingUser: {} } } // return mock/empty revision object
   })
 }
 
