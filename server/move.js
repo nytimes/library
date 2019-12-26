@@ -25,7 +25,7 @@ exports.getFolders = async () => {
 }
 
 exports.moveFile = async (id, destination, driveType = 'team') => {
-  const {parents, slug} = list.getMeta(id) || {}
+  const {parents, slug, path: oldPath} = list.getMeta(id) || {}
   const {path: basePath} = list.getMeta(destination) || {}
 
   if (!parents) return Error('Not found')
@@ -51,40 +51,17 @@ exports.moveFile = async (id, destination, driveType = 'team') => {
   const options = driveType === 'folder' ? baseOptions : teamOptions
   await drive.files.update(options)
 
-  const oldUrls = parents.map((id) => {
-    const {path} = list.getMeta(id) || {}
-    return path ? `${path}/${slug}` : `/${slug}`
-  })
-
   if (basePath === '/trash') {
-    oldUrls.forEach((url) => log.info(`TRASHED ${url}`))
+    log.info(`TRASHED ${oldPath}`)
     return '/'
   }
 
   const newUrl = basePath ? `${basePath}/${slug}` : `/${slug}`
 
-  // log that we moved the page(s) to the new url
-  oldUrls.forEach((url) => {
-    log.info(`MOVED ${url} => ${newUrl}`)
-  })
+  log.info(`MOVED ${basePath} => ${newUrl}`)
 
-  // fake the drive updating immediately by manually copying cache
-  const data = await Promise.all(oldUrls.map((url) => {
-    return cache.get(url)
-  })).catch((err) => { log.warn('Error gettng cached URLs', err) })
-
-  // cache stores urls and page data, make sure to find actual data object for page
-  const hasHtml = data.filter(({html} = {}) => html && html.length)
-  if (!hasHtml.length) return '/'
-
-  const {docId, modified, html} = hasHtml[0]
-
-  return cache.add(docId, modified, newUrl, html).then(() => {
-    return newUrl
-  }).catch((err) => {
-    log.warn(`Failed saving new cache data for ${newUrl}`, err)
-    return '/'
-  })
+  // TODO: this 404s for 5-10 sec at the moment as the tree must update before the path will map to the correct id
+  return newUrl
 }
 
 // converts raw tree data used for routing into sorted lists with resource
@@ -96,7 +73,7 @@ function extendTree({id, children: keys}) {
     ? children.map(extendTree).sort(sortDocs)
     : []
 
-  return Object.assign({}, {id, prettyName, resourceType, sort, isTrashCan}, { children: extended })
+  return Object.assign({}, {id, prettyName, resourceType, sort, isTrashCan}, {children: extended})
 }
 
 function selectFolders({id, prettyName, children, isTrashCan}) {
