@@ -68,7 +68,8 @@ async function purgeCache({id, modified, editEmail, ignore}) {
   if (!data) return // if no currently cached item, don't attempt to purge
 
   // compare current cache entry data vs this request
-  const {noCache, html, modified: oldModified, purgeId: lastPurgeId} = data || {}
+  const {noCache, content, purgeId: lastPurgeId} = data || {}
+  const html = content && content.html
 
   // FIXME: this should be more robust
   if (editEmail && editEmail.includes('@')) {
@@ -80,14 +81,15 @@ async function purgeCache({id, modified, editEmail, ignore}) {
 
   // try and dedupe extra requests from multiple pods (tidier logs)
   if (purgeId === lastPurgeId && !shouldIgnore('all')) throw new Error(`Same purge id as previous request ${purgeId} for docId ${id}`)
+
   // by default, don't try to purge empty
-  if (!html && !shouldIgnore('missing')) throw new Error('Not found')
+  else if (!html && !shouldIgnore('missing')) throw new Error('Not found')
+
   // by default, don't purge a noCache entry
-  if (noCache && !shouldIgnore('editing')) throw new Error('Unauthorized')
-  // by default, don't purge when the modification time is not fresher than previous
-  if (!isNewer(oldModified, modified) && !shouldIgnore('modified')) throw new Error(`No purge of fresh content for docId ${id}`)
+  else if (noCache && !shouldIgnore('editing')) throw new Error('Unauthorized')
 
   // if all checks pass, purge
+  log.info(`CACHE PURGE ${id}`)
   cache.set(id, {modified, purgeId})
 }
 

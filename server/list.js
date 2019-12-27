@@ -320,15 +320,17 @@ function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
   // check all the nodes to see if they have changes
   allPages.forEach((id) => {
     // compare old item to new item
-    const newItem = docsInfo[id]
-    const oldItem = lastInfo[id]
+    const newItem = docsInfo[id] || {}
+    const oldItem = lastInfo[id] || {}
 
-    // don't allow direct purges updates for folders with a home file
-    const hasHome = newItem && (driveBranches[newItem.id] || {}).home
-    if (hasHome) return
+    const newModified = new Date(newItem.modifiedTime)
+    const oldModified = new Date(oldItem.modifiedTime)
+    const hasUpdates = newModified > oldModified
 
-    // basically we are just calling purge because we don't know the last modified
-    cache.purge({id, modified: newItem.modifiedTime}).catch((err) => {
+    // if no updates reported from drive API, don't purge.
+    if (!hasUpdates) return
+
+    cache.purge({id: newItem.id, modified: newItem.modifiedTime}).catch((err) => {
       if (!err) return
 
       // Duplicate purge errors should be logged at debug level only

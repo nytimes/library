@@ -34,7 +34,7 @@ exports.slugify = (text = '') => {
 exports.fetchDoc = async (id, resourceType, req) => {
   const data = await cache.get(id)
   if (data && data.content) {
-    console.log(`CACHE HIT ${req.path}`)
+    log.info(`CACHE HIT ${req.path}`)
     return data.content
   }
 
