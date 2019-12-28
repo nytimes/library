@@ -4,6 +4,8 @@ const {expect} = require('chai')
 
 const {cleanName, slugify, fetchDoc} = require('../../server/docs')
 
+const PAYLOAD_KEYS = ['html', 'byline', 'createdBy', 'sections']
+
 describe('Docs', () => {
   describe('Name Cleaner', () => {
     it('should remove leading numbers and delimeters', () => {
@@ -49,17 +51,18 @@ describe('Docs', () => {
 
   describe('Fetching Docs', () => {
     it('should fetch document data with expected structure', async () => {
-      const doc = await fetchDoc('id1', 'document', {})
-      expect(doc).to.include.keys('html', 'originalRevision')
+      const doc = await fetchDoc('id-doc', 'document', {})
+      expect(doc).to.include.keys('html', 'byline', 'createdBy', 'sections')
     })
 
-    it('should return revision data with correct format', async () => {
-      const {originalRevision} = await fetchDoc('id1', 'document', {})
+    // no longer cas originalrevision data
+    it.skip('should return revision data with correct format', async () => {
+      const {originalRevision} = await fetchDoc('id-doc', 'document', {})
       expect(originalRevision.data).to.have.keys('kind', 'mimeType', 'modifiedTime', 'published', 'lastModifyingUser')
     })
 
-    it('should have correct mimetype for document', async () => {
-      const {originalRevision} = await fetchDoc('id1', 'document', {})
+    it.skip('should have correct mimetype for document', async () => {
+      const {originalRevision} = await fetchDoc('id-doc', 'document', {})
       const {mimeType} = originalRevision.data
       expect(mimeType).equals('application/vnd.google-apps.document')
     })
@@ -75,17 +78,18 @@ describe('Docs', () => {
 
   describe('Fetching Sheets', () => {
     it('should fetch sheet data with expected structure', async () => {
-      const sheet = await fetchDoc('id1', 'spreadsheet', {})
-      expect(sheet).to.include.keys('html', 'originalRevision')
+      const sheet = await fetchDoc('id-sheet', 'spreadsheet', {})
+      expect(sheet).to.include.keys(PAYLOAD_KEYS)
     })
 
-    it('should return revision data with correct format', async () => {
-      const {originalRevision} = await fetchDoc('id1', 'spreadsheet', {})
+    // no longer includes revision data
+    it.skip('should return revision data with correct format', async () => {
+      const {originalRevision} = await fetchDoc('id-sheet', 'spreadsheet', {})
       expect(originalRevision.data).to.have.keys('kind', 'mimeType', 'modifiedTime', 'published', 'lastModifyingUser')
     })
 
     it('should successully parse the sheet to a html table', async () => {
-      const {html} = await fetchDoc('id1', 'spreadsheet', {})
+      const {html} = await fetchDoc('id-sheet', 'spreadsheet', {})
       expect(html).includes('<table>')
       expect(html).includes('</table>')
     })
@@ -93,18 +97,18 @@ describe('Docs', () => {
 
   describe('Fetching html', () => {
     it('should fetch html data with expected structure', async () => {
-      const sheet = await fetchDoc('id1', 'text/html', {})
-      expect(sheet).to.include.keys('html', 'originalRevision')
+      const sheet = await fetchDoc('id-html', 'text/html', {})
+      expect(sheet).to.include.keys(PAYLOAD_KEYS)
     })
 
     it('should not modify html', async () => {
-      const {html} = await fetchDoc('id1', 'text/html', {})
+      const {html} = await fetchDoc('id-html', 'text/html', {})
       expect(html).equals('<h1>This is a raw HTML document</h1>')
     })
   })
 
   it('should identify bad resource types', async () => {
-    const {html} = await fetchDoc('id1', 'badtype', {})
+    const {html} = await fetchDoc('id-html', 'badtype', {})
     expect(html).equals('Library does not support viewing badtypes yet.')
   })
 })
