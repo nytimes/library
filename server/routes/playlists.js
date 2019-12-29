@@ -41,8 +41,7 @@ async function handlePlaylist(req, res) {
     log.info('Getting page in playlist')
 
     // process data
-    const {html, byline, originalRevision, sections} = await fetchDoc(id, resourceType, req)
-    const revisionData = originalRevision.data
+    const {html, byline, createdBy, sections} = await fetchDoc(id, resourceType, req)
     const playlistPageData = await preparePlaylistPage(data, req.path, parentMeta)
 
     // render as a playlist
@@ -50,7 +49,7 @@ async function handlePlaylist(req, res) {
       template: stringTemplate,
       content: html,
       byline: byline,
-      createdBy: revisionData.lastModifyingUser.displayName,
+      createdBy,
       sections,
       title: meta.prettyName
     }), (err, html) => {

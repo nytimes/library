@@ -18,11 +18,8 @@ exports.get = cache.get // expose the ability to retreive cache data internally
 middlewareRouter.use(async (req, res) => {
   // handle the purge request if purge or edit params are present
   const {purge, edit, ignore} = req.query
-  console.log('QUERY IS', req.query)
 
   if (purge || edit) {
-    console.log('WSAITING ON THAT PURGE')
-
     const {email} = edit ? req.userInfo : {}
     const overrides = ignore ? ignore.split(',') : null
     const {meta} = await parseUrl(req.path)

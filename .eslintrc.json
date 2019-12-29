@@ -21,7 +21,7 @@
         "anonymous": "always",
         "named": "never"
       }],
-      "object-curly-spacing": ["error", "never", {"objectsInObjects": true}],
+      "object-curly-spacing": ["error", "never"],
       "prefer-const": ["error"]
     }
 }

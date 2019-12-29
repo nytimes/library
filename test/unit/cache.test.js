@@ -1,20 +1,14 @@
 'use strict'
 
-const nodePath = require('path')
 const request = require('supertest')
 const moment = require('moment')
-const express = require('express')
+const sinon = require('sinon')
 const {expect} = require('chai')
 
 const {f} = require('../utils')
 const cache = require('../../server/cache')
-const categories = require('../../server/routes/categories')
 
-const server = express()
-server.use(cache.middleware)
-server.use(categories)
-server.set('view engine', 'ejs')
-server.set('views', nodePath.join(__dirname, '../../layouts'))
+const app = require('../../server/index')
 
 const sampleEntry = {
   id: 'Test7', // mocked document that maps to path below in the drive listing
@@ -29,13 +23,21 @@ const nextModified = () => {
   count += 1
   return moment(modified).add(count, 'days').format()
 }
+const userInfo = {
+  emails: [{value: 'test.user@test.com'}],
+  id: '10',
+  userId: '10',
+  _json: {domain: 'test.com'}
+}
 
 const purgeCache = () => cache.purge({id, modified: nextModified(), ignore: 'all'})
 const addCache = () => cache.add(id, nextModified(), {html})
-const getCache = (url = path) => request(server).get(url)
+const getCache = (url = path) => request(app).get(url)
 
 // can we run against cache explicitly?
 describe('The cache', f((mocha) => {
+  beforeEach(() => sinon.stub(app.request, 'session').value({passport: {user: userInfo}}))
+
   describe('adding to the cache', f((mocha) => {
     beforeEach(f((mocha) => purgeCache))
 
