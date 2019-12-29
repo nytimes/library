@@ -1,21 +1,26 @@
 'use strict'
 
+const nodePath = require('path')
 const request = require('supertest')
-const assert = require('assert')
 const moment = require('moment')
 const express = require('express')
+const {expect} = require('chai')
 
 const {f} = require('../utils')
 const cache = require('../../server/cache')
+const categories = require('../../server/routes/categories')
 
 const server = express()
 server.use(cache.middleware)
+server.use(categories)
+server.set('view engine', 'ejs')
+server.set('views', nodePath.join(__dirname, '../../layouts'))
 
 const sampleEntry = {
-  id: 'some_id',
+  id: 'Test7', // mocked document that maps to path below in the drive listing
   modified: moment(0).format(), // this should be an actual date
-  path: '/parent/sample-entry',
-  html: 'cached html'
+  path: '/test-folder-1/article-3-in-test-folder-1',
+  html: 'cached html' // will be used to overwrite doc content for tests
 }
 const {id, modified, path, html} = sampleEntry
 
@@ -25,8 +30,8 @@ const nextModified = () => {
   return moment(modified).add(count, 'days').format()
 }
 
-const purgeCache = () => cache.purge({url: path, modified: nextModified(), ignore: 'all'})
-const addCache = () => cache.add(id, nextModified(), path, html)
+const purgeCache = () => cache.purge({id, modified: nextModified(), ignore: 'all'})
+const addCache = () => cache.add(id, nextModified(), {html})
 const getCache = (url = path) => request(server).get(url)
 
 // can we run against cache explicitly?
@@ -36,7 +41,7 @@ describe('The cache', f((mocha) => {
 
     it('should not save if no modification time is passed', f((mocha) => {
       return cache.add(id, null, path, html)
-        .catch((err) => assert(err, 'an error is returned'))
+        .catch((err) => expect(err).to.be.an('error'))
     }))
 
     it('should save successfully with valid data', f((mocha) => {
@@ -44,49 +49,48 @@ describe('The cache', f((mocha) => {
     }))
   }))
 
-  describe('purging the cache', f((mocha) => {  
+  describe('purging the cache', f((mocha) => {
     beforeEach(() => purgeCache().then(addCache))
-    /*
-    it('should succeed via the purge method', f((mocha) => {
+
+    it('should succeed via the purge method', f(async (mocha) => {
       return getCache()
         .expect(200)
-        .then(() => cache.purge({url: path, modified: nextModified()}))
-        .then(() => getCache().expect(404))
+        .then(() => cache.purge({id, modified: nextModified()}))
+        .then(async () => expect(await cache.get(id)).to.include.keys('purgeId'))
     }))
 
     it('should succeed via "purge" query param', f((mocha) => {
       return getCache()
         .query({purge: 1})
         .expect(200)
-        .then(() => getCache().expect(404))
-    })) */
+        .then(async () => expect(await cache.get(id)).to.include.keys('purgeId'))
+    }))
 
     it('should succeed via "edit" query param', f((mocha) => {
       return getCache()
         .query({edit: 1})
         .expect(200)
-        .then(() => getCache().expect(404))
+        .then(async () => expect(await cache.get(id)).to.include.keys('noCache'))
     }))
   }))
 
-  /* describe('saved html', f((mocha) => {
+  describe('saved html', f((mocha) => {
     beforeEach(() => purgeCache().then(addCache))
-    
+
     it('should be returned when available', f((mocha) => {
+      addCache()
       return getCache()
         .expect(200)
-        .then((res) => {
-          assert.equal(res.text, html, 'the returned html should match what was cached')
-        })
+        .then((res) => expect(res.text).to.include(html))
     }))
 
     it('should not be returned when empty', f((mocha) => {
-      return cache.purge({ url: path, modified: nextModified() })
-        .then(() => getCache().expect(404))
+      return cache.purge({id, modified: nextModified()})
+        .then(async () => expect(await cache.get(id)).to.include.keys('purgeId'))
     }))
-  })) */
+  }))
 
-  /* describe('redirects', f((mocha) => {
+  describe.skip('redirects', f((mocha) => {
     beforeEach(() => purgeCache().then(addCache))
 
     it('should save redirects when valid', f((mocha) => {
@@ -97,5 +101,5 @@ describe('The cache', f((mocha) => {
         // and that cache was purged at the destination
         .then(() => getCache(newPath).expect(404))
     }))
-  }))  */
+  }))
 }))

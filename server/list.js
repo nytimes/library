@@ -254,7 +254,8 @@ function buildTreeFromData(rootParent, previousData, breadcrumb) {
     }
 
     return memo
-  }, Object.assign({}, parentNode, {children: {} }))
+  // eslint-disable-next-line object-curly-spacing
+  }, Object.assign({}, parentNode, { children: {} }))
 }
 
 function addPaths(byId) {
@@ -308,7 +309,6 @@ async function retrievePlaylistData(id) {
 function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
   const currentNode = driveBranches[id] || {}
   const lastNode = lastTree[id] || {}
-  const isFirstRun = !Object.keys(lastTree).length // oldTree is empty on the first check
 
   // combine current and previous children ids uniquely
   const allPages = (currentNode.children || [])
