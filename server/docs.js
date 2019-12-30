@@ -9,7 +9,6 @@ const cache = require('./cache')
 const formatter = require('./formatter')
 const log = require('./logger')
 const {getAuth} = require('./auth')
-const {stringTemplate} = require('./utils')
 
 const supportedTypes = new Set(['document', 'spreadsheet', 'text/html'])
 
@@ -77,7 +76,7 @@ async function fetchOriginalRevisions(id, resourceType, req, drive) {
 
   if (!revisionSupported.has(resourceType)) {
     log.info(`Revision data not supported for ${resourceType}:${id}`)
-    return {data: {lastModifyingUser: {} } } // return mock/empty revision object
+    return {data: {lastModifyingUser: {}}} // return mock/empty revision object
   }
   return drive.revisions.get({
     fileId: id,
@@ -85,7 +84,7 @@ async function fetchOriginalRevisions(id, resourceType, req, drive) {
     fields: '*'
   }).catch((err) => {
     log.warn(`Failed retrieving revision data for ${resourceType}:${id}. Error was:`, err)
-    return {data: {lastModifyingUser: {} } } // return mock/empty revision object
+    return {data: {lastModifyingUser: {}}} // return mock/empty revision object
   })
 }
 

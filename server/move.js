@@ -8,6 +8,10 @@ const {sortDocs, stringTemplate} = require('./utils')
 
 const driveId = process.env.DRIVE_ID
 
+/* NB: The move feature is disabled on the front-end as the current cache implementation does
+ * not support moving files via the drive API. The move file feature is pending removal as
+ * shared drives/folders now support more granular permission to allow users to move files. */
+
 // return the folder html (or at least json object) that can be templated
 exports.getFolders = async () => {
   const data = await list.getTree()

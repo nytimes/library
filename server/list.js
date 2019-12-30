@@ -254,8 +254,7 @@ function buildTreeFromData(rootParent, previousData, breadcrumb) {
     }
 
     return memo
-  // eslint-disable-next-line object-curly-spacing
-  }, Object.assign({}, parentNode, { children: {} }))
+  }, Object.assign({}, parentNode, {children: {}}))
 }
 
 function addPaths(byId) {

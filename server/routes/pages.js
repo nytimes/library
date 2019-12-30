@@ -43,6 +43,7 @@ async function handlePage(req, res) {
     })
   }
 
+  // NB: The move feature is currently disabled - see move.js.
   if (page === 'move-file' && id) {
     if (!dest) {
       const folders = await move.getFolders(id)

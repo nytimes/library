@@ -24,9 +24,8 @@ const nextModified = () => {
 }
 const updateFile = () => {}
 
+// NB: The move feature is currently disabled - see move.js.
 describe('Move files', () => {
-  it('TODO: should remove tests with cache logic as the cache no longer relates to file moves')
-
   describe('results from getFolders', async () => {
     let folders
 

@@ -7,7 +7,7 @@
   <% } %>
   <% if (locals.editLink) { %>
     <a class="button btn-footer" href="<%- editLink %>" id="edit-button" target="_blank"><%- template('footer.buttons.edit') %></a>
-    <a class="button btn-footer move-file-button" href="/move-file?id=<%- id %>"><%- template('footer.buttons.move') %></a>
+    <!-- <a class="button btn-footer move-file-button" href="/move-file?id=<%- id %>"><%- template('footer.buttons.move') %></a> -->
   <% } %>
   <% if (locals.parentId) { %>
     <a class="button btn-footer" href="https://docs.google.com/document/u/0/create?usp=drive_web&folder=<%- parentId %>" %> target="_blank"><%- template('footer.buttons.create') %></a>
