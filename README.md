@@ -9,6 +9,8 @@ A collaborative newsroom documentation site, powered by Google Docs.
 
 - [Demo Site & User Guide](#demo-site--user-guide)
 - [Contacting us](#contacting-us)
+- [Community](#community)
+- [Contributing](#contributing)
 - [Questions](#questions)
 - [Development Workflow](#development-workflow)
   - [Tests](#tests)
@@ -29,13 +31,31 @@ A collaborative newsroom documentation site, powered by Google Docs.
 
 ## Demo Site & User Guide
 
-Documentation about how to get started with Library is hosted as a working (read only) demo on Heroku. Consult the site for more detailed instructions than this readme about how to get the most out of Library: https://nyt-library-demo.herokuapp.com. 
+Documentation about how to get started with Library is hosted as a working (read only) demo on Heroku. Consult the site for more detailed instructions than this readme about how to get the most out of Library: https://nyt-library-demo.herokuapp.com.
 
 ## Contacting us
 
 Love Library? Let us know by [joining our Google Group](https://groups.google.com/forum/#!forum/nyt-library-community) and dropping us a line. You'll also stay up to date with the latest Library features via our release notes, which get sent to this list.
 
+## Community
+
+Here are some of the organizations using Library so far.
+
+[Marketplace](https://www.marketplace.org/)
+
+[The New York Times](http://nytimes.com)
+
+[Northwestern University Knight Lab](https://knightlab.northwestern.edu)
+
+[WBEZ](https://www.wbez.org)
+
+
+## Contributing
+
+See [CONTRIBUTING.md](https://github.com/nytimes/library/blob/master/CONTRIBUTING.md) for information on how to contribute code and/or documentation on GitHub or on the [demo site](https://nyt-library-demo.herokuapp.com).
+
 ## Questions
+
 If you have questions about how to get your copy of Library up and running, [join our Google Group](https://groups.google.com/forum/#!forum/nyt-library-community)) and let us know what you're running into. We also keep an eye on the #proj-library channel in the News Nerdery Slack. We'll do our best to answer your questions.
 
 ## Development Workflow
@@ -70,6 +90,8 @@ DRIVE_TYPE=team # or folder, if using a folder instead of a team drive
 DRIVE_ID=0123456ABCDEF # the ID of your team's drive or shared folder. The string of random numbers and letters at the end of your team drive or folder url.
 ```
 Make sure to remove all comments after the `DRIVE_TYPE` and `DRIVE_ID` vars.
+
+Ensure you share your base drive or folder with the email address associated with the service account created in step 2.
 
 **Be careful!** Setting NODE_ENV to `development` changes the built in behaviors for site authentication to allow accounts other than those in the APPROVED_DOMAINS list. **Never use NODE_ENV=development for your deployed site, only locally.**
 

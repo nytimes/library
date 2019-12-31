@@ -155,10 +155,14 @@
   }
 
   .twitter-typeahead {
-    position: absolute;
+    font-style: normal;
+    font-family: $font-sans;
+    font-size: 16px;
+    line-height: 30px;
+    font-weight: 400;
+    position: relative;
+    width: calc(100% - 65px);
     height: 50px;
-    border-radius: 0;
-    background-color: transparent;
     transition: background-color 0.3s;
     display: inline-block;
     border: 1px solid $gray-40;
@@ -174,33 +178,34 @@
     -ms-transition: background .55s ease;
     -o-transition: background .55s ease;
     transition: background .55s ease;
+    padding-left: 15px;
+    -webkit-font-smoothing: antialiased;
+
     &:hover,
     &:focus,
     &:active {
       outline: none;
       background:  $accent-lightest;
     }
+
+
+    .tt-hint {
+      color: $gray-30;
+      background-color: transparent !important;
+      outline: none;
+      border: none;
+      -webkit-appearance: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    // to account for case where typeahead fails to load
+    .twitter-typeahead.tt-input {
+      box-shadow: none;
+      border: none;
+      padding-left: 0;
+    }
   }
 
-  .tt-hint {
-    color: $gray-35;
-    background-color: transparent !important;
-  }
-
-  #search-box, .tt-hint {
-    outline: none;
-    font-size: 16px;
-    line-height: 30px;
-    font-weight: 400;
-    font-style: normal;
-    font-family: $font-sans;
-    border: none;
-    padding-left: 15px;
-    width: calc(100% - 65px);
-    height: 100%;
-    -webkit-appearance: none;
-    -webkit-font-smoothing: antialiased;
-  }
 
   .icon{
     position: relative;
