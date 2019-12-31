@@ -3,10 +3,13 @@ const path = require('path')
 const cheerio = require('cheerio')
 const { assert } = require('chai')
 
+const formatterPath = '../../server/formatter'
+const docPath = path.join(__dirname, '../fixtures/supportedFormats.html')
+
 describe('HTML processing', () => {
   before(function () {
-    const formatter = require('../../server/formatter')
-    this.rawHTML = fs.readFileSync(path.join(__dirname, '../fixtures/supportedFormats.html'), { encoding: 'utf8' })
+    const formatter = require(formatterPath)
+    this.rawHTML = fs.readFileSync(docPath, { encoding: 'utf8' })
     this.processedHTML = formatter.getProcessedHtml(this.rawHTML)
     this.output = cheerio.load(this.processedHTML)
   })
@@ -84,6 +87,51 @@ describe('HTML processing', () => {
       const codeBlock = this.output('pre')
       assert.match(codeBlock.html(), /singleQuotedStr = &apos;str&apos;/)
       assert.match(codeBlock.html(), /doubleQuotedStr = &quot;str&quot;/)
+    })
+  })
+
+  describe('inline code handling', () => {
+    describe('with inline code disabled', () => {
+      it('does not modify code block content', function () {
+        const codeBlock = this.output("pre:contains('codeblocks will not')")
+        assert.match(codeBlock.html(), /&lt;%-.*%&gt;/)
+      })
+
+      it('does not unescape delimited code', function () {
+        const className = this.output("p:contains('.purplePapyrus')")
+        const styleTag = className.prev()
+        const openingTag = styleTag.prev()
+
+        assert.equal(styleTag.html(), '&lt;style&gt;')
+        assert.equal(openingTag.html(), '&lt;%-')
+      })
+    })
+
+    describe('with inline code enabled', () => {
+      before(function () {
+        process.env.ALLOW_INLINE_CODE = 'true'
+        // remove formatter from require cache to recognize changed env variable
+        delete require.cache[require.resolve(formatterPath)]
+        const formatter = require(formatterPath)
+        const rawHTML = fs.readFileSync(docPath, { encoding: 'utf8' })
+        const processedHTML = formatter.getProcessedHtml(rawHTML)
+        this.codeEnabledOut = cheerio.load(processedHTML)
+      })
+
+      it('does not modify code block content', function () {
+        const codeBlock = this.codeEnabledOut("pre:contains('codeblocks will not')")
+        assert.match(codeBlock.html(), /&lt;%-.*%&gt;/)
+      })
+
+      it('properly unescapes delimited code', function () {
+        const style = this.codeEnabledOut("style:contains('.purplePapyrus')")
+        const styledDiv = this.codeEnabledOut('div.purplePapyrus')
+
+        assert.exists(style)
+        assert.exists(styledDiv)
+        assert.match(style, /font-family: papyrus;/)
+        assert.equal(styledDiv.text(), 'But this custom style will!')
+      })
     })
   })
 
