@@ -113,11 +113,22 @@ function formatCode(html) {
     return `<code>${formatCodeContent(content)}</code>`
   })
 
-  html = html.replace(/&lt;%-(.+)%&gt;/g, (match, content) => {
-    if (!allowInlineCode) return '' // strip out scripts entirely when not permitted
-    const html = unescape(content)
-    return formatCodeContent(html)
-  })
+  // for inline code option
+  if (allowInlineCode) {
+    const matches = []
+    // get all code matches, push any that are not <pre> wrapped
+    html.replace(/&lt;%-.*?\s?%&gt;(.*?<\/pre>)?/g, (codeContent, closingPre) => {
+      if (!closingPre) matches.push(codeContent)
+    })
+
+    for (const codeMatch of matches) {
+      // strip leading and trailing templtate delimiters
+      const untaggedMatch = codeMatch.replace(/^&lt;%-/, '').replace(/%&gt;$/, '')
+      // strip interior <p> tags added by google
+      const escapedMatch = untaggedMatch.replace(/<\/p><p>/g, '').replace(/<\/?p>/g, '')
+      html = html.replace(codeMatch, unescape(escapedMatch))
+    }
+  }
 
   return html
 }
