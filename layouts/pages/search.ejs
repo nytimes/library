@@ -17,7 +17,7 @@
               <% if (res.folder) { %>
                 <%- template('search.results.label.folder', res.folder.path, res.folder.prettyName || 'Home')%>&nbsp;
               <% } %>
-              <% if (res.lastModifyingUser) { %>
+              <% if (res.lastModifyingUser && res.lastModifyingUser.displayName) { %>
                 <%- template('search.results.label.person', res.lastModifyingUser.displayName) %>
               <% } %>
               <%= res.lastUpdated %>

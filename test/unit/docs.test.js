@@ -33,6 +33,19 @@ describe('Docs', () => {
       expect(cleanName('3/28')).equals('3/28')
       expect(cleanName('3-28-2018')).equals('3-28-2018')
     })
+
+    it('should only remove keywords preceded by a pipe', () => {
+      expect(cleanName('Page foo | home')).equals('Page foo')
+      expect(cleanName('Page foo home | home')).equals('Page foo home')
+      expect(cleanName('Page foo hidden | home')).equals('Page foo hidden')
+      expect(cleanName('Page foo home | home, hidden')).equals('Page foo home')
+      expect(cleanName('Page foo home | hidden, home')).equals('Page foo home')
+    })
+
+    it('should only remove words after the last pipe pipe', () => {
+      expect(cleanName('I | love | pipes | home')).equals('I | love | pipes')
+      expect(cleanName('I | love | pipes | foobar')).equals('I | love | pipes')
+    })
   })
 
   describe('Slugification', () => {
