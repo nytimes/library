@@ -1,23 +1,21 @@
 const fs = require('fs')
 const path = require('path')
 const cheerio = require('cheerio')
-const { assert } = require('chai')
-const { getProcessedDocAttributes } = require('../../server/formatter')
+const {assert} = require('chai')
+let {getProcessedDocAttributes} = require('../../server/formatter')
+
+const docPath = path.join(__dirname, '../fixtures/supportedFormats.html')
 
 // helper function to stub the doc and get a section of the returned document
 function stubbedProcessedDoc(unprocessedHtml, editorName) {
-  const docData = {data: { lastModifyingUser: {displayName: editorName} }}
+  const docData = {data: {lastModifyingUser: {displayName: editorName}}}
   return getProcessedDocAttributes([unprocessedHtml, docData])
 }
 
-const formatterPath = '../../server/formatter'
-const docPath = path.join(__dirname, '../fixtures/supportedFormats.html')
-
 describe('HTML processing', () => {
   before(function () {
-    const formatter = require(formatterPath)
-    this.rawHTML = fs.readFileSync(docPath, { encoding: 'utf8' })
-    this.processedHTML = formatter.getProcessedHtml(this.rawHTML).html
+    this.rawHTML = fs.readFileSync(docPath, {encoding: 'utf8'})
+    this.processedHTML = stubbedProcessedDoc(this.rawHTML).html
     this.output = cheerio.load(this.processedHTML)
   })
 
@@ -118,10 +116,10 @@ describe('HTML processing', () => {
       before(function () {
         process.env.ALLOW_INLINE_CODE = 'true'
         // remove formatter from require cache to recognize changed env variable
-        delete require.cache[require.resolve(formatterPath)]
-        const formatter = require(formatterPath)
-        const rawHTML = fs.readFileSync(docPath, { encoding: 'utf8' })
-        const processedHTML = formatter.getProcessedHtml(rawHTML)
+        delete require.cache[require.resolve('../../server/formatter')]
+        getProcessedDocAttributes = require('../../server/formatter').getProcessedDocAttributes
+        const rawHTML = fs.readFileSync(docPath, {encoding: 'utf8'})
+        const processedHTML = stubbedProcessedDoc(rawHTML).html
         this.codeEnabledOut = cheerio.load(processedHTML)
       })
 
