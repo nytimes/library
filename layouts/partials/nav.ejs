@@ -7,19 +7,20 @@
   <h1 class="headline"><%= title %></h1>
   <div class="kicker">
     <div class="attribution">
-      <p>
         <% if (locals.byline) { %>
-          By <span class="author"><%= byline %></span>.
-        <% } else if (locals.createdBy && !locals.byline) { %>
-          <%# encode the dates as data properties to make relative time work for cache %>
-          Created by <span class="author"><%= createdBy %></span><span class="date" data-date="<%= locals.createdAt %>"></span>.
+          <p>
+            By <span class="author"><%=locals.byline %></span>.
+          </p>
         <% } %>
-        <% if (locals.lastUpdatedBy) { %>
-          </p><p>
-            Last edited by <span class="author"><%= lastUpdatedBy %></span><span class="date" data-date="<%= locals.modifiedAt %>"></span>.</p>
-        <% } %>
-        <% if (locals.byline) { %>
-          <p>Created <span class="date" data-date="<%= locals.createdAt %>"></span>.</p>
+        <% if (locals.lastUpdatedBy || locals.byline) { %>
+          <p>
+            <% if (locals.lastUpdatedBy) { %>
+              Last edited by <span class="author"><%= lastUpdatedBy %></span><span class="date" data-date="<%= locals.modifiedAt %>"></span>.
+            <% } %>
+            <% if (locals.byline) { %>
+              Created <span class="date" data-date="<%= locals.createdAt %>"></span>.
+            <% } %>
+          </p>
         <% } %>
         <script>
           (function() {
