@@ -4,5 +4,6 @@
   "styleSrc": ["'self'", "'unsafe-inline'", "fonts.googleapis.com", "maxcdn.bootstrapcdn.com", "*.googleusercontent.com"],
   "fontSrc": ["'self'", "fonts.gstatic.com", "maxcdn.bootstrapcdn.com"],
   "imgSrc": ["'self'", "data:", "*.googleusercontent.com", "*.google-analytics.com"],
+  "frameSrc": ["'self'","data:","*.youtube.com"],
   "objectSrc": ["'none'"]
 }
