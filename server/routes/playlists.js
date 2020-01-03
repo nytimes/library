@@ -2,8 +2,6 @@
 
 const router = require('express-promise-router')()
 
-const moment = require('moment')
-
 const log = require('../logger')
 const {getMeta, getPlaylist} = require('../list')
 const {fetchDoc, cleanName, fetchByline} = require('../docs')
@@ -69,7 +67,7 @@ function preparePlaylistOverview(playlistMeta, values, breadcrumb) {
     title: playlistMeta.prettyName,
     modifiedAt: playlistMeta.modifiedTime,
     lastUpdatedBy: (playlistMeta.lastModifyingUser || {}).displayName,
-    createdAt: moment(playlistMeta.createdTime).fromNow(),
+    createdAt: playlistMeta.createdTime,
     editLink: playlistMeta.mimeType === 'text/html' ? playlistMeta.folder.webViewLink : playlistMeta.webViewLink
   })
 

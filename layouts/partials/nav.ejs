@@ -7,25 +7,33 @@
   <h1 class="headline"><%= title %></h1>
   <div class="kicker">
     <div class="attribution">
-      <p>
         <% if (locals.byline) { %>
-          By <span class="author"><%= locals.byline %></span>.
-        <% } else if (locals.createdBy && !locals.byline) { %>
-          Created by <span class="author"><%= createdBy %></span> <%= createdAt %>.
+          <p>
+            By <span class="author"><%=locals.byline %></span>.
+          </p>
         <% } %>
-        <% if (locals.lastUpdatedBy) { %>
-          <%# just encode the last updated date as data property to make relative time work for cache %>
-      Last edited by <span class="author"><%= lastUpdatedBy %></span> <span class="last-updated" data-last-updated="<%= modifiedAt %>"></span>.</p>
-          <!-- populate last updated time -->
-          <script>
-          (function () {
-            var $lastUpdated = $('.last-updated')
-            var utcUpdated = $lastUpdated.data('last-updated')
-            var updatedMoment = moment(utcUpdated)
-            $lastUpdated.html(updatedMoment.fromNow())
+        <% if (locals.lastUpdatedBy || locals.byline) { %>
+          <p>
+            <% if (locals.lastUpdatedBy) { %>
+              Last edited by <span class="author"><%= lastUpdatedBy %></span><span class="date" data-date="<%= locals.modifiedAt %>"></span>.
+            <% } %>
+            <% if (locals.byline) { %>
+              Created <span class="date" data-date="<%= locals.createdAt %>"></span>.
+            <% } %>
+          </p>
+        <% } %>
+        <script>
+          (function() {
+            $('.date').each(function(i) {
+              const date = $(this)
+              const momentDate = moment(date.data('date'))
+              if (momentDate.isValid()) {
+                date.html(moment().diff(momentDate, 'years') > 1 ? ` on ${momentDate.format('MMMM D, YYYY')}` : ` ${momentDate.fromNow()}`)
+                date.attr('title', momentDate.format('MMMM D, YYYY'))
+              }
+            })
           })()
-          </script>
-        <% } %>
+        </script>
       </p>
     </div>
 

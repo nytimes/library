@@ -1,7 +1,5 @@
 'use strict'
 
-const moment = require('moment')
-
 const router = require('express-promise-router')()
 
 const cache = require('../cache')
@@ -41,7 +39,7 @@ async function handleCategory(req, res) {
     title: meta.prettyName,
     lastUpdatedBy: (meta.lastModifyingUser || {}).displayName,
     modifiedAt: meta.modifiedTime,
-    createdAt: moment(meta.createdTime).fromNow(),
+    createdAt: meta.createdTime,
     editLink: meta.mimeType === 'text/html' ? meta.folder.webViewLink : meta.webViewLink,
     id,
     template: stringTemplate,
