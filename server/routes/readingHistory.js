@@ -25,7 +25,7 @@ router.use(async (req, res) => {
 
     const docMeta = getMeta(res.locals.docId)
     const userInfo = req.userInfo
-    if (!docMeta || !userInfo) return
+    if (!docMeta || !userInfo || !datastoreClient) return
 
     recordView(docMeta, userInfo, datastoreClient)
   })

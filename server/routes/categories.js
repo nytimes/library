@@ -5,6 +5,7 @@ const moment = require('moment')
 const router = require('express-promise-router')()
 
 const log = require('../logger')
+const cache = require('../cache')
 const {getMeta} = require('../list')
 const {fetchDoc, cleanName} = require('../docs')
 const {getTemplates, sortDocs, stringTemplate} = require('../utils')
@@ -20,7 +21,14 @@ async function handleCategory(req, res) {
   // FIXME: consider putting this in middleware and save on req
   const {meta, parent, data, root} = await parseUrl(req.path)
 
-  if (!meta || !data) return 'next'
+  if (!meta || !data) { // if no data is returned, check if a redirect exists
+    const pathCache = await cache.get(req.path)
+    if (!pathCache) return 'next'
+
+    const {content} = pathCache
+    if (content.redirect) return res.redirect(content.redirect)
+    return 'next'
+  }
 
   const {resourceType, tags, id} = meta
   const {breadcrumb, duplicates} = data

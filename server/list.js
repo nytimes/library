@@ -211,10 +211,27 @@ function produceTree(files, firstParent) {
   const oldInfo = docsInfo
   const oldBranches = driveBranches
   tags = tagIds
-  docsInfo = addPaths(byId) // update our outer cache w/ data including path information
+
+  const newDocsInfo = addPaths(byId)
+
+  // if docsInfo exists, asynchrononsly check if any files have been moved
+  if (Object.keys(docsInfo).length) setRedirects(docsInfo, newDocsInfo)
+
+  docsInfo = newDocsInfo // update our outer cache w/ data including path information
   driveBranches = byParent
   const tree = buildTreeFromData(firstParent, {info: oldInfo, tree: oldBranches})
   return {tree: tree, filenames: fileNames}
+}
+
+async function setRedirects(oldDocsInfo, newDocsInfo) {
+  Object.keys(newDocsInfo).forEach((id) => {
+    const currPath = newDocsInfo[id] && newDocsInfo[id].path
+    const lastPath = oldDocsInfo[id] && oldDocsInfo[id].path
+    if (currPath !== lastPath) {
+      log.info(`Doc ${id} moved, REDIRECT ${lastPath} → ${currPath}`)
+      cache.add(lastPath, new Date(), {redirect: currPath})
+    }
+  })
 }
 
 function buildTreeFromData(rootParent, previousData, breadcrumb) {
