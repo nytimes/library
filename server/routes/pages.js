@@ -1,7 +1,6 @@
 'use strict'
 
 const search = require('../search')
-const move = require('../move')
 
 const router = require('express-promise-router')()
 
