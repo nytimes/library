@@ -67,11 +67,6 @@ playlist:
     previous: <
     next: '>'
 
-# pages/move-file
-moveFile:
-  title: !!js/function (title) => `Move ${title}`
-  prompt: !!js/function (title) => `Choose a folder to move '${title}' to`
-
 # errors
 error:
   403:
