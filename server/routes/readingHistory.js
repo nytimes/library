@@ -18,6 +18,7 @@ router.use(async (req, res) => {
 
   if (!datastoreClient) {
     datastoreClient = await getDatastoreClient()
+    if (!datastoreClient) return 'next' // if there is still no client, continue
   }
 
   req.on('end', () => {
@@ -25,7 +26,7 @@ router.use(async (req, res) => {
 
     const docMeta = getMeta(res.locals.docId)
     const userInfo = req.userInfo
-    if (!docMeta || !userInfo || !datastoreClient) return
+    if (!docMeta || !userInfo) return
 
     recordView(docMeta, userInfo, datastoreClient)
   })

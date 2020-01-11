@@ -227,7 +227,8 @@ async function setRedirects(oldDocsInfo, newDocsInfo) {
   Object.keys(newDocsInfo).forEach((id) => {
     const currPath = newDocsInfo[id] && newDocsInfo[id].path
     const lastPath = oldDocsInfo[id] && oldDocsInfo[id].path
-    if (currPath !== lastPath) {
+    // if no currPath, file was removed from the drive
+    if (currPath && currPath !== lastPath) {
       log.info(`Doc ${id} moved, REDIRECT ${lastPath} → ${currPath}`)
       cache.add(lastPath, new Date(), {redirect: currPath})
     }

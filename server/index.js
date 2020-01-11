@@ -12,6 +12,7 @@ const pages = require('./routes/pages')
 const categories = require('./routes/categories')
 const playlists = require('./routes/playlists')
 const readingHistory = require('./routes/readingHistory')
+const redirects = require('./routes/redirects')
 const errorPages = require('./routes/errors')
 
 const userAuth = requireWithFallback('userAuth')
@@ -76,6 +77,9 @@ app.use(categories)
 app.use(playlists)
 
 postload.forEach((middleware) => app.use(middleware))
+
+// if no page has been served, check for a redirect before erroring
+app.use(redirects)
 
 // error handler for rendering the 404 and 500 pages, must go last
 app.use(errorPages)

@@ -16,7 +16,7 @@ module.exports = router
 async function handlePlaylist(req, res) {
   const {meta, parent, data} = await parseUrl(req.path)
 
-  if (!meta || !data) throw new Error('Not found')
+  if (!meta || !data) return 'next'
 
   const {resourceType, tags, id} = meta
   const {breadcrumb} = data
