@@ -58,18 +58,6 @@ describe('Server responses', () => {
         })
     })
 
-    it('should render folder list when moving a file', () => {
-      return request(app)
-        .get('/move-file?id=Test3')
-        .expect(200)
-        .then((res) => {
-          expect(res.text).to.include('<h2>Choose a folder to move \'Test 3\' to</h2>')
-          // check it has folder list and a folder to move it to
-          expect(res.text).to.include('<ul class="folder-list">')
-          expect(res.text).to.include('<a href="?id=Test3&dest=TestFolder9">Test Folder 9</a>')
-        })
-    })
-
     it('should render top level folder in categories', () => {
       return request(app)
         .get('/categories')
@@ -128,7 +116,7 @@ describe('Server responses', () => {
       .get('/filename-listing.json')
         .expect(200)
         .then((res) => {
-          const { filenames } = res.body
+          const {filenames} = res.body
           expect(Array.isArray(filenames), 'cached file listing should be an array')
           expect(filenames).to.include(...allFilenames)
           expect(filenames.length).to.equal(allFilenames.length)

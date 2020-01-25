@@ -68,18 +68,6 @@ describe('Docs', () => {
       expect(doc).to.include.keys('html', 'byline', 'createdBy', 'sections')
     })
 
-    // no longer cas originalrevision data
-    it.skip('should return revision data with correct format', async () => {
-      const {originalRevision} = await fetchDoc('id-doc', 'document', {})
-      expect(originalRevision.data).to.have.keys('kind', 'mimeType', 'modifiedTime', 'published', 'lastModifyingUser')
-    })
-
-    it.skip('should have correct mimetype for document', async () => {
-      const {originalRevision} = await fetchDoc('id-doc', 'document', {})
-      const {mimeType} = originalRevision.data
-      expect(mimeType).equals('application/vnd.google-apps.document')
-    })
-
     it('should parse sections correctly', async () => {
       const doc = await fetchDoc('mulitsection', 'document', {})
       expect(doc).to.include.keys('html', 'sections')
@@ -93,12 +81,6 @@ describe('Docs', () => {
     it('should fetch sheet data with expected structure', async () => {
       const sheet = await fetchDoc('id-sheet', 'spreadsheet', {})
       expect(sheet).to.include.keys(PAYLOAD_KEYS)
-    })
-
-    // no longer includes revision data
-    it.skip('should return revision data with correct format', async () => {
-      const {originalRevision} = await fetchDoc('id-sheet', 'spreadsheet', {})
-      expect(originalRevision.data).to.have.keys('kind', 'mimeType', 'modifiedTime', 'published', 'lastModifyingUser')
     })
 
     it('should successully parse the sheet to a html table', async () => {

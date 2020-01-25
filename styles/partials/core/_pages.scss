@@ -402,29 +402,6 @@
   }
 }
 
-#move-file-page {
-
-  li {
-    text-indent: 0;
-    display: block;
-  }
-
-  .folder {
-
-    i {
-      color: mix(darken($accent-light, 15%), $gray-20, 50%);
-    }
-
-    &.active {
-      > i {
-        color: $black;
-      }
-    }
-
-  }
-
-}
-
 // Playlist Page
 //------------------------------------------------------------------------------
 

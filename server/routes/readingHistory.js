@@ -18,6 +18,7 @@ router.use(async (req, res) => {
 
   if (!datastoreClient) {
     datastoreClient = await getDatastoreClient()
+    if (!datastoreClient) return 'next' // if there is still no client, continue
   }
 
   req.on('end', () => {

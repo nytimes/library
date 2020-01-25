@@ -92,16 +92,14 @@ describe('The cache', f((mocha) => {
     }))
   }))
 
-  describe.skip('redirects', f((mocha) => {
+  describe('redirects', f((mocha) => {
     beforeEach(() => purgeCache().then(addCache))
 
-    it('should save redirects when valid', f((mocha) => {
-      const newPath = '/parent/sample-entry-2'
-      return cache.redirect(path, newPath, modified)
-        // check the redirect saved
-        .then(() => getCache().expect(302).expect('Location', newPath))
-        // and that cache was purged at the destination
-        .then(() => getCache(newPath).expect(404))
+    it('should redirect from old URL in cache', f((mocha) => {
+      cache.add('/old-url', nextModified(), {redirect: path})
+      return getCache('/old-url').expect(302).expect('Location', path)
     }))
+
+    // TODO: functional test of cache move? will require modifying mock tree
   }))
 }))
