@@ -333,7 +333,7 @@ function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
       if (!err) return
 
       // Duplicate purge errors should be logged at debug level only
-      if (err.message.includes('Same purge id as previous')) return log.debug(`Ignoring duplicate cache purge for ${newItem.path}`, err)
+      if (err.message.includes('Same purge id as previous')) return log.debug(`Ignoring duplicate cache purge for ${newItem.path}`)
 
       // Ignore errors if not found or no fresh content, just allow the purge to stop
       if (err.message.includes('Not found') || err.message.includes('No purge of fresh content')) return

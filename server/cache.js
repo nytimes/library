@@ -83,10 +83,10 @@ async function purgeCache({id, modified, editEmail, ignore}) {
   if (purgeId === lastPurgeId && !shouldIgnore('all')) throw new Error(`Same purge id as previous request ${purgeId} for docId ${id}`)
 
   // by default, don't try to purge empty
-  else if (!html && !shouldIgnore('missing')) throw new Error('Not found')
+  if (!html && !shouldIgnore('missing')) throw new Error('Not found')
 
   // by default, don't purge a noCache entry
-  else if (noCache && !shouldIgnore('editing')) throw new Error('Unauthorized')
+  if (noCache && !shouldIgnore('editing')) throw new Error('Unauthorized')
 
   // if all checks pass, purge
   log.info(`CACHE PURGE ${id}`)
