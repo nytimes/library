@@ -228,7 +228,8 @@ async function setRedirects(oldDocsInfo, newDocsInfo) {
     const currPath = newDocsInfo[id] && newDocsInfo[id].path
     const lastPath = oldDocsInfo[id] && oldDocsInfo[id].path
     // if no currPath, file was removed from the drive
-    if (currPath && currPath !== lastPath) {
+    // if no lastPath, file is a new addition to the drive
+    if (currPath && lastPath && currPath !== lastPath) {
       log.info(`Doc ${id} moved, REDIRECT ${lastPath} → ${currPath}`)
       cache.add(lastPath, new Date(), {redirect: currPath})
     }
