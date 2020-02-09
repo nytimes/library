@@ -71,7 +71,7 @@ async function updateTree() {
     const files = await fetchAllFiles({drive, driveType})
 
     const updatedData = produceTree(files, driveId)
-    const { tree, filenames } = updatedData
+    const {tree, filenames} = updatedData
     currentTree = tree
     currentFilenames = filenames
 
@@ -211,10 +211,29 @@ function produceTree(files, firstParent) {
   const oldInfo = docsInfo
   const oldBranches = driveBranches
   tags = tagIds
-  docsInfo = addPaths(byId) // update our outer cache w/ data including path information
+
+  const newDocsInfo = addPaths(byId)
+
+  // if docsInfo exists, asynchrononsly check if any files have been moved
+  if (Object.keys(docsInfo).length) setRedirects(docsInfo, newDocsInfo)
+
+  docsInfo = newDocsInfo // update our outer cache w/ data including path information
   driveBranches = byParent
   const tree = buildTreeFromData(firstParent, {info: oldInfo, tree: oldBranches})
   return {tree: tree, filenames: fileNames}
+}
+
+async function setRedirects(oldDocsInfo, newDocsInfo) {
+  Object.keys(newDocsInfo).forEach((id) => {
+    const currPath = newDocsInfo[id] && newDocsInfo[id].path
+    const lastPath = oldDocsInfo[id] && oldDocsInfo[id].path
+    // if no currPath, file was removed from the drive
+    // if no lastPath, file is a new addition to the drive
+    if (currPath && lastPath && currPath !== lastPath) {
+      log.info(`Doc ${id} moved, REDIRECT ${lastPath} → ${currPath}`)
+      cache.add(lastPath, new Date(), {redirect: currPath})
+    }
+  })
 }
 
 function buildTreeFromData(rootParent, previousData, breadcrumb) {
@@ -241,20 +260,20 @@ function buildTreeFromData(rootParent, previousData, breadcrumb) {
   // we have to assemble these paths differently
   return children.reduce((memo, id) => {
     const {slug} = docsInfo[id]
-    const nextCrumb = breadcrumb ? breadcrumb.concat({ id: rootParent, slug: parentInfo.slug }) : []
+    const nextCrumb = breadcrumb ? breadcrumb.concat({id: rootParent, slug: parentInfo.slug}) : []
 
     if (!memo.children[slug]) {
       // recurse building up breadcrumb
       memo.children[slug] = buildTreeFromData(id, previousData, nextCrumb)
     } else {
       log.warn(`Folder ${parentInfo.name} contains duplicate resources with slug ${slug}`)
-      const { name } = docsInfo[id]
+      const {name} = docsInfo[id]
       const previousDupes = memo.children[slug].duplicates || []
       memo.children[slug].duplicates = previousDupes.concat(name)
     }
 
     return memo
-  }, Object.assign({}, parentNode, { children: {} }))
+  }, Object.assign({}, parentNode, {children: {}}))
 }
 
 function addPaths(byId) {
@@ -308,7 +327,6 @@ async function retrievePlaylistData(id) {
 function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
   const currentNode = driveBranches[id] || {}
   const lastNode = lastTree[id] || {}
-  const isFirstRun = !Object.keys(lastTree).length // oldTree is empty on the first check
 
   // combine current and previous children ids uniquely
   const allPages = (currentNode.children || [])
@@ -320,49 +338,28 @@ function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
   // check all the nodes to see if they have changes
   allPages.forEach((id) => {
     // compare old item to new item
-    const newItem = docsInfo[id]
-    const oldItem = lastInfo[id]
+    const newItem = docsInfo[id] || {}
+    const oldItem = lastInfo[id] || {}
 
-    // since we have a "trash" folder we need to account
-    // for both missing items and "trashed" items
-    const isTrashed = (item) => !item || item.path.split('/')[1] === 'trash'
-    if (!isFirstRun && (isTrashed(newItem) || isTrashed(oldItem))) {
-      const item = isTrashed(oldItem) ? newItem : oldItem
-      const {path, modifiedTime} = item
-      const action = isTrashed(oldItem) ? 'Added' : 'Removed'
-      // FIXME: This does not restore deleted documents which are undone to the same location
-      return cache.purge({
-        url: path,
-        modified: modifiedTime,
-        editEmail: `item${action}`,
-        ignore: ['missing', 'modified']
-      }).catch((err) => {
-        log.debug('Error purging trashed item cache', err)
-      })
-    }
+    const newModified = new Date(newItem.modifiedTime)
+    const oldModified = new Date(oldItem.modifiedTime)
+    const hasUpdates = newModified > oldModified
 
-    // don't allow direct purges updates for folders with a home file
-    const hasHome = newItem && (driveBranches[newItem.id] || {}).home
-    if (hasHome) return
+    // if no updates reported from drive API, don't purge.
+    if (!hasUpdates) return
 
-    // if this existed before and the path changed, issue redirects
-    if (oldItem && newItem.path !== oldItem.path) {
-      cache.redirect(oldItem.path, newItem.path, newItem.modifiedTime)
-    } else {
-      // basically we are just calling purge because we don't know the last modified
-      cache.purge({url: newItem.path, modified: newItem.modifiedTime}).catch((err) => {
-        if (!err) return
+    cache.purge({id: newItem.id, modified: newItem.modifiedTime}).catch((err) => {
+      if (!err) return
 
-        // Duplicate purge errors should be logged at debug level only
-        if (err.message.includes('Same purge id as previous')) return log.debug(`Ignoring duplicate cache purge for ${newItem.path}`, err)
+      // Duplicate purge errors should be logged at debug level only
+      if (err.message.includes('Same purge id as previous')) return log.debug(`Ignoring duplicate cache purge for ${newItem.path}`)
 
-        // Ignore errors if not found or no fresh content, just allow the purge to stop
-        if (err.message.includes('Not found') || err.message.includes('No purge of fresh content')) return
+      // Ignore errors if not found or no fresh content, just allow the purge to stop
+      if (err.message.includes('Not found') || err.message.includes('No purge of fresh content')) return
 
-        // Log all other cache purge errors as warnings
-        log.warn(`Cache purging error for ${newItem.path}`, err)
-      })
-    }
+      // Log all other cache purge errors as warnings
+      log.warn(`Cache purging error for ${newItem.path}`, err)
+    })
   })
 }
 

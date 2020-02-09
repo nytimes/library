@@ -4,7 +4,7 @@ const router = require('express-promise-router')()
 
 const log = require('../logger')
 const {getMeta, getPlaylist} = require('../list')
-const {fetchDoc, cleanName, fetchByline} = require('../docs')
+const {fetchDoc, cleanName} = require('../docs')
 const {stringTemplate} = require('../utils')
 const {parseUrl} = require('../urlParser')
 
@@ -14,7 +14,7 @@ module.exports = router
 async function handlePlaylist(req, res) {
   const {meta, parent, data} = await parseUrl(req.path)
 
-  if (!meta || !data) throw new Error('Not found')
+  if (!meta || !data) return 'next'
 
   const {resourceType, tags, id} = meta
   const {breadcrumb} = data
@@ -39,17 +39,15 @@ async function handlePlaylist(req, res) {
     log.info('Getting page in playlist')
 
     // process data
-    const {html, originalRevision, sections} = await fetchDoc(id, resourceType, req)
-    const revisionData = originalRevision.data
-    const payload = fetchByline(html, revisionData.lastModifyingUser.displayName)
+    const {html, byline, createdBy, sections} = await fetchDoc(id, resourceType, req)
     const playlistPageData = await preparePlaylistPage(data, req.path, parentMeta)
 
     // render as a playlist
     return res.render(`playlists/leaf`, Object.assign({}, playlistPageData, {
       template: stringTemplate,
-      content: payload.html,
-      byline: payload.byline,
-      createdBy: revisionData.lastModifyingUser.displayName,
+      content: html,
+      byline: byline,
+      createdBy,
       sections,
       title: meta.prettyName
     }), (err, html) => {

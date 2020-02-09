@@ -1,16 +1,21 @@
 const fs = require('fs')
 const path = require('path')
 const cheerio = require('cheerio')
-const { assert } = require('chai')
+const {assert} = require('chai')
+let {getProcessedDocAttributes} = require('../../server/formatter')
 
-const formatterPath = '../../server/formatter'
 const docPath = path.join(__dirname, '../fixtures/supportedFormats.html')
+
+// helper function to stub the doc and get a section of the returned document
+function stubbedProcessedDoc(unprocessedHtml, editorName) {
+  const docData = {data: {lastModifyingUser: {displayName: editorName}}}
+  return getProcessedDocAttributes([unprocessedHtml, docData])
+}
 
 describe('HTML processing', () => {
   before(function () {
-    const formatter = require(formatterPath)
-    this.rawHTML = fs.readFileSync(docPath, { encoding: 'utf8' })
-    this.processedHTML = formatter.getProcessedHtml(this.rawHTML)
+    this.rawHTML = fs.readFileSync(docPath, {encoding: 'utf8'})
+    this.processedHTML = stubbedProcessedDoc(this.rawHTML).html
     this.output = cheerio.load(this.processedHTML)
   })
 
@@ -111,10 +116,10 @@ describe('HTML processing', () => {
       before(function () {
         process.env.ALLOW_INLINE_CODE = 'true'
         // remove formatter from require cache to recognize changed env variable
-        delete require.cache[require.resolve(formatterPath)]
-        const formatter = require(formatterPath)
-        const rawHTML = fs.readFileSync(docPath, { encoding: 'utf8' })
-        const processedHTML = formatter.getProcessedHtml(rawHTML)
+        delete require.cache[require.resolve('../../server/formatter')]
+        getProcessedDocAttributes = require('../../server/formatter').getProcessedDocAttributes
+        const rawHTML = fs.readFileSync(docPath, {encoding: 'utf8'})
+        const processedHTML = stubbedProcessedDoc(rawHTML).html
         this.codeEnabledOut = cheerio.load(processedHTML)
       })
 
@@ -143,6 +148,24 @@ describe('HTML processing', () => {
     it('strips inline comment anchors', function () {
       const commentAnchorParent = this.output("p:contains('will be stripped from the')")
       assert.notMatch(commentAnchorParent, /\[a\]/)
+    })
+  })
+
+  describe('byline fetching', () => {
+    it('should return reglar byline if none in HTML', () => {
+      const {byline} = stubbedProcessedDoc('<p></p>', 'Ben Koski')
+      assert.equal(byline, 'Ben Koski')
+    })
+
+    it('should return a byline if present in HTML', () => {
+      const {byline} = stubbedProcessedDoc('<p>By John Smith</p>', 'Ben Koski')
+      assert.equal(byline, 'John Smith')
+    })
+
+    it('should return byline override if present in document', () => {
+      const {byline} = stubbedProcessedDoc('<p>I am standing by Port Authority</p>', 'Ben Koski')
+      assert.notEqual(byline, 'Port Authority')
+      assert.equal(byline, 'Ben Koski')
     })
   })
 })

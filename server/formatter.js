@@ -4,6 +4,8 @@ const qs = require('querystring')
 const unescape = require('unescape')
 const list = require('./list')
 
+/* Your one stop shop for all your document processing needs. */
+
 const allowInlineCode = (process.env.ALLOW_INLINE_CODE || '').toLowerCase() === 'true'
 // this is getting a little long, maybe tweak so that we do subtasks separately
 function normalizeHtml(html) {
@@ -145,6 +147,67 @@ function checkForTableOfContents($, aTags) {
   /(\d+$)/mg.test($(aTags[1]).text()) // the second link should contain only a number
 }
 
+function fetchByline(html, creatorOfDoc) {
+  let byline = creatorOfDoc
+  const $ = cheerio.load(html, {xmlMode: true}) // prevent wrapping html tags, see cheerio/issues/1031
+
+  // Iterates through all p tags to find byline
+  $('p').each((index, p) => {
+    // don't search any empty p tags
+    if (p.children.length < 1) return
+
+    // regex that checks for byline
+    const r = /^by.+[^.\n]$/mig
+    if (r.test(p.children[0].data)) {
+      byline = p.children[0].data
+      // Removes the word "By"
+      byline = byline.slice(3)
+      $(p).remove()
+    }
+
+    // only check the first p tag
+    return false
+  })
+
+  return {
+    html: $.html(),
+    byline
+  }
+}
+
+function fetchSections(html) {
+  const $ = cheerio.load(html)
+  const headers = ['h1', 'h2']
+    .map((h) => `body ${h}`)
+    .join(', ')
+
+  const ordered = $(headers).map((i, el) => {
+    const tag = el.name
+    const $el = $(el)
+    const name = $el.text()
+    const url = `#${$el.attr('id')}`
+    return {
+      name,
+      url,
+      level: parseInt(tag.slice(-1), 10)
+    }
+  }).toArray()
+
+  // take our ordered sections and turn them into appropriately nested headings
+  const nested = ordered.reduce((memo, heading) => {
+    const tail = memo.slice(-1)[0]
+    const extended = Object.assign({}, heading, {subsections: []})
+    if (!tail || heading.level <= tail.level) {
+      return memo.concat(extended)
+    }
+
+    tail.subsections.push(heading)
+    return memo
+  }, [])
+
+  return nested
+}
+
 function convertYoutubeUrl(content) {
   // convert youtube url into embeded
   const youtubeUrl = /(>(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?(.+?)<)/g
@@ -153,10 +216,24 @@ function convertYoutubeUrl(content) {
   return content
 }
 
-exports.getProcessedHtml = (src) => {
+function getProcessedHtml(src) {
   let html = normalizeHtml(src)
   html = convertYoutubeUrl(html)
   html = formatCode(html)
   html = pretty(html)
   return html
+}
+
+exports.getProcessedDocAttributes = (driveDoc) => {
+  // document information
+  // TODO: guard against null revision data?
+  const [originalHtml, {data: revisionData}] = driveDoc
+  // clean and prettify the HTML
+  const processedHtml = getProcessedHtml(originalHtml)
+  // crawl processed html for the bylines and sections
+  const sections = fetchSections(processedHtml)
+  const createdBy = revisionData.lastModifyingUser.displayName
+  const {byline, html} = fetchByline(processedHtml, createdBy)
+
+  return {html, byline, createdBy, sections}
 }
