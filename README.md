@@ -47,6 +47,8 @@ Here are some of the organizations using Library so far.
 
 [Northwestern University Knight Lab](https://knightlab.northwestern.edu)
 
+[Star Tribune](http://www.startribune.com)
+
 [WBEZ](https://www.wbez.org)
 
 
