@@ -149,7 +149,7 @@ function checkForTableOfContents($, aTags) {
 
 function fetchByline(html, creatorOfDoc) {
   let byline = creatorOfDoc
-  const $ = cheerio.load(html, {xmlMode: true}) // prevent wrapping html tags, see cheerio/issues/1031
+  const $ = cheerio.load(html)
 
   // Iterates through all p tags to find byline
   $('p').each((index, p) => {
@@ -170,7 +170,7 @@ function fetchByline(html, creatorOfDoc) {
   })
 
   return {
-    html: $.html(),
+    html: $('head').html() + $('body').html(), // include head for list style block
     byline
   }
 }
