@@ -232,7 +232,7 @@ exports.getProcessedDocAttributes = (driveDoc) => {
   const processedHtml = getProcessedHtml(originalHtml)
   // crawl processed html for the bylines and sections
   const sections = fetchSections(processedHtml)
-  const createdBy = revisionData.lastModifyingUser.displayName
+  const createdBy = ((revisionData || {}).lastModifyingUser || {}).displayName
   const {byline, html} = fetchByline(processedHtml, createdBy)
 
   return {html, byline, createdBy, sections}

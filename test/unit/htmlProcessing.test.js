@@ -19,6 +19,11 @@ describe('HTML processing', () => {
     this.output = cheerio.load(this.processedHTML)
   })
 
+  it('does not throw when revision data is unavailable', () => {
+    const processed = getProcessedDocAttributes('<h1>Hello</h1>', null)
+    assert(processed)
+  })
+
   it('strips unnecessary styles', function () {
     const header = this.output('h2')
     assert.equal(null, header.attr('style'))
