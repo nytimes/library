@@ -79,19 +79,23 @@ If you have questions about how to get your copy of Library up and running, [joi
 4. Create a `.env` file at the project root. An example `.env` might look like
 
 ```bash
-NODE_ENV=development # node environment
+# node environment (development or production)
+NODE_ENV=development
 # Google oAuth credentials
 GOOGLE_CLIENT_ID=123456-abcdefg.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=abcxyz12345
 GCP_PROJECT_ID=library-demo-1234
-APPROVED_DOMAINS="nytimes.com,dailypennsylvanian.com" # comma separated list of approved access domains.
+# comma separated list of approved access domains.
+APPROVED_DOMAINS="nytimes.com,dailypennsylvanian.com"
 SESSION_SECRET=supersecretvalue
 
 # Google drive Configuration
-DRIVE_TYPE=team # or folder, if using a folder instead of a team drive
-DRIVE_ID=0123456ABCDEF # the ID of your team's drive or shared folder. The string of random numbers and letters at the end of your team drive or folder url.
+# team or folder ("folder" if using a folder instead of a team drive)
+DRIVE_TYPE=team
+# the ID of your team's drive or shared folder. The string of random numbers and letters at the end of your team drive or folder url.
+DRIVE_ID=0123456ABCDEF
 ```
-Make sure to remove all comments after the `DRIVE_TYPE` and `DRIVE_ID` vars.
+Make sure to not put any comments in the same line as `DRIVE_TYPE` and `DRIVE_ID` vars.
 
 Ensure you share your base drive or folder with the email address associated with the service account created in step 2.
 
