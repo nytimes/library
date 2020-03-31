@@ -4,7 +4,7 @@ const fs = require('fs')
 const path = require('path')
 
 const {google} = require('googleapis')
-const { Datastore } = require('@google-cloud/datastore')
+const {Datastore} = require('@google-cloud/datastore')
 const {sampleSize} = require('lodash')
 
 const {page1, page2, page3} = require('../fixtures/driveListing')
