@@ -2,7 +2,8 @@
 
 const router = require('express-promise-router')()
 
-const datastore = require('@google-cloud/datastore')
+const {Datastore} = require('@google-cloud/datastore')
+
 const moment = require('moment')
 
 const log = require('../logger')
@@ -111,7 +112,7 @@ async function getDatastoreClient() {
   // because auth credentials may be passed in multiple ways, recycle pathway used by main auth logic
   const {email, key} = await getAuth()
 
-  return datastore({
+  return new Datastore({
     projectId,
     credentials: {
       client_email: email,
