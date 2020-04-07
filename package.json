@@ -6,7 +6,7 @@
   "dependencies": {
     "@google-cloud/datastore": "^5.1.0",
     "assert": "^1.4.1",
-    "cache-manager": "^2.9.0",
+    "cache-manager": "^3.2.1",
     "chai": "^4.2.0",
     "cheerio": "^1.0.0-rc.2",
     "deepmerge": "^2.2.1",
