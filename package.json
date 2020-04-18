@@ -23,7 +23,7 @@
     "mime-types": "^2.1.26",
     "moment": "^2.24.0",
     "node-sass": "^4.13.1",
-    "passport": "^0.4.0",
+    "passport": "^0.4.1",
     "passport-google-oauth20": "^1.0.0",
     "pretty": "^2.0.0",
     "promise-inflight": "^1.0.1",
