@@ -85,8 +85,8 @@ NODE_ENV=development
 GOOGLE_CLIENT_ID=123456-abcdefg.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=abcxyz12345
 GCP_PROJECT_ID=library-demo-1234
-# comma separated list of approved access domains.
-APPROVED_DOMAINS="nytimes.com,dailypennsylvanian.com"
+# comma separated list of approved access domains or email addresses (regex is supported).
+APPROVED_DOMAINS="nytimes.com,dailypennsylvanian.com,(.*)?ar.org,demo.user@demo.site.edu"
 SESSION_SECRET=supersecretvalue
 
 # Google drive Configuration
