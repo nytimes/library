@@ -9,7 +9,7 @@
     "chai": "^4.2.0",
     "cheerio": "^1.0.0-rc.2",
     "deepmerge": "^2.2.1",
-    "ejs": "^2.6.1",
+    "ejs": "^3.0.2",
     "express": "^4.17.1",
     "express-promise-router": "^3.0.3",
     "express-session": "^1.15.6",
