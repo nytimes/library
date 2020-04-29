@@ -58,7 +58,7 @@ See [CONTRIBUTING.md](https://github.com/nytimes/library/blob/master/CONTRIBUTIN
 
 ## Questions
 
-If you have questions about how to get your copy of Library up and running, [join our Google Group](https://groups.google.com/forum/#!forum/nyt-library-community)) and let us know what you're running into. We also keep an eye on the #proj-library channel in the News Nerdery Slack. We'll do our best to answer your questions.
+If you have questions about how to get your copy of Library up and running, [join our Google Group](https://groups.google.com/forum/#!forum/nyt-library-community), and let us know what you're running into. We also keep an eye on the #proj-library channel in the News Nerdery Slack. We'll do our best to answer your questions.
 
 ## Development Workflow
 
