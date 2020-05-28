@@ -7,7 +7,7 @@
     "@google-cloud/datastore": "^5.1.0",
     "cache-manager": "^3.2.1",
     "chai": "^4.2.0",
-    "cheerio": "^1.0.0-rc.2",
+    "cheerio": "^1.0.0-rc.3",
     "deepmerge": "^2.2.1",
     "ejs": "^2.6.1",
     "express": "^4.17.1",
