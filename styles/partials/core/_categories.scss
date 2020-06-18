@@ -394,7 +394,7 @@
       }
 
       .line-number::before {
-        content: counter(line-numbering);
+        content: counter(line-numbering, decimal-leading-zero);
         counter-increment: line-numbering;
         padding-right: 1em;
         /* space after numbers */
