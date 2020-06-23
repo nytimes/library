@@ -2,6 +2,7 @@ const pretty = require('pretty')
 const cheerio = require('cheerio')
 const qs = require('querystring')
 const unescape = require('unescape')
+const hljs = require('highlight.js')
 const list = require('./list')
 
 /* Your one stop shop for all your document processing needs. */
@@ -107,7 +108,9 @@ function formatCode(html) {
     // strip interior <p> tags added by google
     content = content.replace(/<\/p><p>/g, '\n').replace(/<\/?p>/g, '')
 
-    return `<pre><code class=${codeType}>${formatCodeContent(content)}</code></pre>`
+    const formattedContent = formatCodeContent(content)
+    const highlighted = hljs.highlight(codeType, unescape(formattedContent), true).value
+    return `<pre><code class=${codeType}>${highlighted}</code></pre>`
   })
 
   // Replace single backticks with <code>
