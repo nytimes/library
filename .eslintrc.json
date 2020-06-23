@@ -1,9 +1,11 @@
 {
     "extends": "standard",
-    "installedESLint": true,
     "plugins": [
         "standard"
     ],
+    "parserOptions": {
+      "ecmaVersion": 2019
+    },
     "globals": {
       "describe": true,
       "it": true,
