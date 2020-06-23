@@ -395,10 +395,12 @@
 
       .line-number::before {
         content: counter(line-numbering);
+        display: block;
         counter-increment: line-numbering;
+        /* space after line numbers */
         padding-right: 1em;
-        /* space after numbers */
-        padding-left:8px;
+        /* space before numbers */
+        padding-left:4px;
         width: 1.5em;
         text-align: right;
         opacity: 0.5;
