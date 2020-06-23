@@ -27,7 +27,7 @@ async function handlePlaylist(req, res) {
     // FIXME: consolidate/refactor this function
     const playlistOverviewData = preparePlaylistOverview(meta, playlistIds, breadcrumb)
 
-    return res.render(`playlists`, playlistOverviewData, (err, html) => {
+    return res.render('playlists', playlistOverviewData, (err, html) => {
       if (err) throw err
       res.end(html)
     })
@@ -43,7 +43,7 @@ async function handlePlaylist(req, res) {
     const playlistPageData = await preparePlaylistPage(data, req.path, parentMeta)
 
     // render as a playlist
-    return res.render(`playlists/leaf`, Object.assign({}, playlistPageData, {
+    return res.render('playlists/leaf', Object.assign({}, playlistPageData, {
       template: stringTemplate,
       content: html,
       byline: byline,
