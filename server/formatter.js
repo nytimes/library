@@ -107,7 +107,7 @@ function formatCode(html) {
     // strip interior <p> tags added by google
     content = content.replace(/<\/p><p>/g, '\n').replace(/<\/?p>/g, '')
 
-    return `<pre type="${codeType}">${formatCodeContent(content)}</pre>`
+    return `<pre><code class=${codeType}>${formatCodeContent(content)}</code></pre>`
   })
 
   // Replace single backticks with <code>
