@@ -57,7 +57,7 @@ async function loadInlineAssets() {
 module.exports = async (err, req, res, next) => {
   const messages = {
     'Not found': 404,
-    'Unauthorized': 403
+    Unauthorized: 403
   }
 
   const code = messages[err.message] || 500
