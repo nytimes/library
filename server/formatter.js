@@ -109,8 +109,8 @@ function formatCode(html) {
     content = content.replace(/<\/p><p>/g, '\n').replace(/<\/?p>/g, '')
 
     const formattedContent = formatCodeContent(content)
-    const highlighted = hljs.highlight(codeType, unescape(formattedContent), true).value
-    return `<pre><code class=${codeType}>${highlighted}</code></pre>`
+    const highlighted = codeType ? hljs.highlight(codeType, unescape(formattedContent), true) : hljs.highlightAuto(unescape(formattedContent))
+    return `<pre><code class=${codeType}>${highlighted.value}</code></pre>`
   })
 
   // Replace single backticks with <code>
