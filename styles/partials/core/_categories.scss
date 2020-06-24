@@ -377,6 +377,19 @@
       margin-left: 80px;
     }
 
+    code {
+      background: $accent-lightest;
+      color: $accent-dark;
+      padding: 1px 0px;
+      margin: 0 4px;
+      -webkit-box-shadow: 4px 0px 0px $accent-lightest, -4px 0px 0px $accent-lightest;
+      -moz-box-shadow: 4px 0px 0px $accent-lightest, -4px 0px 0px $accent-lightest;
+      box-shadow: 4px 0px 0px $accent-lightest, -4px 0px 0px $accent-lightest;
+      -webkit-box-decoration-break: clone;
+      -moz-box-decoration-break: clone;
+      box-decoration-break: clone;
+    }
+
     pre{
       counter-reset:line-numbering;
       background: $accent-lightest;
@@ -419,19 +432,11 @@
         margin-top: 20px;
         line-height: 20px;
       }
-    }
 
-    code {
-      background: $accent-lightest;
-      color: $accent-dark;
-      padding: 1px 0px;
-      margin: 0 4px;
-      -webkit-box-shadow: 4px 0px 0px $accent-lightest, -4px 0px 0px $accent-lightest;
-      -moz-box-shadow: 4px 0px 0px $accent-lightest, -4px 0px 0px $accent-lightest;
-      box-shadow: 4px 0px 0px $accent-lightest, -4px 0px 0px $accent-lightest;
-      -webkit-box-decoration-break: clone;
-      -moz-box-decoration-break: clone;
-      box-decoration-break: clone;
+      code {
+        margin: 0;
+        padding: 0;
+      }
     }
   }
 

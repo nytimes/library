@@ -104,13 +104,13 @@ function normalizeHtml(html) {
 
 function formatCode(html) {
   // Expand code blocks
-  html = html.replace(/<p>```(.*?)<\/p>(.+?)<p>```<\/p>/ig, (match, codeType, content) => {
+  html = html.replace(/<p>```(.*?)<\/p>(.+?)<p>```<\/p>/ig, (match, lang, content) => {
     // strip interior <p> tags added by google
     content = content.replace(/<\/p><p>/g, '\n').replace(/<\/?p>/g, '')
 
     const formattedContent = formatCodeContent(content)
-    const highlighted = codeType ? hljs.highlight(codeType, unescape(formattedContent), true) : hljs.highlightAuto(unescape(formattedContent))
-    return `<pre><code class=${codeType}>${highlighted.value}</code></pre>`
+    const highlighted = lang ? hljs.highlight(lang, unescape(formattedContent), true) : hljs.highlightAuto(unescape(formattedContent))
+    return `<pre><code data-lang="${highlighted.language}">${highlighted.value}</code></pre>`
   })
 
   // Replace single backticks with <code>

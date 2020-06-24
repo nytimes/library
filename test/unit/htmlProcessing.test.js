@@ -95,8 +95,8 @@ describe('HTML processing', () => {
 
     it('scrubs smart quotes', function () {
       const codeBlock = this.output('pre')
-      assert.match(codeBlock.html(), /singleQuotedStr = &apos;str&apos;/)
-      assert.match(codeBlock.html(), /doubleQuotedStr = &quot;str&quot;/)
+      assert.match(codeBlock.html(), /singleQuotedStr = .*&apos;str&apos;/)
+      assert.match(codeBlock.html(), /doubleQuotedStr = .*&quot;str&quot;/)
     })
   })
 
@@ -104,7 +104,7 @@ describe('HTML processing', () => {
     describe('with inline code disabled', () => {
       it('does not modify code block content', function () {
         const codeBlock = this.output("pre:contains('codeblocks will not')")
-        assert.match(codeBlock.html(), /&lt;%-.*%&gt;/)
+        assert.match(codeBlock.html(), /&lt;.*%-.*%&gt;/)
       })
 
       it('does not unescape delimited code', function () {
@@ -130,7 +130,7 @@ describe('HTML processing', () => {
 
       it('does not modify code block content', function () {
         const codeBlock = this.codeEnabledOut("pre:contains('codeblocks will not')")
-        assert.match(codeBlock.html(), /&lt;%-.*%&gt;/)
+        assert.match(codeBlock.html(), /&lt;.*%-.*%&gt;/)
       })
 
       it('properly unescapes delimited code', function () {
