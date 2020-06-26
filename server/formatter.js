@@ -109,8 +109,12 @@ function formatCode(html) {
     content = content.replace(/<\/p><p>/g, '\n').replace(/<\/?p>/g, '')
 
     const formattedContent = formatCodeContent(content)
-    const highlighted = lang ? hljs.highlight(lang, unescape(formattedContent), true) : hljs.highlightAuto(unescape(formattedContent))
-    return `<pre><code data-lang="${highlighted.language}">${highlighted.value}</code></pre>`
+    if (lang) {
+      const textOnlyContent = cheerio.load(formattedContent).text()
+      const highlighted = hljs.highlight(lang, textOnlyContent, true)
+      return `<pre><code data-lang="${highlighted.language}">${highlighted.value}</code></pre>`
+    }
+    return `<pre><code>${formattedContent}</code></pre>`
   })
 
   // Replace single backticks with <code>
