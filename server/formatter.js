@@ -2,6 +2,7 @@ const pretty = require('pretty')
 const cheerio = require('cheerio')
 const qs = require('querystring')
 const unescape = require('unescape')
+const hljs = require('highlight.js')
 const list = require('./list')
 
 /* Your one stop shop for all your document processing needs. */
@@ -103,11 +104,17 @@ function normalizeHtml(html) {
 
 function formatCode(html) {
   // Expand code blocks
-  html = html.replace(/<p>```(.*?)<\/p>(.+?)<p>```<\/p>/ig, (match, codeType, content) => {
+  html = html.replace(/<p>```(.*?)<\/p>(.+?)<p>```<\/p>/ig, (match, lang, content) => {
     // strip interior <p> tags added by google
     content = content.replace(/<\/p><p>/g, '\n').replace(/<\/?p>/g, '')
 
-    return `<pre type="${codeType}">${formatCodeContent(content)}</pre>`
+    const formattedContent = formatCodeContent(content)
+    if (lang) {
+      const textOnlyContent = cheerio.load(formattedContent).text()
+      const highlighted = hljs.highlight(lang, textOnlyContent, true)
+      return `<pre><code data-lang="${highlighted.language}">${highlighted.value}</code></pre>`
+    }
+    return `<pre><code>${formattedContent}</code></pre>`
   })
 
   // Replace single backticks with <code>
