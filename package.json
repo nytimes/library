@@ -29,7 +29,7 @@
     "slugify": "^1.4.0",
     "unescape": "^1.0.1",
     "winston": "^2.4.4",
-    "xlsx": "^0.15.6"
+    "xlsx": "^0.16.2"
   },
   "devDependencies": {
     "concurrently": "^5.1.0",
