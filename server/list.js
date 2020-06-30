@@ -13,6 +13,7 @@ const docs = require('./docs')
 
 const driveType = process.env.DRIVE_TYPE
 const driveId = process.env.DRIVE_ID
+const driveTimeout = parseInt(process.env.DRIVE_TIMEOUT_SECONDS, 10) || 60
 
 let currentTree = null // current route data by slug
 let currentFilenames = null // current list of filenames for typeahead
@@ -117,7 +118,10 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentId
   log.debug(`searching for files > ${listSoFar.length}`)
 
   // Gets files in single folder (shared) or files listed in single page of response (team)
-  const {data} = await drive.files.list(options)
+  const {data} = await Promise.race([
+    drive.files.list(options),
+    new Promise((resolve, reject) => setTimeout(() => reject(Error('drive.files.list timeout expired!')), driveTimeout * 1000))
+  ])
 
   const {files, nextPageToken} = data
   const combined = listSoFar.concat(files)
