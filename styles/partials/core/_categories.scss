@@ -395,7 +395,6 @@
       background: $accent-lightest;
       padding:0px 0px 20px 0;
       width:600px;
-      color:$black;
 
       .line {
         display: flex;
@@ -436,6 +435,7 @@
       code {
         margin: 0;
         padding: 0;
+        color: $black;
       }
     }
   }
