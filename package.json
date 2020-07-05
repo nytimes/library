@@ -12,7 +12,7 @@
     "ejs": "^2.6.1",
     "express": "^4.17.1",
     "express-promise-router": "^3.0.3",
-    "express-session": "^1.15.6",
+    "express-session": "^1.17.1",
     "google-auth-library": "^3.1.1",
     "googleapis": "^48.0.0",
     "helmet-csp": "^2.10.0",
