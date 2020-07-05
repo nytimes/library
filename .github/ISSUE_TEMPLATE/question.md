@@ -12,7 +12,7 @@ If you have a question about how to do something with Library, you can open an i
 
 You can also submit questions to our Google group: https://groups.google.com/g/nyt-library-community
 
-We also answer questions in the #project-library channel of the News Nerdery slack: http://newsnerdery.slack.com/
+We also answer questions in the #proj-library channel of the News Nerdery slack: http://newsnerdery.slack.com/
 -->
 
 ### What I am trying to do
