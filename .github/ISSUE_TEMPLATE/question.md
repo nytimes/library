@@ -9,6 +9,10 @@ assignees: ''
 
 <!--
 If you have a question about how to do something with Library, you can open an issue and we will try to point you in the right direction. Before opening one of these, make sure to consult the demo site which has answers to many common questions: https://nyt-library-demo.herokuapp.com/
+
+You can also submit questions to our Google group: https://groups.google.com/g/nyt-library-community
+
+We also answer questions in the #project-library channel of the News Nerdery slack: http://newsnerdery.slack.com/
 -->
 
 ### What I am trying to do
