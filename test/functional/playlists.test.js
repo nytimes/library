@@ -13,7 +13,7 @@ const userInfo = {
 
 const playlistPath = '/test-folder-9/test-14'
 
-describe('Playlist route handling', () => {
+describe.skip('Playlist route handling', () => {
   beforeEach(() => sinon.stub(app.request, 'session').value({passport: {user: userInfo}}))
   afterEach(() => sinon.restore())
 
