@@ -2,7 +2,10 @@ const pretty = require('pretty')
 const cheerio = require('cheerio')
 const qs = require('querystring')
 const unescape = require('unescape')
+const hljs = require('highlight.js')
 const list = require('./list')
+
+/* Your one stop shop for all your document processing needs. */
 
 const allowInlineCode = (process.env.ALLOW_INLINE_CODE || '').toLowerCase() === 'true'
 // this is getting a little long, maybe tweak so that we do subtasks separately
@@ -101,11 +104,17 @@ function normalizeHtml(html) {
 
 function formatCode(html) {
   // Expand code blocks
-  html = html.replace(/<p>```(.*?)<\/p>(.+?)<p>```<\/p>/ig, (match, codeType, content) => {
+  html = html.replace(/<p>```(.*?)<\/p>(.+?)<p>```<\/p>/ig, (match, lang, content) => {
     // strip interior <p> tags added by google
     content = content.replace(/<\/p><p>/g, '\n').replace(/<\/?p>/g, '')
 
-    return `<pre type="${codeType}">${formatCodeContent(content)}</pre>`
+    const formattedContent = formatCodeContent(content)
+    if (lang) {
+      const textOnlyContent = cheerio.load(formattedContent).text()
+      const highlighted = hljs.highlight(lang, textOnlyContent, true)
+      return `<pre><code data-lang="${highlighted.language}">${highlighted.value}</code></pre>`
+    }
+    return `<pre><code>${formattedContent}</code></pre>`
   })
 
   // Replace single backticks with <code>
@@ -113,11 +122,22 @@ function formatCode(html) {
     return `<code>${formatCodeContent(content)}</code>`
   })
 
-  html = html.replace(/&lt;%-(.+)%&gt;/g, (match, content) => {
-    if (!allowInlineCode) return '' // strip out scripts entirely when not permitted
-    const html = unescape(content)
-    return formatCodeContent(html)
-  })
+  // for inline code option
+  if (allowInlineCode) {
+    const matches = []
+    // get all code matches, push any that are not <pre> wrapped
+    html.replace(/&lt;%-.*?\s?%&gt;(.*?<\/pre>)?/g, (codeContent, closingPre) => {
+      if (!closingPre) matches.push(codeContent)
+    })
+
+    for (const codeMatch of matches) {
+      // strip leading and trailing templtate delimiters
+      const untaggedMatch = codeMatch.replace(/^&lt;%-/, '').replace(/%&gt;$/, '')
+      // strip interior <p> tags added by google
+      const escapedMatch = untaggedMatch.replace(/<\/p><p>/g, '').replace(/<\/?p>/g, '')
+      html = html.replace(codeMatch, unescape(escapedMatch))
+    }
+  }
 
   return html
 }
@@ -134,9 +154,93 @@ function checkForTableOfContents($, aTags) {
   /(\d+$)/mg.test($(aTags[1]).text()) // the second link should contain only a number
 }
 
-exports.getProcessedHtml = (src) => {
+function fetchByline(html, creatorOfDoc) {
+  let byline = creatorOfDoc
+  const $ = cheerio.load(html)
+
+  // Iterates through all p tags to find byline
+  $('p').each((index, p) => {
+    // don't search any empty p tags
+    if (p.children.length < 1) return
+
+    // regex that checks for byline
+    const r = /^by.+[^.\n]$/mig
+    if (r.test(p.children[0].data)) {
+      byline = p.children[0].data
+      // Removes the word "By"
+      byline = byline.slice(3)
+      $(p).remove()
+    }
+
+    // only check the first p tag
+    return false
+  })
+
+  return {
+    html: $('head').html() + $('body').html(), // include head for list style block
+    byline
+  }
+}
+
+function fetchSections(html) {
+  const $ = cheerio.load(html)
+  const headers = ['h1', 'h2']
+    .map((h) => `body ${h}`)
+    .join(', ')
+
+  const ordered = $(headers).map((i, el) => {
+    const tag = el.name
+    const $el = $(el)
+    const name = $el.text()
+    const url = `#${$el.attr('id')}`
+    return {
+      name,
+      url,
+      level: parseInt(tag.slice(-1), 10)
+    }
+  }).toArray()
+
+  // take our ordered sections and turn them into appropriately nested headings
+  const nested = ordered.reduce((memo, heading) => {
+    const tail = memo.slice(-1)[0]
+    const extended = Object.assign({}, heading, {subsections: []})
+    if (!tail || heading.level <= tail.level) {
+      return memo.concat(extended)
+    }
+
+    tail.subsections.push(heading)
+    return memo
+  }, [])
+
+  return nested
+}
+
+function convertYoutubeUrl(content) {
+  // convert youtube url into embeded
+  const youtubeUrl = /(>(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?(.+?)<)/g
+  const replacement = '><iframe width="560" height="315" src="https://www.youtube.com/embed/$2" frameborder="0" allowfullscreen></iframe><'
+  content = content.replace(youtubeUrl, replacement)
+  return content
+}
+
+function getProcessedHtml(src) {
   let html = normalizeHtml(src)
+  html = convertYoutubeUrl(html)
   html = formatCode(html)
   html = pretty(html)
   return html
+}
+
+exports.getProcessedDocAttributes = (driveDoc) => {
+  // document information
+  // TODO: guard against null revision data?
+  const [originalHtml, {data: revisionData}] = driveDoc
+  // clean and prettify the HTML
+  const processedHtml = getProcessedHtml(originalHtml)
+  // crawl processed html for the bylines and sections
+  const sections = fetchSections(processedHtml)
+  const createdBy = ((revisionData || {}).lastModifyingUser || {}).displayName
+  const {byline, html} = fetchByline(processedHtml, createdBy)
+
+  return {html, byline, createdBy, sections}
 }

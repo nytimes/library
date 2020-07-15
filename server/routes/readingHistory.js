@@ -2,7 +2,8 @@
 
 const router = require('express-promise-router')()
 
-const datastore = require('@google-cloud/datastore')
+const {Datastore} = require('@google-cloud/datastore')
+
 const moment = require('moment')
 
 const log = require('../logger')
@@ -18,6 +19,7 @@ router.use(async (req, res) => {
 
   if (!datastoreClient) {
     datastoreClient = await getDatastoreClient()
+    if (!datastoreClient) return 'next' // if there is still no client, continue
   }
 
   req.on('end', () => {
@@ -57,11 +59,11 @@ async function fetchHistory(userInfo, historyType, queryLimit) {
 
   const mostViewedQuery = client.createQuery(['LibraryView' + historyType])
     .filter('userId', '=', userInfo.userId)
-    .order('viewCount', { descending: true })
+    .order('viewCount', {descending: true})
     .limit(datastoreLimit)
   const lastViewedQuery = client.createQuery(['LibraryView' + historyType])
     .filter('userId', '=', userInfo.userId)
-    .order('lastViewedAt', { descending: true })
+    .order('lastViewedAt', {descending: true})
     .limit(datastoreLimit)
 
   const results = await Promise.all([
@@ -110,7 +112,7 @@ async function getDatastoreClient() {
   // because auth credentials may be passed in multiple ways, recycle pathway used by main auth logic
   const {email, key} = await getAuth()
 
-  return datastore({
+  return new Datastore({
     projectId,
     credentials: {
       client_email: email,
@@ -121,12 +123,12 @@ async function getDatastoreClient() {
 
 function recordView(docMeta, userInfo, datastoreClient) {
   const docKey = datastoreClient.key(['LibraryViewDoc', [userInfo.userId, docMeta.id].join(':')])
-  updateViewRecord(docKey, { documentId: docMeta.id }, userInfo, datastoreClient)
+  updateViewRecord(docKey, {documentId: docMeta.id}, userInfo, datastoreClient)
 
   if (docMeta.topLevelFolder && docMeta.topLevelFolder.tags.includes('team')) {
     const teamId = docMeta.topLevelFolder.id
     const teamKey = datastoreClient.key(['LibraryViewTeam', [userInfo.userId, teamId].join(':')])
-    updateViewRecord(teamKey, { teamId: teamId }, userInfo, datastoreClient)
+    updateViewRecord(teamKey, {teamId: teamId}, userInfo, datastoreClient)
   }
 }
 
@@ -156,5 +158,9 @@ function updateViewRecord(viewKey, metadata, userInfo, datastoreClient) {
       }).catch((err) => {
         log.error('Failed saving reading history to GCloud datastore:', err)
       })
+    }).catch((err) => {
+      // TODO: don't attempt to store if datastore is not enabled
+      if (err.code === 7) return log.warn('Cloud datastore not enabled. Reading history was not recorded.')
+      log.error(err)
     })
 }

@@ -4,7 +4,7 @@ const fs = require('fs')
 const path = require('path')
 
 const {google} = require('googleapis')
-const datastore = require('@google-cloud/datastore')
+const {Datastore} = require('@google-cloud/datastore')
 const {sampleSize} = require('lodash')
 
 const {page1, page2, page3} = require('../fixtures/driveListing')
@@ -76,9 +76,9 @@ exports.init = () => {
   }
 
   // google datastore mocks
-  datastore.prototype.key = () => {}
+  Datastore.prototype.key = () => {}
 
-  datastore.prototype.runQuery = ({
+  Datastore.prototype.runQuery = ({
     kinds
   }) => {
     const kind = kinds[0]
@@ -86,7 +86,7 @@ exports.init = () => {
     return teamResponse
   }
 
-  datastore.prototype.get = async () => {
+  Datastore.prototype.get = async () => {
     return [
       {
         viewCount: 5,
@@ -97,5 +97,5 @@ exports.init = () => {
     ]
   }
 
-  datastore.prototype.upsert = () => Promise.resolve(true)
+  Datastore.prototype.upsert = () => Promise.resolve(true)
 }

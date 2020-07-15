@@ -3,7 +3,7 @@ const fs = require('fs')
 const path = require('path')
 const {promisify} = require('util')
 const yaml = require('js-yaml')
-const { get: deepProp } = require('lodash')
+const {get: deepProp} = require('lodash')
 const merge = require('deepmerge')
 const mime = require('mime-types')
 
@@ -44,8 +44,11 @@ exports.requireWithFallback = (attemptPath) => {
     return require(customPath)
   } catch (err) {
     // if the file exists but we failed to pull it in, log that error at a warning level
-    const level = fs.existsSync(customPath) ? 'warn' : 'debug'
-    log[level](`Failed pulling in custom file ${attemptPath} @ ${customPath}. Error was:`, err)
+    if (fs.existsSync(customPath)) {
+      log.warn(`Failed pulling in custom file "${attemptPath}" @ ${customPath}. Error was:`, err)
+    } else {
+      log.debug(`No custom file "${attemptPath}" found in ${customPath}. Did you mean to include one?`)
+    }
     return require(serverPath)
   }
 }
@@ -55,7 +58,7 @@ const middlewares = fs.existsSync(path.join(__dirname, '../custom/middleware')) 
 
 // create object with preload and postload middleware functions
 exports.allMiddleware = middlewares.reduce((m, item) => {
-  const { preload, postload } = require(path.join(__dirname, `../custom/middleware/${item}`))
+  const {preload, postload} = require(path.join(__dirname, `../custom/middleware/${item}`))
   return {
     preload: preload ? m.preload.concat(preload) : m.preload,
     postload: postload ? m.postload.concat(postload) : m.postload
@@ -118,7 +121,7 @@ exports.assetDataURI = async (filePath) => {
   const mimeType = mime.lookup(path.posix.basename(publicPath))
   const fullPath = path.join(__dirname, '..', publicPath)
 
-  const data = await readFileAsync(fullPath, { encoding: 'base64' })
+  const data = await readFileAsync(fullPath, {encoding: 'base64'})
   const src = `data:${mimeType};base64,${data}`
   return src
 }

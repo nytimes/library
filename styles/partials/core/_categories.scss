@@ -377,12 +377,24 @@
       margin-left: 80px;
     }
 
+    code {
+      background: $accent-lightest;
+      color: $accent-dark;
+      padding: 1px 0px;
+      margin: 0 4px;
+      -webkit-box-shadow: 4px 0px 0px $accent-lightest, -4px 0px 0px $accent-lightest;
+      -moz-box-shadow: 4px 0px 0px $accent-lightest, -4px 0px 0px $accent-lightest;
+      box-shadow: 4px 0px 0px $accent-lightest, -4px 0px 0px $accent-lightest;
+      -webkit-box-decoration-break: clone;
+      -moz-box-decoration-break: clone;
+      box-decoration-break: clone;
+    }
+
     pre{
       counter-reset:line-numbering;
       background: $accent-lightest;
       padding:0px 0px 20px 0;
       width:600px;
-      color:$black;
 
       .line {
         display: flex;
@@ -395,10 +407,12 @@
 
       .line-number::before {
         content: counter(line-numbering);
+        display: block;
         counter-increment: line-numbering;
+        /* space after line numbers */
         padding-right: 1em;
-        /* space after numbers */
-        padding-left:8px;
+        /* space before numbers */
+        padding-left:4px;
         width: 1.5em;
         text-align: right;
         opacity: 0.5;
@@ -417,19 +431,12 @@
         margin-top: 20px;
         line-height: 20px;
       }
-    }
 
-    code {
-      background: $accent-lightest;
-      color: $accent-dark;
-      padding: 1px 0px;
-      margin: 0 4px;
-      -webkit-box-shadow: 4px 0px 0px $accent-lightest, -4px 0px 0px $accent-lightest;
-      -moz-box-shadow: 4px 0px 0px $accent-lightest, -4px 0px 0px $accent-lightest;
-      box-shadow: 4px 0px 0px $accent-lightest, -4px 0px 0px $accent-lightest;
-      -webkit-box-decoration-break: clone;
-      -moz-box-decoration-break: clone;
-      box-decoration-break: clone;
+      code {
+        margin: 0;
+        padding: 0;
+        color: $black;
+      }
     }
   }
 
