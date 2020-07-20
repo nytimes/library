@@ -8,7 +8,7 @@
     "cache-manager": "^3.3.0",
     "chai": "^4.2.0",
     "cheerio": "^1.0.0-rc.3",
-    "deepmerge": "^2.2.1",
+    "deepmerge": "^4.2.2",
     "ejs": "^2.6.1",
     "express": "^4.17.1",
     "express-promise-router": "^3.0.3",
