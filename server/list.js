@@ -13,6 +13,7 @@ const docs = require('./docs')
 
 const driveType = process.env.DRIVE_TYPE
 const driveId = process.env.DRIVE_ID
+const MAX_QUERY_TERMS = 150 // max query terms allowed by google in a search request
 const driveTimeout = parseInt(process.env.DRIVE_TIMEOUT_SECONDS, 10) || 60
 
 let currentTree = null // current route data by slug
@@ -108,14 +109,12 @@ function getOptions(id) {
   }
 }
 
-async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentIds = [driveId], driveType = 'team', drive} = {}) {
+async function fetchAllFiles({nextPageToken: pageToken, parentIds = [driveId], driveType = 'team', drive} = {}) {
   const options = getOptions(parentIds)
 
   if (pageToken) {
     options.pageToken = pageToken
   }
-
-  log.debug(`searching for files > ${listSoFar.length}`)
 
   // Gets files in single folder (shared) or files listed in single page of response (team)
   const {data} = await Promise.race([
@@ -124,37 +123,44 @@ async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentId
   ])
 
   const {files, nextPageToken} = data
-  const combined = listSoFar.concat(files)
+  const levelItems = files
 
   // If there is more data the API has not returned for the query, the request needs to continue
   if (nextPageToken) {
-    return fetchAllFiles({
+    const nextPageFiles = await fetchAllFiles({
       nextPageToken,
-      listSoFar: combined,
       drive,
       parentIds,
       driveType
     })
+    log.debug(`next page files and folders: ${nextPageFiles.length}`)
+    return levelItems.concat(nextPageFiles)
   }
 
   // If there are no more pages and this is not a shared folder, return completed list
-  if (driveType !== 'folder') return combined
+  if (driveType !== 'folder') return levelItems
 
   // Continue searching if shared folder, since API only returns contents of the immediate parent folder
   // Find folders that have not yet been searched
-  const folders = combined.filter((item) =>
+  const folderIds = levelItems.filter((item) =>
     item.mimeType === 'application/vnd.google-apps.folder' && parentIds.includes(item.parents[0]))
+    .map((folder) => folder.id)
 
-  if (folders.length > 0) {
-    return fetchAllFiles({
-      listSoFar: combined,
+  const folderPartitions = []
+  while (folderIds.length > 0) {
+    folderPartitions.push(folderIds.splice(0, MAX_QUERY_TERMS))
+  }
+  const partitionPromises = folderPartitions.map((partition) =>
+    fetchAllFiles({
       drive,
-      parentIds: folders.map((folder) => folder.id),
+      parentIds: partition,
       driveType
     })
-  }
-
-  return combined
+  )
+  const partitionList = await Promise.all(partitionPromises)
+  const itemsSoFar = levelItems.concat([].concat.apply([], partitionList))
+  log.debug(`all files and folders under this level: ${itemsSoFar.length}`)
+  return itemsSoFar
 }
 
 function produceTree(files, firstParent) {
