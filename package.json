@@ -22,7 +22,7 @@
     "md5": "^2.2.1",
     "mime-types": "^2.1.27",
     "moment": "^2.27.0",
-    "node-sass": "^4.13.1",
+    "node-sass": "^4.14.1",
     "passport": "^0.4.1",
     "passport-google-oauth20": "^2.0.0",
     "pretty": "^2.0.0",
