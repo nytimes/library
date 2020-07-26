@@ -2,6 +2,8 @@
 
 const search = require('../search')
 const move = require('../move')
+const { getAuth } = require('../auth')
+const { errorMessages } = require('../errors/messages.json')
 
 const router = require('express-promise-router')()
 
@@ -14,7 +16,7 @@ router.get('/:page', handlePage)
 router.get('/filename-listing.json', async (req, res) => {
   res.header('Cache-Control', 'public, must-revalidate') // override no-cache
   const filenames = await getFilenames()
-  res.json({filenames: filenames})
+  res.json({ filenames: filenames })
 })
 
 module.exports = router
@@ -57,7 +59,12 @@ async function handlePage(req, res) {
 
   if (page === 'categories' || page === 'index') {
     const tree = await getTree()
-    if (!tree.children) throw new Error('No files found. Ensure your DRIVE_ID is correct and that your service account email is shared with your drive or folder.')
+    if (!tree.children) {
+      // pull the auth client email to make debugging easier:
+      const authClient = await getAuth()
+      const errMsg = errorMessages.noFilesFound.replace('email', `email (<code>${authClient.email}</code>)`)
+      throw new Error(errMsg)
+    }
     const categories = buildDisplayCategories(tree)
     res.render(template, { ...categories, template: stringTemplate })
     return
