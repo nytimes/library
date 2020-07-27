@@ -17,7 +17,7 @@
     "googleapis": "^48.0.0",
     "helmet-csp": "^2.10.0",
     "highlight.js": "^10.1.2",
-    "js-yaml": "^3.13.1",
+    "js-yaml": "^3.14.0",
     "lodash": "^4.17.19",
     "md5": "^2.2.1",
     "mime-types": "^2.1.27",
