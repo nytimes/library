@@ -10,8 +10,19 @@ const mime = require('mime-types')
 const log = require('./logger')
 
 const layoutsDir = path.join(__dirname, '../layouts')
+const customLayoutsDir = path.join(__dirname, '../custom/layouts')
 exports.getTemplates = (subfolder) => {
-  return (fs.readdirSync(path.join(layoutsDir, subfolder)) || [])
+  const defaultLayouts = fs.readdirSync(path.join(layoutsDir, subfolder)) || []
+  let customLayouts = [];
+  try {
+    // NB: This will fail if custom/layouts does not exist.
+    customLayouts = fs.readdirSync(path.join(customLayoutsDir, subfolder)) || []
+  } catch (err) {
+    const level = err.code === 'ENOENT' ? 'debug' : 'warn';
+    log[level]('Custom layouts directory not found. Did you mean to include one?');
+  }
+  
+  return defaultLayouts.concat(customLayouts)
     .reduce((memo, filename) => {
       const [name] = filename.split('.')
       memo.add(name)
