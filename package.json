@@ -4,7 +4,7 @@
   "description": "A collaborative newsroom documentation site, powered by Google Docs.",
   "main": "server/index.js",
   "dependencies": {
-    "@google-cloud/datastore": "^5.1.0",
+    "@google-cloud/datastore": "^6.1.1",
     "cache-manager": "^3.3.0",
     "chai": "^4.2.0",
     "cheerio": "^1.0.0-rc.3",
