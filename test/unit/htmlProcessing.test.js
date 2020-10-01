@@ -83,20 +83,30 @@ describe('HTML processing', () => {
   })
 
   describe('code block handling', () => {
+    it('highlights registered languages', function () {
+      const codeBlock = this.output('pre > code[data-lang="javascript"]')
+      assert.exists(codeBlock.html())
+    })
+
     it('allows &nbsp; as part of a code block', function () {
-      const codeBlock = this.output('pre')
+      const codeBlock = this.output('pre > code[data-lang="javascript"]')
       assert.match(codeBlock.html(), /&amp;nbsp/)
     })
 
     it('preserves whitespace at the start of a line', function () {
-      const codeBlock = this.output('pre')
+      const codeBlock = this.output('pre > code[data-lang="javascript"]')
       assert.match(codeBlock.html(), / +jQuery.fn.calcSubWidth/)
     })
 
     it('scrubs smart quotes', function () {
-      const codeBlock = this.output('pre')
+      const codeBlock = this.output('pre > code[data-lang="javascript"]')
       assert.match(codeBlock.html(), /singleQuotedStr = .*&apos;str&apos;/)
       assert.match(codeBlock.html(), /doubleQuotedStr = .*&quot;str&quot;/)
+    })
+
+    it('allows unregistered languages', function () {
+      const codeBlock = this.output('pre')
+      assert.match(codeBlock.html(), /1 \+ 1 == 5/)
     })
   })
 

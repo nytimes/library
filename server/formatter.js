@@ -109,7 +109,7 @@ function formatCode(html) {
     content = content.replace(/<\/p><p>/g, '\n').replace(/<\/?p>/g, '')
 
     const formattedContent = formatCodeContent(content)
-    if (lang) {
+    if (lang && hljs.getLanguage(lang)) {
       const textOnlyContent = cheerio.load(formattedContent).text()
       const highlighted = hljs.highlight(lang, textOnlyContent, true)
       return `<pre><code data-lang="${highlighted.language}">${highlighted.value}</code></pre>`
