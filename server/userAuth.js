@@ -2,7 +2,7 @@
 
 const passport = require('passport')
 const session = require('express-session')
-const md5 = require('md5')
+const crypto = require('crypto')
 const GoogleStrategy = require('passport-google-oauth20')
 
 const log = require('./logger')
@@ -10,6 +10,8 @@ const {stringTemplate: template} = require('./utils')
 
 const router = require('express-promise-router')()
 const domains = new Set(process.env.APPROVED_DOMAINS.split(/,\s?/g))
+
+const md5 = (data) => crypto.createHash('md5').update(data).digest('hex')
 
 passport.use(new GoogleStrategy.Strategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
