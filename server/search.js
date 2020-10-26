@@ -19,27 +19,28 @@ exports.run = async (query, driveType = 'team') => {
   }
   log.debug(`searching ${allFolderIds.length} folders in chunks of ${MAX_FOLDERS_TO_SEARCH}`)
 
-  const files = []
+  const folderIdBatches = []
 
   while (allFolderIds.length > 0) {
-    const folderIds = allFolderIds.splice(0, MAX_FOLDERS_TO_SEARCH)
-
-    const theseFiles = await fullSearch({drive, query, folderIds, driveType})
-      .catch((err) => {
-        log.error(`Error when searching for ${query}, ${err}`)
-        throw err
-      })
-
-    files.push(...theseFiles)
+    folderIdBatches.push(allFolderIds.splice(0, MAX_FOLDERS_TO_SEARCH))
   }
 
-  log.debug(`got ${files.length} results`)
+  try {
+    const files = (await Promise.all(
+      folderIdBatches.map((folderIds) =>
+        fullSearch({drive, query, folderIds, driveType})
+      )
+    )).flat()
 
-  const fileMetas = files
-    .map((file) => { return list.getMeta(file.id) || {} })
-    .filter(({path, tags}) => (path || '').split('/')[1] !== 'trash' && !(tags || []).includes('hidden'))
+    const fileMetas = files
+      .map((file) => { return list.getMeta(file.id) || {} })
+      .filter(({path, tags}) => (path || '').split('/')[1] !== 'trash' && !(tags || []).includes('hidden'))
 
-  return fileMetas
+    return fileMetas
+  } catch (err) {
+    log.error(`Error when searching for ${query}, ${err}`)
+    throw err
+  }
 }
 
 async function fullSearch({drive, query, folderIds, results = [], nextPageToken: pageToken, driveType}) {
