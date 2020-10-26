@@ -6,22 +6,34 @@ const list = require('./list')
 const log = require('./logger')
 
 const driveId = process.env.DRIVE_ID
+const MAX_FOLDERS_TO_SEARCH = 100 // got 413 entity too large at 129, this gives us some headroom
 
 exports.run = async (query, driveType = 'team') => {
   const authClient = await getAuth()
-  let folderIds
+  let allFolderIds
 
   const drive = google.drive({version: 'v3', auth: authClient})
 
   if (driveType === 'folder') {
-    folderIds = await getAllFolders({drive})
+    allFolderIds = await getAllFolders({drive})
+  }
+  log.debug(`searching ${allFolderIds.length} folders in chunks of ${MAX_FOLDERS_TO_SEARCH}`)
+
+  const files = []
+
+  while (allFolderIds.length > 0) {
+    const folderIds = allFolderIds.splice(0, MAX_FOLDERS_TO_SEARCH)
+
+    const theseFiles = await fullSearch({drive, query, folderIds, driveType})
+      .catch((err) => {
+        log.error(`Error when searching for ${query}, ${err}`)
+        throw err
+      })
+
+    files.push(...theseFiles)
   }
 
-  const files = await fullSearch({drive, query, folderIds, driveType})
-    .catch((err) => {
-      log.error(`Error when searching for ${query}, ${err}`)
-      throw err
-    })
+  log.debug(`got ${files.length} results`)
 
   const fileMetas = files
     .map((file) => { return list.getMeta(file.id) || {} })
