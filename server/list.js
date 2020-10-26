@@ -124,7 +124,6 @@ async function fetchAllFiles({parentIds = [driveId], driveType = 'team', drive} 
 
     options.pageToken = data.nextPageToken
     levelItems.push(...data.files)
-
   } while (options.pageToken)
 
   // If this is not a shared folder, return completed list
