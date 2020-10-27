@@ -10,19 +10,22 @@ const MAX_FOLDERS_TO_SEARCH = 100 // got 413 entity too large at 129, this gives
 
 exports.run = async (query, driveType = 'team') => {
   const authClient = await getAuth()
-  let allFolderIds
-
   const drive = google.drive({version: 'v3', auth: authClient})
 
+  let folderIdBatches = []
+
   if (driveType === 'folder') {
-    allFolderIds = await getAllFolders({drive})
+    let allFolderIds = await getAllFolders({drive})
+    while (allFolderIds.length > 0) {
+      folderIdBatches.push(allFolderIds.splice(0, MAX_FOLDERS_TO_SEARCH))
+    }
+
+    log.debug(`searching ${allFolderIds.length} folders in chunks of ${MAX_FOLDERS_TO_SEARCH}`)
+
   }
-  log.debug(`searching ${allFolderIds.length} folders in chunks of ${MAX_FOLDERS_TO_SEARCH}`)
 
-  const folderIdBatches = []
-
-  while (allFolderIds.length > 0) {
-    folderIdBatches.push(allFolderIds.splice(0, MAX_FOLDERS_TO_SEARCH))
+  if (folderIdBatches.length === 0) {
+    folderIdBatches.push([])
   }
 
   try {
