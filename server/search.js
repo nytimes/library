@@ -33,7 +33,7 @@ exports.run = async (query, driveType = 'team') => {
       folderIdBatches.map((folderIds) =>
         fullSearch({drive, query, folderIds, driveType})
       )
-    )).flat()
+    )).reduce((files, fileBatch) => files.concat(fileBatch), [])
 
     const fileMetas = files
       .map((file) => { return list.getMeta(file.id) || {} })
