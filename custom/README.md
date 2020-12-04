@@ -15,7 +15,7 @@ custom/
 ├── layouts
 │   └── categories
 │       ├── default.ejs // override for default content layout
-|       └── your-subsectioin.ejs // override for paths beginning with "your-subsection", for example
+|       └── outer-space.ejs // override for paths beginning with "outer-space", for example 🚀
 ├── middleware
 │   ├── middleware1.js // pre/postload exports will be included as middleware
 │   └── middleware2.js
