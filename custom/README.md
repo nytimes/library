@@ -12,6 +12,10 @@ custom/
 ├── package.json       // for any npm modules required for custom code
 ├── cache
 │   └── store.js
+├── layouts
+│   └── categories
+│       ├── default.ejs // override for default content layout
+|       └── your-subsectioin.ejs // override for paths beginning with "your-subsection", for example
 ├── middleware
 │   ├── middleware1.js // pre/postload exports will be included as middleware
 │   └── middleware2.js
@@ -88,6 +92,17 @@ A custom cache client can be used by placing a `store.js` file in the `custom/ca
 directory. This file must export an object with the methods
 - `set(key, value, callback)`, where `callback` takes `(err, success)`
 - `get(key, callback)`, where `callback` takes `(err, value)`
+
+## Layouts
+Default layouts and templates are included in the top level `layouts` directory, and [are automatically superceded](https://github.com/nytimes/library/pull/200) by the presence of a mirror file within the custom/layouts folder.
+
+Using this folder, it's possible to both replace default templates that are invoked by your copy of Library to customize markup around your site, as well as to include dedicated template entrypoints for specific subsections of your site.
+
+For example, to override the markup on your search page, you could include a `custom/layouts/pages/search.ejs` file to replace the output of [this default template](https://github.com/nytimes/library/blob/master/layouts/pages/search.ejs#L23:L23).
+
+If you had a folder in your your Shared Drive/Folder that was called "Outer Space", creating a template at `custom/layouts/categories/outer-space.ejs` would serve as the entrypoint for all pages nested under that section of your site, replacing the [this default template](https://github.com/nytimes/library/blob/master/layouts/categories/default.ejs) for matching paths.
+
+When overriding default templates included with Library, it's usually a good idea to being by copying the base template to the custom location, then tweak until you achieve the desired effect. This helps ensure that important parts of the site furniture are not accidentally removed.
 
 ## Authentication
 By default, Library uses Google oAuth and [`passport`](http://www.passportjs.org/) to authenticate users. Different authentication systems can be used by overriding `custom/userAuth.js`, and can easily be implemented using
