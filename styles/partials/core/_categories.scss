@@ -393,8 +393,9 @@
     pre{
       counter-reset:line-numbering;
       background: $accent-lightest;
-      padding:0px 0px 20px 0;
-      width:600px;
+      padding: 0px 0px 20px 0;
+      width: 600px;
+      text-indent: 0;
 
       .line {
         display: flex;
