@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html>
-  <%- include ../partials/head %>
+  <%- include('../partials/head') %>
   <body>
     <h1 class="visually-hidden">Default template</h1>
-    <%- include ../partials/header %>
-    <%- include ../partials/nav %>
+    <%- include('../partials/header') %>
+    <%- include('../partials/nav') %>
     <div class="g-body">
       <div class="g-left-panel">
         <% if (locals.sections && locals.sections.length) { %>
           <!-- is this TOC -->
-          <%- include ../partials/sectionList %>
+          <%- include('../partials/sectionList') %>
         <% } %>
         <!-- Hide sibling docs on normal pages -->
         <!-- <% if (locals.siblings && siblings.length) { %>
