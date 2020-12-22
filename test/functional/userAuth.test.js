@@ -37,8 +37,8 @@ const unauthorizedUser = {
 
 describe('Authentication', () => {
   describe('when not logged in', () => {
-    before(() => sinon.stub(express.request, 'isAuthenticated').returns(false))
-    after(() => sinon.restore())
+    beforeAll(() => sinon.stub(express.request, 'isAuthenticated').returns(false))
+    afterAll(() => sinon.restore())
 
     it('should redirect to login if unauthenticated at homepage', () => {
       return request(app)
@@ -62,12 +62,12 @@ describe('Authentication', () => {
   })
 
   describe('when logging in with regex-approved domain', () => {
-    before(() => {
+    beforeAll(() => {
       sinon.stub(app.request, 'session').value({ passport: { user: regexUser } })
       sinon.stub(express.request, 'user').value(regexUser)
       sinon.stub(express.request, 'userInfo').value(regexUser)
     })
-    after(() => sinon.restore())
+    afterAll(() => sinon.restore())
 
     it('should check for regex domains in APPROVED_DOMAINS', () => {
       return request(app)
@@ -77,12 +77,12 @@ describe('Authentication', () => {
   })
 
   describe('when logging in with specified email address', () => {
-    before(() => {
+    beforeAll(() => {
       sinon.stub(app.request, 'session').value({ passport: { user: specificUser } })
       sinon.stub(express.request, 'user').value(specificUser)
       sinon.stub(express.request, 'userInfo').value(specificUser)
     })
-    after(() => sinon.restore())
+    afterAll(() => sinon.restore())
 
     it('should check for individual emails in APPROVED_DOMAINS', () => {
       return request(app)
@@ -92,12 +92,12 @@ describe('Authentication', () => {
   })
 
   describe('when logging in with unauthorized domain/email', () => {
-    before(() => {
+    beforeAll(() => {
       sinon.stub(app.request, 'session').value({passport: {user: unauthorizedUser}})
       sinon.stub(express.request, 'user').value(unauthorizedUser)
       sinon.stub(express.request, 'userInfo').value(unauthorizedUser)
     })
-    after(() => sinon.restore())
+    afterAll(() => sinon.restore())
 
     it('should reject unauthorized user', () => {
       return request(app)
@@ -107,8 +107,8 @@ describe('Authentication', () => {
   })
 
   describe('when logged in', () => {
-    before(() => sinon.stub(app.request, 'session').value({passport: {user: userInfo}}))
-    after(() => sinon.restore())
+    beforeAll(() => sinon.stub(app.request, 'session').value({passport: {user: userInfo}}))
+    afterAll(() => sinon.restore())
 
     it('should return correct information at /whoami.json', () => {
       return request(app)
