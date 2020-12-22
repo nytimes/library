@@ -14,6 +14,7 @@ const domains = new Set(process.env.APPROVED_DOMAINS.split(/,\s?/g))
 
 const authStrategies = ['google', 'Slack']
 const authStrategy = process.env.OAUTH_STRATEGY || 'google'
+const callbackURL = process.env.REDIRECT_URL || '/auth/redirect'
 if (!authStrategies.includes(authStrategy)) {
   log.warn(`Invalid oauth strategy ${authStrategy} specific, defaulting to google auth`)
 }
@@ -25,7 +26,7 @@ if (isSlackOauth) {
     clientID: process.env.SLACK_CLIENT_ID,
     clientSecret: process.env.SLACK_CLIENT_SECRET,
     skipUserProfile: false,
-    callbackURL: process.env.REDIRECT_URL,
+    callbackURL,
     scope: ['identity.basic', 'identity.email', 'identity.avatar', 'identity.team', 'identity.email']
   },
   (accessToken, refreshToken, profile, done) => {
@@ -38,7 +39,7 @@ if (isSlackOauth) {
   passport.use(new GoogleStrategy.Strategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.REDIRECT_URL,
+    callbackURL,
     userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo',
     passReqToCallback: true
   }, (request, accessToken, refreshToken, profile, done) => done(null, profile)))
@@ -65,6 +66,7 @@ const googleLoginOptions = {
   ],
   prompt: 'select_account'
 }
+
 router.get('/login', passport.authenticate(authStrategy, isSlackOauth ? {} : googleLoginOptions))
 
 router.get('/logout', (req, res) => {
