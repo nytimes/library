@@ -13,7 +13,7 @@ const router = require('express-promise-router')()
 const domains = new Set(process.env.APPROVED_DOMAINS.split(/,\s?/g))
 
 const authStrategies = ['google', 'Slack']
-const authStrategy = process.env.OAUTH_STRATEGY
+const authStrategy = process.env.OAUTH_STRATEGY || 'google'
 if (!authStrategies.includes(authStrategy)) {
   log.warn(`Invalid oauth strategy ${authStrategy} specific, defaulting to google auth`)
 }
@@ -65,14 +65,14 @@ const googleLoginOptions = {
   ],
   prompt: 'select_account'
 }
-router.get('/login', passport.authenticate(process.env.OAUTH_STRATEGY, isSlackOauth ? {} : googleLoginOptions))
+router.get('/login', passport.authenticate(authStrategy, isSlackOauth ? {} : googleLoginOptions))
 
 router.get('/logout', (req, res) => {
   req.logout()
   res.redirect('/')
 })
 
-router.get('/auth/redirect', passport.authenticate(process.env.OAUTH_STRATEGY, {failureRedirect: '/login'}), (req, res) => {
+router.get('/auth/redirect', passport.authenticate(authStrategy, {failureRedirect: '/login'}), (req, res) => {
   res.redirect(req.session.authRedirect || '/')
 })
 
