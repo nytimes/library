@@ -15,7 +15,7 @@ const domains = new Set(process.env.APPROVED_DOMAINS.split(/,\s?/g))
 const authStrategies = ['google', 'Slack']
 const authStrategy = process.env.OAUTH_STRATEGY
 if (!authStrategies.includes(authStrategy)) {
-  throw Error(`Invalid oauth strategy ${authStrategy}`)
+  log.warn(`Invalid oauth strategy ${authStrategy} specific, defaulting to google auth`)
 }
 
 const isSlackOauth = authStrategy === 'Slack'
