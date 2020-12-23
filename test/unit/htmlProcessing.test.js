@@ -134,6 +134,7 @@ describe('HTML processing', () => {
 
     describe('with inline code enabled', () => {
       beforeAll(() => {
+        jest.resetModules()
         process.env.ALLOW_INLINE_CODE = 'true'
         // remove formatter from require cache to recognize changed env variable
         delete require.cache[require.resolve('../../server/formatter')]
