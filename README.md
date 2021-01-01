@@ -51,6 +51,7 @@ Here are some of the organizations using Library so far.
 
 [WBEZ](https://www.wbez.org)
 
+[The Los Angeles Times Data and Graphics Department](https://twitter.com/palewire/status/1326220493762883585)
 
 ## Contributing
 
