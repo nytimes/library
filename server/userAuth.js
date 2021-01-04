@@ -13,14 +13,15 @@ const router = require('express-promise-router')()
 const domains = new Set(process.env.APPROVED_DOMAINS.split(/,\s?/g))
 
 const authStrategies = ['google', 'Slack']
-const authStrategy = process.env.OAUTH_STRATEGY || 'google'
+let authStrategy = process.env.OAUTH_STRATEGY
+
 const callbackURL = process.env.REDIRECT_URL || '/auth/redirect'
 if (!authStrategies.includes(authStrategy)) {
   log.warn(`Invalid oauth strategy ${authStrategy} specific, defaulting to google auth`)
+  authStrategy = 'google'
 }
 
 const isSlackOauth = authStrategy === 'Slack'
-
 if (isSlackOauth) {
   passport.use(new SlackStrategy({
     clientID: process.env.SLACK_CLIENT_ID,
