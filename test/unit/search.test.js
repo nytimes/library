@@ -10,11 +10,11 @@ const {page1} = require('../fixtures/driveListing')
 
 describe('Search', () => {
   describe('when not Google authenticated', () => {
-    before(() => {
+    beforeAll(() => {
       sinon.stub(google.auth, 'getApplicationDefault').returns(Error('Auth error'))
     })
 
-    after(() => {
+    afterAll(() => {
       google.auth.getApplicationDefault.restore()
     })
     
@@ -29,7 +29,7 @@ describe('Search', () => {
   describe('in shared drive', () => {
     describe('when making first api call to retrieve folders in drive', () => {
       let listFilesSpy
-      before(() => {
+      beforeAll(() => {
         listFilesSpy = sinon.spy(listZeroFiles)
         google.drive = () => {
           return {
@@ -50,7 +50,7 @@ describe('Search', () => {
     describe('when making second api call to retrieve search results', () => {
       let listFilesSpy
 
-      before(async () => {
+      beforeAll(async () => {
         listFilesSpy = sinon.spy(listSearchResults)
         google.drive = () => {
           return {
@@ -80,7 +80,7 @@ describe('Search', () => {
   describe('in team drive', () => {
     describe('when querying the drive api', () => {
       let listFilesSpy
-      before(() => {
+      beforeAll(() => {
         listFilesSpy = sinon.spy(listZeroFiles)
         google.drive = () => {
           return {
@@ -102,7 +102,7 @@ describe('Search', () => {
   })
 
   describe('result handling', () => {
-    before(() => {
+    beforeAll(() => {
       google.drive = () => {
         return {
           files: {
@@ -137,7 +137,7 @@ describe('Search', () => {
     })
 
     describe('when no results found', () => {
-      before(() => {
+      beforeAll(() => {
         list.getMeta = (fileId) => ({id: fileId, path: '/', tags: []})
         google.drive = () => {
           return {
@@ -155,7 +155,7 @@ describe('Search', () => {
     })
 
     describe('when the drive api throws an error', () => {
-      before(() => {
+      beforeAll(() => {
         google.drive = () => {
           return {
             files: {
