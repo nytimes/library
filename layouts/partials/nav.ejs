@@ -1,5 +1,5 @@
 <div class="g-upper-body">
-  <%- include search %>
+  <%- include('search') %>
   <% if (locals.title) { %>
   <% if (locals.duplicates) { %>
     <%- include('partials/warning', {message: template('warning.duplicate', locals.duplicates, locals.parentId) }) %>
