@@ -104,12 +104,15 @@ function normalizeHtml(html) {
 
 function formatCode(html) {
   // Expand code blocks
-  html = html.replace(/<p>```(.*?)<\/p>(.+?)<p>```<\/p>/ig, (match, lang, content) => {
+  html = html.replace(/```(.*?)```/ig, (match, content) => {
     // strip interior <p> tags added by google
-    content = content.replace(/<\/p><p>/g, '\n').replace(/<\/?p>/g, '')
+    content = content.replace(/(?:<\/p><p>|<br\/?>)/g, '\n').replace(/<\/?p>/g, '').trim()
+    // try to find language hint within text block
+    const [, lang] = content.match(/^([^\n]+)\n(.+)/) || []
+    if (lang) content = content.replace(`${lang}\n`, '')
 
     const formattedContent = formatCodeContent(content)
-    if (lang) {
+    if (lang && hljs.getLanguage(lang)) {
       const textOnlyContent = cheerio.load(formattedContent).text()
       const highlighted = hljs.highlight(lang, textOnlyContent, true)
       return `<pre><code data-lang="${highlighted.language}">${highlighted.value}</code></pre>`
@@ -117,7 +120,7 @@ function formatCode(html) {
     return `<pre><code>${formattedContent}</code></pre>`
   })
 
-  // Replace single backticks with <code>
+  // Replace single backticks with <code>, as long as they are not inside triple backticks
   html = html.replace(/`(.+?)`/g, (match, content) => {
     return `<code>${formatCodeContent(content)}</code>`
   })
@@ -144,6 +147,7 @@ function formatCode(html) {
 
 function formatCodeContent(content) {
   content = content.replace(/[‘’]|&#x201[89];/g, "'").replace(/[“”]|&#x201[CD];/g, '"') // remove smart quotes
+  content = content.replace(/`/g, '&#96;') // remove internal cases of backticks
   return content
 }
 
