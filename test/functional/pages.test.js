@@ -122,5 +122,42 @@ describe('Server responses', () => {
           expect(filenames.length).to.equal(allFilenames.length)
         })
     })
+
+    it('folder with home doc should render the doc', () => {
+      return request(app)
+        .get('/test-folder-9')
+        .set('Accept', 'application/json')
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .then((res) => {
+          const data = JSON.parse(res.text)
+          expect(data).to.deep.equal(
+            {
+              html: '<p> This is a simple test document export.</p>',
+              byline: 'John Smith',
+              createdBy: 'John Smith',
+              sections: []
+            }
+          )
+        })
+    })
+
+    it('folder with home doc should render the doc (.json suffix)', () => {
+      return request(app)
+        .get('/test-folder-9.json')
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .then((res) => {
+          const data = JSON.parse(res.text)
+          expect(data).to.deep.equal(
+            {
+              html: '<p> This is a simple test document export.</p>',
+              byline: 'John Smith',
+              createdBy: 'John Smith',
+              sections: []
+            }
+          )
+        })
+    })
   })
 })
