@@ -211,7 +211,7 @@ Authentication with the Google Drive v3 api is handled by the auth.js file, whic
 
 Library currently supports both Slack and Google Oauth methods. As Library sites are usually intended to be internal to a set of limited users, Oauth with your organization is strongly encouraged. To use Slack Oauth, specify your Oauth strategy in your `.env` file, like so:
 ```
-# Slack needs to be capitalized
+# Slack needs to be capitalized as per the Passport.js slack oauth docs http://www.passportjs.org/packages/passport-slack-oauth2/
 OAUTH_STRATEGY=Slack
 ``` 
 You will need to provide Slack credentials, which you can do by creating a Library Oauth app in your Slack workspace. After creating the app, save the app's `CLIENT_ID` and `CLIENT_SECRET` in your `.env` file:
