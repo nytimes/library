@@ -10,6 +10,7 @@ const {stringTemplate: template} = require('./utils')
 
 const router = require('express-promise-router')()
 const domains = new Set(process.env.APPROVED_DOMAINS.split(/,\s?/g))
+const isPublic = (process.env.TRUST_PROXY || '').toUpperCase() === 'TRUE'
 
 passport.use(new GoogleStrategy.Strategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
@@ -52,7 +53,6 @@ router.get('/auth/redirect', passport.authenticate('google'), (req, res) => {
 
 router.use((req, res, next) => {
   const isDev = process.env.NODE_ENV === 'development'
-  const isPublic = process.env.PUBLIC_SITE === true
   const passportUser = (req.session.passport || {}).user || {}
 
   if (isDev || isPublic || (req.isAuthenticated() && isAuthorized(passportUser))) {
@@ -82,8 +82,6 @@ function isAuthorized(user) {
 }
 
 function setUserInfo(req) {
-  const isPublic = process.env.PUBLIC_SITE === true
-
   if (process.env.NODE_ENV === 'development' || isPublic) {
     req.userInfo = {
       email: process.env.TEST_EMAIL || template('footer.defaultEmail'),

@@ -43,7 +43,8 @@ async function handleCategory(req, res) {
     lastUpdatedBy: (meta.lastModifyingUser || {}).displayName,
     modifiedAt: meta.modifiedTime,
     createdAt: meta.createdTime,
-    editLink: isPublicUser ? false : (meta.mimeType === 'text/html' ? meta.folder.webViewLink : meta.webViewLink),
+    isPublic: isPublicUser,
+    editLink: meta.mimeType === 'text/html' ? meta.folder.webViewLink : meta.webViewLink,
     id,
     template: stringTemplate,
     duplicates
@@ -91,7 +92,8 @@ function prepareContextualData(data, url, breadcrumb, parent, slug) {
       return {
         url: `/${arr.slice(0, i + 1).join('/')}`,
         name: cleanName(breadcrumbInfo[i].name),
-        editLink: isPublicUser ? false : (breadcrumbInfo[i].webViewLink)
+        isPublic: isPublicUser,
+        editLink: breadcrumbInfo[i].webViewLink
       }
     })
 
@@ -113,7 +115,8 @@ function createRelatedList(slugs, self, baseUrl) {
       return {
         sort,
         name: prettyName,
-        editLink: isPublicUser ? false :webViewLink,
+        isPublic: isPublicUser,
+        editLink: webViewLink,
         resourceType,
         url,
         tags

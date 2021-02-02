@@ -69,7 +69,8 @@ function preparePlaylistOverview(playlistMeta, values, breadcrumb) {
     modifiedAt: playlistMeta.modifiedTime,
     lastUpdatedBy: (playlistMeta.lastModifyingUser || {}).displayName,
     createdAt: playlistMeta.createdTime,
-    editLink: isPublicUser ? false : (playlistMeta.mimeType === 'text/html' ? playlistMeta.folder.webViewLink : playlistMeta.webViewLink)
+    isPublic: isPublicUser,
+    editLink: playlistMeta.mimeType === 'text/html' ? playlistMeta.folder.webViewLink : playlistMeta.webViewLink
   })
 
   return renderData
@@ -100,7 +101,8 @@ async function preparePlaylistPage(data, url, parent) {
       return {
         url: `/${arr.slice(0, i + 1).join('/')}`,
         name: cleanName(breadcrumbInfo[i].name),
-        editLink: isPublicUser ? false : breadcrumbInfo[i].webViewLink
+        isPublic: isPublicUser,
+        editLink: breadcrumbInfo[i].webViewLink
       }
     })
 
@@ -134,7 +136,8 @@ function prepareContextualData(playlistMeta, values, breadcrumb) {
       return {
         url: `/${arr.slice(0, i + 1).join('/')}`,
         name: cleanName(breadcrumbInfo[i].name),
-        editLink: isPublicUser ? false : breadcrumbInfo[i].webViewLink
+        isPublic: isPublicUser,
+        editLink: breadcrumbInfo[i].webViewLink
       }
     })
 
@@ -144,7 +147,8 @@ function prepareContextualData(playlistMeta, values, breadcrumb) {
       sort: prettyName,
       name: prettyName,
       url: `${path}/${slug}`,
-      editLink: isPublicUser ? false : mimeType === 'text/html' ? folder.webViewLink : webViewLink,
+      isPublic: isPublicUser,
+      editLink: mimeType === 'text/html' ? folder.webViewLink : webViewLink,
       resourceType: resourceType
     }
   })

@@ -5,12 +5,14 @@
   <a class="button btn-footer" href="<%- page.link %>"><%= i + 1 %></a>
     <% }) %>
   <% } %>
-  <% if (locals.editLink) { %>
-    <a class="button btn-footer" href="<%- editLink %>" id="edit-button" target="_blank"><%- template('footer.buttons.edit') %></a>
-  <% } %>
-  <% if (locals.parentId) { %>
-    <a class="button btn-footer" href="https://docs.google.com/document/u/0/create?usp=drive_web&folder=<%- parentId %>" %> target="_blank"><%- template('footer.buttons.create') %></a>
-    <a class="button btn-footer" href="https://drive.google.com/drive/u/0/folders/<%- parentId %>" target="_blank"><%- template('footer.buttons.viewFolder') %></a>
+  <% if (!locals.isPublic) { %>
+    <% if (locals.editLink) { %>
+      <a class="button btn-footer" href="<%- editLink %>" id="edit-button" target="_blank"><%- template('footer.buttons.edit') %></a>
+    <% } %>
+    <% if (locals.parentId) { %>
+      <a class="button btn-footer" href="https://docs.google.com/document/u/0/create?usp=drive_web&folder=<%- parentId %>" %> target="_blank"><%- template('footer.buttons.create') %></a>
+      <a class="button btn-footer" href="https://drive.google.com/drive/u/0/folders/<%- parentId %>" target="_blank"><%- template('footer.buttons.viewFolder') %></a>
+    <% } %>
   <% } %>
 
   <p class="help-text"><%- template('footer.helpText') %></p>
