@@ -11,9 +11,12 @@ const {parseUrl} = require('../urlParser')
 router.get('*', handleCategory)
 module.exports = router
 
+let isPublicUser = false
+
 const categories = getTemplates('categories')
 
 async function handleCategory(req, res) {
+  isPublicUser = req.userInfo.userId === '0'
   log.info(`GET ${req.path}`)
   // FIXME: consider putting this in middleware and save on req
   const {meta, parent, data, root} = await parseUrl(req.path)
@@ -40,7 +43,7 @@ async function handleCategory(req, res) {
     lastUpdatedBy: (meta.lastModifyingUser || {}).displayName,
     modifiedAt: meta.modifiedTime,
     createdAt: meta.createdTime,
-    editLink: meta.mimeType === 'text/html' ? meta.folder.webViewLink : meta.webViewLink,
+    editLink: isPublicUser ? false : (meta.mimeType === 'text/html' ? meta.folder.webViewLink : meta.webViewLink),
     id,
     template: stringTemplate,
     duplicates
@@ -88,7 +91,7 @@ function prepareContextualData(data, url, breadcrumb, parent, slug) {
       return {
         url: `/${arr.slice(0, i + 1).join('/')}`,
         name: cleanName(breadcrumbInfo[i].name),
-        editLink: breadcrumbInfo[i].webViewLink
+        editLink: isPublicUser ? false : (breadcrumbInfo[i].webViewLink)
       }
     })
 
@@ -110,7 +113,7 @@ function createRelatedList(slugs, self, baseUrl) {
       return {
         sort,
         name: prettyName,
-        editLink: webViewLink,
+        editLink: isPublicUser ? false :webViewLink,
         resourceType,
         url,
         tags

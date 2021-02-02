@@ -52,9 +52,10 @@ router.get('/auth/redirect', passport.authenticate('google'), (req, res) => {
 
 router.use((req, res, next) => {
   const isDev = process.env.NODE_ENV === 'development'
+  const isPublic = process.env.PUBLIC_SITE === true
   const passportUser = (req.session.passport || {}).user || {}
 
-  if (isDev || (req.isAuthenticated() && isAuthorized(passportUser))) {
+  if (isDev || isPublic || (req.isAuthenticated() && isAuthorized(passportUser))) {
     setUserInfo(req)
     return next()
   }
@@ -81,14 +82,17 @@ function isAuthorized(user) {
 }
 
 function setUserInfo(req) {
-  if (process.env.NODE_ENV === 'development') {
+  const isPublic = process.env.PUBLIC_SITE === true
+
+  if (process.env.NODE_ENV === 'development' || isPublic) {
     req.userInfo = {
       email: process.env.TEST_EMAIL || template('footer.defaultEmail'),
-      userId: '10',
+      userId: isPublic ? '0' : '10',
       analyticsUserId: md5('10library')
     }
     return
   }
+
   req.userInfo = req.userInfo ? req.userInfo : {
     email: req.session.passport.user.emails[0].value,
     userId: req.session.passport.user.id,

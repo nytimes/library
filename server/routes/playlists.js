@@ -11,7 +11,10 @@ const {parseUrl} = require('../urlParser')
 router.get('*', handlePlaylist)
 module.exports = router
 
+let isPublicUser = false
+
 async function handlePlaylist(req, res) {
+  isPublicUser = req.userInfo.userId === '0'
   const {meta, parent, data} = await parseUrl(req.path)
 
   if (!meta || !data) return 'next'
@@ -66,7 +69,7 @@ function preparePlaylistOverview(playlistMeta, values, breadcrumb) {
     modifiedAt: playlistMeta.modifiedTime,
     lastUpdatedBy: (playlistMeta.lastModifyingUser || {}).displayName,
     createdAt: playlistMeta.createdTime,
-    editLink: playlistMeta.mimeType === 'text/html' ? playlistMeta.folder.webViewLink : playlistMeta.webViewLink
+    editLink: isPublicUser ? false : (playlistMeta.mimeType === 'text/html' ? playlistMeta.folder.webViewLink : playlistMeta.webViewLink)
   })
 
   return renderData
@@ -97,7 +100,7 @@ async function preparePlaylistPage(data, url, parent) {
       return {
         url: `/${arr.slice(0, i + 1).join('/')}`,
         name: cleanName(breadcrumbInfo[i].name),
-        editLink: breadcrumbInfo[i].webViewLink
+        editLink: isPublicUser ? false : breadcrumbInfo[i].webViewLink
       }
     })
 
@@ -131,7 +134,7 @@ function prepareContextualData(playlistMeta, values, breadcrumb) {
       return {
         url: `/${arr.slice(0, i + 1).join('/')}`,
         name: cleanName(breadcrumbInfo[i].name),
-        editLink: breadcrumbInfo[i].webViewLink
+        editLink: isPublicUser ? false : breadcrumbInfo[i].webViewLink
       }
     })
 
@@ -141,7 +144,7 @@ function prepareContextualData(playlistMeta, values, breadcrumb) {
       sort: prettyName,
       name: prettyName,
       url: `${path}/${slug}`,
-      editLink: mimeType === 'text/html' ? folder.webViewLink : webViewLink,
+      editLink: isPublicUser ? false : mimeType === 'text/html' ? folder.webViewLink : webViewLink,
       resourceType: resourceType
     }
   })
