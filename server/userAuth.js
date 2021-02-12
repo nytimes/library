@@ -36,10 +36,11 @@ if (isSlackOauth) {
   }
   ))
 } else {
+  // default to google auth
   passport.use(new GoogleStrategy.Strategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: '/auth/redirect',
+    callbackURL,
     userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo',
     passReqToCallback: true
   }, (request, accessToken, refreshToken, profile, done) => done(null, profile)))
