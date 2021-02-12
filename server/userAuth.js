@@ -2,7 +2,7 @@
 
 const passport = require('passport')
 const session = require('express-session')
-const md5 = require('md5')
+const crypto = require('crypto')
 const GoogleStrategy = require('passport-google-oauth20')
 const SlackStrategy = require('passport-slack-oauth2').Strategy
 
@@ -36,15 +36,16 @@ if (isSlackOauth) {
   }
   ))
 } else {
-  // default to google auth
   passport.use(new GoogleStrategy.Strategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL,
+    callbackURL: '/auth/redirect',
     userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo',
     passReqToCallback: true
   }, (request, accessToken, refreshToken, profile, done) => done(null, profile)))
 }
+
+const md5 = (data) => crypto.createHash('md5').update(data).digest('hex')
 
 router.use(session({
   secret: process.env.SESSION_SECRET,
