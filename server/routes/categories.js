@@ -57,7 +57,8 @@ async function handleCategory(req, res) {
       },
 
       json: () => {
-        res.json(baseRenderData)
+        const {template, duplicates, ...jsonResponse} = Object.assign({}, baseRenderData, {resourceType})
+        res.json(jsonResponse)
       }
     })
   }
@@ -82,7 +83,8 @@ async function handleCategory(req, res) {
     },
 
     json: () => {
-      res.json(renderData)
+      const {template, duplicates, ...jsonResponse} = Object.assign({}, renderData, {resourceType})
+      res.json(jsonResponse)
     }
   })
 }

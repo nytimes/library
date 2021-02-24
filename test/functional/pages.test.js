@@ -113,7 +113,7 @@ describe('Server responses', () => {
   describe('that return JSON', () => {
     it('should contain a complete filename listing', () => {
       return request(app)
-      .get('/filename-listing.json')
+        .get('/filename-listing.json')
         .expect(200)
         .then((res) => {
           const {filenames} = res.body
@@ -131,9 +131,16 @@ describe('Server responses', () => {
         .expect('Content-Type', /json/)
         .then((res) => {
           const data = JSON.parse(res.text)
-          expect(data).to.deep.equal(
+          expect(data).to.deep.include(
             {
-              html: '<p> This is a simple test document export.</p>',
+              url: '/test-folder-9',
+              title: 'Home article 10 for test folder 9',
+              lastUpdatedBy: 'Foo Bar',
+              modifiedAt: '2018-03-02T14:13:20.000Z',
+              createdAt: '2018-02-19T00:26:40.000Z',
+              id: 'Test10',
+              resourceType: 'document',
+              content: '<p> This is a simple test document export.</p>',
               byline: 'John Smith',
               createdBy: 'John Smith',
               sections: []
@@ -149,9 +156,16 @@ describe('Server responses', () => {
         .expect('Content-Type', /json/)
         .then((res) => {
           const data = JSON.parse(res.text)
-          expect(data).to.deep.equal(
+          expect(data).to.deep.include(
             {
-              html: '<p> This is a simple test document export.</p>',
+              url: '/test-folder-9',
+              title: 'Home article 10 for test folder 9',
+              lastUpdatedBy: 'Foo Bar',
+              modifiedAt: '2018-03-02T14:13:20.000Z',
+              createdAt: '2018-02-19T00:26:40.000Z',
+              id: 'Test10',
+              resourceType: 'document',
+              content: '<p> This is a simple test document export.</p>',
               byline: 'John Smith',
               createdBy: 'John Smith',
               sections: []
