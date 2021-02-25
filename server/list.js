@@ -325,7 +325,7 @@ async function retrievePlaylistData(id) {
 
   // format data from api response
   const playlistIds = response.data.values.slice(1).map((link) => {
-    const id = url.parse(link[0]).pathname.split('/')[3]
+    const id = url.URL(link[0]).pathname.split('/')[3]
     return id
   })
 
