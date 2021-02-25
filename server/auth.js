@@ -4,7 +4,7 @@ const path = require('path')
 
 const inflight = require('promise-inflight')
 const {google} = require('googleapis')
-const {auth: nodeAuth, GoogleAuth } = require('google-auth-library')
+const {auth: nodeAuth, GoogleAuth} = require('google-auth-library')
 
 const log = require('./logger')
 
@@ -37,14 +37,15 @@ async function setAuthClient() {
       authClient = credential
     }
 
-    authClient = new GoogleAuth({scopes: [
-      'https://www.googleapis.com/auth/drive',
-      'https://www.googleapis.com/auth/cloud-platform',
-      'https://www.googleapis.com/auth/datastore'
-    ]})
+    authClient = new GoogleAuth({
+      scopes: [
+        'https://www.googleapis.com/auth/drive',
+        'https://www.googleapis.com/auth/cloud-platform',
+        'https://www.googleapis.com/auth/datastore'
+      ]
+    })
     google.options({auth: authClient})
     log.info('Google API auth successfully retrieved.')
-
     return authClient
   })
 }
