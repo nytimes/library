@@ -17,9 +17,8 @@
     "googleapis": "^48.0.0",
     "helmet-csp": "^2.10.0",
     "highlight.js": "^10.1.2",
-    "js-yaml": "^3.13.1",
+    "js-yaml": "^3.14.0",
     "lodash": "^4.17.19",
-    "md5": "^2.2.1",
     "mime-types": "^2.1.27",
     "moment": "^2.27.0",
     "node-sass": "^4.14.1",
@@ -30,7 +29,7 @@
     "slugify": "^1.4.5",
     "unescape": "^1.0.1",
     "winston": "^2.4.5",
-    "xlsx": "^0.16.4"
+    "xlsx": "^0.16.7"
   },
   "devDependencies": {
     "concurrently": "^5.2.0",
@@ -45,6 +44,7 @@
     "nock": "^13.0.3",
     "nodemon": "^2.0.4",
     "nyc": "^15.1.0",
+    "passport-slack-oauth2": "^1.0.2",
     "sinon": "^9.0.2",
     "supertest": "^4.0.2",
     "valid-url": "^1.0.9"

@@ -26,6 +26,7 @@ A collaborative newsroom documentation site, powered by Google Docs.
   - [Doc parsing](#doc-parsing)
   - [Listing the drive](#listing-the-drive)
   - [Auth](#auth)
+  - [User Authentication](#user-authentication)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -205,3 +206,17 @@ The tree and file metadata are repopulated into memory on an interval (currently
 ### Auth
 
 Authentication with the Google Drive v3 api is handled by the auth.js file, which exposes a single method `getAuth`. `getAuth` will either return an already instantiated authentication client or produce a fresh one. Calling `getAuth` multiple times will not produce a new authentication client if the credentials have expired; we should build this into the auth.js file later to automatically refresh the credentials on some sort of interval to prevent them from expiring.
+
+### User Authentication
+
+Library currently supports both Slack and Google Oauth methods. As Library sites are usually intended to be internal to a set of limited users, Oauth with your organization is strongly encouraged. To use Slack Oauth, specify your Oauth strategy in your `.env` file, like so:
+```
+# Slack needs to be capitalized as per the Passport.js slack oauth docs http://www.passportjs.org/packages/passport-slack-oauth2/
+OAUTH_STRATEGY=Slack
+``` 
+You will need to provide Slack credentials, which you can do by creating a Library Oauth app in your Slack workspace. After creating the app, save the app's `CLIENT_ID` and `CLIENT_SECRET` in your `.env` file:
+```
+SLACK_CLIENT_ID=1234567890abcdefg
+SLACK_CLIENT_SECRET=09876544321qwerty
+``` 
+You will need to add a callback URL to your Slack app to allow Slack to redirect back to your Library instance after the user is authenticated. 
