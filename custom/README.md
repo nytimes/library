@@ -1,3 +1,18 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Customizing Library](#customizing-library)
+  - [The `custom` Directory](#the-custom-directory)
+  - [Styles](#styles)
+  - [Text, Language, and Branding](#text-language-and-branding)
+  - [Middleware](#middleware)
+  - [Cache Client](#cache-client)
+  - [Layouts](#layouts)
+  - [Authentication](#authentication)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Customizing Library
 
 ## The `custom` Directory

@@ -1,3 +1,17 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Contributing to Library](#contributing-to-library)
+  - [Repo Layout](#repo-layout)
+  - [Feature Requests](#feature-requests)
+  - [Testing](#testing)
+  - [Code Conventions](#code-conventions)
+- [Contributing Documentation](#contributing-documentation)
+  - [Document Contributors](#document-contributors)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Contributing to Library
 
 ## Repo Layout
