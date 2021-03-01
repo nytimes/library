@@ -48,9 +48,18 @@ async function handleCategory(req, res) {
 
   // if this is a folder, just render from the generic data
   if (resourceType === 'folder') {
-    return res.render(template, baseRenderData, (err, html) => {
-      if (err) throw err
-      res.end(html)
+    return res.format({
+      html: () => {
+        res.render(template, baseRenderData, (err, html) => {
+          if (err) throw err
+          res.end(html)
+        })
+      },
+
+      json: () => {
+        const {template, duplicates, ...jsonResponse} = Object.assign({}, baseRenderData, {resourceType})
+        res.json(jsonResponse)
+      }
     })
   }
 
@@ -58,14 +67,25 @@ async function handleCategory(req, res) {
   // for docs, fetch the html and then combine with the base data
   const {html, byline, createdBy, sections} = await fetchDoc(id, resourceType, req)
 
-  res.render(template, Object.assign({}, baseRenderData, {
+  const renderData = Object.assign({}, baseRenderData, {
     content: html,
     byline,
     createdBy,
     sections
-  }), (err, html) => {
-    if (err) throw err
-    res.end(html)
+  })
+
+  res.format({
+    html: () => {
+      res.render(template, renderData, (err, html) => {
+        if (err) throw err
+        res.end(html)
+      })
+    },
+
+    json: () => {
+      const {template, duplicates, ...jsonResponse} = Object.assign({}, renderData, {resourceType})
+      res.json(jsonResponse)
+    }
   })
 }
 
