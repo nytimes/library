@@ -75,7 +75,8 @@ async function handlePage(req, res) {
           lastUpdatedBy: (category.lastModifyingUser || {}).displayName,
           modifiedAt: category.modifiedTime,
           createdAt: category.createdTime,
-          id: category.id
+          id: category.id,
+          resourceType: category.resourceType
         })))
       }
     })
