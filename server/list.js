@@ -109,35 +109,24 @@ function getOptions(id) {
   }
 }
 
-async function fetchAllFiles({nextPageToken: pageToken, parentIds = [driveId], driveType = 'team', drive} = {}) {
+async function fetchAllFiles({parentIds = [driveId], driveType = 'team', drive} = {}) {
   const options = getOptions(parentIds)
+  const levelItems = []
 
-  if (pageToken) {
-    options.pageToken = pageToken
-  }
+  do {
+    // Gets files in single folder (shared) or files listed in single page of response (team)
+    const {data} = await Promise.race([
+      drive.files.list(options),
+      new Promise((resolve, reject) => setTimeout(() => reject(Error('drive.files.list timeout expired!')), driveTimeout * 1000))
+    ])
 
-  // Gets files in single folder (shared) or files listed in single page of response (team)
-  const {data} = await Promise.race([
-    drive.files.list(options),
-    new Promise((resolve, reject) => setTimeout(() => reject(Error('drive.files.list timeout expired!')), driveTimeout * 1000))
-  ])
+    log.debug(`got files and folders: ${data.files.length}, ${data.nextPageToken ? '' : 'no '}more results to fetch`)
 
-  const {files, nextPageToken} = data
-  const levelItems = files
+    options.pageToken = data.nextPageToken
+    levelItems.push(...data.files)
+  } while (options.pageToken)
 
-  // If there is more data the API has not returned for the query, the request needs to continue
-  if (nextPageToken) {
-    const nextPageFiles = await fetchAllFiles({
-      nextPageToken,
-      drive,
-      parentIds,
-      driveType
-    })
-    log.debug(`next page files and folders: ${nextPageFiles.length}`)
-    return levelItems.concat(nextPageFiles)
-  }
-
-  // If there are no more pages and this is not a shared folder, return completed list
+  // If this is not a shared folder, return completed list
   if (driveType !== 'folder') return levelItems
 
   // Continue searching if shared folder, since API only returns contents of the immediate parent folder
