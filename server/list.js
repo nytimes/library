@@ -120,10 +120,9 @@ async function fetchAllFiles({parentIds = [driveId], driveType = 'team', drive} 
       new Promise((resolve, reject) => setTimeout(() => reject(Error('drive.files.list timeout expired!')), driveTimeout * 1000))
     ])
 
-    log.debug(`got files and folders: ${data.files.length}, ${data.nextPageToken ? '' : 'no '}more results to fetch`)
-
     options.pageToken = data.nextPageToken
     levelItems.push(...data.files)
+    log.debug(`fetched ${data.files.length} files and folders (total: ${levelItems.length}), ${data.nextPageToken ? '' : 'no '}more results to fetch`)
   } while (options.pageToken)
 
   // If this is not a shared folder, return completed list
