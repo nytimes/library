@@ -3,6 +3,7 @@
 const inflight = require('promise-inflight')
 const {google} = require('googleapis')
 const path = require('path')
+const url = require('url')
 
 const cache = require('./cache')
 const log = require('./logger')
@@ -324,7 +325,7 @@ async function retrievePlaylistData(id) {
 
   // format data from api response
   const playlistIds = response.data.values.slice(1).map((link) => {
-    const id = new URL(link[0]).pathname.split('/')[3]
+    const id = url.URL(link[0]).pathname.split('/')[3]
     return id
   })
 

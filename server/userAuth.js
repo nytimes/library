@@ -2,6 +2,7 @@
 
 const passport = require('passport')
 const session = require('express-session')
+const md5 = require('md5')
 const GoogleStrategy = require('passport-google-oauth20')
 
 const log = require('./logger')
