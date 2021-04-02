@@ -69,6 +69,15 @@ app.use((req, res, next) => {
   next()
 })
 
+// treat requests ending in .json as application/json
+app.use((req, res, next) => {
+  if (req.path.endsWith('.json')) {
+    req.headers.accept = 'application/json'
+    req.url = req.baseUrl + req.path.slice(0, -5)
+  }
+  next()
+})
+
 app.use(pages)
 app.use(cache)
 
