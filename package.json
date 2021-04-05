@@ -56,8 +56,8 @@
     "build": "npm run build:main && npm run build:inline",
     "debug": "node -r dotenv/config --inspect --debug-brk server/index.js",
     "watch": "npm run build && concurrently \"nodemon --inspect=0.0.0.0 -r dotenv/config -e js,ejs server/index.js\" \"nodemon -e scss --watch styles --watch custom/styles -x npm run build\"",
-    "test": "NODE_ENV=test PORT=3001 jest test/**/*.test.js --setupTestFrameworkScriptFile='./test/utils/bootstrap.js' --forceExit",
-    "test:cover": "NODE_ENV=test PORT=3001 nyc --include=server/** --reporter=html --reporter=text jest test/**/*.test.js --setupTestFrameworkScriptFile='./test/utils/bootstrap.js' --forceExit",
+    "test": "NODE_ENV=test PORT=3001 jest test/**/*.test.js --setupFiles dotenv/config --setupTestFrameworkScriptFile='./test/utils/bootstrap.js' --forceExit",
+    "test:cover": "NODE_ENV=test PORT=3001 nyc --include=server/** --reporter=html --reporter=text jest test/**/*.test.js --setupFiles dotenv/config --setupTestFrameworkScriptFile='./test/utils/bootstrap.js' --forceExit",
     "lint": "eslint ./server",
     "gcp-build": "./bin/install_customizations && npm run build && ./bin/update_gae_pkg"
   },
