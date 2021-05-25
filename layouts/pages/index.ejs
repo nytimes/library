@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-  <%- include('partials/head', {title: template('branding.prettyName')}) %>
+  <%- include('partials/head', {title: template('branding.prettyName'), externalScripts}) %>
   <body>
 
     <header id="masthead" class="masthead" role="banner">
@@ -18,11 +18,11 @@
         <%- include('partials/search', {style: 'homepage', focus: 'autofocus', msgOnFocus: template('search.placeholder')}) %>
 
         <div class="featured-cat">
-          <% if (modules.length) { 
+          <% if (modules.length) {
             modules.forEach((module, i, all) => {
           %>
             <%- include('partials/landingModule', module) %>
-          <%  })  
+          <%  })
           } else { %>
           <!-- Eventually we might display a warning here about why this space is empty. -->
           <% } %>

@@ -4,6 +4,7 @@ const qs = require('querystring')
 const unescape = require('unescape')
 const hljs = require('highlight.js')
 const list = require('./list')
+const {transforms} = require('./plugins');
 
 /* Your one stop shop for all your document processing needs. */
 
@@ -231,6 +232,7 @@ function getProcessedHtml(src) {
   let html = normalizeHtml(src)
   html = convertYoutubeUrl(html)
   html = formatCode(html)
+  transforms.forEach(transform => html = transform(html))
   html = pretty(html)
   return html
 }

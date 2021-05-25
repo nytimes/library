@@ -7,6 +7,7 @@ const {getMeta} = require('../list')
 const {fetchDoc, cleanName} = require('../docs')
 const {getTemplates, sortDocs, stringTemplate} = require('../utils')
 const {parseUrl} = require('../urlParser')
+const {externalScripts} = require('../plugins')
 
 router.get('*', handleCategory)
 module.exports = router
@@ -43,7 +44,8 @@ async function handleCategory(req, res) {
     editLink: meta.mimeType === 'text/html' ? meta.folder.webViewLink : meta.webViewLink,
     id,
     template: stringTemplate,
-    duplicates
+    duplicates,
+    externalScripts
   })
 
   // if this is a folder, just render from the generic data
