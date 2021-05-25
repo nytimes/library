@@ -12,6 +12,8 @@ const {stringTemplate: template} = require('./utils')
 const router = require('express-promise-router')()
 const domains = new Set(process.env.APPROVED_DOMAINS.split(/,\s?/g))
 
+const isDev = process.env.NODE_ENV === 'development'
+
 const authStrategies = ['google', 'Slack']
 let authStrategy = process.env.OAUTH_STRATEGY
 
@@ -38,8 +40,9 @@ if (isSlackOauth) {
 } else {
   // default to google auth
   passport.use(new GoogleStrategy.Strategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    // some value must be passed to passport, but in dev this value does not matter
+    clientID: isDev ? ' ' : process.env.GOOGLE_CLIENT_ID,
+    clientSecret: isDev ? ' ' : process.env.GOOGLE_CLIENT_SECRET,
     callbackURL,
     userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo',
     passReqToCallback: true
@@ -82,7 +85,6 @@ router.get('/auth/redirect', passport.authenticate(authStrategy, {failureRedirec
 })
 
 router.use((req, res, next) => {
-  const isDev = process.env.NODE_ENV === 'development'
   const passportUser = (req.session.passport || {}).user || {}
   if (isDev || (req.isAuthenticated() && isAuthorized(passportUser))) {
     setUserInfo(req)
@@ -111,7 +113,7 @@ function isAuthorized(user) {
 }
 
 function setUserInfo(req) {
-  if (process.env.NODE_ENV === 'development') {
+  if (isDev) { // userInfo shim for development
     req.userInfo = {
       email: process.env.TEST_EMAIL || template('footer.defaultEmail'),
       userId: '10',
