@@ -1,22 +1,22 @@
 'use strict'
 
 const search = require('../search')
-const move = require('../move')
-const { getAuth } = require('../auth')
-const { errorMessages } = require('../errors/messages.json')
+
+const {getAuth} = require('../auth')
+const {errorMessages} = require('../errors/messages.json')
 
 const router = require('express-promise-router')()
 
-const { getTree, getFilenames, getMeta, getTagged } = require('../list')
-const { getTemplates, sortDocs, stringTemplate, getConfig } = require('../utils')
+const {getTree, getFilenames, getMeta, getTagged} = require('../list')
+const {getTemplates, sortDocs, stringTemplate, getConfig} = require('../utils')
 
 router.get('/', handlePage)
 router.get('/:page', handlePage)
 
-router.get('/filename-listing.json', async (req, res) => {
+router.get('/filename-listing', async (req, res) => {
   res.header('Cache-Control', 'public, must-revalidate') // override no-cache
   const filenames = await getFilenames()
-  res.json({ filenames: filenames })
+  res.json({filenames: filenames})
 })
 
 module.exports = router
@@ -31,7 +31,7 @@ async function handlePage(req, res) {
   if (!pages.has(page)) return 'next'
 
   const template = `pages/${page}`
-  const { q, id, dest, autocomplete } = req.query
+  const {q, autocomplete} = req.query
   if (page === 'search' && q) {
     return search.run(q, driveType).then((results) => {
       // special rule for the autocomplete case, go directly to the item if we find it.
@@ -41,21 +41,27 @@ async function handlePage(req, res) {
         if (exactMatches.length === 1) return res.redirect(exactMatches[0].path)
       }
 
-      res.render(template, { q, results, template: stringTemplate })
+      res.format({
+        html: () => {
+          res.render(template, {q, results, template: stringTemplate})
+        },
+
+        json: () => {
+          res.json(results.map((result) => ({
+            url: result.path,
+            title: result.prettyName,
+            lastUpdatedBy: (result.lastModifyingUser || {}).displayName,
+            modifiedAt: result.modifiedTime,
+            createdAt: result.createdTime,
+            id: result.id,
+            resourceType: result.resourceType
+          })))
+        }
+      })
     })
   }
 
-  if (page === 'move-file' && id) {
-    if (!dest) {
-      const folders = await move.getFolders(id)
-      const { prettyName, parents } = getMeta(id)
-      return res.render(template, { prettyName, folders, id, parents, template: stringTemplate })
-    }
-
-    return move.moveFile(id, dest, driveType).then((result) => {
-      res.redirect(result)
-    })
-  }
+  // TODO: repurpose old getFolders/folder view from move-file as tree view for files
 
   if (page === 'categories' || page === 'index') {
     const tree = await getTree()
@@ -66,11 +72,27 @@ async function handlePage(req, res) {
       throw new Error(errMsg)
     }
     const categories = buildDisplayCategories(tree)
-    res.render(template, { ...categories, template: stringTemplate })
+    res.format({
+      html: () => {
+        res.render(template, {...categories, template: stringTemplate})
+      },
+
+      json: () => {
+        res.json(categories.all.map((category) => ({
+          url: category.path,
+          title: category.prettyName,
+          lastUpdatedBy: (category.lastModifyingUser || {}).displayName,
+          modifiedAt: category.modifiedTime,
+          createdAt: category.createdTime,
+          id: category.id,
+          resourceType: category.resourceType
+        })))
+      }
+    })
     return
   }
 
-  res.render(template, { template: stringTemplate })
+  res.render(template, {template: stringTemplate})
 }
 
 function buildDisplayCategories(tree) {
@@ -83,14 +105,14 @@ function buildDisplayCategories(tree) {
   // Ignore pages at the root of the site on the category page
   const all = categories
     .map((c) => Object.assign({}, c, getMeta(c.id)))
-    .filter(({ resourceType, tags, isTrashCan }) => resourceType === 'folder' && !tags.includes('hidden') && !isTrashCan)
+    .filter(({resourceType, tags, isTrashCan}) => resourceType === 'folder' && !tags.includes('hidden') && !isTrashCan)
     .sort(sortDocs)
     .map((category) => {
-      category.children = Object.values(category.children || {}).map(({ id }) => {
-        const { prettyName: name, path: url, resourceType, sort, tags } = getMeta(id)
-        return { name, resourceType, url, sort, tags }
+      category.children = Object.values(category.children || {}).map(({id}) => {
+        const {prettyName: name, path: url, resourceType, sort, tags} = getMeta(id)
+        return {name, resourceType, url, sort, tags}
       })
-        .filter(({ tags }) => !tags.includes('hidden'))
+        .filter(({tags}) => !tags.includes('hidden'))
         .sort(sortDocs)
       return category
     })
@@ -102,8 +124,8 @@ function buildDisplayCategories(tree) {
       .map(getMeta)
       .sort(sortDocs)
 
-    return { ...module, items }
+    return {...module, items}
   })
 
-  return { all, modules }
+  return {all, modules}
 }

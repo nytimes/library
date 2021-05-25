@@ -13,6 +13,7 @@ const pages = require('./routes/pages')
 const categories = require('./routes/categories')
 const playlists = require('./routes/playlists')
 const readingHistory = require('./routes/readingHistory')
+const redirects = require('./routes/redirects')
 const errorPages = require('./routes/errors')
 
 checkErrors()
@@ -32,7 +33,7 @@ if ((process.env.TRUST_PROXY || '').toUpperCase() === 'TRUE') {
 }
 
 app.set('view engine', 'ejs')
-app.set('views', path.join(__dirname, '../layouts'))
+app.set('views', [path.join(__dirname, '../custom/layouts'), path.join(__dirname, '../layouts')])
 
 app.get('/healthcheck', (req, res) => {
   res.send('OK')
@@ -71,6 +72,15 @@ app.use((req, res, next) => {
   next()
 })
 
+// treat requests ending in .json as application/json
+app.use((req, res, next) => {
+  if (req.path.endsWith('.json')) {
+    req.headers.accept = 'application/json'
+    req.url = req.baseUrl + req.path.slice(0, -5)
+  }
+  next()
+})
+
 app.use(pages)
 app.use(cache)
 
@@ -79,6 +89,9 @@ app.use(categories)
 app.use(playlists)
 
 postload.forEach((middleware) => app.use(middleware))
+
+// if no page has been served, check for a redirect before erroring
+app.use(redirects)
 
 // error handler for rendering the 404 and 500 pages, must go last
 app.use(errorPages)

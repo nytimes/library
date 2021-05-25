@@ -2,11 +2,9 @@
 
 const router = require('express-promise-router')()
 
-const moment = require('moment')
-
 const log = require('../logger')
 const {getMeta, getPlaylist} = require('../list')
-const {fetchDoc, cleanName, fetchByline} = require('../docs')
+const {fetchDoc, cleanName} = require('../docs')
 const {stringTemplate} = require('../utils')
 const {parseUrl} = require('../urlParser')
 
@@ -16,7 +14,7 @@ module.exports = router
 async function handlePlaylist(req, res) {
   const {meta, parent, data} = await parseUrl(req.path)
 
-  if (!meta || !data) throw new Error('Not found')
+  if (!meta || !data) return 'next'
 
   const {resourceType, tags, id} = meta
   const {breadcrumb} = data
@@ -29,7 +27,7 @@ async function handlePlaylist(req, res) {
     // FIXME: consolidate/refactor this function
     const playlistOverviewData = preparePlaylistOverview(meta, playlistIds, breadcrumb)
 
-    return res.render(`playlists`, playlistOverviewData, (err, html) => {
+    return res.render('playlists', playlistOverviewData, (err, html) => {
       if (err) throw err
       res.end(html)
     })
@@ -41,17 +39,15 @@ async function handlePlaylist(req, res) {
     log.info('Getting page in playlist')
 
     // process data
-    const {html, originalRevision, sections} = await fetchDoc(id, resourceType, req)
-    const revisionData = originalRevision.data
-    const payload = fetchByline(html, revisionData.lastModifyingUser.displayName)
+    const {html, byline, createdBy, sections} = await fetchDoc(id, resourceType, req)
     const playlistPageData = await preparePlaylistPage(data, req.path, parentMeta)
 
     // render as a playlist
-    return res.render(`playlists/leaf`, Object.assign({}, playlistPageData, {
+    return res.render('playlists/leaf', Object.assign({}, playlistPageData, {
       template: stringTemplate,
-      content: payload.html,
-      byline: payload.byline,
-      createdBy: revisionData.lastModifyingUser.displayName,
+      content: html,
+      byline: byline,
+      createdBy,
       sections,
       title: meta.prettyName
     }), (err, html) => {
@@ -69,7 +65,7 @@ function preparePlaylistOverview(playlistMeta, values, breadcrumb) {
     title: playlistMeta.prettyName,
     modifiedAt: playlistMeta.modifiedTime,
     lastUpdatedBy: (playlistMeta.lastModifyingUser || {}).displayName,
-    createdAt: moment(playlistMeta.createdTime).fromNow(),
+    createdAt: playlistMeta.createdTime,
     editLink: playlistMeta.mimeType === 'text/html' ? playlistMeta.folder.webViewLink : playlistMeta.webViewLink
   })
 

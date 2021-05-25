@@ -9,6 +9,8 @@ A collaborative newsroom documentation site, powered by Google Docs.
 
 - [Demo Site & User Guide](#demo-site--user-guide)
 - [Contacting us](#contacting-us)
+- [Community](#community)
+- [Contributing](#contributing)
 - [Questions](#questions)
 - [Development Workflow](#development-workflow)
   - [Tests](#tests)
@@ -24,6 +26,7 @@ A collaborative newsroom documentation site, powered by Google Docs.
   - [Doc parsing](#doc-parsing)
   - [Listing the drive](#listing-the-drive)
   - [Auth](#auth)
+  - [User Authentication](#user-authentication)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -35,8 +38,29 @@ Documentation about how to get started with Library is hosted as a working (read
 
 Love Library? Let us know by [joining our Google Group](https://groups.google.com/forum/#!forum/nyt-library-community) and dropping us a line. You'll also stay up to date with the latest Library features via our release notes, which get sent to this list.
 
+## Community
+
+Here are some of the organizations using Library so far.
+
+[Marketplace](https://www.marketplace.org/)
+
+[The New York Times](http://nytimes.com)
+
+[Northwestern University Knight Lab](https://knightlab.northwestern.edu)
+
+[Star Tribune](http://www.startribune.com)
+
+[WBEZ](https://www.wbez.org)
+
+[The Los Angeles Times Data and Graphics Department](https://twitter.com/palewire/status/1326220493762883585)
+
+## Contributing
+
+See [CONTRIBUTING.md](https://github.com/nytimes/library/blob/master/CONTRIBUTING.md) for information on how to contribute code and/or documentation on GitHub or on the [demo site](https://nyt-library-demo.herokuapp.com).
+
 ## Questions
-If you have questions about how to get your copy of Library up and running, [join our Google Group](https://groups.google.com/forum/#!forum/nyt-library-community)) and let us know what you're running into. We also keep an eye on the #proj-library channel in the News Nerdery Slack. We'll do our best to answer your questions.
+
+If you have questions about how to get your copy of Library up and running, [join our Google Group](https://groups.google.com/forum/#!forum/nyt-library-community), and let us know what you're running into. We also keep an eye on the #proj-library channel in the News Nerdery Slack. We'll do our best to answer your questions.
 
 ## Development Workflow
 
@@ -57,19 +81,23 @@ If you have questions about how to get your copy of Library up and running, [joi
 4. Create a `.env` file at the project root. An example `.env` might look like
 
 ```bash
-NODE_ENV=development # node environment
+# node environment (development or production)
+NODE_ENV=development
 # Google oAuth credentials
 GOOGLE_CLIENT_ID=123456-abcdefg.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=abcxyz12345
 GCP_PROJECT_ID=library-demo-1234
-APPROVED_DOMAINS="nytimes.com,dailypennsylvanian.com" # comma separated list of approved access domains.
+# comma separated list of approved access domains or email addresses (regex is supported).
+APPROVED_DOMAINS="nytimes.com,dailypennsylvanian.com,(.*)?ar.org,demo.user@demo.site.edu"
 SESSION_SECRET=supersecretvalue
 
 # Google drive Configuration
-DRIVE_TYPE=team # or folder, if using a folder instead of a team drive
-DRIVE_ID=0123456ABCDEF # the ID of your team's drive or shared folder. The string of random numbers and letters at the end of your team drive or folder url.
+# team or folder ("folder" if using a folder instead of a team drive)
+DRIVE_TYPE=team
+# the ID of your team's drive or shared folder. The string of random numbers and letters at the end of your team drive or folder url.
+DRIVE_ID=0123456ABCDEF
 ```
-Make sure to remove all comments after the `DRIVE_TYPE` and `DRIVE_ID` vars.
+Make sure to not put any comments in the same line as `DRIVE_TYPE` and `DRIVE_ID` vars.
 
 Ensure you share your base drive or folder with the email address associated with the service account created in step 2.
 
@@ -178,3 +206,17 @@ The tree and file metadata are repopulated into memory on an interval (currently
 ### Auth
 
 Authentication with the Google Drive v3 api is handled by the auth.js file, which exposes a single method `getAuth`. `getAuth` will either return an already instantiated authentication client or produce a fresh one. Calling `getAuth` multiple times will not produce a new authentication client if the credentials have expired; we should build this into the auth.js file later to automatically refresh the credentials on some sort of interval to prevent them from expiring.
+
+### User Authentication
+
+Library currently supports both Slack and Google Oauth methods. As Library sites are usually intended to be internal to a set of limited users, Oauth with your organization is strongly encouraged. To use Slack Oauth, specify your Oauth strategy in your `.env` file, like so:
+```
+# Slack needs to be capitalized as per the Passport.js slack oauth docs http://www.passportjs.org/packages/passport-slack-oauth2/
+OAUTH_STRATEGY=Slack
+``` 
+You will need to provide Slack credentials, which you can do by creating a Library Oauth app in your Slack workspace. After creating the app, save the app's `CLIENT_ID` and `CLIENT_SECRET` in your `.env` file:
+```
+SLACK_CLIENT_ID=1234567890abcdefg
+SLACK_CLIENT_SECRET=09876544321qwerty
+``` 
+You will need to add a callback URL to your Slack app to allow Slack to redirect back to your Library instance after the user is authenticated. 

@@ -5,11 +5,10 @@ const cheerio = require('cheerio')
 const slugify = require('slugify')
 const xlsx = require('xlsx')
 
-const {getAuth} = require('./auth')
-const log = require('./logger')
-const {stringTemplate} = require('./utils')
-
+const cache = require('./cache')
 const formatter = require('./formatter')
+const log = require('./logger')
+const {getAuth} = require('./auth')
 
 const supportedTypes = new Set(['document', 'spreadsheet', 'text/html'])
 
@@ -18,8 +17,7 @@ exports.cleanName = (name = '') => {
     .trim()
     // eslint-disable-next-line no-useless-escape
     .replace(/^(\d+[-–—_\s]*)([^\d\/\-^\s]+)/, '$2') // remove leading numbers and delimiters
-    .replace(/\s*\|\s*([^|]+)$/i, '')
-    .replace(/\W+home$/i, '')
+    .replace(/\s*\|\s*([^|]+)$/i, '') // remove trailing pipe and tags
     .replace(/\.[^.]+$/, '') // remove file extensions
 }
 
@@ -32,41 +30,23 @@ exports.slugify = (text = '') => {
 }
 
 exports.fetchDoc = async (id, resourceType, req) => {
+  const data = await cache.get(id)
+  if (data && data.content) {
+    log.info(`CACHE HIT ${req.path}`)
+    return data.content
+  }
+
   const auth = await getAuth()
 
-  const [html, originalRevision] = await fetch({id, resourceType, req}, auth)
-  const processedHtml = formatter.getProcessedHtml(html)
-  const sections = getSections(html)
-  // maybe we should pull out headers here
-  return {html: processedHtml, originalRevision, sections, template: stringTemplate}
-}
+  const driveDoc = await fetch({id, resourceType, req}, auth)
+  const originalRevision = driveDoc[1]
 
-exports.fetchByline = (html, creatorOfDoc) => {
-  let byline = creatorOfDoc
-  const $ = cheerio.load(html)
+  const {html, byline, createdBy, sections} = formatter.getProcessedDocAttributes(driveDoc)
+  const payload = {html, byline, createdBy, sections}
 
-  // Iterates through all p tags to find byline
-  $('p').each((index, p) => {
-    // don't search any empty p tags
-    if (p.children.length < 1) return
-
-    // regex that checks for byline
-    const r = /^by.+[^.\n]$/mig
-    if (r.test(p.children[0].data)) {
-      byline = p.children[0].data
-      // Removes the word "By"
-      byline = byline.slice(3)
-      $(p).remove()
-    }
-
-    // only check the first p tag
-    return false
-  })
-
-  return {
-    byline,
-    html: $.html()
-  }
+  // cache only information from document body
+  cache.add(id, originalRevision.data.modifiedTime, payload)
+  return payload
 }
 
 async function fetchHTMLForId(id, resourceType, req, drive) {
@@ -95,7 +75,7 @@ async function fetchOriginalRevisions(id, resourceType, req, drive) {
 
   if (!revisionSupported.has(resourceType)) {
     log.info(`Revision data not supported for ${resourceType}:${id}`)
-    return {data: { lastModifyingUser: {} }} // return mock/empty revision object
+    return {data: {lastModifyingUser: {}}} // return mock/empty revision object
   }
   return drive.revisions.get({
     fileId: id,
@@ -103,7 +83,7 @@ async function fetchOriginalRevisions(id, resourceType, req, drive) {
     fields: '*'
   }).catch((err) => {
     log.warn(`Failed retrieving revision data for ${resourceType}:${id}. Error was:`, err)
-    return {data: { lastModifyingUser: {} }} // return mock/empty revision object
+    return {data: {lastModifyingUser: {}}} // return mock/empty revision object
   })
 }
 
@@ -169,37 +149,4 @@ async function fetchHTML(drive, id) {
     alt: 'media'
   })
   return data
-}
-
-function getSections(html) {
-  const $ = cheerio.load(html)
-  const headers = ['h1', 'h2']
-    .map((h) => `body ${h}`)
-    .join(', ')
-
-  const ordered = $(headers).map((i, el) => {
-    const tag = el.name
-    const $el = $(el)
-    const name = $el.text()
-    const url = `#${$el.attr('id')}`
-    return {
-      name,
-      url,
-      level: parseInt(tag.slice(-1), 10)
-    }
-  }).toArray()
-
-  // take our ordered sections and turn them into appropriately nested headings
-  const nested = ordered.reduce((memo, heading) => {
-    const tail = memo.slice(-1)[0]
-    const extended = Object.assign({}, heading, {subsections: []})
-    if (!tail || heading.level <= tail.level) {
-      return memo.concat(extended)
-    }
-
-    tail.subsections.push(heading)
-    return memo
-  }, [])
-
-  return nested
 }

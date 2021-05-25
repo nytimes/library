@@ -2,7 +2,9 @@
 
 const {expect} = require('chai')
 
-const {cleanName, slugify, fetchByline, fetchDoc} = require('../../server/docs')
+const {cleanName, slugify, fetchDoc} = require('../../server/docs')
+
+const PAYLOAD_KEYS = ['html', 'byline', 'createdBy', 'sections']
 
 describe('Docs', () => {
   describe('Name Cleaner', () => {
@@ -31,6 +33,19 @@ describe('Docs', () => {
       expect(cleanName('3/28')).equals('3/28')
       expect(cleanName('3-28-2018')).equals('3-28-2018')
     })
+
+    it('should only remove keywords preceded by a pipe', () => {
+      expect(cleanName('Page foo | home')).equals('Page foo')
+      expect(cleanName('Page foo home | home')).equals('Page foo home')
+      expect(cleanName('Page foo hidden | home')).equals('Page foo hidden')
+      expect(cleanName('Page foo home | home, hidden')).equals('Page foo home')
+      expect(cleanName('Page foo home | hidden, home')).equals('Page foo home')
+    })
+
+    it('should only remove words after the last pipe pipe', () => {
+      expect(cleanName('I | love | pipes | home')).equals('I | love | pipes')
+      expect(cleanName('I | love | pipes | foobar')).equals('I | love | pipes')
+    })
   })
 
   describe('Slugification', () => {
@@ -47,39 +62,10 @@ describe('Docs', () => {
     })
   })
 
-  describe('Fetching Byline', () => {
-    it('should return reglar byline if none in HTML', () => {
-      const {byline} = fetchByline('<p></p>', 'Ben Koski')
-      expect(byline).equals('Ben Koski')
-    })
-
-    it('should return a byline if present in HTML', () => {
-      const {byline} = fetchByline('<p>By John Smith</p>', 'Ben Koski')
-      expect(byline).equals('John Smith')
-    })
-
-    it('should return byline override if present in document', () => {
-      const {byline} = fetchByline('<p>I am standing by Port Authority</p>', 'Ben Koski')
-      expect(byline).to.not.equals('Port Authority')
-      expect(byline).equals('Ben Koski')
-    })
-  })
-
   describe('Fetching Docs', () => {
     it('should fetch document data with expected structure', async () => {
-      const doc = await fetchDoc('id1', 'document', {})
-      expect(doc).to.include.keys('html', 'originalRevision')
-    })
-
-    it('should return revision data with correct format', async () => {
-      const {originalRevision} = await fetchDoc('id1', 'document', {})
-      expect(originalRevision.data).to.have.keys('kind', 'mimeType', 'modifiedTime', 'published', 'lastModifyingUser')
-    })
-
-    it('should have correct mimetype for document', async () => {
-      const {originalRevision} = await fetchDoc('id1', 'document', {})
-      const {mimeType} = originalRevision.data
-      expect(mimeType).equals('application/vnd.google-apps.document')
+      const doc = await fetchDoc('id-doc', 'document', {})
+      expect(doc).to.include.keys('html', 'byline', 'createdBy', 'sections')
     })
 
     it('should parse sections correctly', async () => {
@@ -93,17 +79,12 @@ describe('Docs', () => {
 
   describe('Fetching Sheets', () => {
     it('should fetch sheet data with expected structure', async () => {
-      const sheet = await fetchDoc('id1', 'spreadsheet', {})
-      expect(sheet).to.include.keys('html', 'originalRevision')
-    })
-
-    it('should return revision data with correct format', async () => {
-      const {originalRevision} = await fetchDoc('id1', 'spreadsheet', {})
-      expect(originalRevision.data).to.have.keys('kind', 'mimeType', 'modifiedTime', 'published', 'lastModifyingUser')
+      const sheet = await fetchDoc('id-sheet', 'spreadsheet', {})
+      expect(sheet).to.include.keys(PAYLOAD_KEYS)
     })
 
     it('should successully parse the sheet to a html table', async () => {
-      const {html} = await fetchDoc('id1', 'spreadsheet', {})
+      const {html} = await fetchDoc('id-sheet', 'spreadsheet', {})
       expect(html).includes('<table>')
       expect(html).includes('</table>')
     })
@@ -111,18 +92,18 @@ describe('Docs', () => {
 
   describe('Fetching html', () => {
     it('should fetch html data with expected structure', async () => {
-      const sheet = await fetchDoc('id1', 'text/html', {})
-      expect(sheet).to.include.keys('html', 'originalRevision')
+      const sheet = await fetchDoc('id-html', 'text/html', {})
+      expect(sheet).to.include.keys(PAYLOAD_KEYS)
     })
 
     it('should not modify html', async () => {
-      const {html} = await fetchDoc('id1', 'text/html', {})
+      const {html} = await fetchDoc('id-html', 'text/html', {})
       expect(html).equals('<h1>This is a raw HTML document</h1>')
     })
   })
 
   it('should identify bad resource types', async () => {
-    const {html} = await fetchDoc('id1', 'badtype', {})
+    const {html} = await fetchDoc('id-html', 'badtype', {})
     expect(html).equals('Library does not support viewing badtypes yet.')
   })
 })

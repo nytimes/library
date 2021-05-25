@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html>
-  <%- include ../partials/head %>
+  <%- include('partials/head') %>
   <body>
     <h1 class="visually-hidden">Default template</h1>
-    <%- include ../partials/header %>
-    <%- include ../partials/nav %>
+    <%- include('partials/header') %>
+    <%- include('partials/nav') %>
     <div class="g-body">
       <div class="g-left-panel">
         <% if (locals.sections && locals.sections.length) { %>
           <!-- is this TOC -->
-          <%- include ../partials/sectionList %>
+          <%- include('partials/sectionList') %>
         <% } %>
         <!-- Hide sibling docs on normal pages -->
         <!-- <% if (locals.siblings && siblings.length) { %>
-        <%- include('../partials/siblingList', {kicker: template('folder.siblingList.heading')}) %>
+        <%- include('partials/siblingList', {kicker: template('folder.siblingList.heading')}) %>
         <% } %> -->
       </div>
 
@@ -23,11 +23,11 @@
         <% } %>
 
         <% if (locals.children && children.length) { %>
-        <%- include('../partials/childrenList', {children, kicker: template('folder.childrenList.kicker', title)}) %>
+        <%- include('partials/childrenList', {children, kicker: template('folder.childrenList.kicker', title)}) %>
         <% } %>
       </div>
 
-      <%- include('../partials/footer', { pageType: 'document', topLevelFolder: url.split('/')[1] }) %>
+      <%- include('partials/footer', { pageType: 'document', topLevelFolder: url.split('/')[1] }) %>
     </div>
   </body>
 </html>

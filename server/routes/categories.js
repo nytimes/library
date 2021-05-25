@@ -1,13 +1,10 @@
 'use strict'
 
-const moment = require('moment')
-
 const router = require('express-promise-router')()
 
-const cache = require('../cache')
 const log = require('../logger')
 const {getMeta} = require('../list')
-const {fetchDoc, cleanName, fetchByline} = require('../docs')
+const {fetchDoc, cleanName} = require('../docs')
 const {getTemplates, sortDocs, stringTemplate} = require('../utils')
 const {parseUrl} = require('../urlParser')
 
@@ -15,6 +12,7 @@ router.get('*', handleCategory)
 module.exports = router
 
 const categories = getTemplates('categories')
+
 async function handleCategory(req, res) {
   log.info(`GET ${req.path}`)
   // FIXME: consider putting this in middleware and save on req
@@ -41,7 +39,7 @@ async function handleCategory(req, res) {
     title: meta.prettyName,
     lastUpdatedBy: (meta.lastModifyingUser || {}).displayName,
     modifiedAt: meta.modifiedTime,
-    createdAt: moment(meta.createdTime).fromNow(),
+    createdAt: meta.createdTime,
     editLink: meta.mimeType === 'text/html' ? meta.folder.webViewLink : meta.webViewLink,
     id,
     template: stringTemplate,
@@ -50,28 +48,44 @@ async function handleCategory(req, res) {
 
   // if this is a folder, just render from the generic data
   if (resourceType === 'folder') {
-    return res.render(template, baseRenderData, (err, html) => {
-      if (err) throw err
+    return res.format({
+      html: () => {
+        res.render(template, baseRenderData, (err, html) => {
+          if (err) throw err
+          res.end(html)
+        })
+      },
 
-      cache.add(id, meta.modifiedTime, req.path, html)
-      res.end(html)
+      json: () => {
+        const {template, duplicates, ...jsonResponse} = Object.assign({}, baseRenderData, {resourceType})
+        res.json(jsonResponse)
+      }
     })
   }
 
-  // for docs, fetch the html and then combine with the base data
-  const {html, originalRevision, sections} = await fetchDoc(id, resourceType, req)
   res.locals.docId = data.id // we need this for history later
-  const revisionData = originalRevision.data || { lastModifyingUser: {} }
-  const payload = fetchByline(html, revisionData.lastModifyingUser.displayName)
-  res.render(template, Object.assign({}, baseRenderData, {
-    content: payload.html,
-    byline: payload.byline,
-    createdBy: revisionData.lastModifyingUser.displayName,
+  // for docs, fetch the html and then combine with the base data
+  const {html, byline, createdBy, sections} = await fetchDoc(id, resourceType, req)
+
+  const renderData = Object.assign({}, baseRenderData, {
+    content: html,
+    byline,
+    createdBy,
     sections
-  }), (err, html) => {
-    if (err) throw err
-    cache.add(id, meta.modifiedTime, req.path, html)
-    res.end(html)
+  })
+
+  res.format({
+    html: () => {
+      res.render(template, renderData, (err, html) => {
+        if (err) throw err
+        res.end(html)
+      })
+    },
+
+    json: () => {
+      const {template, duplicates, ...jsonResponse} = Object.assign({}, renderData, {resourceType})
+      res.json(jsonResponse)
+    }
   })
 }
 

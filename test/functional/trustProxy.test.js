@@ -7,9 +7,9 @@ const express = require('express')
 
 describe('Trust Proxy', () => {
   describe('when trust proxy env is not true', () => {
-    before(() => sinon.stub(express.request, 'isAuthenticated').returns(false))
+    beforeAll(() => sinon.stub(express.request, 'isAuthenticated').returns(false))
     beforeEach(() => delete require.cache[require.resolve('../../server/index')])
-    after(() => sinon.restore())
+    afterAll(() => sinon.restore())
     // app moved inside tests so that it can be recreated later with different
     // environment variables setup.
     const app = require('../../server/index')
@@ -38,14 +38,16 @@ describe('Trust Proxy', () => {
   })
 
   describe('when trust proxy env is set to true', () => {
-    before(() => sinon.stub(express.request, 'isAuthenticated').returns(false))
-    beforeEach(() => delete require.cache[require.resolve('../../server/index')])
-    after(() => sinon.restore())
+    beforeAll(() => sinon.stub(express.request, 'isAuthenticated').returns(false))
+    beforeEach(() => {
+        delete require.cache[require.resolve('../../server/index')]
+        jest.resetModules()
+        process.env.TRUST_PROXY = 'true'
+    })
+    afterAll(() => sinon.restore())
     // app moved inside tests so that it can be recreated later with different
     // environment variables setup.
-
     it('redirect should be for http with no headers', () => {
-      process.env.TRUST_PROXY = 'true'
       const app = require('../../server/index')
       return request(app)
         .get('/login')
@@ -57,7 +59,6 @@ describe('Trust Proxy', () => {
     })
 
     it('redirect should be for https with headers and env set', () => {
-      process.env.TRUST_PROXY = 'true'
       const app = require('../../server/index.js')
       return request(app)
         .get('/login')

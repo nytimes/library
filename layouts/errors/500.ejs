@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
-  <%- include('../partials/head', {title: template('error.500.title')}) %>
+  <%- include('partials/head', {title: template('error.500.title')}) %>
   <body>
-    <%- include('../partials/header', {title: template('error.500.title'), parentLinks: []}) %>
+    <%- include('partials/header', {title: template('error.500.title'), parentLinks: []}) %>
     <div id="main-search-page">
       <div class="main-item">
         <div class="tagline">
@@ -12,10 +12,10 @@
             <p><strong>Error:</strong> <%- locals.err.message %></p>
           <% } %>
         </div>
-        <%- include('../partials/search', {style: 'homepage'}) %>
+        <%- include('partials/search', {style: 'homepage'}) %>
       </div>
 
-      <%- include('../partials/footer', {style: 'homepage'}) %>
+      <%- include('partials/footer', {style: 'homepage'}) %>
     </div>
 
   </body>

@@ -3,15 +3,26 @@ const fs = require('fs')
 const path = require('path')
 const {promisify} = require('util')
 const yaml = require('js-yaml')
-const { get: deepProp } = require('lodash')
+const {get: deepProp} = require('lodash')
 const merge = require('deepmerge')
 const mime = require('mime-types')
 
 const log = require('./logger')
 
 const layoutsDir = path.join(__dirname, '../layouts')
+const customLayoutsDir = path.join(__dirname, '../custom/layouts')
 exports.getTemplates = (subfolder) => {
-  return (fs.readdirSync(path.join(layoutsDir, subfolder)) || [])
+  const defaultLayouts = fs.readdirSync(path.join(layoutsDir, subfolder)) || []
+  let customLayouts = []
+  try {
+    // NB: This will fail if custom/layouts does not exist.
+    customLayouts = fs.readdirSync(path.join(customLayoutsDir, subfolder)) || []
+  } catch (err) {
+    const level = err.code === 'ENOENT' ? 'debug' : 'warn'
+    log[level]('Custom layouts directory not found. Did you mean to include one?')
+  }
+
+  return defaultLayouts.concat(customLayouts)
     .reduce((memo, filename) => {
       const [name] = filename.split('.')
       memo.add(name)
@@ -44,11 +55,11 @@ exports.requireWithFallback = (attemptPath) => {
     return require(customPath)
   } catch (err) {
     // if the file exists but we failed to pull it in, log that error at a warning level
-    // with no stacktrace.
-    const fileExists = fs.existsSync(customPath)
-    const level = fileExists ? 'warn' : 'debug'
-    const toLog = fileExists ? err : 'No override file given.'
-    log[level](`Failed pulling in custom file ${attemptPath} @ ${customPath}. Error was:`, toLog)
+    if (err.code !== 'MODULE_NOT_FOUND') {
+      log.warn(`Failed pulling in custom file "${attemptPath}" @ ${customPath}. Error was:`, err)
+    } else {
+      log.debug(`No custom file "${attemptPath}" found in ${customPath}. Did you mean to include one?`)
+    }
     return require(serverPath)
   }
 }
@@ -58,7 +69,7 @@ const middlewares = fs.existsSync(path.join(__dirname, '../custom/middleware')) 
 
 // create object with preload and postload middleware functions
 exports.allMiddleware = middlewares.reduce((m, item) => {
-  const { preload, postload } = require(path.join(__dirname, `../custom/middleware/${item}`))
+  const {preload, postload} = require(path.join(__dirname, `../custom/middleware/${item}`))
   return {
     preload: preload ? m.preload.concat(preload) : m.preload,
     postload: postload ? m.postload.concat(postload) : m.postload
@@ -121,7 +132,7 @@ exports.assetDataURI = async (filePath) => {
   const mimeType = mime.lookup(path.posix.basename(publicPath))
   const fullPath = path.join(__dirname, '..', publicPath)
 
-  const data = await readFileAsync(fullPath, { encoding: 'base64' })
+  const data = await readFileAsync(fullPath, {encoding: 'base64'})
   const src = `data:${mimeType};base64,${data}`
   return src
 }

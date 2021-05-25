@@ -3,7 +3,6 @@
 const inflight = require('promise-inflight')
 const {google} = require('googleapis')
 const path = require('path')
-const url = require('url')
 
 const cache = require('./cache')
 const log = require('./logger')
@@ -13,6 +12,8 @@ const docs = require('./docs')
 
 const driveType = process.env.DRIVE_TYPE
 const driveId = process.env.DRIVE_ID
+const MAX_QUERY_TERMS = 150 // max query terms allowed by google in a search request
+const driveTimeout = parseInt(process.env.DRIVE_TIMEOUT_SECONDS, 10) || 60
 
 let currentTree = null // current route data by slug
 let currentFilenames = null // current list of filenames for typeahead
@@ -71,7 +72,7 @@ async function updateTree() {
     const files = await fetchAllFiles({drive, driveType})
 
     const updatedData = produceTree(files, driveId)
-    const { tree, filenames } = updatedData
+    const {tree, filenames} = updatedData
     currentTree = tree
     currentFilenames = filenames
 
@@ -107,50 +108,46 @@ function getOptions(id) {
   }
 }
 
-async function fetchAllFiles({nextPageToken: pageToken, listSoFar = [], parentIds = [driveId], driveType = 'team', drive} = {}) {
+async function fetchAllFiles({parentIds = [driveId], driveType = 'team', drive} = {}) {
   const options = getOptions(parentIds)
+  const levelItems = []
 
-  if (pageToken) {
-    options.pageToken = pageToken
-  }
+  do {
+    // Gets files in single folder (shared) or files listed in single page of response (team)
+    const {data} = await Promise.race([
+      drive.files.list(options),
+      new Promise((resolve, reject) => setTimeout(() => reject(Error('drive.files.list timeout expired!')), driveTimeout * 1000))
+    ])
 
-  log.debug(`searching for files > ${listSoFar.length}`)
+    options.pageToken = data.nextPageToken
+    levelItems.push(...data.files)
+    log.debug(`fetched ${data.files.length} files and folders (total: ${levelItems.length}), ${data.nextPageToken ? '' : 'no '}more results to fetch`)
+  } while (options.pageToken)
 
-  // Gets files in single folder (shared) or files listed in single page of response (team)
-  const {data} = await drive.files.list(options)
-
-  const {files, nextPageToken} = data
-  const combined = listSoFar.concat(files)
-
-  // If there is more data the API has not returned for the query, the request needs to continue
-  if (nextPageToken) {
-    return fetchAllFiles({
-      nextPageToken,
-      listSoFar: combined,
-      drive,
-      parentIds,
-      driveType
-    })
-  }
-
-  // If there are no more pages and this is not a shared folder, return completed list
-  if (driveType !== 'folder') return combined
+  // If this is not a shared folder, return completed list
+  if (driveType !== 'folder') return levelItems
 
   // Continue searching if shared folder, since API only returns contents of the immediate parent folder
   // Find folders that have not yet been searched
-  const folders = combined.filter((item) =>
+  const folderIds = levelItems.filter((item) =>
     item.mimeType === 'application/vnd.google-apps.folder' && parentIds.includes(item.parents[0]))
+    .map((folder) => folder.id)
 
-  if (folders.length > 0) {
-    return fetchAllFiles({
-      listSoFar: combined,
+  const folderPartitions = []
+  while (folderIds.length > 0) {
+    folderPartitions.push(folderIds.splice(0, MAX_QUERY_TERMS))
+  }
+  const partitionPromises = folderPartitions.map((partition) =>
+    fetchAllFiles({
       drive,
-      parentIds: folders.map((folder) => folder.id),
+      parentIds: partition,
       driveType
     })
-  }
-
-  return combined
+  )
+  const partitionList = await Promise.all(partitionPromises)
+  const itemsSoFar = levelItems.concat([].concat.apply([], partitionList))
+  log.debug(`all files and folders under this level: ${itemsSoFar.length}`)
+  return itemsSoFar
 }
 
 function produceTree(files, firstParent) {
@@ -211,10 +208,29 @@ function produceTree(files, firstParent) {
   const oldInfo = docsInfo
   const oldBranches = driveBranches
   tags = tagIds
-  docsInfo = addPaths(byId) // update our outer cache w/ data including path information
+
+  const newDocsInfo = addPaths(byId)
+
+  // if docsInfo exists, asynchrononsly check if any files have been moved
+  if (Object.keys(docsInfo).length) setRedirects(docsInfo, newDocsInfo)
+
+  docsInfo = newDocsInfo // update our outer cache w/ data including path information
   driveBranches = byParent
   const tree = buildTreeFromData(firstParent, {info: oldInfo, tree: oldBranches})
   return {tree: tree, filenames: fileNames}
+}
+
+async function setRedirects(oldDocsInfo, newDocsInfo) {
+  Object.keys(newDocsInfo).forEach((id) => {
+    const currPath = newDocsInfo[id] && newDocsInfo[id].path
+    const lastPath = oldDocsInfo[id] && oldDocsInfo[id].path
+    // if no currPath, file was removed from the drive
+    // if no lastPath, file is a new addition to the drive
+    if (currPath && lastPath && currPath !== lastPath) {
+      log.info(`Doc ${id} moved, REDIRECT ${lastPath} → ${currPath}`)
+      cache.add(lastPath, new Date(), {redirect: currPath})
+    }
+  })
 }
 
 function buildTreeFromData(rootParent, previousData, breadcrumb) {
@@ -241,20 +257,20 @@ function buildTreeFromData(rootParent, previousData, breadcrumb) {
   // we have to assemble these paths differently
   return children.reduce((memo, id) => {
     const {slug} = docsInfo[id]
-    const nextCrumb = breadcrumb ? breadcrumb.concat({ id: rootParent, slug: parentInfo.slug }) : []
+    const nextCrumb = breadcrumb ? breadcrumb.concat({id: rootParent, slug: parentInfo.slug}) : []
 
     if (!memo.children[slug]) {
       // recurse building up breadcrumb
       memo.children[slug] = buildTreeFromData(id, previousData, nextCrumb)
     } else {
       log.warn(`Folder ${parentInfo.name} contains duplicate resources with slug ${slug}`)
-      const { name } = docsInfo[id]
+      const {name} = docsInfo[id]
       const previousDupes = memo.children[slug].duplicates || []
       memo.children[slug].duplicates = previousDupes.concat(name)
     }
 
     return memo
-  }, Object.assign({}, parentNode, { children: {} }))
+  }, Object.assign({}, parentNode, {children: {}}))
 }
 
 function addPaths(byId) {
@@ -296,7 +312,7 @@ async function retrievePlaylistData(id) {
 
   // format data from api response
   const playlistIds = response.data.values.slice(1).map((link) => {
-    const id = url.parse(link[0]).pathname.split('/')[3]
+    const id = new URL(link[0]).pathname.split('/')[3]
     return id
   })
 
@@ -308,7 +324,6 @@ async function retrievePlaylistData(id) {
 function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
   const currentNode = driveBranches[id] || {}
   const lastNode = lastTree[id] || {}
-  const isFirstRun = !Object.keys(lastTree).length // oldTree is empty on the first check
 
   // combine current and previous children ids uniquely
   const allPages = (currentNode.children || [])
@@ -320,49 +335,28 @@ function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
   // check all the nodes to see if they have changes
   allPages.forEach((id) => {
     // compare old item to new item
-    const newItem = docsInfo[id]
-    const oldItem = lastInfo[id]
+    const newItem = docsInfo[id] || {}
+    const oldItem = lastInfo[id] || {}
 
-    // since we have a "trash" folder we need to account
-    // for both missing items and "trashed" items
-    const isTrashed = (item) => !item || item.path.split('/')[1] === 'trash'
-    if (!isFirstRun && (isTrashed(newItem) || isTrashed(oldItem))) {
-      const item = isTrashed(oldItem) ? newItem : oldItem
-      const {path, modifiedTime} = item
-      const action = isTrashed(oldItem) ? 'Added' : 'Removed'
-      // FIXME: This does not restore deleted documents which are undone to the same location
-      return cache.purge({
-        url: path,
-        modified: modifiedTime,
-        editEmail: `item${action}`,
-        ignore: ['missing', 'modified']
-      }).catch((err) => {
-        log.debug('Error purging trashed item cache', err)
-      })
-    }
+    const newModified = new Date(newItem.modifiedTime)
+    const oldModified = new Date(oldItem.modifiedTime)
+    const hasUpdates = newModified > oldModified
 
-    // don't allow direct purges updates for folders with a home file
-    const hasHome = newItem && (driveBranches[newItem.id] || {}).home
-    if (hasHome) return
+    // if no updates reported from drive API, don't purge.
+    if (!hasUpdates) return
 
-    // if this existed before and the path changed, issue redirects
-    if (oldItem && newItem.path !== oldItem.path) {
-      cache.redirect(oldItem.path, newItem.path, newItem.modifiedTime)
-    } else {
-      // basically we are just calling purge because we don't know the last modified
-      cache.purge({url: newItem.path, modified: newItem.modifiedTime}).catch((err) => {
-        if (!err) return
+    cache.purge({id: newItem.id, modified: newItem.modifiedTime}).catch((err) => {
+      if (!err) return
 
-        // Duplicate purge errors should be logged at debug level only
-        if (err.message.includes('Same purge id as previous')) return log.debug(`Ignoring duplicate cache purge for ${newItem.path}`, err)
+      // Duplicate purge errors should be logged at debug level only
+      if (err.message.includes('Same purge id as previous')) return log.debug(`Ignoring duplicate cache purge for ${newItem.path}`)
 
-        // Ignore errors if not found or no fresh content, just allow the purge to stop
-        if (err.message.includes('Not found') || err.message.includes('No purge of fresh content')) return
+      // Ignore errors if not found or no fresh content, just allow the purge to stop
+      if (err.message.includes('Not found') || err.message.includes('No purge of fresh content')) return
 
-        // Log all other cache purge errors as warnings
-        log.warn(`Cache purging error for ${newItem.path}`, err)
-      })
-    }
+      // Log all other cache purge errors as warnings
+      log.warn(`Cache purging error for ${newItem.path}`, err)
+    })
   })
 }
 

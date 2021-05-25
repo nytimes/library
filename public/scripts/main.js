@@ -3,7 +3,7 @@ $(document).ready(function() {
   var $document = $(document)
   var $html = $('html')
 
-  $("pre").html(function (index, html) {
+  $("pre code").html(function (index, html) {
     return html.split(/\r?\n/).map(function(line) {
       return [
         '<div class="line">',
