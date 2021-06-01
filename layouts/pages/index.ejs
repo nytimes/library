@@ -18,11 +18,11 @@
         <%- include('partials/search', {style: 'homepage', focus: 'autofocus', msgOnFocus: template('search.placeholder')}) %>
 
         <div class="featured-cat">
-          <% if (modules.length) { 
+          <% if (modules.length) {
             modules.forEach((module, i, all) => {
           %>
             <%- include('partials/landingModule', module) %>
-          <%  })  
+          <%  })
           } else { %>
           <!-- Eventually we might display a warning here about why this space is empty. -->
           <% } %>

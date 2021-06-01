@@ -1,0 +1,14 @@
+{
+  "name": "library-plugin-syntax-highlight",
+  "version": "1.0.0",
+  "description": "A plugin for Library to highlight the syntax of code blocks\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "highlight.js": "^11.0.0"
+  }
+}
