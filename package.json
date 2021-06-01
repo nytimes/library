@@ -30,7 +30,6 @@
     "unescape": "^1.0.1",
     "winston": "^2.4.5",
     "xlsx": "^0.16.7",
-    "@afischer/library-plugin-test": "file:~/Desktop/library-plugin-test",
     "library-plugin-syntax-highlight": "file:./library-plugin-syntax-highlight"
   },
   "devDependencies": {

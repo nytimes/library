@@ -2,6 +2,10 @@ const hljs = require('highlight.js')
 
 const externalStyles = ['//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/styles/default.min.css']
 
+const csp = {
+  styleSrc: ['cdnjs.cloudflare.com']
+}
+
 const transform = (html) => {
   // find preprocessed code blocks
   html = html.replace(/<pre><code>(.|\n)*?<\/code><\/pre>/igm, (match) => {
@@ -23,5 +27,6 @@ const transform = (html) => {
 
 module.exports = {
   externalStyles,
-  transform
+  transform,
+  csp
 }
