@@ -7,7 +7,7 @@ const {getMeta} = require('../list')
 const {fetchDoc, cleanName} = require('../docs')
 const {getTemplates, sortDocs, stringTemplate} = require('../utils')
 const {parseUrl} = require('../urlParser')
-const {externalScripts} = require('../plugins')
+const {externalScripts, externalStyles} = require('../plugins')
 
 router.get('*', handleCategory)
 module.exports = router
@@ -45,7 +45,8 @@ async function handleCategory(req, res) {
     id,
     template: stringTemplate,
     duplicates,
-    externalScripts
+    externalScripts,
+    externalStyles
   })
 
   // if this is a folder, just render from the generic data

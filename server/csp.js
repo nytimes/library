@@ -10,5 +10,4 @@ const csp = {
   objectSrc: ["'none'", ...csps.flatMap((csp) => csp.objectSrc || [])]
 }
 
-console.log(csp)
 module.exports = csp
