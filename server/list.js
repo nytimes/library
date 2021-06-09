@@ -12,6 +12,7 @@ const docs = require('./docs')
 
 const driveType = process.env.DRIVE_TYPE
 const driveId = process.env.DRIVE_ID
+const excludeIds = (process.env.EXCLUDE_IDS || '').split(',').map((s) => s.trim())
 const MAX_QUERY_TERMS = 150 // max query terms allowed by google in a search request
 const driveTimeout = parseInt(process.env.DRIVE_TIMEOUT_SECONDS, 10) || 60
 
@@ -21,6 +22,8 @@ let docsInfo = {} // doc info by id
 let tags = {} // tags to doc id
 let driveBranches = {} // map of id to nodes
 const playlistInfo = {} // playlist info by id
+
+exports.excludeIds = excludeIds
 
 // normally return the cached tree data
 // if it does not exist yet, return a promise for the new tree
@@ -102,7 +105,7 @@ async function updateTree() {
   })
 }
 
-function getOptions(id) {
+function getOptions(driveType, id) {
   const fields = 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)'
 
   if (driveType === 'folder') {
@@ -114,15 +117,16 @@ function getOptions(id) {
   }
 
   return {
-    teamDriveId: id,
     ...exports.commonListOptions.team,
+    teamDriveId: id,
+    q: `trashed = false and '${id}' in parents`,
     // fields: '*', // setting fields to '*' returns all fields but ignores pageSize
     fields
   }
 }
 
-async function fetchAllFiles({parentIds = [driveId], driveType = 'team', drive} = {}) {
-  const options = getOptions(parentIds)
+async function fetchAllFiles({parentIds = [driveId], driveType = 'team', drive, query = ''} = {}) {
+  const options = getOptions(driveType, parentIds, query)
   const levelItems = []
 
   do {
