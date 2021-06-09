@@ -92,7 +92,11 @@ function getOptions(id) {
   if (driveType === 'folder') {
     return {
       q: id.map((id) => `'${id}' in parents`).join(' or '),
-      fields
+      corpora: "allDrives",
+      includeItemsFromAllDrives: true,
+      supportsAllDrives: true,
+      fields,
+      pageSize: 1000
     }
   }
 
