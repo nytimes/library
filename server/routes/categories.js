@@ -94,12 +94,10 @@ function prepareContextualData(data, url, breadcrumb, parent, slug) {
 
   const {children: siblings} = parent
   const {children} = data
-  const self = url.split('/').slice(-1)[0]
   // most of what we are doing here is preparing parents and siblings
   // we need the url and parent object, as well as the breadcrumb to do that
-  const siblingLinks = createRelatedList(siblings, self, `${url.split('/').slice(0, -1).join('/')}`)
-  const childrenLinks = createRelatedList(children || {}, self, url)
-
+  const siblingLinks = createRelatedList(siblings)
+  const childrenLinks = createRelatedList(children || {})
   // extend the breadcrumb with render data
   const parentLinks = url
     .split('/')
@@ -121,9 +119,8 @@ function prepareContextualData(data, url, breadcrumb, parent, slug) {
   }
 }
 
-function createRelatedList(slugs, self, baseUrl) {
+function createRelatedList(slugs) {
   return Object.keys(slugs)
-    .filter((slug) => slug !== self)
     .map((slug) => {
       const {id} = slugs[slug]
       const {sort, prettyName, webViewLink, path: url, resourceType, tags} = getMeta(id)
