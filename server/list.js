@@ -60,6 +60,22 @@ exports.getAllRoutes = () => {
     }, new Set())
 }
 
+exports.commonListOptions = {
+  folder: {
+    corpora: 'allDrives',
+    includeItemsFromAllDrives: true,
+    supportsAllDrives: true,
+    pageSize: 1000
+  },
+  team: {
+    q: 'trashed = false',
+    corpora: 'teamDrive',
+    supportsTeamDrives: true,
+    includeTeamDriveItems: true,
+    pageSize: 1000
+  }
+}
+
 // delay in ms, 15s default with env var
 const treeUpdateDelay = parseInt(process.env.LIST_UPDATE_DELAY || 15, 10) * 1000
 startTreeRefresh(treeUpdateDelay)
@@ -91,23 +107,16 @@ function getOptions(id) {
 
   if (driveType === 'folder') {
     return {
+      ...exports.commonListOptions.folder,
       q: id.map((id) => `'${id}' in parents`).join(' or '),
-      corpora: 'allDrives',
-      includeItemsFromAllDrives: true,
-      supportsAllDrives: true,
-      fields,
-      pageSize: 1000
+      fields
     }
   }
 
   return {
     teamDriveId: id,
-    q: 'trashed = false',
-    corpora: 'teamDrive',
-    supportsTeamDrives: true,
-    includeTeamDriveItems: true,
+    ...exports.commonListOptions.team,
     // fields: '*', // setting fields to '*' returns all fields but ignores pageSize
-    pageSize: 1000, // this value does not seem to be doing anything
     fields
   }
 }
