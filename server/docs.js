@@ -2,7 +2,7 @@
 
 const {google} = require('googleapis')
 const cheerio = require('cheerio')
-const slugify = require('slugify')
+const slugify = require('limax')
 const xlsx = require('xlsx')
 
 const cache = require('./cache')
@@ -26,11 +26,7 @@ exports.cleanName = (name = '') => {
 }
 
 exports.slugify = (text = '') => {
-  // convert non alpha numeric into whitespace, rather than removing
-  const alphaNumeric = text.replace(/[^\w\d]/g, ' ')
-  return slugify(alphaNumeric, {
-    lower: true
-  })
+  return slugify(text)
 }
 
 exports.fetchDoc = async (id, resourceType, req) => {
