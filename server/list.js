@@ -137,14 +137,11 @@ async function fetchAllFiles({parentIds = [driveId], driveType = 'team', drive, 
     ])
 
     options.pageToken = data.nextPageToken
-    levelItems.push(...data.files)
+    levelItems.push(...data.files.filter(f => !excludeIds.includes(f.id)))
     log.debug(`fetched ${data.files.length} files and folders (total: ${levelItems.length}), ${data.nextPageToken ? '' : 'no '}more results to fetch`)
   } while (options.pageToken)
 
-  // If this is not a shared folder, return completed list
-  if (driveType !== 'folder') return levelItems
-
-  // Continue searching if shared folder, since API only returns contents of the immediate parent folder
+  // Continue searching if shared folder, since our API call only returns contents of the immediate parent folder
   // Find folders that have not yet been searched
   const folderIds = levelItems.filter((item) =>
     item.mimeType === 'application/vnd.google-apps.folder' && parentIds.includes(item.parents[0]))
@@ -158,7 +155,7 @@ async function fetchAllFiles({parentIds = [driveId], driveType = 'team', drive, 
     fetchAllFiles({
       drive,
       parentIds: partition,
-      driveType
+      driveType: 'folder'
     })
   )
   const partitionList = await Promise.all(partitionPromises)
