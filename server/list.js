@@ -71,7 +71,7 @@ exports.commonListOptions = {
     pageSize: 1000
   },
   team: {
-    q: 'trashed = false',
+    teamDriveId: driveId,    
     corpora: 'teamDrive',
     supportsTeamDrives: true,
     includeTeamDriveItems: true,
@@ -79,15 +79,16 @@ exports.commonListOptions = {
   }
 }
 
-// delay in ms, 15s default with env var
-const treeUpdateDelay = parseInt(process.env.LIST_UPDATE_DELAY || 15, 10) * 1000
-startTreeRefresh(treeUpdateDelay)
+async function getDrive() {
+  const authClient = await getAuth()
+
+  return google.drive({version: 'v3', auth: authClient})  
+}
 
 async function updateTree() {
   return inflight('tree', async () => {
-    const authClient = await getAuth()
+    const drive = await getDrive()
 
-    const drive = google.drive({version: 'v3', auth: authClient})
     const files = await fetchAllFiles({drive, driveType})
 
     const updatedData = produceTree(files, driveId)
@@ -118,15 +119,27 @@ function getOptions(driveType, id) {
 
   return {
     ...exports.commonListOptions.team,
-    teamDriveId: id,
     q: `trashed = false and '${id}' in parents`,
     // fields: '*', // setting fields to '*' returns all fields but ignores pageSize
     fields
   }
 }
 
-async function fetchAllFiles({parentIds = [driveId], driveType = 'team', drive, query = ''} = {}) {
-  const options = getOptions(driveType, parentIds, query)
+let startPageToken = undefined
+async function checkChanges() {  
+  console.log("Checking changes...")
+  const drive = await getDrive()
+  const options = exports.commonListOptions[driveType]
+  startPageToken = startPageToken || (await drive.changes.getStartPageToken(options)).data.startPageToken  
+  const response = (await drive.changes.list({ ...options, pageToken: startPageToken }))
+  const changes = response.data.changes
+  console.log("token", response.data.newStartPageToken)
+  console.log("changes", changes.length)
+  startPageToken = response.data.newStartPageToken
+  return changes.length > 0
+}
+
+async function listFiles(drive, options, limit) {
   const levelItems = []
 
   do {
@@ -139,7 +152,14 @@ async function fetchAllFiles({parentIds = [driveId], driveType = 'team', drive, 
     options.pageToken = data.nextPageToken
     levelItems.push(...data.files.filter(f => !excludeIds.includes(f.id)))
     log.debug(`fetched ${data.files.length} files and folders (total: ${levelItems.length}), ${data.nextPageToken ? '' : 'no '}more results to fetch`)
-  } while (options.pageToken)
+  } while (options.pageToken && (!limit || levelItems.length < limit))
+
+  return levelItems.slice(0, limit)
+}
+
+async function fetchAllFiles({parentIds = [driveId], driveType = 'team', drive, query = ''} = {}) {
+  const options = getOptions(driveType, parentIds, query)
+  const levelItems = await listFiles(drive, options)
 
   // Continue searching if shared folder, since our API call only returns contents of the immediate parent folder
   // Find folders that have not yet been searched
@@ -388,15 +408,24 @@ function cleanResourceType(mimeType) {
   return match[1]
 }
 
-async function startTreeRefresh(interval) {
-  log.debug('updating tree...')
+const treeUpdateDelaySeconds = parseInt(process.env.LIST_UPDATE_DELAY || 15, 10)
+let refreshCounter = 0
+async function startTreeRefresh() {
+  const force = (refreshCounter ++) === treeUpdateDelaySeconds
 
   try {
-    await updateTree()
-    log.debug('tree updated.')
+    const shouldUpdate = force || await checkChanges()
+    if (shouldUpdate) {
+      log.debug('updating tree...')
+      await updateTree()
+      log.debug('tree updated.')  
+    }
   } catch (err) {
     log.warn('failed updating tree', err)
   }
-
-  setTimeout(() => { startTreeRefresh(interval) }, interval)
+  setTimeout(() => { 
+    startTreeRefresh() 
+  }, 1000)
 }
+// delay in ms, 15s default with env var
+startTreeRefresh()

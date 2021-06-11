@@ -72,7 +72,6 @@ async function getAllFolders({nextPageToken: pageToken, drive, driveType, parent
     fields: 'files(id,name,mimeType,parents)'
   } : {
     ...list.commonListOptions.team,
-    teamDriveId: driveId,
     q: 'trashed = false AND mimeType = \'application/vnd.google-apps.folder\'',
     // fields: '*', // setting fields to '*' returns all fields but ignores pageSize
     fields: 'files(id,name,mimeType,parents)'
@@ -128,7 +127,6 @@ function getOptions(query, allFolders, driveType) {
   return {
     ...list.commonListOptions.team,
     q: `fullText contains ${JSON.stringify(query)} AND mimeType != 'application/vnd.google-apps.folder' AND trashed = false`,
-    teamDriveId: driveId,
     fields
   }
 }
