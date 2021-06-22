@@ -9,7 +9,7 @@ const {getTemplates, sortDocs, stringTemplate} = require('../utils')
 const {parseUrl} = require('../urlParser')
 
 router.get('*', handleCategory)
-module.exports = router
+module.exports = {router, createRelatedList}
 
 const categories = getTemplates('categories')
 
