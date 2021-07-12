@@ -6,6 +6,7 @@ const googleMock = require('../utils/googleMock')
 // Set environment variables for testing
 process.env.NODE_ENV = 'test'
 
+process.env.GOOGLE_APPLICATION_CREDENTIALS = 'parse_json'
 // Drive ID matches top level folder in mock drive listing
 process.env.DRIVE_ID = 'b1ae9c8be6c34aa155f157207a0c840e'
 process.env.GOOGLE_CLIENT_ID = 'abc123'

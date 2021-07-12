@@ -4,6 +4,9 @@ const fs = require('fs')
 const path = require('path')
 
 const {google} = require('googleapis')
+const {
+  GoogleAuth
+} = require('google-auth-library')
 const {Datastore} = require('@google-cloud/datastore')
 const {sampleSize} = require('lodash')
 
@@ -17,7 +20,7 @@ const spreadsheetBuf = (() => {
 
 exports.init = () => {
   // google drive mocks
-  google.auth.getApplicationDefault = () => {
+  GoogleAuth.getApplicationDefault = () => {
     return {credential: {JWT: {}}}
   }
   google.options = () => {}
@@ -61,12 +64,12 @@ exports.init = () => {
         values: {
           get: ({spreadsheetId}) => {
             return {
-              data: { 
+              data: {
                 values: spreadsheetId === 'Test12' ?
                   page1.data.files.slice(0, 20)
                     .filter(file => file.mimeType !== 'application/vnd.google-apps.folder')
                     .map(file => [file.webViewLink]) :
-                  sampleSize(page1.data.files, 20).map(file => [file.webViewLink]) 
+                  sampleSize(page1.data.files, 20).map(file => [file.webViewLink])
               }
             }
           }

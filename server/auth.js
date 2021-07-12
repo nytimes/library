@@ -4,7 +4,10 @@ const path = require('path')
 
 const inflight = require('promise-inflight')
 const {google} = require('googleapis')
-const {auth, GoogleAuth} = require('google-auth-library')
+const {
+  auth,
+  GoogleAuth
+} = require('google-auth-library')
 
 const log = require('./logger')
 
@@ -33,6 +36,7 @@ async function setAuthClient() {
       'https://www.googleapis.com/auth/cloud-platform',
       'https://www.googleapis.com/auth/datastore'
     ]
+    // see https://github.com/googleapis/google-auth-library-nodejs#loading-credentials-from-environment-variables
     if (credentialPath === 'parse_json') {
       log.info('Trying to parse client credentials via GOOGLE_APPLICATION_JSON.')
       const keys = JSON.parse(process.env.GOOGLE_APPLICATION_JSON)
@@ -45,6 +49,7 @@ async function setAuthClient() {
     }
     google.options({auth: authClient})
     log.info('Google API auth successfully retrieved.')
+
     return authClient
   })
 }
