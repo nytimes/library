@@ -10,7 +10,7 @@ const {getTemplates, sortDocs, stringTemplate, getConfig} = require('../utils')
 router.get('/', handlePage)
 router.get('/:page', handlePage)
 
-router.get('/filename-listing.json', async (req, res) => {
+router.get('/filename-listing', async (req, res) => {
   res.header('Cache-Control', 'public, must-revalidate') // override no-cache
   const filenames = await getFilenames()
   res.json({filenames: filenames})
@@ -38,7 +38,23 @@ async function handlePage(req, res) {
         if (exactMatches.length === 1) return res.redirect(exactMatches[0].path)
       }
 
-      res.render(template, {q, results, template: stringTemplate})
+      res.format({
+        html: () => {
+          res.render(template, {q, results, template: stringTemplate})
+        },
+
+        json: () => {
+          res.json(results.map((result) => ({
+            url: result.path,
+            title: result.prettyName,
+            lastUpdatedBy: (result.lastModifyingUser || {}).displayName,
+            modifiedAt: result.modifiedTime,
+            createdAt: result.createdTime,
+            id: result.id,
+            resourceType: result.resourceType
+          })))
+        }
+      })
     })
   }
 
@@ -47,7 +63,23 @@ async function handlePage(req, res) {
   if (page === 'categories' || page === 'index') {
     const tree = await getTree()
     const categories = buildDisplayCategories(tree)
-    res.render(template, {...categories, template: stringTemplate})
+    res.format({
+      html: () => {
+        res.render(template, {...categories, template: stringTemplate})
+      },
+
+      json: () => {
+        res.json(categories.all.map((category) => ({
+          url: category.path,
+          title: category.prettyName,
+          lastUpdatedBy: (category.lastModifyingUser || {}).displayName,
+          modifiedAt: category.modifiedTime,
+          createdAt: category.createdTime,
+          id: category.id,
+          resourceType: category.resourceType
+        })))
+      }
+    })
     return
   }
 

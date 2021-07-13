@@ -1,0 +1,76 @@
+# Run tests and ensure program compiles, runs on non-main branches
+kind: pipeline
+type: docker
+name: run tests node 12
+
+steps:
+  - name: install dependencies
+    image: node:12.22.1
+    pull: if-not-exists
+    commands:
+      - npm ci
+  - name: run build
+    image: node:12.22.1
+    commands:
+      - npm run build
+  - name: test
+    image: node:12.22.1
+    pull: if-not-exists
+    commands:
+      - npm run test
+
+trigger:
+  event:
+    - push # trigger pipeline on push to any branch
+
+---
+# Run tests and ensure program compiles, runs on non-main branches
+kind: pipeline
+type: docker
+name: run tests node 10
+
+steps:
+  - name: install dependencies
+    image: node:10.24.1
+    pull: if-not-exists
+    commands:
+      - npm ci
+  - name: run build
+    image: node:10.24.1
+    commands:
+      - npm run build
+  - name: test
+    image: node:10.24.1
+    pull: if-not-exists
+    commands:
+      - npm run test
+
+trigger:
+  event:
+    - push # trigger pipeline on push to any branch
+
+---
+kind: pipeline
+type: docker
+name: production
+
+steps:
+  - name: install dependencies
+    image: node:12.22.1
+    pull: if-not-exists
+    commands:
+      - npm ci
+  - name: run build
+    image: node:12.22.1
+    commands:
+      - npm run build
+  - name: test
+    image: node:12.22.1
+    pull: if-not-exists
+    commands:
+      - npm run test
+trigger:
+  branch:
+    - main
+  event:
+    - push # trigger pipeline on merge to main

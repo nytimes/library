@@ -8,6 +8,9 @@ const req = {url: 'foo.com/bar'}
 const res = {
   renderResults: {},
   status: () => res,
+  format: (formats) => {
+    formats.html()
+  },
   render: (template, opts) => { res.renderResults = {template, opts} }
 }
 
