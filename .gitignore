@@ -12,3 +12,4 @@ coverage
 .eslintcache
 .npmrc*
 .vscode
+.idea
