@@ -17,4 +17,4 @@ const getClient = async function () {
 }
 
 GoogleAuth.getClient = getClient
-export default GoogleAuth
+module.exports = GoogleAuth
