@@ -33,5 +33,3 @@ app.request.session = {}
 
 // drive and datastore mocks
 googleMock.init()
-// eslint-disable-next-line no-undef
-jest.createMockFromModule('google-auth-library')

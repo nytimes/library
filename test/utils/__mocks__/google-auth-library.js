@@ -11,10 +11,12 @@ const getClient = async function () {
         expires_in:
           3920,
         token_type:
-          'Bearer'
+          'Bearer',
+        email: 'some email',
+        key: 'some key value'
       })
   })
 }
 
-GoogleAuth.getClient = getClient
+GoogleAuth.GoogleAuth.prototype.getClient = getClient
 module.exports = GoogleAuth
