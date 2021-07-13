@@ -4,7 +4,10 @@ const path = require('path')
 
 const inflight = require('promise-inflight')
 const {google} = require('googleapis')
-const {auth: nodeAuth} = require('google-auth-library')
+const {
+  auth,
+  GoogleAuth
+} = require('google-auth-library')
 
 const log = require('./logger')
 
@@ -28,21 +31,21 @@ async function setAuthClient() {
     const credentialPath = process.env.GOOGLE_APPLICATION_CREDENTIALS
 
     // In Heroku environment, set GOOGLE_APPLICATION_CREDENTIALS to 'parse_json' to avoid introducing new file
+    const scopes = [
+      'https://www.googleapis.com/auth/drive',
+      'https://www.googleapis.com/auth/cloud-platform',
+      'https://www.googleapis.com/auth/datastore'
+    ]
+    // see https://github.com/googleapis/google-auth-library-nodejs#loading-credentials-from-environment-variables
     if (credentialPath === 'parse_json') {
       log.info('Trying to parse client credentials via GOOGLE_APPLICATION_JSON.')
       const keys = JSON.parse(process.env.GOOGLE_APPLICATION_JSON)
-      authClient = nodeAuth.fromJSON(keys)
+      authClient = auth.fromJSON(keys)
+      authClient.scopes = scopes
     } else {
-      const {credential} = await google.auth.getApplicationDefault()
-      authClient = credential
-    }
-
-    if (authClient.createScopedRequired && authClient.createScopedRequired()) {
-      authClient = authClient.createScoped([
-        'https://www.googleapis.com/auth/drive',
-        'https://www.googleapis.com/auth/cloud-platform',
-        'https://www.googleapis.com/auth/datastore'
-      ])
+      // if .auth.json file exists, google will find it automatically https://github.com/googleapis/google-auth-library-nodejs#choosing-the-correct-credential-type-automatically
+      const googleAuth = new GoogleAuth({scopes})
+      authClient = await googleAuth.getClient()
     }
     google.options({auth: authClient})
     log.info('Google API auth successfully retrieved.')
