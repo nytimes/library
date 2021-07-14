@@ -78,7 +78,5 @@ steps:
       cache_from:
         - nytimes/library:latest
 trigger:
-  branch:
-    - push-to-dockerhub
   event:
     - tag # trigger pipeline on tag release
