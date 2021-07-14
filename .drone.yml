@@ -24,7 +24,6 @@ trigger:
     - push # trigger pipeline on push to any branch
 
 ---
-# Run tests and ensure program compiles, runs on non-main branches
 kind: pipeline
 type: docker
 name: run tests node 10
