@@ -63,6 +63,7 @@ async function handlePage(req, res) {
   if (page === 'categories' || page === 'index') {
     const tree = await getTree()
     const categories = buildDisplayCategories(tree)
+
     res.format({
       html: () => {
         res.render(template, {...categories, template: stringTemplate})
@@ -84,6 +85,7 @@ async function handlePage(req, res) {
   }
 
   res.render(template, {template: stringTemplate})
+  res.render(template, {...categories, template: stringTemplate, isPublic: true})
 }
 
 function buildDisplayCategories(tree) {

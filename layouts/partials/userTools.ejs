@@ -1,19 +1,21 @@
-<div class="user-tools">
-  <div id="user-profile">
-    <a class="btn-user-whole" href="#me">
-      <button class="button btn-user-initial"></button>
-      <span class="user-fullname"></span>
+<% if (!locals.isPublic) { %>
+    <div class="user-tools">
+      <div id="user-profile">
+        <a class="btn-user-whole" href="#me">
+          <button class="button btn-user-initial"></button>
+          <span class="user-fullname"></span>
 
-      <i class="fa fa-angle-down" aria-hidden="true"></i>
-    </a>
-  </div>
+          <i class="fa fa-angle-down" aria-hidden="true"></i>
+        </a>
+      </div>
 
-  <div id="me" class="overlay">
-  	<a class="cancel" href="#"></a>
-  	<div class="popup">
-      <a class="close" href="#">&times;</a>
-      <i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>
+      <div id="me" class="overlay">
+      	<a class="cancel" href="#"></a>
+      	<div class="popup">
+          <a class="close" href="#">&times;</a>
+          <i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>
+        </div>
+
+    	</div>
     </div>
-
-	</div>
-</div>
+<% } %>

@@ -13,6 +13,8 @@ process.env.GOOGLE_CLIENT_SECRET = 'abc123'
 process.env.SESSION_SECRET = 'abc123'
 process.env.APPROVED_DOMAINS = 'test.com, (.*)?ar.org, demo.user@demo.site.edu'
 process.env.GCP_PROJECT_ID = 'fake-project'
+process.env.PUBLIC_SITE = true
+
 const userInfo = {
   emails: [{value: 'test.user@test.com'}],
   email: 'test.user@test.com',

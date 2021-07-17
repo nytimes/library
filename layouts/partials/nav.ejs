@@ -37,11 +37,12 @@
       </p>
     </div>
 
-    <% if (locals.editLink) { %>
-      <div class="tool">
-        <a href="<%- editLink %>" id="edit-button" target="_blank">Edit<i class="fa fa-pencil" aria-hidden="true"></i></a>
-
-      </div>
+    <% if (!locals.isPublic) { %>
+        <% if (locals.editLink) { %>
+          <div class="tool">
+            <a href="<%- editLink %>" id="edit-button" target="_blank">Edit<i class="fa fa-pencil" aria-hidden="true"></i></a>
+          </div>
+        <% } %>
     <% } %>
 
   </div>

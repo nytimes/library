@@ -11,6 +11,7 @@ const {stringTemplate: template} = require('./utils')
 
 const router = require('express-promise-router')()
 const domains = new Set(process.env.APPROVED_DOMAINS.split(/,\s?/g))
+const isPublic = (process.env.TRUST_PROXY || '').toUpperCase() === 'TRUE'
 
 const authStrategies = ['google', 'Slack']
 let authStrategy = process.env.OAUTH_STRATEGY
@@ -84,7 +85,8 @@ router.get('/auth/redirect', passport.authenticate(authStrategy, {failureRedirec
 router.use((req, res, next) => {
   const isDev = process.env.NODE_ENV === 'development'
   const passportUser = (req.session.passport || {}).user || {}
-  if (isDev || (req.isAuthenticated() && isAuthorized(passportUser))) {
+  
+  if (isDev || isPublic || (req.isAuthenticated() && isAuthorized(passportUser))) {
     setUserInfo(req)
     return next()
   }
@@ -111,15 +113,17 @@ function isAuthorized(user) {
 }
 
 function setUserInfo(req) {
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'development' || isPublic) {
     req.userInfo = {
       email: process.env.TEST_EMAIL || template('footer.defaultEmail'),
-      userId: '10',
+      userId: isPublic ? '0' : '10',
       analyticsUserId: md5('10library')
     }
     return
   }
+
   const email = isSlackOauth ? req.session.passport.user.email : req.session.passport.user.emails[0].value
+
   req.userInfo = req.userInfo ? req.userInfo : {
     userId: req.session.passport.user.id,
     analyticsUserId: md5(req.session.passport.user.id + 'library'),
