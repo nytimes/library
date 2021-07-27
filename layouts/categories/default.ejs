@@ -26,6 +26,10 @@
         <%- include('partials/childrenList', {children, kicker: template('folder.childrenList.kicker', title)}) %>
         <% } %>
       </div>
+      <div id="image-modal" class="image-modal">
+          <span class="close">&times;</span>
+          <img class="modal-image" id="img1" />
+      </div>
 
       <%- include('partials/footer', { pageType: 'document', topLevelFolder: url.split('/')[1] }) %>
     </div>

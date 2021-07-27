@@ -451,3 +451,38 @@
     text-align: center;
   }
 }
+
+.image-modal {
+    display: none;
+    position: fixed;
+    z-index: 11; /* search bar icon has z-index of 10 */
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: auto;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(0,0,0,0.9); /* dim black allows images to pop */
+}
+
+.modal-image {
+    margin: auto;
+    display: block;
+    max-width: 100%;
+}
+
+.image-modal .close {
+    position: absolute;
+    top: 50px;
+    right: 35px;
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+
+    &:hover, &:focus {
+        color: #bbb;
+        text-decoration: none;
+        cursor: pointer;
+    }
+}

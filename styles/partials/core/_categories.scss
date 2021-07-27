@@ -271,6 +271,11 @@
       padding: 10px;
       display: block;
       margin: 20px auto;
+      cursor: pointer;
+
+      &:hover {
+          opacity: 0.8;
+      }
 
       @include tablet{
         max-width: 580px;

@@ -97,4 +97,34 @@
     }) // no callback on this.
   })
 
+  window.onload = () => {
+    const imgs = document.querySelectorAll('.g-main-content img'); // get all images
+    imgs.forEach(img => {
+        img.addEventListener('click', (event) => {
+            expandImage(img.src);
+        });
+    });
+  }
+
+  var imgModal = document.querySelector('.image-modal')
+  var modalImg = document.querySelector('.image-modal .modal-image');
+
+  
+  function expandImage(imgSrc) {
+    imgModal.style.display = 'block';
+    modalImg.src = imgSrc;
+  }
+
+  var modalCloseBtn = document.querySelector('.image-modal .close');
+  modalCloseBtn.addEventListener('click', () => {
+    imgModal.style.display = 'none';
+  });
+
+  /* keydown listener so img modal can be closed with Esc key */
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && imgModal.style.display === 'block') {
+        imgModal.style.display = 'none';
+    }
+  });
+
 </script>
