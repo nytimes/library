@@ -2,8 +2,8 @@ const pretty = require('pretty')
 const cheerio = require('cheerio')
 const qs = require('querystring')
 const unescape = require('unescape')
-const hljs = require('highlight.js')
 const list = require('./list')
+const {transforms} = require('./plugins');
 
 /* Your one stop shop for all your document processing needs. */
 
@@ -107,16 +107,7 @@ function formatCode(html) {
   html = html.replace(/```(.*?)```/ig, (match, content) => {
     // strip interior <p> tags added by google
     content = content.replace(/(?:<\/p><p>|<br\/?>)/g, '\n').replace(/<\/?p>/g, '').trim()
-    // try to find language hint within text block
-    const [, lang] = content.match(/^([^\n]+)\n(.+)/) || []
-    if (lang) content = content.replace(`${lang}\n`, '')
-
     const formattedContent = formatCodeContent(content)
-    if (lang && hljs.getLanguage(lang)) {
-      const textOnlyContent = cheerio.load(formattedContent).text()
-      const highlighted = hljs.highlight(lang, textOnlyContent, true)
-      return `<pre><code data-lang="${highlighted.language}">${highlighted.value}</code></pre>`
-    }
     return `<pre><code>${formattedContent}</code></pre>`
   })
 
@@ -231,6 +222,7 @@ function getProcessedHtml(src) {
   let html = normalizeHtml(src)
   html = convertYoutubeUrl(html)
   html = formatCode(html)
+  transforms.forEach(transform => html = transform(html))
   html = pretty(html)
   return html
 }
