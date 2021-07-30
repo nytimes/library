@@ -27,8 +27,15 @@
         <% } %>
       </div>
       <div id="image-modal" class="image-modal">
-          <span class="close">&times;</span>
-          <img class="modal-image" id="img1" />
+          <button type="button" class="close" title="Minimize this image" aria-label="Minimize this image">
+            <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M35.9665 25.3668L38.5997 28H32V21.4003L34.6332 24.0335L38.6667 20L40 21.3333L35.9665 25.3668Z" fill="#000" />
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M24.0335 34.6332L21.4003 32H28V38.5997L25.3668 35.9665L21.3333 40L20 38.6667L24.0335 34.6332Z" fill="#000" />
+            </svg>
+          </button>
+          <div class="img-wrapper">
+            <img class="modal-image" id="img1" />
+          </div>
       </div>
 
       <%- include('partials/footer', { pageType: 'document', topLevelFolder: url.split('/')[1] }) %>

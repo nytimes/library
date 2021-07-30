@@ -452,17 +452,40 @@
   }
 }
 
+// the image-wrapper class is added for the benefit of the
+// Image Modal, so co-locating it here
+.image-wrapper { 
+    position: relative;
+
+	.expand-image-btn {
+		height: 60px;
+		width: 60px;
+		position: absolute;
+		bottom: 25px;
+		right: 25px;
+		opacity: 0;
+		transition: opacity 0.3s ease 0s;
+		background-color: transparent;
+		pointer-events: none;
+		border: none;
+	}
+	
+	&:hover {
+		.expand-image-btn {
+			opacity: 1;
+		}
+	}
+}
+
+
 .image-modal {
     display: none;
     position: fixed;
-    z-index: 11; /* search bar icon has z-index of 10 */
-    padding-top: 100px;
-    left: 0;
-    top: 0;
-    width: auto;
-    height: 100%;
+    z-index: 1000000090; /* search bar icon has z-index of 1*10 */
+    inset: 0px; /* shorthand for top,right,bottom,left at the same time */
     overflow: hidden;
-    background-color: rgba(0,0,0,0.9); /* dim black allows images to pop */
+    background-color: rgb(255, 255, 255); /* full white allows images to pop */
+    transition: display 0.2s ease 0s;
 }
 
 .modal-image {
@@ -472,17 +495,30 @@
 }
 
 .image-modal .close {
+    display: flex;
+    align-items: center;
     position: absolute;
-    top: 50px;
-    right: 35px;
-    color: white;
-    font-size: 40px;
-    font-weight: bold;
-    transition: 0.3s;
+    top: 10px;
+    right: 10px;
+    background-color: transparent;
+    cursor: pointer;
+    border: 0.5px solid white;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    transition: all 0.1s ease-in;
+    padding: 0px;
 
     &:hover, &:focus {
-        color: #bbb;
-        text-decoration: none;
-        cursor: pointer;
+        background-color: #f9f9f9;
+        border-color: lightgray;
     }
+}
+
+.image-modal .img-wrapper {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    height: 100%;
+    padding: 30px;
 }

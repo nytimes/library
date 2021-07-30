@@ -92,6 +92,16 @@ function normalizeHtml(html) {
       $(el).attr('href', libraryDeepLink || decoded)
     }
 
+    // Wrap images in a div, and add an expand button with an svg inside it
+    // svg could be stored in a server side images folder, then loaded with the
+    // dataLoader, but forces normalizeHtml and its calling func to be async
+    // console.time() reports about ~1ms for this entire block, both when 
+    // declaring the button+svg string inline or as a variable outside this func
+    if (el.tagName === 'img') {
+      $(el).wrap('<div class="image-wrapper"></div>');
+      $(el).parent().append('<button aria-label="expand this image" title="expand this image" class="expand-image-btn"><svg width="60" height="60" viewBox="0 0 60 60" fill="none"><circle cx="30" cy="30" r="30" fill="#000" fill-opacity="0.5"></circle><path fill-rule="evenodd" clip-rule="evenodd" d="M23.9665 37.3668L26.5997 40H20V33.4003L22.6332 36.0335L26.6667 32L28 33.3333L23.9665 37.3668Z" fill="#fff"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M36.0335 22.6332L33.4003 20H40V26.5997L37.3668 23.9665L33.3333 28L32 26.6667L36.0335 22.6332Z" fill="#fff"></path></svg></button>');
+    }
+
     return el
   })
 

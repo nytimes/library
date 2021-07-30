@@ -271,11 +271,7 @@
       padding: 10px;
       display: block;
       margin: 20px auto;
-      cursor: pointer;
-
-      &:hover {
-          opacity: 0.8;
-      }
+      cursor: pointer; // images can be opened in a modal
 
       @include tablet{
         max-width: 580px;

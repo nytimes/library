@@ -113,7 +113,12 @@
   function expandImage(imgSrc) {
     imgModal.style.display = 'block';
     modalImg.src = imgSrc;
-  }
+
+    window.addEventListener('scroll', function onScroll() {
+        window.removeEventListener('scroll', onScroll);
+        imgModal.style.display='none';
+    });
+  };
 
   var modalCloseBtn = document.querySelector('.image-modal .close');
   modalCloseBtn.addEventListener('click', () => {
@@ -126,5 +131,4 @@
         imgModal.style.display = 'none';
     }
   });
-
 </script>
