@@ -65,6 +65,24 @@ describe('HTML processing', () => {
       const widthMatch = imageWidth.attr('style').match('width')
       assert.isNotNull(widthMatch)
     })
+
+    it('wraps img elements in a div, and appends button containing svg to same div', () => {
+      const numImages = (testGlobal.rawHTML.match(/<img/g) || []).length
+      
+      // There should be no divs with the image-wrapper class initially
+      assert.equal(testGlobal.rawHTML.indexOf('image-wrapper'), -1)
+
+      // expect there to be the same number of wrappers as images
+      assert.equal(testGlobal.output('.image-wrapper').length, numImages)
+        
+      // assert each wrapper contains an image and an expand button
+      const $ = testGlobal.output
+      testGlobal.output('.image-wrapper').each((i, elem) => {
+        assert.equal($(elem).children().length, 2)
+        assert.isNotNull($(elem).find('.expand-image-btn'))
+        assert.isNotNull($(elem).find('img'))
+      })
+    });
   })
 
   describe('list handling', () => {
