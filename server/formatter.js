@@ -172,11 +172,11 @@ function addImageModal(html) {
 
   let imgModalHtml = fs.readFileSync('server/ssrComponents/imageModal.html', 'utf8')
   const minimizeIconSvg = fs.readFileSync('server/ssrComponents/minimizeIcon.svg', 'utf8')
-  imgModalHtml = imgModalHtml.replace('<minimizeIconSvg>', minimizeIconSvg)
+  imgModalHtml = imgModalHtml.replace('<!-- svgPlaceholder -->', minimizeIconSvg)
 
   const $ = cheerio.load(html)
   $('body').append(imgModalHtml)
-  return $('body').html()
+  return $('head').html() + $('body').html() // include head for list style block
 }
 
 function checkForTableOfContents($, aTags) {
