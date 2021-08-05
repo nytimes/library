@@ -179,6 +179,17 @@ describe('HTML processing', () => {
     })
   })
 
+  describe('image modal handling', () => {
+    it('adds an image modal', () => {
+      assert.isNotNull(testGlobal.output('image-modal'))
+    })
+    it('replaces comment in imageModal.html with an actual svg', () => {
+      const $ = testGlobal.output
+      const imgModal = $('image-modal')
+      assert.isNotNull($(imgModal).find('svg'))
+    })
+  })
+
   describe('comment handling', () => {
     it('strips comments', () => {
       assert.notMatch(testGlobal.processedHTML, /This comment text will not appear/)
