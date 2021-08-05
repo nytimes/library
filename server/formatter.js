@@ -167,7 +167,7 @@ function formatCodeContent(content) {
 
 function addImageModal(html) {
   if (html.indexOf('img') === -1) {
-    return html;
+    return html
   }
 
   let imgModalHtml = fs.readFileSync('server/ssrComponents/imageModal.html', 'utf8')
