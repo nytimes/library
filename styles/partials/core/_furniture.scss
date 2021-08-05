@@ -477,7 +477,6 @@
 	}
 }
 
-
 .image-modal {
     display: none;
     position: fixed;
@@ -488,10 +487,19 @@
     transition: display 0.2s ease 0s;
 }
 
-.modal-image {
+.image-modal .img-wrapper {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  height: 100%;
+  padding: 30px;
+
+  .modal-image {
     margin: auto;
     display: block;
     max-width: 100%;
+    cursor: default;
+  }
 }
 
 .image-modal .close {
@@ -515,10 +523,4 @@
     }
 }
 
-.image-modal .img-wrapper {
-    display: flex;
-    align-items: center;
-    align-content: center;
-    height: 100%;
-    padding: 30px;
-}
+

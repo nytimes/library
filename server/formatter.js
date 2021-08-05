@@ -165,6 +165,20 @@ function formatCodeContent(content) {
   return content
 }
 
+function addImageModal(html) {
+  if (html.indexOf('img') === -1) {
+    return html;
+  }
+
+  let imgModalHtml = fs.readFileSync('server/ssrComponents/imageModal.html', 'utf8')
+  const minimizeIconSvg = fs.readFileSync('server/ssrComponents/minimizeIcon.svg', 'utf8')
+  imgModalHtml = imgModalHtml.replace('<minimizeIconSvg>', minimizeIconSvg)
+
+  const $ = cheerio.load(html)
+  $('body').append(imgModalHtml)
+  return $('body').html()
+}
+
 function checkForTableOfContents($, aTags) {
   return aTags.length === 2 && // TOC links title and number
   aTags[0].attribs.href.match('#h.') && // the links go to a heading in the doc
@@ -241,8 +255,10 @@ function convertYoutubeUrl(content) {
   return content
 }
 
+// TODO: pass around cheerio instance vs html string to avoid loading multiple times?
 function getProcessedHtml(src) {
   let html = normalizeHtml(src)
+  html = addImageModal(html)
   html = convertYoutubeUrl(html)
   html = formatCode(html)
   html = pretty(html)

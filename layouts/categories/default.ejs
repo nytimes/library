@@ -26,15 +26,6 @@
         <%- include('partials/childrenList', {children, kicker: template('folder.childrenList.kicker', title)}) %>
         <% } %>
       </div>
-      <div id="image-modal" class="image-modal">
-          <button type="button" class="close" title="Minimize this image" aria-label="Minimize this image">
-            <%- include('../../public/images/minimizeIcon.svg') %>
-          </button>
-          <div class="img-wrapper">
-            <img class="modal-image" id="img1" />
-          </div>
-      </div>
-
       <%- include('partials/footer', { pageType: 'document', topLevelFolder: url.split('/')[1] }) %>
     </div>
   </body>
