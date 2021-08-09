@@ -97,22 +97,59 @@
     }) // no callback on this.
   })
 
-  window.onload = () => {
+  var imgWrapper
+  function createImageOverlayWrapper() {
+    if (imgWrapper) { // cache hit
+      return imgWrapper
+    }
+
+    // read expandIcon from image-modal where its inlined so that we
+    // can read it here. then remove it and strip the id since it'll be used multiple times
+    const expandIconSvg = document.getElementById('expandIconSvg')
+    expandIconSvg.remove()
+    expandIconSvg.id = ""
+
+
+    let wrapperDiv = document.createElement('div')
+    wrapperDiv.className = 'image-wrapper'
+
+    let expandBtn = document.createElement('button')
+    expandBtn.setAttribute('aria-label', 'expand this image')
+    expandBtn.title = 'expand this image'
+    expandBtn.className='expand-image-btn'
+    expandBtn.appendChild(expandIconSvg)
+
+    wrapperDiv.appendChild(expandBtn)
+
+    imgWrapper = wrapperDiv // add to cache
+
+    return wrapperDiv
+  }
+
+  function wrapImageInOverlay(imgElement) {
+    // clone the wrapper so the original isn't mutated and we can reuse it
+    const overlayWrapper = createImageOverlayWrapper().cloneNode(true)
+
+    imgElement.parentNode.insertBefore(overlayWrapper, imgElement)
+    overlayWrapper.appendChild(imgElement)
+  }
+
+  window.onload = () => { 
     const imgs = document.querySelectorAll('.g-main-content img'); // get all images
-    imgs.forEach(img => {
-        img.addEventListener('click', (event) => {
-            expandImage(img.src);
-        });
+
+    // for each image - add overlay allowing for expand btn and click handler for expansion
+    imgs.forEach((img, idx) => {
+      wrapImageInOverlay(img); 
+      img.addEventListener('click', () => expandImage(img.src));
     });
   }
 
   var imgModal = document.querySelector('.image-modal')
-  var modalImg = document.querySelector('.image-modal .modal-image');
+  var imgModalImg = document.querySelector('.image-modal .modal-image');
 
-  
   function expandImage(imgSrc) {
     imgModal.style.display = 'block';
-    modalImg.src = imgSrc;
+    imgModalImg.src = imgSrc;
 
     window.addEventListener('scroll', function onScroll() {
         window.removeEventListener('scroll', onScroll);

@@ -91,7 +91,7 @@ Javascript function, or image path.
 
 ## Image Modal
 Images can opened/expanded in a modal/dialog. On hover of an image, the cursor will turn into the pointer style, and an expand button will show. Once clicked, the image will center in the page, and a minimize icon will show. Styles for the modal can be found in
-`/styles/partials/core/_furniture.scss` as well as one line in `/styles/partials/core/_base.scss` that adds a pointer cursor on hover of images. The image modal is added server side, code for which can be found [here](../server/formatter.js#L168). `img` elements are wrapped in an overlay that allows for an expand button to show on hover during, code for which can be found [here](../server/formatter.js#L104). All components of the image modal that are used on the server can be found in the `/server/ssrComponents/` directory. Finally, the javascript that enables the image modal is in `/layouts/partials/footer.ejs`.
+`/styles/partials/core/_furniture.scss` as well as one line in `/styles/partials/core/_base.scss` that adds a pointer cursor on hover of images. The image modal is added in the default layout for content, code for which can be found [here](../layouts/categories/default.ejs#L29). `img` elements are wrapped in an overlay that allows for an expand button to show on hover during, code for which can be found [here](../layouts/partials/footer.ejs#L138).
 
 ## Middleware
 Middleware can be added to the beginning or end of the request cycle by placing

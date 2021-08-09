@@ -3,7 +3,6 @@ const cheerio = require('cheerio')
 const qs = require('querystring')
 const unescape = require('unescape')
 const hljs = require('highlight.js')
-const fs = require('fs')
 const list = require('./list')
 
 /* Your one stop shop for all your document processing needs. */
@@ -18,12 +17,6 @@ function normalizeHtml(html) {
 
   const $p = $('p')
   const isClean = $('meta[name="library-html-doc"]').attr('content') === '1'
-
-  let svgString
-  // load svg that will be used on images. takes ~0.2ms
-  if (html.indexOf('img') !== -1) {
-    svgString = fs.readFileSync('server/ssrComponents/expandIcon.svg', 'utf8')
-  }
 
   // Remove p tags in Table of Contents
   $p.each((index, p) => {
@@ -99,13 +92,6 @@ function normalizeHtml(html) {
       $(el).attr('href', libraryDeepLink || decoded)
     }
 
-    // Wrap images in a div, and add an expand button with an svg inside it
-    // to the wrapper
-    if (el.tagName === 'img') {
-      $(el).wrap('<div class="image-wrapper"></div>')
-      $(el).parent().append(`<button aria-label="expand this image" title="expand this image" class="expand-image-btn">${svgString}</button>`)
-    }
-
     return el
   })
 
@@ -163,20 +149,6 @@ function formatCodeContent(content) {
   content = content.replace(/[‘’]|&#x201[89];/g, "'").replace(/[“”]|&#x201[CD];/g, '"') // remove smart quotes
   content = content.replace(/`/g, '&#96;') // remove internal cases of backticks
   return content
-}
-
-function addImageModal(html) {
-  if (!html.includes('img')) {
-    return html
-  }
-
-  let imgModalHtml = fs.readFileSync('server/ssrComponents/imageModal.html', 'utf8')
-  const minimizeIconSvg = fs.readFileSync('server/ssrComponents/minimizeIcon.svg', 'utf8')
-  imgModalHtml = imgModalHtml.replace('<!-- svgPlaceholder -->', minimizeIconSvg)
-
-  const $ = cheerio.load(html)
-  $('body').append(imgModalHtml)
-  return $('head').html() + $('body').html() // include head for list style block
 }
 
 function checkForTableOfContents($, aTags) {
@@ -258,7 +230,6 @@ function convertYoutubeUrl(content) {
 // TODO: pass around cheerio instance vs html string to avoid loading multiple times?
 function getProcessedHtml(src) {
   let html = normalizeHtml(src)
-  html = addImageModal(html)
   html = convertYoutubeUrl(html)
   html = formatCode(html)
   html = pretty(html)
