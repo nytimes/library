@@ -166,7 +166,7 @@ function formatCodeContent(content) {
 }
 
 function addImageModal(html) {
-  if (html.indexOf('img') === -1) {
+  if (!html.includes('img')) {
     return html
   }
 
