@@ -5,16 +5,16 @@ name: run tests node 12
 
 steps:
   - name: install dependencies
-    image: node:12.22.1
+    image: node:12
     pull: if-not-exists
     commands:
       - npm ci
   - name: run build
-    image: node:12.22.1
+    image: node:12
     commands:
       - npm run build
   - name: test
-    image: node:12.22.1
+    image: node:12
     pull: if-not-exists
     commands:
       - npm run test
@@ -31,16 +31,16 @@ name: run tests node 10
 
 steps:
   - name: install dependencies
-    image: node:10.24.1
+    image: node:10
     pull: if-not-exists
     commands:
       - npm ci
   - name: run build
-    image: node:10.24.1
+    image: node:10
     commands:
       - npm run build
   - name: test
-    image: node:10.24.1
+    image: node:10
     pull: if-not-exists
     commands:
       - npm run test
@@ -52,25 +52,32 @@ trigger:
 ---
 kind: pipeline
 type: docker
-name: production
+name: tag
 
 steps:
   - name: install dependencies
-    image: node:12.22.1
+    image: node:12
     pull: if-not-exists
     commands:
       - npm ci
   - name: run build
-    image: node:12.22.1
+    image: node:12
     commands:
       - npm run build
-  - name: test
-    image: node:12.22.1
-    pull: if-not-exists
-    commands:
-      - npm run test
+  - name: push docker
+    image: plugins/docker
+    settings:
+      repo: nytimes/library
+      tags:
+        - latest
+        - ${DRONE_TAG}
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      # cache_from:
+        # - nytimes/library:latest
+        # we are not cacheing right now because we are rate limited
 trigger:
-  branch:
-    - main
   event:
-    - push # trigger pipeline on merge to main
+    - tag # trigger pipeline on tag release
