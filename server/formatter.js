@@ -227,7 +227,6 @@ function convertYoutubeUrl(content) {
   return content
 }
 
-// TODO: pass around cheerio instance vs html string to avoid loading multiple times?
 function getProcessedHtml(src) {
   let html = normalizeHtml(src)
   html = convertYoutubeUrl(html)
