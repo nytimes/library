@@ -21,7 +21,7 @@
     "lodash": "^4.17.21",
     "mime-types": "^2.1.27",
     "moment": "^2.27.0",
-    "node-sass": "^4.14.1",
+    "node-sass": "^6.0.1",
     "passport": "^0.4.1",
     "passport-google-oauth20": "^2.0.0",
     "passport-slack-oauth2": "^1.0.2",
@@ -56,7 +56,7 @@
     "build": "npm run build:main && npm run build:inline",
     "debug": "node -r dotenv/config --inspect --debug-brk server/index.js",
     "watch": "npm run build && concurrently \"nodemon --inspect=0.0.0.0 -r dotenv/config -e js,ejs server/index.js\" \"nodemon -e scss --watch styles --watch custom/styles -x npm run build\"",
-    "test": "NODE_ENV=test PORT=3001 jest test/**/*.test.js --setupFiles dotenv/config --setupTestFrameworkScriptFile='./test/utils/bootstrap.js' --forceExit",
+    "test": "NODE_ENV=test PORT=3001 jest --setupFiles dotenv/config --setupTestFrameworkScriptFile='./test/utils/bootstrap.js' --forceExit",
     "test:cover": "NODE_ENV=test PORT=3001 nyc --include=server/** --reporter=html --reporter=text jest test/**/*.test.js --setupFiles dotenv/config --setupTestFrameworkScriptFile='./test/utils/bootstrap.js' --forceExit",
     "lint": "eslint ./server",
     "gcp-build": "./bin/install_customizations && npm run build && ./bin/update_gae_pkg"
@@ -71,8 +71,8 @@
     "url": "https://github.com/nytimes/library/issues"
   },
   "engines": {
-    "node": "10.x",
-    "npm": "6.5.x"
+    "node": ">=10.x",
+    "npm": ">=6.5.x"
   },
   "homepage": "https://github.com/nytimes/library#readme"
 }
