@@ -52,7 +52,7 @@ exports.fetchDoc = async (id, resourceType, req) => {
   if (revisionMimeSupported.has(originalRevision.data.mimeType)) {
     cache.add(id, originalRevision.data.modifiedTime, payload)
   } else {
-    console.log(`Skipping cache add: unsupported mimetype ${originalRevision.data.mimeType}`);
+    console.log(`Skipping cache add: unsupported mimetype ${originalRevision.data.mimeType}`)
   }
   return payload
 }
