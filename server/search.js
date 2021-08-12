@@ -52,6 +52,7 @@ async function fullSearch({drive, query, folderIds, results = [], nextPageToken:
 // Grab all folders in directory to search through in shared drive
 async function getAllFolders({nextPageToken: pageToken, drive, parentIds = [driveId], foldersSoFar = []} = {}) {
   const options = {
+    ...list.commonListOptions.folder,
     q: `(${parentIds.map((id) => `'${id}' in parents`).join(' or ')}) AND mimeType = 'application/vnd.google-apps.folder'`,
     fields: 'files(id,name,mimeType,parents)'
   }
@@ -92,17 +93,16 @@ function getOptions(query, folderIds, driveType) {
   if (driveType === 'folder') {
     const parents = folderIds.map((id) => `'${id}' in parents`).join(' or ')
     return {
+      ...list.commonListOptions.folder,
       q: `(${parents}) AND fullText contains ${JSON.stringify(query)} AND mimeType != 'application/vnd.google-apps.folder' AND trashed = false`,
       fields
     }
   }
 
   return {
+    ...list.commonListOptions.team,
     q: `fullText contains ${JSON.stringify(query)} AND mimeType != 'application/vnd.google-apps.folder' AND trashed = false`,
     teamDriveId: driveId,
-    corpora: 'teamDrive',
-    supportsTeamDrives: true,
-    includeTeamDriveItems: true,
     fields
   }
 }
