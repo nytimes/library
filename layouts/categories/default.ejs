@@ -26,16 +26,7 @@
         <%- include('partials/childrenList', {children, kicker: template('folder.childrenList.kicker', title)}) %>
         <% } %>
       </div>
-      <div id="image-modal" class="image-modal">
-        <button type="button" class="close" title="Minimize this image" aria-label="Minimize this image">
-          <svg width="60" height="60" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M35.97 25.37L38.6 28H32v-6.6l2.63 2.63L38.67 20 40 21.33l-4.03 4.04zM24.03 34.63L21.4 32H28v6.6l-2.63-2.63L21.33 40 20 38.67l4.03-4.04z" fill="#000"/></svg>
-        </button>
-        <div class="img-wrapper">
-          <img class="modal-image" id="img1" />
-        </div>
-        <!-- expandIconSvg svg inlined, will be used in image overlay and removed from here on document load. JS in footer.ejs does this-->
-        <svg id="expandIconSvg" width="60" height="60" fill="#fff"><circle cx="30" cy="30" r="30" fill="#000" fill-opacity=".5"/><path fill-rule="evenodd" clip-rule="evenodd" d="M23.97 37.37L26.6 40H20v-6.6l2.63 2.63L26.67 32 28 33.33l-4.03 4.04zM36.03 22.63L33.4 20H40v6.6l-2.63-2.63L33.33 28 32 26.67l4.03-4.04z"/></svg>
-      </div>
+      <%- include('partials/imgModal') %>
       <%- include('partials/footer', { pageType: 'document', topLevelFolder: url.split('/')[1] }) %>
     </div>
   </body>
