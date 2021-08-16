@@ -26,7 +26,7 @@
         <%- include('partials/childrenList', {children, kicker: template('folder.childrenList.kicker', title)}) %>
         <% } %>
       </div>
-
+      <%- include('partials/imgModal') %>
       <%- include('partials/footer', { pageType: 'document', topLevelFolder: url.split('/')[1] }) %>
     </div>
   </body>

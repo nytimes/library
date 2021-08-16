@@ -271,6 +271,7 @@
       padding: 10px;
       display: block;
       margin: 20px auto;
+      cursor: pointer; // images can be opened in a modal
 
       @include tablet{
         max-width: 580px;
