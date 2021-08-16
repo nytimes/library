@@ -1,4 +1,4 @@
-Library [![Build Status](https://travis-ci.org/nytimes/library.svg?branch=master)](https://travis-ci.org/nytimes/library)
+Library [![Build Status](https://cloud.drone.io/api/badges/nytimes/library/status.svg)](https://cloud.drone.io/nytimes/library) ![Supported node versions](https://img.shields.io/badge/dynamic/json?color=informational&label=node&query=%24.engines.node&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnytimes%2Flibrary%2Fmain%2Fpackage.json)
 ========
 
 A collaborative newsroom documentation site, powered by Google Docs.
@@ -26,6 +26,7 @@ A collaborative newsroom documentation site, powered by Google Docs.
   - [Doc parsing](#doc-parsing)
   - [Listing the drive](#listing-the-drive)
   - [Auth](#auth)
+  - [User Authentication](#user-authentication)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -51,6 +52,7 @@ Here are some of the organizations using Library so far.
 
 [WBEZ](https://www.wbez.org)
 
+[The Los Angeles Times Data and Graphics Department](https://twitter.com/palewire/status/1326220493762883585)
 
 ## Contributing
 
@@ -136,7 +138,7 @@ Set your app's `GOOGLE_APPLICATION_JSON`, `GOOGLE_CLIENT_ID`, and `GOOGLE_CLIENT
 ### Using Google App Engine
 You can also deploy Library to GAE, using the included `app.yaml`. Note that you will need to enable billing on your GCP project in order to use Google App Engine. More detailed instructions are provided on the [demo site](https://nyt-library-demo.herokuapp.com/get-started/deploying-library-google-app-engine).
 
-### Using Docker
+### Using Docker [![Dockerhub](https://img.shields.io/docker/v/nytimes/library?logo=docker)](https://hub.docker.com/r/nytimes/library/tags)
 Library can be used as a base image for deployment using Docker. This allows you
 to automate building and deploying a custom version of Library during Docker's
 build phase. If you create a repo with the contents of your `custom` folder, you
@@ -204,3 +206,17 @@ The tree and file metadata are repopulated into memory on an interval (currently
 ### Auth
 
 Authentication with the Google Drive v3 api is handled by the auth.js file, which exposes a single method `getAuth`. `getAuth` will either return an already instantiated authentication client or produce a fresh one. Calling `getAuth` multiple times will not produce a new authentication client if the credentials have expired; we should build this into the auth.js file later to automatically refresh the credentials on some sort of interval to prevent them from expiring.
+
+### User Authentication
+
+Library currently supports both Slack and Google Oauth methods. As Library sites are usually intended to be internal to a set of limited users, Oauth with your organization is strongly encouraged. To use Slack Oauth, specify your Oauth strategy in your `.env` file, like so:
+```
+# Slack needs to be capitalized as per the Passport.js slack oauth docs http://www.passportjs.org/packages/passport-slack-oauth2/
+OAUTH_STRATEGY=Slack
+```
+You will need to provide Slack credentials, which you can do by creating a Library Oauth app in your Slack workspace. After creating the app, save the app's `CLIENT_ID` and `CLIENT_SECRET` in your `.env` file:
+```
+SLACK_CLIENT_ID=1234567890abcdefg
+SLACK_CLIENT_SECRET=09876544321qwerty
+```
+You will need to add a callback URL to your Slack app to allow Slack to redirect back to your Library instance after the user is authenticated.

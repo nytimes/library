@@ -113,13 +113,64 @@ describe('Server responses', () => {
   describe('that return JSON', () => {
     it('should contain a complete filename listing', () => {
       return request(app)
-      .get('/filename-listing.json')
+        .get('/filename-listing.json')
         .expect(200)
         .then((res) => {
           const {filenames} = res.body
           expect(Array.isArray(filenames), 'cached file listing should be an array')
           expect(filenames).to.include(...allFilenames)
           expect(filenames.length).to.equal(allFilenames.length)
+        })
+    })
+
+    it('folder with home doc should render the doc', () => {
+      return request(app)
+        .get('/test-folder-9')
+        .set('Accept', 'application/json')
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .then((res) => {
+          const data = JSON.parse(res.text)
+          expect(data).to.deep.include(
+            {
+              url: '/test-folder-9',
+              title: 'Home article 10 for test folder 9',
+              lastUpdatedBy: 'Foo Bar',
+              modifiedAt: '2018-03-02T14:13:20.000Z',
+              createdAt: '2018-02-19T00:26:40.000Z',
+              id: 'Test10',
+              resourceType: 'document',
+              content: '<p> This is a simple test document export.</p>',
+              byline: 'John Smith',
+              createdBy: 'John Smith',
+              sections: []
+            }
+          )
+        })
+    })
+
+    it('folder with home doc should render the doc (.json suffix)', () => {
+      return request(app)
+        .get('/test-folder-9.json')
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .then((res) => {
+          const data = JSON.parse(res.text)
+          expect(data).to.deep.include(
+            {
+              url: '/test-folder-9',
+              title: 'Home article 10 for test folder 9',
+              lastUpdatedBy: 'Foo Bar',
+              modifiedAt: '2018-03-02T14:13:20.000Z',
+              createdAt: '2018-02-19T00:26:40.000Z',
+              id: 'Test10',
+              resourceType: 'document',
+              content: '<p> This is a simple test document export.</p>',
+              byline: 'John Smith',
+              createdBy: 'John Smith',
+              sections: []
+            }
+          )
         })
     })
   })

@@ -12,11 +12,11 @@ const {getPlaylist, getTree, getMeta} = require('../../server/list')
 describe('Playlists', () => {
   describe('getPlaylist() in list.js', () => {
     describe('when not Google authenticated', () => {
-      before(() => {
+      beforeAll(() => {
         sinon.stub(google.auth, 'getApplicationDefault').rejects(Error('Auth error'))
       })
 
-      after(() => {
+      afterAll(() => {
         google.auth.getApplicationDefault.restore()
       })
 
@@ -30,12 +30,12 @@ describe('Playlists', () => {
 
     describe('when fetching a second time', () => {
       let sheetsSpy, playlistInfo
-      before(async () => {
+      beforeAll(async () => {
         sheetsSpy = sinon.spy(google, 'sheets')
         playlistInfo = await getPlaylist('testId')
       })
 
-      after(async () => {
+      afterAll(async () => {
         sheetsSpy.restore()
       })
 
@@ -49,7 +49,7 @@ describe('Playlists', () => {
 
     describe('when adding data to local memory object playlistInfo', () => {
       let playlistInfo
-      before(async () => {
+      beforeAll(async () => {
         playlistInfo = await getPlaylist('firstId')
         await getTree()
       })
@@ -71,7 +71,7 @@ describe('Playlists', () => {
     
     describe('when Google spreadsheet fetch fails', () => {
       let oldSheet
-      before(() => {
+      beforeAll(() => {
         oldSheet = google.sheets
         google.sheets = () => {
           return {
@@ -88,7 +88,7 @@ describe('Playlists', () => {
         }
       })
 
-      after(() => {
+      afterAll(() => {
         google.sheets = oldSheet
       })
 

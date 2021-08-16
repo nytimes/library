@@ -40,7 +40,7 @@ middlewareRouter.use(async (req, res) => {
 exports.middleware = middlewareRouter
 
 exports.add = async (id, newModified, content) => {
-  if (!newModified) throw new Error('Refusing to store new item without modified time.')
+  if (!newModified) throw new Error(`Refusing to store ${id} without modified time.`)
 
   const data = await cache.get(id)
   const {modified, noCache, content: oldContent} = data || {}

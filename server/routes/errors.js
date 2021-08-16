@@ -63,9 +63,23 @@ module.exports = async (err, req, res, next) => {
   const code = messages[err.message] || 500
   log.error(`Serving an error page for ${req.url}`, err)
   const inlined = await loadInlineAssets()
-  res.status(code).render(`errors/${code}`, {
-    inlineCSS: inlined.css,
-    err,
-    template: inlined.stringTemplate
+  res.status(code)
+
+  res.format({
+    html: () => {
+      res.render(`errors/${code}`, {
+        inlineCSS: inlined.css,
+        err,
+        template: inlined.stringTemplate
+      })
+    },
+
+    json: () => {
+      res.json({
+        error: true,
+        code: code,
+        message: inlined.stringTemplate(`error.${code}.message`)
+      })
+    }
   })
 }

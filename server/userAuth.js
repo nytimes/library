@@ -2,8 +2,9 @@
 
 const passport = require('passport')
 const session = require('express-session')
-const md5 = require('md5')
+const crypto = require('crypto')
 const GoogleStrategy = require('passport-google-oauth20')
+const SlackStrategy = require('passport-slack-oauth2').Strategy
 
 const log = require('./logger')
 const {stringTemplate: template} = require('./utils')
@@ -11,13 +12,41 @@ const {stringTemplate: template} = require('./utils')
 const router = require('express-promise-router')()
 const domains = new Set(process.env.APPROVED_DOMAINS.split(/,\s?/g))
 
-passport.use(new GoogleStrategy.Strategy({
-  clientID: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: '/auth/redirect',
-  userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo',
-  passReqToCallback: true
-}, (request, accessToken, refreshToken, profile, done) => done(null, profile)))
+const authStrategies = ['google', 'Slack']
+let authStrategy = process.env.OAUTH_STRATEGY
+
+const callbackURL = process.env.REDIRECT_URL || '/auth/redirect'
+if (!authStrategies.includes(authStrategy)) {
+  log.warn(`Invalid oauth strategy ${authStrategy} specific, defaulting to google auth`)
+  authStrategy = 'google'
+}
+
+const isSlackOauth = authStrategy === 'Slack'
+if (isSlackOauth) {
+  passport.use(new SlackStrategy({
+    clientID: process.env.SLACK_CLIENT_ID,
+    clientSecret: process.env.SLACK_CLIENT_SECRET,
+    skipUserProfile: false,
+    callbackURL,
+    scope: ['identity.basic', 'identity.email', 'identity.avatar', 'identity.team', 'identity.email']
+  },
+  (accessToken, refreshToken, profile, done) => {
+    // optionally persist user data into a database
+    done(null, profile)
+  }
+  ))
+} else {
+  // default to google auth
+  passport.use(new GoogleStrategy.Strategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL,
+    userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo',
+    passReqToCallback: true
+  }, (request, accessToken, refreshToken, profile, done) => done(null, profile)))
+}
+
+const md5 = (data) => crypto.createHash('md5').update(data).digest('hex')
 
 router.use(session({
   secret: process.env.SESSION_SECRET,
@@ -33,27 +62,28 @@ router.use(passport.session())
 passport.serializeUser((user, done) => done(null, user))
 passport.deserializeUser((obj, done) => done(null, obj))
 
-router.get('/login', passport.authenticate('google', {
+const googleLoginOptions = {
   scope: [
     'https://www.googleapis.com/auth/userinfo.email',
     'https://www.googleapis.com/auth/userinfo.profile'
   ],
   prompt: 'select_account'
-}))
+}
+
+router.get('/login', passport.authenticate(authStrategy, isSlackOauth ? {} : googleLoginOptions))
 
 router.get('/logout', (req, res) => {
   req.logout()
   res.redirect('/')
 })
 
-router.get('/auth/redirect', passport.authenticate('google'), (req, res) => {
+router.get('/auth/redirect', passport.authenticate(authStrategy, {failureRedirect: '/login'}), (req, res) => {
   res.redirect(req.session.authRedirect || '/')
 })
 
 router.use((req, res, next) => {
   const isDev = process.env.NODE_ENV === 'development'
   const passportUser = (req.session.passport || {}).user || {}
-
   if (isDev || (req.isAuthenticated() && isAuthorized(passportUser))) {
     setUserInfo(req)
     return next()
@@ -89,10 +119,11 @@ function setUserInfo(req) {
     }
     return
   }
+  const email = isSlackOauth ? req.session.passport.user.email : req.session.passport.user.emails[0].value
   req.userInfo = req.userInfo ? req.userInfo : {
-    email: req.session.passport.user.emails[0].value,
     userId: req.session.passport.user.id,
-    analyticsUserId: md5(req.session.passport.user.id + 'library')
+    analyticsUserId: md5(req.session.passport.user.id + 'library'),
+    email
   }
 }
 

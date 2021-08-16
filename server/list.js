@@ -3,7 +3,6 @@
 const inflight = require('promise-inflight')
 const {google} = require('googleapis')
 const path = require('path')
-const url = require('url')
 
 const cache = require('./cache')
 const log = require('./logger')
@@ -61,6 +60,22 @@ exports.getAllRoutes = () => {
     }, new Set())
 }
 
+exports.commonListOptions = {
+  folder: {
+    corpora: 'allDrives',
+    includeItemsFromAllDrives: true,
+    supportsAllDrives: true,
+    pageSize: 1000
+  },
+  team: {
+    q: 'trashed = false',
+    corpora: 'teamDrive',
+    supportsTeamDrives: true,
+    includeTeamDriveItems: true,
+    pageSize: 1000
+  }
+}
+
 // delay in ms, 15s default with env var
 const treeUpdateDelay = parseInt(process.env.LIST_UPDATE_DELAY || 15, 10) * 1000
 startTreeRefresh(treeUpdateDelay)
@@ -92,6 +107,7 @@ function getOptions(id) {
 
   if (driveType === 'folder') {
     return {
+      ...exports.commonListOptions.folder,
       q: id.map((id) => `'${id}' in parents`).join(' or '),
       fields
     }
@@ -99,45 +115,29 @@ function getOptions(id) {
 
   return {
     teamDriveId: id,
-    q: 'trashed = false',
-    corpora: 'teamDrive',
-    supportsTeamDrives: true,
-    includeTeamDriveItems: true,
+    ...exports.commonListOptions.team,
     // fields: '*', // setting fields to '*' returns all fields but ignores pageSize
-    pageSize: 1000, // this value does not seem to be doing anything
     fields
   }
 }
 
-async function fetchAllFiles({nextPageToken: pageToken, parentIds = [driveId], driveType = 'team', drive} = {}) {
+async function fetchAllFiles({parentIds = [driveId], driveType = 'team', drive} = {}) {
   const options = getOptions(parentIds)
+  const levelItems = []
 
-  if (pageToken) {
-    options.pageToken = pageToken
-  }
+  do {
+    // Gets files in single folder (shared) or files listed in single page of response (team)
+    const {data} = await Promise.race([
+      drive.files.list(options),
+      new Promise((resolve, reject) => setTimeout(() => reject(Error('drive.files.list timeout expired!')), driveTimeout * 1000))
+    ])
 
-  // Gets files in single folder (shared) or files listed in single page of response (team)
-  const {data} = await Promise.race([
-    drive.files.list(options),
-    new Promise((resolve, reject) => setTimeout(() => reject(Error('drive.files.list timeout expired!')), driveTimeout * 1000))
-  ])
+    options.pageToken = data.nextPageToken
+    levelItems.push(...data.files)
+    log.debug(`fetched ${data.files.length} files and folders (total: ${levelItems.length}), ${data.nextPageToken ? '' : 'no '}more results to fetch`)
+  } while (options.pageToken)
 
-  const {files, nextPageToken} = data
-  const levelItems = files
-
-  // If there is more data the API has not returned for the query, the request needs to continue
-  if (nextPageToken) {
-    const nextPageFiles = await fetchAllFiles({
-      nextPageToken,
-      drive,
-      parentIds,
-      driveType
-    })
-    log.debug(`next page files and folders: ${nextPageFiles.length}`)
-    return levelItems.concat(nextPageFiles)
-  }
-
-  // If there are no more pages and this is not a shared folder, return completed list
+  // If this is not a shared folder, return completed list
   if (driveType !== 'folder') return levelItems
 
   // Continue searching if shared folder, since API only returns contents of the immediate parent folder
@@ -325,7 +325,7 @@ async function retrievePlaylistData(id) {
 
   // format data from api response
   const playlistIds = response.data.values.slice(1).map((link) => {
-    const id = url.parse(link[0]).pathname.split('/')[3]
+    const id = new URL(link[0]).pathname.split('/')[3]
     return id
   })
 

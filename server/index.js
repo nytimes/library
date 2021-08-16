@@ -30,7 +30,7 @@ if ((process.env.TRUST_PROXY || '').toUpperCase() === 'TRUE') {
 }
 
 app.set('view engine', 'ejs')
-app.set('views', path.join(__dirname, '../layouts'))
+app.set('views', [path.join(__dirname, '../custom/layouts'), path.join(__dirname, '../layouts')])
 
 app.get('/healthcheck', (req, res) => {
   res.send('OK')
@@ -66,6 +66,15 @@ app.use(readingHistory.middleware)
 // don't cache pages client-side to ensure browser always gets latest revision
 app.use((req, res, next) => {
   res.set('Cache-Control', 'no-cache')
+  next()
+})
+
+// treat requests ending in .json as application/json
+app.use((req, res, next) => {
+  if (req.path.endsWith('.json')) {
+    req.headers.accept = 'application/json'
+    req.url = req.baseUrl + req.path.slice(0, -5)
+  }
   next()
 })
 
