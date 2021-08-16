@@ -47,12 +47,12 @@
     overlayWrapper.appendChild(imgElement)
   }
 
-  window.onload = () => { 
+  window.onload = () => {
     const imgs = document.querySelectorAll('.g-main-content img'); // get all images
 
     // for each image - add overlay allowing for expand btn and click handler for expansion
     imgs.forEach((img, idx) => {
-      wrapImageInOverlay(img); 
+      wrapImageInOverlay(img);
       img.addEventListener('click', () => expandImage(img.src));
     });
   }
@@ -74,6 +74,10 @@
   modalCloseBtn.addEventListener('click', () => {
     imgModal.style.display = 'none';
   });
+
+  imgModal.addEventListener('click', () => {
+    imgModal.style.display = 'none';
+  })
 
   /* keydown listener so img modal can be closed with Esc key */
   document.addEventListener('keydown', (event) => {
