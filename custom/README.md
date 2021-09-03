@@ -89,6 +89,10 @@ The site name, logo, and most of the text on the website can be modified from th
 placing a value for the same key in `custom/strings.yaml`, with a custom string,
 Javascript function, or image path.
 
+## Image Modal
+Images can opened/expanded in a modal/dialog. On hover of an image, the cursor will turn into the pointer style, and an expand button will show. Once clicked, the image will center in the page, and a minimize icon will show. Styles for the modal can be found in
+`/styles/partials/core/_furniture.scss` as well as one line in `/styles/partials/core/_base.scss` that adds a pointer cursor on hover of images. All HTML/JS for the Image Modal is included in the [`/layouts/partials/imgModal.ejs`](../layouts/partials/imgModal.ejs) file. The Image Modal is then imported in the default layout for content, code for which can be found [here](../layouts/categories/default.ejs#L29).
+
 ## Middleware
 Middleware can be added to the beginning or end of the request cycle by placing
 files into `custom/middleware`. These files can export `preload` and `postload`

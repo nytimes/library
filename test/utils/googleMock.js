@@ -17,9 +17,6 @@ const spreadsheetBuf = (() => {
 
 exports.init = () => {
   // google drive mocks
-  google.auth.getApplicationDefault = () => {
-    return {credential: {JWT: {}}}
-  }
   google.options = () => {}
   google.drive = () => {
     return {
@@ -38,18 +35,20 @@ exports.init = () => {
       },
       revisions: {
         get: () => {
-          return Promise.resolve({ data: {
-            kind: 'drive#revision',
-            mimeType: 'application/vnd.google-apps.document',
-            modifiedTime: '2017-01-01T19:55:07.353Z',
-            published: false,
-            lastModifyingUser: {
-              kind: 'drive#user',
-              displayName: 'John Smith',
-              photoLink: 'https://foo.com/photo.jpg',
-              me: false
+          return Promise.resolve({
+            data: {
+              kind: 'drive#revision',
+              mimeType: 'application/vnd.google-apps.document',
+              modifiedTime: '2017-01-01T19:55:07.353Z',
+              published: false,
+              lastModifyingUser: {
+                kind: 'drive#user',
+                displayName: 'John Smith',
+                photoLink: 'https://foo.com/photo.jpg',
+                me: false
+              }
             }
-          }})
+          })
         }
       }
     }
@@ -61,12 +60,12 @@ exports.init = () => {
         values: {
           get: ({spreadsheetId}) => {
             return {
-              data: { 
-                values: spreadsheetId === 'Test12' ?
-                  page1.data.files.slice(0, 20)
-                    .filter(file => file.mimeType !== 'application/vnd.google-apps.folder')
-                    .map(file => [file.webViewLink]) :
-                  sampleSize(page1.data.files, 20).map(file => [file.webViewLink]) 
+              data: {
+                values: spreadsheetId === 'Test12'
+                  ? page1.data.files.slice(0, 20)
+                    .filter((file) => file.mimeType !== 'application/vnd.google-apps.folder')
+                    .map((file) => [file.webViewLink])
+                  : sampleSize(page1.data.files, 20).map((file) => [file.webViewLink])
               }
             }
           }

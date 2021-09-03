@@ -1,4 +1,4 @@
-Library [![Build Status](https://travis-ci.org/nytimes/library.svg?branch=master)](https://travis-ci.org/nytimes/library)
+Library [![Build Status](https://cloud.drone.io/api/badges/nytimes/library/status.svg)](https://cloud.drone.io/nytimes/library) ![Supported node versions](https://img.shields.io/badge/dynamic/json?color=informational&label=node&query=%24.engines.node&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnytimes%2Flibrary%2Fmain%2Fpackage.json)
 ========
 
 A collaborative newsroom documentation site, powered by Google Docs.
@@ -138,7 +138,7 @@ Set your app's `GOOGLE_APPLICATION_JSON`, `GOOGLE_CLIENT_ID`, and `GOOGLE_CLIENT
 ### Using Google App Engine
 You can also deploy Library to GAE, using the included `app.yaml`. Note that you will need to enable billing on your GCP project in order to use Google App Engine. More detailed instructions are provided on the [demo site](https://nyt-library-demo.herokuapp.com/get-started/deploying-library-google-app-engine).
 
-### Using Docker
+### Using Docker [![Dockerhub](https://img.shields.io/docker/v/nytimes/library?logo=docker)](https://hub.docker.com/r/nytimes/library/tags)
 Library can be used as a base image for deployment using Docker. This allows you
 to automate building and deploying a custom version of Library during Docker's
 build phase. If you create a repo with the contents of your `custom` folder, you
@@ -213,10 +213,10 @@ Library currently supports both Slack and Google Oauth methods. As Library sites
 ```
 # Slack needs to be capitalized as per the Passport.js slack oauth docs http://www.passportjs.org/packages/passport-slack-oauth2/
 OAUTH_STRATEGY=Slack
-``` 
+```
 You will need to provide Slack credentials, which you can do by creating a Library Oauth app in your Slack workspace. After creating the app, save the app's `CLIENT_ID` and `CLIENT_SECRET` in your `.env` file:
 ```
 SLACK_CLIENT_ID=1234567890abcdefg
 SLACK_CLIENT_SECRET=09876544321qwerty
-``` 
-You will need to add a callback URL to your Slack app to allow Slack to redirect back to your Library instance after the user is authenticated. 
+```
+You will need to add a callback URL to your Slack app to allow Slack to redirect back to your Library instance after the user is authenticated.
