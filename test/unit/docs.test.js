@@ -60,6 +60,10 @@ describe('Docs', () => {
     it('should strip spacing', () => {
       expect(slugify('  slugify-  me please ')).equals('slugify-me-please')
     })
+
+    it('should support diacritics', () => {
+      expect(slugify('Öğretmenelere Öneriler')).equals('ogretmenelere-oneriler')
+    })
   })
 
   describe('Fetching Docs', () => {
