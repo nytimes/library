@@ -23,7 +23,7 @@ exports.cleanName = (name = '') => {
 
 exports.slugify = (text = '') => {
   // convert non alpha numeric into whitespace, rather than removing
-  const alphaNumeric = text.replace(/[^\w\d]/g, ' ')
+  const alphaNumeric = text.replace(/[^\p{L}\p{N}]+/ug, ' ')
   return slugify(alphaNumeric, {
     lower: true
   })
