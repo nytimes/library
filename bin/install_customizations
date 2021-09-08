@@ -17,6 +17,8 @@ if ! [[ -z ${CUSTOMIZATION_GIT_REPO} ]];
     npm i;
     # force overwriting of packages if necessary
     yes | cp -rf ./node_modules/* ../node_modules;
+    # copy custom images/assets
+    yes | cp -rf ./public/* ../public;
   else
     echo "Not found. Continuing with standard Library deploy";
 fi;
