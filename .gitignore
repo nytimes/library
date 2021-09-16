@@ -13,3 +13,5 @@ coverage
 .npmrc*
 .vscode
 .idea
+custom
+
