@@ -71,7 +71,7 @@ exports.commonListOptions = {
     pageSize: 1000
   },
   team: {
-    teamDriveId: driveId,    
+    teamDriveId: driveId,
     corpora: 'teamDrive',
     supportsTeamDrives: true,
     includeTeamDriveItems: true,
@@ -82,7 +82,7 @@ exports.commonListOptions = {
 async function getDrive() {
   const authClient = await getAuth()
 
-  return google.drive({version: 'v3', auth: authClient})  
+  return google.drive({version: 'v3', auth: authClient})
 }
 
 async function updateTree() {
@@ -125,16 +125,16 @@ function getOptions(driveType, id) {
   }
 }
 
-let startPageToken = undefined
-async function checkChanges() {  
-  console.log("Checking changes...")
+let startPageToken
+async function checkChanges() {
+  console.log('Checking changes...')
   const drive = await getDrive()
   const options = exports.commonListOptions[driveType]
-  startPageToken = startPageToken || (await drive.changes.getStartPageToken(options)).data.startPageToken  
-  const response = (await drive.changes.list({ ...options, pageToken: startPageToken }))
+  startPageToken = startPageToken || (await drive.changes.getStartPageToken(options)).data.startPageToken
+  const response = (await drive.changes.list({...options, pageToken: startPageToken}))
   const changes = response.data.changes
-  console.log("token", response.data.newStartPageToken)
-  console.log("changes", changes.length)
+  console.log('token', response.data.newStartPageToken)
+  console.log('changes', changes.length)
   startPageToken = response.data.newStartPageToken
   return changes.length > 0
 }
@@ -150,8 +150,9 @@ async function listFiles(drive, options, limit) {
     ])
 
     options.pageToken = data.nextPageToken
-    levelItems.push(...data.files.filter(f => !excludeIds.includes(f.id)))
+    levelItems.push(...data.files.filter((f) => !excludeIds.includes(f.id)))
     log.debug(`fetched ${data.files.length} files and folders (total: ${levelItems.length}), ${data.nextPageToken ? '' : 'no '}more results to fetch`)
+    // eslint-disable-next-line no-unmodified-loop-condition
   } while (options.pageToken && (!limit || levelItems.length < limit))
 
   return levelItems.slice(0, limit)
@@ -411,20 +412,20 @@ function cleanResourceType(mimeType) {
 const treeUpdateDelaySeconds = parseInt(process.env.LIST_UPDATE_DELAY || 15, 10)
 let refreshCounter = 0
 async function startTreeRefresh() {
-  const force = (refreshCounter ++) === treeUpdateDelaySeconds
+  const force = (refreshCounter++) === treeUpdateDelaySeconds
 
   try {
-    const shouldUpdate = force || await checkChanges()
+    const shouldUpdate = force || await checkChanges()
     if (shouldUpdate) {
       log.debug('updating tree...')
       await updateTree()
-      log.debug('tree updated.')  
+      log.debug('tree updated.')
     }
   } catch (err) {
     log.warn('failed updating tree', err)
   }
-  setTimeout(() => { 
-    startTreeRefresh() 
+  setTimeout(() => {
+    startTreeRefresh()
   }, 1000)
 }
 // delay in ms, 15s default with env var
