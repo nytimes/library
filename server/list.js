@@ -112,7 +112,7 @@ function getOptions(driveType, id) {
   if (driveType === 'folder') {
     return {
       ...exports.commonListOptions.folder,
-      q: id.map((id) => `'${id}' in parents`).join(' or '),
+      q: 'trashed = false and (' + id.map((id) => `'${id}' in parents`).join(' or ') + ')',
       fields
     }
   }
