@@ -127,14 +127,14 @@ function getOptions(driveType, id) {
 
 let startPageToken
 async function checkChanges() {
-  console.log('Checking changes...')
   const drive = await getDrive()
   const options = exports.commonListOptions[driveType]
   startPageToken = startPageToken || (await drive.changes.getStartPageToken(options)).data.startPageToken
   const response = (await drive.changes.list({...options, pageToken: startPageToken}))
   const changes = response.data.changes
-  console.log('token', response.data.newStartPageToken)
-  console.log('changes', changes.length)
+  if (changes && changes.length > 0) {
+    log.debug(`${changes.length} changes detected in drive...`)
+  }
   startPageToken = response.data.newStartPageToken
   return changes.length > 0
 }
