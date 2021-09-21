@@ -1,4 +1,5 @@
 'use strict'
+const fs = require('fs')
 const path = require('path')
 
 const express = require('express')
@@ -43,8 +44,17 @@ preload.forEach((middleware) => app.use(middleware))
 
 app.use(userInfo)
 
-// serve all files in the public folder
-app.use('/assets', express.static(path.join(__dirname, '../public')))
+const customImagesDir = path.join(__dirname, '../custom/public/images')
+const customImagesDirExists = fs.existsSync(customImagesDir)
+if (customImagesDirExists) {
+  // serve public/images from custom dir and other public assets from public dir
+  app.use('/assets/images', express.static(customImagesDir))
+  app.use('/assets/css', express.static(path.join(__dirname, '../public/css')))
+  app.use('/assets/scripts', express.static(path.join(__dirname, '../public/scripts')))
+} else {
+  // serve all files in the public folder
+  app.use('/assets', express.static(path.join(__dirname, '../public')))
+}
 
 // strip trailing slashes from URLs
 app.get(/(.+)\/$/, (req, res, next) => {
