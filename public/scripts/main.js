@@ -16,7 +16,8 @@ $(document).ready(function() {
 
   // make TOC sticky
   var $toc = $(".g-left-panel");
-  if ($toc.length) {
+  var $content = $(".g-main-content-wrapper")
+  if ($toc.length && $content.height() > $toc.height()) {
     var stickyTop = $toc.offset().top - 100;
     $window.on('scroll', function(){
       ($window.scrollTop() >= stickyTop) ? $toc.addClass('d-fixed') : $toc.removeClass('d-fixed');
