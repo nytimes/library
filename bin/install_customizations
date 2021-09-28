@@ -10,7 +10,7 @@ if ! [[ -z ${CUSTOMIZATION_GIT_REPO} ]];
   then
     echo "Cloning custom repo...";
     # remove custom to allow for cloning to that directory name
-    rm -r ./custom;
+    rm -rf ./custom;
     git clone $CUSTOMIZATION_GIT_REPO custom;
     echo "Installing custom packages...";
     cd ./custom;
