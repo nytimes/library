@@ -112,6 +112,17 @@ describe('HTML processing', () => {
     it('allows unregistered languages', () => {
       const codeBlock = testGlobal.output('pre')
       assert.match(codeBlock.html(), /1 \+ 1 == 5/)
+      assert.notMatch(codeBlock.html(), /myfakelanguage/)
+    })
+
+    it('handles code blocks without defined language', () => {
+      const codeBlock = testGlobal.output("pre:contains('bar')")
+      assert.match(codeBlock.html(), /foo\nbar/)
+    })
+
+    it('handles whitespace in language definition of code block', () => {
+      const codeBlock = testGlobal.output("pre:contains('works')")
+      assert.notMatch(codeBlock.html(), /space/)
     })
   })
 

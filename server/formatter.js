@@ -105,11 +105,11 @@ function normalizeHtml(html) {
 function formatCode(html) {
   // Expand code blocks
   html = html.replace(/```(.*?)```/ig, (match, content) => {
+    // try to find language hint within text block
+    const lang = content.match(/.*?(?=<\/p>|<br\/?>|$)/i)[0]
     // strip interior <p> tags added by google
     content = content.replace(/(?:<\/p><p>|<br\/?>)/g, '\n').replace(/<\/?p>/g, '').trim()
-    // try to find language hint within text block
-    const [, lang] = content.match(/^([^\n]+)\n(.+)/) || []
-    if (lang) content = content.replace(`${lang}\n`, '')
+    if (lang) content = content.replace(`${lang.trim()}\n`, '')
 
     const formattedContent = formatCodeContent(content)
     if (lang && hljs.getLanguage(lang)) {
