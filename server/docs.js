@@ -41,7 +41,7 @@ exports.fetchDoc = async (id, resourceType, req) => {
   const driveDoc = await fetch({id, resourceType, req}, auth)
   const originalRevision = driveDoc[1]
 
-  const {html, byline, createdBy, sections} = formatter.getProcessedDocAttributes(driveDoc)
+  const {html, byline, createdBy, sections} = formatter.getProcessedDocAttributes(driveDoc, req.path)
   const payload = {html, byline, createdBy, sections}
 
   // cache only information from document body if mimetype supports revision data

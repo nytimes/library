@@ -4,12 +4,13 @@ const qs = require('querystring')
 const unescape = require('unescape')
 const hljs = require('highlight.js')
 const list = require('./list')
+const log = require('./logger')
 
 /* Your one stop shop for all your document processing needs. */
 
 const allowInlineCode = (process.env.ALLOW_INLINE_CODE || '').toLowerCase() === 'true'
 // this is getting a little long, maybe tweak so that we do subtasks separately
-function normalizeHtml(html) {
+function normalizeHtml(html, docPath) {
   // scrub all &nbsp;s (if there is a &nbsp; in a code block it will be escaped)
   html = html.replace(/&nbsp;/g, ' ')
 
@@ -85,6 +86,11 @@ function normalizeHtml(html) {
       const decoded = qs.unescape(redirectUrl)
       const [isDoc, docId] = decoded.match(/docs\.google\.com.+\/d\/([^/]+)/i) || []
       const [deepLink = ''] = decoded.match(/(?<=#heading=)([^/]+)/i) || []
+
+      const isConfluLink = decoded.includes('extra.reaktor.com')
+      if (isConfluLink) {
+        log.warn('Link to Confluence on page ' + docPath + ': ' + decoded)
+      }
 
       const {path: libraryPath} = isDoc ? list.getMeta(docId) || {} : {}
       const libraryDeepLink = deepLink && libraryPath ? `${libraryPath}#${deepLink}` : libraryPath
@@ -227,20 +233,20 @@ function convertYoutubeUrl(content) {
   return content
 }
 
-function getProcessedHtml(src) {
-  let html = normalizeHtml(src)
+function getProcessedHtml(src, docPath) {
+  let html = normalizeHtml(src, docPath)
   html = convertYoutubeUrl(html)
   html = formatCode(html)
   html = pretty(html)
   return html
 }
 
-exports.getProcessedDocAttributes = (driveDoc) => {
+exports.getProcessedDocAttributes = (driveDoc, docPath) => {
   // document information
   // TODO: guard against null revision data?
   const [originalHtml, {data: revisionData}] = driveDoc
   // clean and prettify the HTML
-  const processedHtml = getProcessedHtml(originalHtml)
+  const processedHtml = getProcessedHtml(originalHtml, docPath)
   // crawl processed html for the bylines and sections
   const sections = fetchSections(processedHtml)
   const createdBy = ((revisionData || {}).lastModifyingUser || {}).displayName
