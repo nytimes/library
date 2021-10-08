@@ -396,10 +396,7 @@ function handleUpdates(id, {info: lastInfo, tree: lastTree}) {
 }
 
 function determineSort(name = '') {
-  const sort = name.match(/(\d+)[^\d]/)
-  // to be consistent with drive API, we will do string sort
-  // also means we can sort off a single field when number is absent
-  return sort ? sort[1] : name // items without sort go alphabetically
+  return name
 }
 
 function cleanResourceType(mimeType) {
