@@ -84,7 +84,7 @@ function normalizeHtml(html, docPath) {
       if (!isRedirected) return el
 
       const decoded = qs.unescape(redirectUrl)
-      const [isDoc, docId] = decoded.match(/docs\.google\.com.+\/d\/([^/]+)/i) || []
+      const [isDoc, docId] = decoded.match(/docs\.google\.com(?!\/spreadsheets).+\/d\/([^/]+)/i) || []
       const [deepLink = ''] = decoded.match(/(?<=#heading=)([^/]+)/i) || []
 
       const isConfluLink = decoded.includes('extra.reaktor.com')
