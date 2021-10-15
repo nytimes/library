@@ -20,8 +20,6 @@ Library is an open source project, and we'd love your help making it better!
 - See [CONTRIBUTING.md](https://github.com/nytimes/library/blob/master/CONTRIBUTING.md) for information on how to contribute code and/or documentation.
 ## Who else uses Library?
 
-Here are some of the organizations using Library so far.
-
 [Marketplace](https://www.marketplace.org/)
 
 [The New York Times](http://nytimes.com)
