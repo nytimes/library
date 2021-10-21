@@ -452,29 +452,53 @@
   }
 }
 
-// the image-wrapper class is added for the benefit of the
-// Image Modal, so co-locating it here
-.image-wrapper { 
-    position: relative;
 
-	.expand-image-btn {
-		height: 60px;
-		width: 60px;
-		position: absolute;
-		bottom: 25px;
-		right: 25px;
-		opacity: 0;
-		transition: opacity 0.3s ease 0s;
-		background-color: transparent;
-		pointer-events: none;
-		border: none;
-	}
-	
-	&:hover {
-		.expand-image-btn {
-			opacity: 1;
-		}
-	}
+// the outer wrapper allows us to center the inner-wrapper, which itself
+// fits exactly the image - so in effect, centering the inner wrapper
+.image-wrapper {
+  /* 
+  * Flex usage prefixed
+  * Prefixed by https://autoprefixer.github.io
+  * PostCSS: v8.3.6,
+  * Autoprefixer: v10.3.1
+  * Browsers: last 4 version
+  */
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center; 
+
+  // The inner wrapper allows us to fit the button onto the bottom right
+  // corner no matter the image dimenension
+  .inner-wrapper {
+    position: relative;
+    width: min-content;
+
+    .expand-image-btn {
+      height: 60px;
+      width: 60px;
+      position: absolute;
+      bottom: 30px;
+      right: 10px;
+      opacity: 0;
+      transition: opacity 0.3s ease 0s;
+      background-color: transparent;
+      pointer-events: none;
+      border: none;
+    }
+
+    &:hover {
+      .expand-image-btn {
+        opacity: 1;
+      }
+    }
+  }
 }
 
 .image-modal {
@@ -498,6 +522,7 @@
     margin: auto;
     display: block;
     max-width: 100%;
+    max-height: 100%;
     cursor: default;
   }
 }
