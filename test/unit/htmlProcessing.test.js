@@ -113,6 +113,11 @@ describe('HTML processing', () => {
       const codeBlock = testGlobal.output('pre')
       assert.match(codeBlock.html(), /1 \+ 1 == 5/)
     })
+
+    it('retains backticks', () => {
+      const codeBlock = testGlobal.output('pre > code[data-lang="javascript"]')
+      assert.match(codeBlock.html(), /`/)
+    })
   })
 
   describe('inline code handling', () => {
