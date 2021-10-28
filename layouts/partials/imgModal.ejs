@@ -26,13 +26,17 @@
     let wrapperDiv = document.createElement('div')
     wrapperDiv.className = 'image-wrapper'
 
+    let innerWrapper = document.createElement('div')
+    innerWrapper.className = 'inner-wrapper'
+
     let expandBtn = document.createElement('button')
     expandBtn.setAttribute('aria-label', 'expand this image')
     expandBtn.title = 'expand this image'
     expandBtn.className='expand-image-btn'
     expandBtn.appendChild(expandIconSvg)
 
-    wrapperDiv.appendChild(expandBtn)
+    innerWrapper.appendChild(expandBtn)
+    wrapperDiv.appendChild(innerWrapper)
 
     imgWrapper = wrapperDiv // add to cache
 
@@ -42,9 +46,14 @@
   function wrapImageInOverlay(imgElement) {
     // clone the wrapper so the original isn't mutated and we can reuse it
     const overlayWrapper = createImageOverlayWrapper().cloneNode(true)
+    
+    // make the generic expand button included in the wrapper work for this element
+    overlayWrapper.getElementsByTagName('button')[0].onclick = () => expandImage(imgElement.src)
 
+    // Put the overlay wrapper where the image used to be, then append image wrapper to overlayWrapper's
+    // innerWrapper
     imgElement.parentNode.insertBefore(overlayWrapper, imgElement)
-    overlayWrapper.appendChild(imgElement)
+    overlayWrapper.getElementsByClassName('inner-wrapper')[0].appendChild(imgElement)
   }
 
   window.onload = () => {
