@@ -108,15 +108,22 @@ function formatCode(html) {
     // strip interior <p> tags added by google
     content = content.replace(/(?:<\/p><p>|<br\/?>)/g, '\n').replace(/<\/?p>/g, '').trim()
     // try to find language hint within text block
-    const [, lang] = content.match(/^([^\n]+)\n(.+)/) || []
-    if (lang) content = content.replace(`${lang}\n`, '')
+    const [, lang] = content.match(/^(.+?)\n/) || []
 
     if (lang && hljs.getLanguage(lang)) {
+      // if the language hint exists and contains a valid language, remove it from the code block
+      content = content.replace(`${lang}\n`, '')
+
       const textOnlyContent = cheerio.load(content).text()
       const highlighted = hljs.highlight(lang, textOnlyContent, true)
       return `<pre><code data-lang="${highlighted.language}">${formatCodeContent(highlighted.value)}</code></pre>`
     }
     return `<pre><code>${formatCodeContent(content)}</code></pre>`
+  })
+
+  // Replace double backticks with <code>, for supporting backticks in inline code blocks
+  html = html.replace(/``(.+?`?)``/g, (match, content) => {
+    return `<code>${formatCodeContent(content)}</code>`
   })
 
   // Replace single backticks with <code>
