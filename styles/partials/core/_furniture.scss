@@ -451,3 +451,94 @@
     text-align: center;
   }
 }
+
+
+// the outer wrapper allows us to center the inner-wrapper, which itself
+// fits exactly the image - so in effect, centering the inner wrapper
+.image-wrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center; 
+
+  // The inner wrapper allows us to fit the button onto the bottom right
+  // corner no matter the image dimenension
+  .inner-wrapper {
+    position: relative;
+    width: min-content;
+
+    .expand-image-btn {
+      height: 60px;
+      width: 60px;
+      position: absolute;
+      bottom: 30px;
+      right: 10px;
+      opacity: 0;
+      transition: opacity 0.3s ease 0s;
+      background-color: transparent;
+      pointer-events: none;
+      border: none;
+    }
+
+    &:hover {
+      .expand-image-btn {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+.image-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000000090; /* search bar icon has z-index of 1*10 */
+    inset: 0px; /* shorthand for top,right,bottom,left at the same time */
+    overflow: hidden;
+    background-color: rgb(255, 255, 255); /* full white allows images to pop */
+    transition: display 0.2s ease 0s;
+}
+
+.image-modal .img-wrapper {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  height: 100%;
+  padding: 30px;
+
+  .modal-image {
+    margin: auto;
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    cursor: default;
+  }
+}
+
+.image-modal .close {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: transparent;
+    cursor: pointer;
+    border: 0.5px solid white;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    transition: all 0.1s ease-in;
+    padding: 0px;
+
+    &:hover, &:focus {
+        background-color: #f9f9f9;
+        border-color: lightgray;
+    }
+}
+
+

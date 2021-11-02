@@ -1,0 +1,97 @@
+<div id="image-modal" class="image-modal">
+    <button type="button" class="close" title="Minimize this image" aria-label="Minimize this image">
+        <svg width="60" height="60" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M35.97 25.37L38.6 28H32v-6.6l2.63 2.63L38.67 20 40 21.33l-4.03 4.04zM24.03 34.63L21.4 32H28v6.6l-2.63-2.63L21.33 40 20 38.67l4.03-4.04z" fill="#000"/></svg>
+    </button>
+    <div class="img-wrapper">
+        <img class="modal-image" id="img1" />
+    </div>
+    <!-- expandIconSvg svg inlined, will be used in image overlay and removed from here on document load. JS in footer.ejs does this-->
+    <svg id="expandIconSvg" width="60" height="60" fill="#fff"><circle cx="30" cy="30" r="30" fill="#000" fill-opacity=".5"/><path fill-rule="evenodd" clip-rule="evenodd" d="M23.97 37.37L26.6 40H20v-6.6l2.63 2.63L26.67 32 28 33.33l-4.03 4.04zM36.03 22.63L33.4 20H40v6.6l-2.63-2.63L33.33 28 32 26.67l4.03-4.04z"/></svg>
+</div>
+
+<script>
+  var imgWrapper
+  function createImageOverlayWrapper() {
+    if (imgWrapper) { // cache hit
+      return imgWrapper
+    }
+
+    // read expandIcon from image-modal where its inlined so that we
+    // can read it here. then remove it and strip the id since it'll be used multiple times
+    const expandIconSvg = document.getElementById('expandIconSvg')
+    expandIconSvg.remove()
+    expandIconSvg.id = ""
+
+
+    let wrapperDiv = document.createElement('div')
+    wrapperDiv.className = 'image-wrapper'
+
+    let innerWrapper = document.createElement('div')
+    innerWrapper.className = 'inner-wrapper'
+
+    let expandBtn = document.createElement('button')
+    expandBtn.setAttribute('aria-label', 'expand this image')
+    expandBtn.title = 'expand this image'
+    expandBtn.className='expand-image-btn'
+    expandBtn.appendChild(expandIconSvg)
+
+    innerWrapper.appendChild(expandBtn)
+    wrapperDiv.appendChild(innerWrapper)
+
+    imgWrapper = wrapperDiv // add to cache
+
+    return wrapperDiv
+  }
+
+  function wrapImageInOverlay(imgElement) {
+    // clone the wrapper so the original isn't mutated and we can reuse it
+    const overlayWrapper = createImageOverlayWrapper().cloneNode(true)
+    
+    // make the generic expand button included in the wrapper work for this element
+    overlayWrapper.getElementsByTagName('button')[0].onclick = () => expandImage(imgElement.src)
+
+    // Put the overlay wrapper where the image used to be, then append image wrapper to overlayWrapper's
+    // innerWrapper
+    imgElement.parentNode.insertBefore(overlayWrapper, imgElement)
+    overlayWrapper.getElementsByClassName('inner-wrapper')[0].appendChild(imgElement)
+  }
+
+  window.onload = () => {
+    const imgs = document.querySelectorAll('.g-main-content img'); // get all images
+
+    // for each image - add overlay allowing for expand btn and click handler for expansion
+    imgs.forEach((img, idx) => {
+      wrapImageInOverlay(img);
+      img.addEventListener('click', () => expandImage(img.src));
+    });
+  }
+
+  var imgModal = document.querySelector('.image-modal')
+  var imgModalImg = document.querySelector('.image-modal .modal-image');
+
+  function expandImage(imgSrc) {
+    imgModal.style.display = 'block';
+    imgModalImg.src = imgSrc;
+
+    window.addEventListener('scroll', function onScroll() {
+        window.removeEventListener('scroll', onScroll);
+        imgModal.style.display='none';
+    });
+  };
+
+  var modalCloseBtn = document.querySelector('.image-modal .close');
+  modalCloseBtn.addEventListener('click', () => {
+    imgModal.style.display = 'none';
+  });
+
+  imgModal.addEventListener('click', () => {
+    imgModal.style.display = 'none';
+  })
+
+  /* keydown listener so img modal can be closed with Esc key */
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && imgModal.style.display === 'block') {
+        imgModal.style.display = 'none';
+    }
+  });
+</script>

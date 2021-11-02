@@ -12,6 +12,10 @@ const {getAuth} = require('./auth')
 
 const supportedTypes = new Set(['document', 'spreadsheet', 'text/html'])
 
+const revisionSupportedArr = ['document', 'spreadsheet', 'presentation']
+const revisionSupported = new Set(revisionSupportedArr)
+const revisionMimeSupported = new Set(revisionSupportedArr.map((x) => `application/vnd.google-apps.${x}`))
+
 exports.cleanName = (name = '') => {
   return name
     .trim()
@@ -23,7 +27,7 @@ exports.cleanName = (name = '') => {
 
 exports.slugify = (text = '') => {
   // convert non alpha numeric into whitespace, rather than removing
-  const alphaNumeric = text.replace(/[^\w\d]/g, ' ')
+  const alphaNumeric = text.replace(/[^\p{L}\p{N}]+/ug, ' ')
   return slugify(alphaNumeric, {
     lower: true
   })
@@ -44,8 +48,12 @@ exports.fetchDoc = async (id, resourceType, req) => {
   const {html, byline, createdBy, sections} = formatter.getProcessedDocAttributes(driveDoc)
   const payload = {html, byline, createdBy, sections}
 
-  // cache only information from document body
-  cache.add(id, originalRevision.data.modifiedTime, payload)
+  // cache only information from document body if mimetype supports revision data
+  if (revisionMimeSupported.has(originalRevision.data.mimeType)) {
+    cache.add(id, originalRevision.data.modifiedTime, payload)
+  } else {
+    console.log(`Skipping cache add: unsupported mimetype ${originalRevision.data.mimeType}`)
+  }
   return payload
 }
 
@@ -71,8 +79,6 @@ async function fetchHTMLForId(id, resourceType, req, drive) {
 }
 
 async function fetchOriginalRevisions(id, resourceType, req, drive) {
-  const revisionSupported = new Set(['document', 'spreadsheet', 'presentation'])
-
   if (!revisionSupported.has(resourceType)) {
     log.info(`Revision data not supported for ${resourceType}:${id}`)
     return {data: {lastModifyingUser: {}}} // return mock/empty revision object
