@@ -19,6 +19,7 @@ if ! [[ -z ${CUSTOMIZATION_GIT_REPO} ]];
     yes | cp -rf ./node_modules/* ../node_modules;
     # copy custom images/assets
     yes | cp -rf ./public/* ../public;
+    # remove custom directory after it's been copied to avoid having duplicate assets in the container
     rm -rf ./public
   else
     echo "Not found. Continuing with standard Library deploy";
