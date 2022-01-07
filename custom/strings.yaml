@@ -1,0 +1,10 @@
+### Default String Configuration
+### Add custom strings in custom/strings.yaml
+
+# base config in partials/branding, partials/head
+branding:
+  name: Library Catalog
+  prettyName: Ad Hoc Library Catalog
+  org: Ad Hoc
+  icon: /assets/images/icon-logo.svg
+  favicon: /assets/images/library.ico
