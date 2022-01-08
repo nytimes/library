@@ -6,5 +6,23 @@ branding:
   name: Library Catalog
   prettyName: Ad Hoc Library Catalog
   org: Ad Hoc
-  icon: /assets/images/icon-logo.svg
+  icon: /assets/images/green-white-logo-mark.svg
   favicon: /assets/images/library.ico
+
+# pages/categories, pages/index, partials/search
+landing:
+  tagline: Reusable content about Ad Hoc's work and how we do it.
+  viewAll: View All
+  quickLink: <a href="/readme-how-to-use-the-content-library">Get Started.</a>
+  modules:
+    - tag: featured
+      label: Featured Docs
+      style: docs
+
+footer:
+  helpText: "Questions? Stop by #content-library-support!"
+  buttons:
+    edit: Edit This Page
+    move: Move This Page
+    create: Create New Page
+    viewFolder: View Folder

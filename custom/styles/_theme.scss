@@ -1,0 +1,68 @@
+// Fonts
+//------------------------------------------------------------------------------
+// Font imports
+@import url('https://fonts.googleapis.com/css?family=Alfa+Slab+One|Open+Sans:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese');
+@import url("https://use.typekit.net/djs8fjl.css");
+$font-branding: 'Alfa Slab One', cursive;
+$font-headline: 'proxima-nova', sans-serif;
+$font-sans: 'proxima-nova', sans-serif;
+
+// Colors
+//------------------------------------------------------------------------------
+$masthead-background: $gray-10;
+$main-homepage-background: $white;
+$main-homepage-icon-color: $black;
+$main-homepage-icon-border: $black;
+$main-page-text-color: $gray-35;
+$main-page-btn-color: $gray-45;
+$search-container-background: #e6e2e2;
+$search-container-hover: $gray-70;
+$btn-homepage-background: $white;
+$btn-homepage-border: $black;
+$btn-default-background: $white;
+$btn-default-background-hover: $accent;
+$btn-default-border: $black;
+$btn-default-text-color: $black;
+$btn-default-text-hover: $black;
+$btn-user-initial: $gray-50;
+$elem-link-color: $gray-50;
+$elem-active-link-color: $gray-50;
+$elem-link-accent: $accent;
+$nav-text-color: $gray-40;
+
+// Ad Hoc Colors
+$green-primary: #118762;
+$green-secondary: #31b67b;
+$gray-primary: #626262;
+
+/* Logo overrides to deal with Ad Hoc image. */
+#main-search-page {
+  .logo {
+    height: 28px !important;
+    margin-top: -4px;
+
+    @media (min-width: 768px) {
+      height: 36px !important;
+      margin-top: 0;
+    }
+  }
+}
+
+.logo {
+  filter: none !important;
+}
+
+/* Adds colors to the headers in rendering to match Ad Hoc templates. */
+
+h1, h2 {
+  color: $green-primary;
+}
+
+h1.headline {
+  color: $green-primary !important;
+  font-weight: 600 !important;
+}
+
+h3, h4 {
+  color: $gray-primary;
+}
