@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@google-cloud/connect-datastore": "^5.0.3",
+    "@google-cloud/datastore": "^6.0.0"
+  }
+}
