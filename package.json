@@ -9,6 +9,7 @@
     "chai": "^4.2.0",
     "cheerio": "^1.0.0-rc.3",
     "deepmerge": "^4.2.2",
+    "dotenv": "^8.6.0",
     "ejs": "^3.1.5",
     "express": "^4.17.1",
     "express-promise-router": "^4.0.1",
@@ -34,7 +35,7 @@
   },
   "devDependencies": {
     "concurrently": "^5.2.0",
-    "dotenv": "^8.2.0",
+    "dotenv": "^8.6.0",
     "eslint": "^7.10.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.22.0",
