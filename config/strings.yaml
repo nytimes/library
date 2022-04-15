@@ -13,7 +13,7 @@ branding:
 landing:
   tagline: One place for your organization's documents.
   viewAll: View All
-  quickLink: <a href="/get-started">Get Started.</a>
+  quickLink: <a href="/library/get-started">Get Started.</a>
   modules:
     - tag: team
       label: Find by team
@@ -40,7 +40,7 @@ search:
     title: !!js/function (query) => `Search results for ${query}`
     kicker: !!js/function (query) => `Showing results for '${query}':`
     label:
-      folder: !!js/function (path, folder) => `Filed under <a class="folder" href=${path}><span>${folder}</span></a>`
+      folder: !!js/function (path, folder) => `Filed under <a class="folder" href=/library${path}><span>${folder}</span></a>`
       person: !!js/function (lastUser) => `Last edited by <span class='author'>${lastUser}`
     none:
       kicker: !!js/function (query) => `There are no results for '${query}'`
@@ -72,7 +72,7 @@ error:
   403:
     title: Operation Not Permitted
     heading: Not Authorized
-    message: "<p>The page you're trying to access is forbidden. Please try <a href='/login'>logging in</a> with another account, or contact your organization's administrators for assistance.</p>"
+    message: "<p>The page you're trying to access is forbidden. Please try <a href='/library/login'>logging in</a> with another account, or contact your organization's administrators for assistance.</p>"
   404:
     title: Page Not Found
     heading: Whoops, that's a 404.

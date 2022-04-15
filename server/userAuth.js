@@ -15,7 +15,7 @@ const domains = new Set(process.env.APPROVED_DOMAINS.split(/,\s?/g))
 const authStrategies = ['google', 'Slack']
 let authStrategy = process.env.OAUTH_STRATEGY
 
-const callbackURL = process.env.REDIRECT_URL || '/auth/redirect'
+const callbackURL = process.env.REDIRECT_URL || '/library/auth/redirect'
 if (!authStrategies.includes(authStrategy)) {
   log.warn(`Invalid oauth strategy ${authStrategy} specific, defaulting to google auth`)
   authStrategy = 'google'
@@ -77,8 +77,8 @@ router.get('/logout', (req, res) => {
   res.redirect('/')
 })
 
-router.get('/auth/redirect', passport.authenticate(authStrategy, {failureRedirect: '/login'}), (req, res) => {
-  res.redirect(req.session.authRedirect || '/')
+router.get('/auth/redirect', passport.authenticate(authStrategy, {failureRedirect: '/library/login'}), (req, res) => {
+  res.redirect(req.session.authRedirect || '/library')
 })
 
 router.use((req, res, next) => {
@@ -95,7 +95,7 @@ router.use((req, res, next) => {
 
   log.info('User not authenticated')
   req.session.authRedirect = req.path
-  res.redirect('/login')
+  res.redirect('/library/login')
 })
 
 function isAuthorized(user) {

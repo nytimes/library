@@ -1,7 +1,7 @@
 <div class="children-container">
   <% if (locals.kicker) { %>
     <h3>
-    <% if (locals.link) { %><a href="<%= link %>"><% } %>
+    <% if (locals.link) { %><a href="/library<%= link %>"><% } %>
     <%= kicker %>
     <% if (locals.link) { %></a><% } %>
     </h3>
@@ -26,7 +26,7 @@
           const className = `fa-${iconName}`
           %>
           <i class="fa foldericon <%= className %>" aria-hidden="true"></i>
-          <a class="content-link" href="<%- link.url %>" ><%= link.name %></a>
+          <a class="content-link" href="/library<%- link.url %>" ><%= link.name %></a>
         </li>
       <% }) %>
     </ul>

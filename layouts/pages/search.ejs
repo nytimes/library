@@ -12,7 +12,7 @@
           <h3 class="search-kicker"><%- template('search.results.kicker', locals.q) %></h3>
           <% results.forEach((res) => { %>
           <div class="search-result">
-            <h3><a href="<%= res.path %>"><%= res.prettyName %></a></h3>
+            <h3><a href="/library<%= res.path %>"><%= res.prettyName %></a></h3>
             <p>
               <% if (res.folder) { %>
                 <%- template('search.results.label.folder', res.folder.path, res.folder.prettyName || 'Home')%>&nbsp;

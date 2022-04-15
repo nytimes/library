@@ -37,21 +37,21 @@ app.get('/healthcheck', (req, res) => {
 })
 
 app.use(csp({directives: customCsp}))
-app.use(userAuth)
+app.use('/library', userAuth)
 
 preload.forEach((middleware) => app.use(middleware))
 
-app.use(userInfo)
+app.use('/library', userInfo)
 
 // serve all files in the public folder
-app.use('/assets', express.static(path.join(__dirname, '../public')))
+app.use('/library/assets', express.static(path.join(__dirname, '../public')))
 
 // strip trailing slashes from URLs
 app.get(/(.+)\/$/, (req, res, next) => {
   res.redirect(req.params[0])
 })
 
-app.get('/view-on-site/:docId', (req, res, next) => {
+app.get('/library/view-on-site/:docId', (req, res, next) => {
   const {docId} = req.params
   const doc = getMeta(docId)
 
@@ -78,20 +78,20 @@ app.use((req, res, next) => {
   next()
 })
 
-app.use(pages)
-app.use(cache)
+app.use('/library', pages)
+app.use('/library', cache)
 
 // category pages will be cache busted when their last updated timestamp changes
-app.use(categories)
-app.use(playlists)
+app.use('/library', categories)
+app.use('/library', playlists)
 
 postload.forEach((middleware) => app.use(middleware))
 
 // if no page has been served, check for a redirect before erroring
-app.use(redirects)
+app.use('/library', redirects)
 
 // error handler for rendering the 404 and 500 pages, must go last
-app.use(errorPages)
+app.use('/library', errorPages)
 
 // If we are called directly, listen on port 3000, otherwise don't
 

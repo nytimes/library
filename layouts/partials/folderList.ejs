@@ -10,7 +10,7 @@
       <% if (parents.includes(folder.id)) { %>
         <%= folder.prettyName %>
       <% } else { %>
-        <a href="?id=<%= locals.id %>&dest=<%= folder.id %>"><%= folder.prettyName %></a>
+        <a href="/library?id=<%= locals.id %>&dest=<%= folder.id %>"><%= folder.prettyName %></a>
       <% } %>
       <%- include('./folderList', {folders: folder.children, id, parents}) %>
     </li>

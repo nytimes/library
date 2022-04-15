@@ -9,10 +9,10 @@
   <div class="g-body" id="playlist-page">
     <p class="playlist-navigation">
       <!-- include the text of the next item here? -->
-      <a id="previous" href="<%- previous.url %>">
+      <a id="previous" href="/library<%- previous.url %>">
         <%- template('playlist.nav.previous') %>
         <%= previous.name %></a>
-      <a id="next" href="<%- next.url %>">
+      <a id="next" href="/library<%- next.url %>">
         <%= next.name %>
         <%- template('playlist.nav.next') %></a>
     </p>
@@ -25,8 +25,8 @@
       <% } %>
       <p class="playlist-navigation">
           <!-- include the text of the next item here? -->
-        <a id="previous" href="<%- previous.url %>"><%- template('playlist.nav.previous') %> <%= previous.name %></a>
-        <a id="next" href="<%- next.url %>"><%= next.name %> <%- template('playlist.nav.next') %></a>
+        <a id="previous" href="/library<%- previous.url %>"><%- template('playlist.nav.previous') %> <%= previous.name %></a>
+        <a id="next" href="/library<%- next.url %>"><%= next.name %> <%- template('playlist.nav.next') %></a>
       </p>
     </div>
     <%- include('../partials/footer', { pageType: 'playlist' }) %>
