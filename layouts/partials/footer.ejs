@@ -37,13 +37,13 @@
   // get the userinfo then fire a pageview (can't cache in the page)
   $.ajax({
     method: 'GET',
-    url: '/whoami.json'
+    url: '/library/whoami.json'
   }).always(function (data) {
     var userId = (data || {}).analyticsUserId;
     if (userId) {
       ga('set', 'userId', userId)
 
-      if(window.location.pathname === '/') {
+      if(window.location.pathname === '/library/') {
         $(document).ready(function() {
           personalizeHomepage(userId)
         })
@@ -71,7 +71,7 @@
   if (!lastFilenameFetch || now - lastFilenameFetch.lastFetched > 600000) { // 10 min
     $.ajax({
       method: 'GET',
-      url: '/filename-listing.json',
+      url: '/library/filename-listing.json',
       json: true
     }).then(function(data, textStatus, xhr) {
       if (xhr.status !== 200) return; // if ajax fails, continue with old listing
