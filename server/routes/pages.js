@@ -35,7 +35,7 @@ async function handlePage(req, res) {
       if (autocomplete) {
         // filter here first to make sure only _one_ document exists with this exact name
         const exactMatches = results.filter((i) => i.prettyName === q)
-        if (exactMatches.length === 1) return res.redirect(exactMatches[0].path)
+        if (exactMatches.length === 1) return res.redirect('/library' + exactMatches[0].path)
       }
 
       res.format({
