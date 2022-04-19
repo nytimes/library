@@ -89,7 +89,7 @@ function normalizeHtml(html) {
       const {path: libraryPath} = isDoc ? list.getMeta(docId) || {} : {}
       const libraryDeepLink = deepLink && libraryPath ? `${libraryPath}#${deepLink}` : libraryPath
 
-      $(el).attr('href', libraryDeepLink || decoded)
+      $(el).attr('href', ('/library' + libraryDeepLink) || decoded)
     }
 
     return el
