@@ -24,9 +24,10 @@
           }
           const iconName = iconMap[type] || 'external-link'
           const className = `fa-${iconName}`
+          const href = link.url.match(/^https?:\/\//) ? link.url : `/library${link.url}`
           %>
           <i class="fa foldericon <%= className %>" aria-hidden="true"></i>
-          <a class="content-link" href="/library<%- link.url %>" ><%= link.name %></a>
+          <a class="content-link" href="<%= href %>" ><%= link.name %></a>
         </li>
       <% }) %>
     </ul>
