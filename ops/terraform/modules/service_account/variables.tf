@@ -11,7 +11,7 @@ variable "service_account_display_name" {
 variable "service_account_description" {
   description = "Helpful description of the service account. Defaults to a somewhat descriptive string if nothing is passed"
   type = string
-  default = "Main service accounmt for the library application"
+  default = "Main service account for the library application"
 }
 
 # Optional variable to automatically generate an API key for the service account and store it in secrets manager

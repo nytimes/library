@@ -12,25 +12,31 @@ resource "google_service_account_key" "main" {
 
 resource "google_secret_manager_secret" "main_publickey" {
   count = var.use_secretsmanager ? 1 : 0
-  secret_id = "/service_account/${var.service_account_id}/PUBLIC_KEY"
+  secret_id = "${var.service_account_id}-public-key"
+  replication {
+    automatic = true
+  }
 }
 
 resource "google_secret_manager_secret_version" "main_publickey" {
   count = var.use_secretsmanager ? 1 : 0
-  secret = google_secret_manager_secret.main_publickey.id
+  secret = google_secret_manager_secret.main_publickey[0].id
 
-  secret_data = google_service_account_key.main.public_key
+  secret_data = google_service_account_key.main[0].public_key
 }
 
 resource "google_secret_manager_secret" "main_privatekey" {
   count = var.use_secretsmanager ? 1 : 0
-  secret_id = "${var.service_account_id}/PRIVATE_KEY"
+  secret_id = "${var.service_account_id}-private-key"
+  replication {
+    automatic = true
+  }
 }
 
 resource "google_secret_manager_secret_version" "main_privatekey" {
   count = var.use_secretsmanager ? 1 : 0
-  secret = google_secret_manager_secret.main_privatekey.id
+  secret = google_secret_manager_secret.main_privatekey[0].id
 
-  secret_data = google_service_account_key.main.private_key
+  secret_data = google_service_account_key.main[0].private_key
 }
 
