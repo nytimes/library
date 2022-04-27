@@ -1,6 +1,3 @@
-data "google_project" "current" {
-}
-
 locals {
   # App engine recognizes us-central1 as "us-central" and "europe-west1" as "europe-west", but will take any other region ID normally
   # We don't convert europe-west though because we do not want to deploy any resources to outside of the US
@@ -9,7 +6,7 @@ locals {
 }
 
 resource "google_app_engine_application" "app" {
-  project              = data.google_project.current.project_id
+  project              = var.project_id
   database_type        = var.database_type
   location_id          = local.location_id
 }
