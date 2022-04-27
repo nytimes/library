@@ -10,6 +10,15 @@ resource "google_service_account_key" "main" {
   service_account_id = google_service_account.main.name
 }
 
+# Bind the IAM role roles/datastore.user to the service account
+resource "google_project_iam_binding" "main" {
+  project = var.project_id
+  role    = "roles/datastore.user"
+  members = [
+    "serviceAccount:${google_service_account.main.email}"
+  ]
+}
+
 resource "google_secret_manager_secret" "main_publickey" {
   count = var.use_secretsmanager ? 1 : 0
   secret_id = "${var.service_account_id}-public-key"
