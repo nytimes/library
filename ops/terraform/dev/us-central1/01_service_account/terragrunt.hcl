@@ -7,6 +7,13 @@ include {
    path = find_in_parent_folders()
 }
 
+# Set a dependency for the GCP APIs being enabled, which will prevent this module from running too early
+dependency "library_service_api" {
+  config_path = "../00_library_service_api"
+  skip_outputs = true
+}
+
+
 locals {
   environment = "dev"
   resource_prefix = "nytimes-library"
