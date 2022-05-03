@@ -12,9 +12,9 @@ locals {
 }
 
 generate "provider" {
-   path = "provider.tf"
-   if_exists = "overwrite_terragrunt"
-   contents = <<EOF
+  path      = "provider.tf"
+  if_exists = "overwrite_terragrunt"
+  contents  = <<EOF
 provider "google" {
    project = "${local.project_id}"
    region  = "${local.region}"
@@ -23,18 +23,18 @@ EOF
 }
 
 remote_state {
-   backend = "gcs"
-   generate = {
-      path = "backend.tf"
-      if_exists = "overwrite_terragrunt"
-   }
+  backend = "gcs"
+  generate = {
+    path      = "backend.tf"
+    if_exists = "overwrite_terragrunt"
+  }
 
-   config = {
-      project = "${local.project_id}"
-      location = "us"
-      bucket = "${local.account_name}-tfstate"
-      prefix = "${path_relative_to_include()}/terraform.tfstate"
-   }
+  config = {
+    project  = "${local.project_id}"
+    location = "us"
+    bucket   = "${local.account_name}-tfstate"
+    prefix   = "${path_relative_to_include()}/terraform.tfstate"
+  }
 }
 
 inputs = merge(

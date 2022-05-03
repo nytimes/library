@@ -1,28 +1,28 @@
 # Terraform module call to configure datastore for LibraryViewDoc Entity kind
 terraform {
-   source = "${get_parent_terragrunt_dir()}//modules//service_account"
+  source = "${get_parent_terragrunt_dir()}//modules//service_account"
 }
 
 include {
-   path = find_in_parent_folders()
+  path = find_in_parent_folders()
 }
 
 # Set a dependency for the GCP APIs being enabled, which will prevent this module from running too early
 dependency "library_service_api" {
-  config_path = "../00_library_service_api"
+  config_path  = "../00_library_service_api"
   skip_outputs = true
 }
 
 
 locals {
-  environment = "dev"
+  environment     = "dev"
   resource_prefix = "nytimes-library"
-  project_id = read_terragrunt_config(find_in_parent_folders("account.hcl"))
+  project_id      = read_terragrunt_config(find_in_parent_folders("account.hcl"))
 }
 
 inputs = {
-  project_id         = local.project_id.locals.project_id
-  service_account_id = "${local.resource_prefix}-${local.environment}"
+  project_id                   = local.project_id.locals.project_id
+  service_account_id           = "${local.resource_prefix}-${local.environment}"
   service_account_display_name = "${local.resource_prefix}-${local.environment}"
-  use_secretsmanager = true
+  use_secretsmanager           = true
 }
