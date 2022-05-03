@@ -5,7 +5,7 @@ resource "google_datastore_index" "main" {
   dynamic "properties" {
     for_each = var.properties[*]
     content {
-      name = lookup(properties.value, "name", null)
+      name      = lookup(properties.value, "name", null)
       direction = lookup(properties.value, "direction", null)
     }
   }

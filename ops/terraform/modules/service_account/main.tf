@@ -6,7 +6,7 @@ resource "google_service_account" "main" {
 
 
 resource "google_service_account_key" "main" {
-  count = var.use_secretsmanager ? 1 : 0
+  count              = var.use_secretsmanager ? 1 : 0
   service_account_id = google_service_account.main.name
 }
 
@@ -20,7 +20,7 @@ resource "google_project_iam_binding" "main" {
 }
 
 resource "google_secret_manager_secret" "main_publickey" {
-  count = var.use_secretsmanager ? 1 : 0
+  count     = var.use_secretsmanager ? 1 : 0
   secret_id = "${var.service_account_id}-public-key"
   replication {
     automatic = true
@@ -28,14 +28,14 @@ resource "google_secret_manager_secret" "main_publickey" {
 }
 
 resource "google_secret_manager_secret_version" "main_publickey" {
-  count = var.use_secretsmanager ? 1 : 0
+  count  = var.use_secretsmanager ? 1 : 0
   secret = google_secret_manager_secret.main_publickey[0].id
 
   secret_data = google_service_account_key.main[0].public_key
 }
 
 resource "google_secret_manager_secret" "main_privatekey" {
-  count = var.use_secretsmanager ? 1 : 0
+  count     = var.use_secretsmanager ? 1 : 0
   secret_id = "${var.service_account_id}-private-key"
   replication {
     automatic = true
@@ -43,7 +43,7 @@ resource "google_secret_manager_secret" "main_privatekey" {
 }
 
 resource "google_secret_manager_secret_version" "main_privatekey" {
-  count = var.use_secretsmanager ? 1 : 0
+  count  = var.use_secretsmanager ? 1 : 0
   secret = google_secret_manager_secret.main_privatekey[0].id
 
   secret_data = google_service_account_key.main[0].private_key

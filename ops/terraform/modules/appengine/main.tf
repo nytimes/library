@@ -6,9 +6,9 @@ locals {
 }
 
 resource "google_app_engine_application" "app" {
-  project              = var.project_id
-  database_type        = var.database_type
-  location_id          = local.location_id
+  project       = var.project_id
+  database_type = var.database_type
+  location_id   = local.location_id
 }
 
 

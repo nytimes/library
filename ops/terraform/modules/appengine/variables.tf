@@ -1,6 +1,6 @@
 variable "project_id" {
   description = "The project ID to create resources in. Required"
-  type    = string
+  type        = string
 }
 
 
@@ -17,7 +17,7 @@ variable "project_id" {
 
 variable "region" {
   description = "The region ID to place the application in. Required"
-  type = string
+  type        = string
 }
 
 variable "database_type" {
