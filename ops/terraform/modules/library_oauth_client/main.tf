@@ -30,3 +30,31 @@ resource "google_secret_manager_secret" "main_client_secret" {
     automatic = true
   }
 }
+
+# Create a random string used for the Library app's oauth session secret string
+
+resource "random_password" "session_secret" {
+  count            = var.use_secretsmanager ? 1 : 0
+  length           = 48
+  special          = true
+  min_special      = 6
+  override_special = "#_%^"
+  keepers = {
+    pass_version = 1
+  }
+}
+
+resource "google_secret_manager_secret" "main_session_secret" {
+  count     = var.use_secretsmanager ? 1 : 0
+  secret_id = "${var.secretsmanager_resource_prefix}-oauth-session-secret"
+  replication {
+    automatic = true
+  }
+}
+
+resource "google_secret_manager_secret_version" "main_session_secret" {
+  count  = var.use_secretsmanager ? 1 : 0
+  secret = google_secret_manager_secret.main_session_secret[0].id
+
+  secret_data = random_password.session_secret[0].result
+}
