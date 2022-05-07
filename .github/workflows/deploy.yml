@@ -36,7 +36,7 @@ jobs:
           echo GOOGLE_CLIENT_SECRET >> .env
           echo SESSION_SECRET >> .env
 
-          echo $LIBRARY_SA_CREDENTIALS > ./server/.auth.json
+          echo $LIBRARY_SA_CREDENTIALS | base64 -d > ./server/.auth.json
 
           npm run gcp-build
         env:
