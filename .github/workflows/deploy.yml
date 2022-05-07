@@ -21,6 +21,39 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build for GCP
+        run: |
+          echo NODE_ENV=$NODE_ENV > .env
+          echo OAUTH_STRATEGY=$OAUTH_STRATEGY >> .env
+          echo GCP_PROJECT=$GCP_PROJECT >> .env
+          echo DRIVE_TYPE=$DRIVE_TYPE >> .env
+          echo TRUST_PROXY=$TRUST_PROXY >> .env
+          echo APPROVED_DOMAINS=$APPROVED_DOMAINS >> .env
+          echo GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS >> .env
+          echo CUSTOMIZATION_GIT_REPO=$CUSTOMIZATION_GIT_REPO >> .env
+          echo DRIVE_ID=$DRIVE_ID >> .env
+          echo GOOGLE_CLIENT_ID >> .env
+          echo GOOGLE_CLIENT_SECRET >> .env
+          echo SESSION_SECRET >> .env
+
+          echo $LIBRARY_SA_CREDENTIALS > ./server/.auth.json
+
+          npm run gcp-build
+        env:
+          NODE_ENV: production
+          OAUTH_STRATEGY: google
+          GCP_PROJECT: centering-oxide-347014
+          DRIVE_TYPE: folder
+          TRUST_PROXY: true
+          APPROVED_DOMAINS: "(.*)"
+          GOOGLE_APPLICATION_CREDENTIALS: ./server/.auth.json
+          CUSTOMIZATION_GIT_REPO: https://github.com/newsguildny/library-customizations
+          DRIVE_ID: ${{ secrets.DRIVE_ID }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          LIBRARY_SA_CREDENTIALS: ${{ secrets.LIBRARY_SA_CREDENTIALS }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+
       - uses: actions-hub/gcloud@master
         env:
           PROJECT_ID: centering-oxide-347014
