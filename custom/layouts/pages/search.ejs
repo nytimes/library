@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <%- include('partials/head', {title: template('search.results.title', locals.q)}) %>
+  
+  <!-- Font Awesome used for displaying FileType Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" 
+        integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" 
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <body>
+    <%- include('partials/header', {parentLinks: [], title: template('search.results.title', locals.q)}) %>
+
+    <%- include('partials/nav') %>
+
+    <div class="g-body">
+      <div class="g-main-content" id="g-search-page">
+        <% if (locals.results && results.length) { %>
+          <h3 class="search-kicker"><%- template('search.results.kicker', locals.q) %></h3>
+          <% results.forEach((res) => { %>
+          <div class="search-result">
+            <h3><a href="<%= res.path %>"><%= res.prettyName %></a></h3>
+            <%- include('partials/fileType', { mimeType: res.mimeType }) %>
+            <p>
+              <% if (res.folder) { %>
+                <%- template('search.results.label.folder', res.folder.path, res.folder.prettyName || 'Home')%>&nbsp;
+              <% } %>
+              <% if (res.lastModifyingUser && res.lastModifyingUser.displayName) { %>
+                <%- template('search.results.label.person', res.lastModifyingUser.displayName) %>
+              <% } %>
+              <%= res.lastUpdated %>
+            </p>
+          </div>
+          <% }) %>
+        <% }  else { %>
+          <h3 class="search-kicker"><%- template('search.results.none.kicker', locals.q) %></h3>
+          <p><%- template('search.results.none.suggestion') %></p>
+        <% } %>
+      </div>
+
+      <%- include('partials/footer', { pageType: 'search' }) %>
+      
+      <!-- Font Awesome used for displaying FileType Icons -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/js/fontawesome.min.js" 
+              integrity="sha512-5qbIAL4qJ/FSsWfIq5Pd0qbqoZpk5NcUVeAAREV2Li4EKzyJDEGlADHhHOSSCw0tHP7z3Q4hNHJXa81P92borQ==" crossorigin="anonymous" 
+              referrerpolicy="no-referrer"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/js/solid.min.js" 
+              integrity="sha512-C92U8X5fKxCN7C6A/AttDsqXQiB7gxwvg/9JCxcqR6KV+F0nvMBwL4wuQc+PwCfQGfazIe7Cm5g0VaHaoZ/BOQ==" crossorigin="anonymous" 
+              referrerpolicy="no-referrer"></script>
+    </div>
+  </body>
+</html>
