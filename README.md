@@ -50,6 +50,23 @@ search:
       person: ...
 ```
 
+### Route Handler Hooks
+
+Router handlers can be customized by creating custom handlers in:
+
+```
+/custom/routes/...
+```
+
+For example, to create a custom page handler:
+
+1. Create a copy of the file `/server/routes/pages.js` and put it in `/custom/routes/pages.js`
+2. Customize pages.js as needed
+3. Make sure all `require()` references the files the server directory. Example: `require('../../server/list')` or `require('../../utils')` and use `requireWithFallback()`.
+
+This would be useful in cases if you wanted to modify data without resorting to middleware.  An example would be adding a property to the response without writing middleware to parse the payload or override `response.send()`.
+
+
 ---
 ## Demo Site & User Guide
 
