@@ -14,3 +14,38 @@
     }
   }
 }
+
+// override poor usage of z-index from upstream 
+.masthead {
+  z-index: 1;
+}
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0,0,0,.25);
+}
+.modalBody {
+  padding: 1rem 2rem;
+  background-color: #fff;
+  box-shadow: 5px 5px 0px 0px $gray-25;
+  header {
+    margin-bottom: 1rem;
+    padding-bottom: .5rem;
+    border-bottom: 1px solid $gray-60;
+    font-weight: bold;
+    color: $green-primary;
+  }
+  footer {
+    margin-top: 1rem;
+  }
+  input[type=radio] {
+    margin-right: .25rem;
+  }
+}
