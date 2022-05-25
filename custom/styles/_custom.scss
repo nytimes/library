@@ -1,0 +1,16 @@
+#usefulness-feedback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  max-width: 20rem;
+  margin: 0 auto;
+  padding: 1rem;
+  background-color: $gray-70;
+  a {
+    background-color: #fff;
+    i {
+      margin-right: .25rem;
+    }
+  }
+}

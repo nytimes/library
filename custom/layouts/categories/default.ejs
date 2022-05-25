@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <%- include('partials/head') %>
+  <body>
+    <h1 class="visually-hidden">Default template</h1>
+    <%- include('partials/header') %>
+    <%- include('partials/nav') %>
+    <div class="g-body">
+      <div class="g-left-panel">
+        <% if (locals.sections && locals.sections.length) { %>
+          <!-- is this TOC -->
+          <%- include('partials/sectionList') %>
+        <% } %>
+        <!-- Hide sibling docs on normal pages -->
+        <!-- <% if (locals.siblings && siblings.length) { %>
+        <%- include('partials/siblingList', {kicker: template('folder.siblingList.heading')}) %>
+        <% } %> -->
+      </div>
+
+      <div class="g-main-content">
+        <% if (locals.content) { %>
+        <%- content %>
+        <div id="usefulness-feedback">
+          Was this helpful?
+          <a class="button" href=""><i class="fa fa-thumbs-up" aria-hidden="true"></i>Yes</a>
+          <a class="button" href=""><i class="fa fa-thumbs-down" aria-hidden="true"></i>No</a>
+        </div>
+        <% } %>
+
+        <% if (locals.children && children.length) { %>
+        <%- include('partials/childrenList', {children, kicker: template('folder.childrenList.kicker', title)}) %>
+        <% } %>
+      </div>
+      <%- include('partials/imgModal') %>
+      <%- include('partials/footer', { pageType: 'document', topLevelFolder: url.split('/')[1] }) %>
+    </div>
+  </body>
+</html>
