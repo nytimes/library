@@ -2,6 +2,10 @@
 
 // override poor usage of z-index from upstream 
 .masthead {
+  z-index: 2;
+}
+
+.search-container .icon {
   z-index: 1;
 }
 
