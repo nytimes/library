@@ -32,9 +32,25 @@
   background-color: rgba(0,0,0,.25);
 }
 .modalBody {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
   padding: 1rem 2rem;
   background-color: #fff;
   box-shadow: 5px 5px 0px 0px $gray-25;
+
+  .modalGraphic {
+    height: 10rem;
+    width: 10rem;
+    background-image: url(/assets/images/blocky-arms-up.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 75%;
+    background-color: #88caa6;
+    border-radius: 50%;
+  }
+
   header {
     margin-bottom: 1rem;
     padding-bottom: .5rem;
