@@ -24,7 +24,8 @@
   margin: 0 auto;
   padding: 1rem;
   background-color: $gray-70;
-  a {
+  > button {
+    padding: .25rem .5rem;
     background-color: #fff;
     i {
       margin-right: .25rem;
