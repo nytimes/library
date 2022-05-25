@@ -1,3 +1,20 @@
+// =Overrides
+
+// override poor usage of z-index from upstream 
+.masthead {
+  z-index: 1;
+}
+
+// =General
+
+.button-accent {
+  color: #fff;
+  background-color: $accent;
+  border-color: $accent;
+}
+
+// =Specific
+
 #usefulness-feedback {
   display: flex;
   align-items: center;
@@ -15,10 +32,7 @@
   }
 }
 
-// override poor usage of z-index from upstream 
-.masthead {
-  z-index: 1;
-}
+
 .modal {
   position: fixed;
   top: 0;
