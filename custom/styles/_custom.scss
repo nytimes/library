@@ -9,7 +9,11 @@
   z-index: 1;
 }
 
-// =General
+// =General use
+
+.wrapper {
+  padding: 0 1rem;
+}
 
 .button-accent {
   color: #fff;
@@ -42,7 +46,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 2;
+  z-index: 3;
   height: 100vh;
   width: 100%;
   display: flex;
@@ -54,14 +58,28 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
-  padding: 1rem 2rem;
+  gap: .5rem;
+  padding: .5rem 1rem;
   background-color: #fff;
   box-shadow: 5px 5px 0px 0px $gray-25;
 
+  transition: .5s;
+  @media screen and ( min-width:35rem ) {
+    gap: 1rem;
+    padding: 1rem 2rem;
+  }
+
   .modalGraphic {
-    height: 10rem;
-    width: 10rem;
+    height: 5rem;
+    width: 5rem;
+    min-width: 5rem;
+    
+    transition: .5s;
+    @media screen and ( min-width:35rem ) {
+      height: 8rem;
+      width: 8rem;
+    }
+    
     background-image: url(/assets/images/blocky-arms-up.svg);
     background-repeat: no-repeat;
     background-position: center;
