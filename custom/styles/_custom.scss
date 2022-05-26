@@ -86,6 +86,10 @@
     background-size: 75%;
     background-color: #88caa6;
     border-radius: 50%;
+
+    &.blocky-lookng-down {
+      background-image: url(/assets/images/blocky-looking-down.svg);
+    }
   }
 
   header {
