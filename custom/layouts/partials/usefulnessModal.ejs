@@ -1,4 +1,4 @@
-<div id="usefulness-feedback">
+<div id="usefulness-feedback" data-document-id=<%= id %>>
   Was this helpful?
   <button id="usefulYes" data-launch-modal="useful-yes" class="button"><i class="fa fa-thumbs-up" aria-hidden="true"></i>Yes</button>
   <button id="usefulNo" data-launch-modal="useful-no" class="button"><i class="fa fa-thumbs-down" aria-hidden="true"></i>No</button>
@@ -45,18 +45,28 @@
     </div>
     <button class="modal-close" data-type='cancel' type="button">Close</button>
   </div>
+</div>
+<script type="text/javascript">
+  // Allow buttons to display modals
+  $('[data-launch-modal').on('click', function(){
+    const modalName = $(this).attr('data-launch-modal');
+    $('[data-modal=' + modalName + ']').addClass('active');
+  });
 
-  <script>
+  // Allow buttons to close modals
+  $('[data-type=cancel]').on('click', function(){
+    $(this).parents('.modal').removeClass('active');
+  });
 
-    // Allow buttons to display modals
-    $('[data-launch-modal').on('click', function(){
-      const modalName = $(this).attr('data-launch-modal');
-      $('[data-modal=' + modalName + ']').addClass('active');
-    });
-
-    // Allow buttons to close modals
-    $('[data-type=cancel]').on('click', function(){
-      $(this).parents('.modal').removeClass('active');
-    });
+  $('[data-type=submit]').on('click', function(){
+    // Submit usefulness feedback
+    const documentId =  $(this).parents('[data-document-id]').attr("data-document-id");
+    fetch('/api/upvote', {
+      method: 'POST',
+      body: JSON.stringify({ id: documentId })})
+        .then(res => console.log(res, res.json().then(d => console.log(d))));
+    // close the modal
+    $(this).parents('.modal').removeClass('active');
+  });
 
   </script>
