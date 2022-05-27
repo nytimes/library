@@ -7,18 +7,20 @@ const csp = require('helmet-csp')
 const {middleware: cache} = require('./cache')
 const {getMeta} = require('./list')
 const {allMiddleware, requireWithFallback} = require('./utils')
-const userInfo = requireWithFallback('./routes/userInfo')
-const pages = requireWithFallback('./routes/pages')
-const categories = requireWithFallback('./routes/categories')
-const playlists = requireWithFallback('./routes/playlists')
-const readingHistory = requireWithFallback('./routes/readingHistory')
-const redirects = requireWithFallback('./routes/redirects')
-const errorPages = requireWithFallback('./routes/errors')
+const userInfo = requireWithFallback('./routes/userInfo') // AdHoc: Changed to requireWithFallback
+const pages = requireWithFallback('./routes/pages') // AdHoc: Changed to requireWithFallback
+const categories = requireWithFallback('./routes/categories') // AdHoc: Changed to requireWithFallback
+const playlists = requireWithFallback('./routes/playlists') // AdHoc: Changed to requireWithFallback
+const readingHistory = requireWithFallback('./routes/readingHistory') // AdHoc: Changed to requireWithFallback
+const redirects = requireWithFallback('./routes/redirects') // AdHoc: Changed to requireWithFallback
+const errorPages = requireWithFallback('./routes/errors') // AdHoc: Changed to requireWithFallback
 
 const userAuth = requireWithFallback('userAuth')
 const customCsp = requireWithFallback('csp')
 
 const app = express()
+// AdHoc: Added Body Parser to support posts
+app.use(express.json())
 
 const {preload, postload} = allMiddleware
 
