@@ -1,4 +1,4 @@
-# Terraform module call to configure datastore for LibraryViewDoc Entity kind
+# Terraform module to create the IAM service account used by the content library app
 terraform {
   source = "${get_parent_terragrunt_dir()}//modules//service_account"
 }

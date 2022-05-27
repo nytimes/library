@@ -3,18 +3,6 @@ variable "project_id" {
   type        = string
 }
 
-
-# Unsure what these are for, not used so will be disabling for now
-# variable "client_id" {
-#   type    = string
-# }
-
-
-# variable "client_secret" {
-#   type    = string
-# }
-
-
 variable "region" {
   description = "The region ID to place the application in. Required"
   type        = string

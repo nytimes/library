@@ -1,4 +1,4 @@
-# Terraform module call to configure datastore for LibraryViewDoc Entity kind
+# Terraform module call to configure datastore for LibraryViewTeam Entity kind
 terraform {
   source = "${get_parent_terragrunt_dir()}//modules//datastore"
 }

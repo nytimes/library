@@ -1,4 +1,4 @@
-# Terraform module call to configure datastore for LibraryViewDoc Entity kind
+# Terraform module call to configure the OAuth client for the nytimes library app
 terraform {
   source = "${get_parent_terragrunt_dir()}//modules//library_oauth_client"
 }
