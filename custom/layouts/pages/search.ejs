@@ -19,6 +19,7 @@
           <div class="search-result">
             <h3><a href="<%= res.path %>"><%= res.prettyName %></a></h3>
             <%- include('partials/fileType', { mimeType: res.mimeType }) %>
+            For NS: ID to use when voting: <%- res.id %>
             <p>
               <% if (res.folder) { %>
                 <%- template('search.results.label.folder', res.folder.path, res.folder.prettyName || 'Home')%>&nbsp;
