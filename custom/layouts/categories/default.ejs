@@ -20,50 +20,7 @@
       <div class="g-main-content">
         <% if (locals.content) { %>
         <%- content %>
-        <div id="usefulness-feedback">
-          Was this helpful?
-          <button class="button"><i class="fa fa-thumbs-up" aria-hidden="true"></i>Yes</button>
-          <button class="button"><i class="fa fa-thumbs-down" aria-hidden="true"></i>No</button>
-          <div class="modal">
-            <div class="wrapper">
-              <section class="modalBody">
-                <div class="modalGraphic"></div>
-                <div class="modalContent">
-                  <header>
-                    What is the reason for your feedback?
-                  </header>
-                  <div><input name="reason" id="growth" type="radio" /><label for="growth">Used for growth</label></div>
-                  <div><input name="reason" id="training" type="radio" /><label for="training">Used for training</label></div>
-                  <div><input name="reason" id="other" type="radio" /><label for="other">Other</label></div>
-                  <footer>
-                    <button class="button" href="">Cancel</button>
-                    <button class="button button-accent" href="">Submit</button>
-                  </footer>
-                </div>
-              </section>
-            </div>
-          </div>
-
-          <div class="modal">
-            <div class="wrapper">
-              <section class="modalBody">
-                <div class="modalGraphic blocky-lookng-down"></div>
-                <div class="modalContent">
-                  <header>
-                    What is the reason for your feedback?
-                  </header>
-                  <div><input name="reason" id="not-relevant" type="radio" /><label for="not-relevant">Not relevant</label></div>
-                  <div><input name="reason" id="hard-to-understand" type="radio" /><label for="hard-to-understand">Hard to understand</label></div>
-                  <div><input name="reason" id="incorrect" type="radio" /><label for="incorrect">Incorrect information</label></div>
-                  <div><input name="reason" id="other-unhelpful" type="radio" /><label for="other-unhelpful">Other</label></div>
-                  <footer>
-                    <button class="button" href="">Cancel</button>
-                    <button class="button button-accent" href="">Submit</button>
-                  </footer>
-                </div>
-              </section>
-            </div>
-          </div>
+        <%- include('partials/usefulnessModal.ejs') %>
         </div>
         <% } %>
 

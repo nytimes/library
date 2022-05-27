@@ -43,16 +43,24 @@
 
 
 .modal {
+  display: none;
+  &.active {
+    display: flex;
+  }
+  align-items: center;
+  justify-content: center;
   position: fixed;
   top: 0;
   left: 0;
   z-index: 3;
   height: 100vh;
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   background-color: rgba(0,0,0,.25);
+
+  .wrapper {
+    position: relative;
+    z-index: 3;
+  }
 }
 .modalBody {
   display: flex;
@@ -105,4 +113,12 @@
   input[type=radio] {
     margin-right: .25rem;
   }
+}
+
+.modal-close {
+  height: 100vh;
+  width: 100%;
+  position: fixed;
+  background: none;
+  border: none;
 }
