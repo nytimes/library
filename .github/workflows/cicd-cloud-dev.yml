@@ -34,4 +34,5 @@ jobs:
           drive_type: ${{ secrets.DRIVE_TYPE }} 
           # the ID of your team's drive or shared folder. The string of random numbers and letters at the end of your team drive or folder url.
           drive_id: ${{ secrets.DRIVE_ID }} 
-      - run: npm install
+      - run: npm ci
+      - run: npm run build
