@@ -16,7 +16,7 @@
           <div><input name="reason" id="other" type="radio" /><label for="other">Other</label></div>
           <footer>
             <button data-type="cancel" type="button" class="button">Cancel</button>
-            <button data-type="submit" type="button" class="button button-accent">Submit</button>
+            <button data-type="submit" type="button" class="button button-accent" value="yes">Submit</button>
           </footer>
         </div>
       </section>
@@ -38,8 +38,7 @@
           <div><input name="reason" id="other-unhelpful" type="radio" /><label for="other-unhelpful">Other</label></div>
           <footer>
             <button data-type="cancel" class="button">Cancel</button>
-            <button data-type="submit" class="button button-accent">Submit</button>
-          </footer>
+            <button data-type="submit" class="button button-accent" value="no">Submit</button>
         </div>
       </section>
     </div>
@@ -60,13 +59,19 @@
 
   $('[data-type=submit]').on('click', function(){
     // Submit usefulness feedback
-    const documentId =  $(this).parents('[data-document-id]').attr("data-document-id");
-    fetch('/api/upvote', {
-      method: 'POST',
-      body: JSON.stringify({ id: documentId })})
-        .then(res => console.log(res, res.json().then(d => console.log(d))));
+    const documentId = $(this).parents('[data-document-id]').attr("data-document-id");
+    const location = $(this).val() == 'yes' ? '/api/upvote' : '/api/downvote'
+    post(location, {
+      id: documentId
+    });
     // close the modal
     $(this).parents('.modal').removeClass('active');
   });
 
+  function post(location, payload){
+    fetch(location, {
+      method: 'POST',
+      body: JSON.stringify(payload)})
+        .then(res => console.log(res, res.json().then(d => console.log(d))));
+  }
   </script>
