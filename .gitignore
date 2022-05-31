@@ -13,3 +13,7 @@ coverage
 .npmrc*
 .vscode
 .idea
+
+.terraform
+*.tfstate
+.terragrunt-cache
