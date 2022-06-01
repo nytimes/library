@@ -11,12 +11,12 @@
           <header>
             What is the reason for your feedback?
           </header>
-          <div><input name="reason" id="growth" type="radio" /><label for="growth">Used for growth</label></div>
-          <div><input name="reason" id="training" type="radio" /><label for="training">Used for training</label></div>
-          <div><input name="reason" id="other" type="radio" /><label for="other">Other</label></div>
+          <div><input name="reason" value="Used for growth" id="yes-reason-1" type="radio" /><label for="yes-reason-1">Used for growth</label></div>
+          <div><input name="reason" value="Used for training" id="yes-reason-2" type="radio" /><label for="yes-reason-2">Used for training</label></div>
+          <div><input name="reason" value="Other" id="yes-reason-3" type="radio" /><label for="yes-reason-3">Other</label></div>
           <footer>
             <button data-type="cancel" type="button" class="button">Cancel</button>
-            <button data-type="submit" type="button" class="button button-accent">Submit</button>
+            <button data-type="submit" type="button" class="button button-accent" value="yes">Submit</button>
           </footer>
         </div>
       </section>
@@ -32,14 +32,13 @@
           <header>
             What is the reason for your feedback?
           </header>
-          <div><input name="reason" id="not-relevant" type="radio" /><label for="not-relevant">Not relevant</label></div>
-          <div><input name="reason" id="hard-to-understand" type="radio" /><label for="hard-to-understand">Hard to understand</label></div>
-          <div><input name="reason" id="incorrect" type="radio" /><label for="incorrect">Incorrect information</label></div>
-          <div><input name="reason" id="other-unhelpful" type="radio" /><label for="other-unhelpful">Other</label></div>
+          <div><input name="reason" value="Not relevant" id="no-reason-1" type="radio" /><label for="no-reason-1">Not relevant</label></div>
+          <div><input name="reason" value="Hard to understand" id="no-reason-2" type="radio" /><label for="no-reason-2">Hard to understand</label></div>
+          <div><input name="reason" value="Incorrect information" id="no-reason-3" type="radio" /><label for="no-reason-3">Incorrect information</label></div>
+          <div><input name="reason" value="Other" id="no-reason-4" type="radio" /><label for="no-reason-4">Other</label></div>
           <footer>
             <button data-type="cancel" class="button">Cancel</button>
-            <button data-type="submit" class="button button-accent">Submit</button>
-          </footer>
+            <button data-type="submit" class="button button-accent" value="no">Submit</button>
         </div>
       </section>
     </div>
@@ -60,13 +59,21 @@
 
   $('[data-type=submit]').on('click', function(){
     // Submit usefulness feedback
-    const documentId =  $(this).parents('[data-document-id]').attr("data-document-id");
-    fetch('/api/upvote', {
-      method: 'POST',
-      body: JSON.stringify({ id: documentId })})
-        .then(res => console.log(res, res.json().then(d => console.log(d))));
+    const documentId = $(this).parents('[data-document-id]').attr("data-document-id");
+    const location = $(this).val() == 'yes' ? '/api/upvote' : '/api/downvote';
+    const reason = $(this).parents('.modal').find('input[name="reason"]:checked').val();
+    post(location, {
+      id: documentId,
+      reason: reason,
+    });
     // close the modal
     $(this).parents('.modal').removeClass('active');
   });
 
+  function post(location, payload){
+    fetch(location, {
+      method: 'POST',
+      body: JSON.stringify(payload)})
+        .then(res => console.log(res, res.json().then(d => console.log(d))));
+  }
   </script>
