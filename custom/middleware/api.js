@@ -71,7 +71,7 @@ function updateVoteRecord(viewKey, metadata, userInfo, datastoreClient) {
         updatedData = existing
         updatedData.vote = metadata.vote
         updatedData.voteDate = new Date()
-        updatedData.voteReason = metadata.reason
+        updatedData.voteReason = metadata.voteReason
       } else {
         updatedData = Object.assign({
           userId: userInfo.userId,
