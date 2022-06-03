@@ -73,6 +73,9 @@
   function post(location, payload){
     fetch(location, {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(payload)})
         .then(res => console.log(res, res.json().then(d => console.log(d))));
   }

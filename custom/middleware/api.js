@@ -6,9 +6,8 @@ const {getAuth} = require('../../server/auth')
 const log = require('../../server/logger')
 
 const apiRoutes = {
-  '/api/hello': handleHello,
-  '/api/upvote': handleUpvote,
-  '/api/downvote': handleDownvote
+  '/api/upvote': handleVote(1),
+  '/api/downvote': handleVote(-1)
 }
 
 async function handleApi(req, res, next) {
@@ -21,36 +20,17 @@ async function handleApi(req, res, next) {
   }
 }
 
-async function handleHello(req, res, next) {
-  const result = await getDocumentById('1CEkEK7NzQ0oXKXZWSTsHfSeqnwohHwVgSjBqB2cOnPM')
+function handleVote(vote) {
+  return async function (req, res, _) {
+    const documentId = req.body.id
+    const reason = req.body.reason
+    const userInfo = req.userInfo
+    const datastoreClient = await getDatastoreClient()
 
-  res.send(JSON.stringify(result))
-}
+    recordVote(documentId, userInfo, vote, reason, datastoreClient)
 
-async function handleUpvote(req, res, next) {
-  const documentId = req.body.id
-  const userInfo = req.userInfo
-  const document = await getDocumentById(documentId)
-
-  if (document) {
-    // Up vote will be a +1
-    document.vote = 1
+    res.send({documentId})
   }
-
-  res.send({documentId})
-}
-
-async function handleDownvote(req, res, next) {
-  const documentId = req.body.id
-  const userInfo = req.userInfo
-  const document = await getDocumentById(documentId)
-
-  if (document) {
-    // Down vote will be -1
-    document.vote = -1
-  }
-
-  res.send({message: 'OK'})
 }
 
 router.use(handleApi)
@@ -76,14 +56,40 @@ async function getDatastoreClient() {
   })
 }
 
-async function getDocumentById(documentId) {
-  const datastore = await getDatastoreClient()
+async function recordVote(documentId, userInfo, vote, voteReason, datastoreClient) {
+  const docKey = datastoreClient.key(['LibraryViewDoc', [userInfo.userId, documentId].join(':')])
+  updateVoteRecord(docKey, {documentId, vote, voteReason}, userInfo, datastoreClient)
+}
 
-  const query = datastore.createQuery(['LibraryViewDoc']).filter('documentId', '=', documentId)
+function updateVoteRecord(viewKey, metadata, userInfo, datastoreClient) {
+  datastoreClient.get(viewKey)
+    .then((results) => {
+      const existing = results[0]
+      let updatedData
 
-  const result = await datastore.runQuery(query)
+      if (existing) {
+        updatedData = existing
+        updatedData.vote = metadata.vote
+        updatedData.voteDate = new Date()
+        updatedData.voteReason = metadata.reason
+      } else {
+        updatedData = Object.assign({
+          userId: userInfo.userId,
+          email: userInfo.email,
+          voteDate: new Date()
+        }, metadata)
+      }
 
-  return result.length > 0 ? result[0] : null
+      datastoreClient.upsert({
+        key: viewKey, data: updatedData
+      }).catch((err) => {
+        log.error('Failed saving vote data to GCloud datastore:', err)
+      })
+    }).catch((err) => {
+      // TODO: don't attempt to store if datastore is not enabled
+      if (err.code === 7) return log.warn('Cloud datastore not enabled. Vote data was not recorded.')
+      log.error(err)
+    })
 }
 
 // error functions are special. They have to be attached directly to the app.
