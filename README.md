@@ -33,6 +33,20 @@ A collaborative newsroom documentation site, powered by Google Docs.
 ---
 ## AdHoc Updates
 
+### Google Cloud DataStore
+
+The Content Library has the following entities in the Google Cloud DataStore:
+- `LibraryViewDoc` - Keeps track of user accesses per document
+- `express-sessions` - Used by Express 
+
+The main Google Cloud DataStore Entity used in the Content Library is `LibraryViewDoc`. `LibraryViewDoc` keeps track of each user access to a document.  As such, the ID of a LibraryViewDoc instance is a concatenation of the following: `[Google User ID]:[Google Document Id]` (delimited with a colon)
+
+This entity keeps track each users' current number of views per document.  It has also been updated to add `vote`, `voteDate` and `voteReason`.  
+
+Vote values are `1` for thumbs up and a `-1` for thumbs down.  The idea for using this is if we wanted to get the overall vote score of a document, we simply sum the votes. 
+
+[Google Cloud Datastore Dashboard](https://console.cloud.google.com/datastore/entities;kind=LibraryViewDoc;ns=__$DEFAULT$__/query/kind?project=content-library-development&supportedpurview=project).
+
 ### Templating Engine
 
 The Library Catalog utilizes EJS as the templating engine.  The documentation can be found [here](https://ejs.co/).
