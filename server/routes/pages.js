@@ -1,6 +1,7 @@
 'use strict'
 
-const search = require('../search')
+const {requireWithFallback} = require('../utils')
+const search = requireWithFallback('./search')
 
 const router = require('express-promise-router')()
 
