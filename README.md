@@ -67,6 +67,22 @@ For example, to create a custom page handler:
 This would be useful in cases if you wanted to modify data without resorting to middleware.  An example would be adding a property to the response without writing middleware to parse the payload or override `response.send()`.
 
 
+### TypeScript and Stimulus.js
+
+The AdHoc Content Library is built with [TypeScript](https://www.typescriptlang.org/) and [Stimulus.js](https://stimulus.hotwired.dev/).  
+
+To add a new Stimulus controller to this project, add a new controller under the `/scripts/controllers` folder.  And make sure to register the new controller in the file `/scripts/index.ts`.  For more information on how to use Stimulus, please refer to the [Stimulus.js Handbook](https://stimulus.hotwired.dev/handbook/introduction).
+
+For example Stimulus code, refer to the `stimulus-examples` branch. [Link here](https://github.com/adhocteam/nytimes-library/tree/stimulus-examples/scripts)
+
+The webpack compiled output will located at: `/public/bundle/bundle.js` along with the source map: `/public/bundle/bundle.js.map`.
+
+### SASS Import and Webpack
+
+The original NYTimes Library was built with [`node-sass`](https://github.com/sass/node-sass).  When Webpack was added, the updated ['dart-sass'](https://github.com/sass/dart-sass) is used by `sass-loader` and `node-sass` removed.
+
+Previously, the npm build scripts used `node-sass` and `--include-paths` command line parameters where the earlier paths took precedence over later paths in the command.  This is different from the Webpack `sass-loader` which uses the concept of entry points and imports the SASS references as indicated in the entry point files.  Due to this difference, new custom `errors.scss` and `style.scss` were created to correctly import the files in correct order.
+
 ---
 ## Demo Site & User Guide
 

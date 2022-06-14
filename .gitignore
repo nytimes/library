@@ -17,3 +17,6 @@ coverage
 .terraform
 *.tfstate
 .terragrunt-cache
+
+# Webpack Output
+public/bundle
