@@ -89,7 +89,7 @@
       width: 8rem;
     }
     
-    background-image: url(/assets/images/blocky-arms-up.svg);
+    background-image: url(/public/images/blocky-arms-up.svg);
     background-repeat: no-repeat;
     background-position: center;
     background-size: 75%;
@@ -97,7 +97,7 @@
     border-radius: 50%;
 
     &.blocky-lookng-down {
-      background-image: url(/assets/images/blocky-looking-down.svg);
+      background-image: url(/public/images/blocky-looking-down.svg);
     }
   }
 
