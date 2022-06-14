@@ -20,6 +20,7 @@
       <div class="g-main-content">
         <% if (locals.content) { %>
         <%- content %>
+        <%- include('partials/usefulnessModal.ejs', {id: locals.docId}) %>
         <% } %>
 
         <% if (locals.children && children.length) { %>
