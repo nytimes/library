@@ -1,9 +1,11 @@
-<div id="usefulness-feedback" data-document-id=<%= id %>>
+<div id="usefulness-feedback" data-controller="usefulness" data-usefulness-document-id=<%= id %>>
   Was this helpful?
-  <button id="usefulYes" data-launch-modal="useful-yes" class="button"><i class="fa fa-thumbs-up" aria-hidden="true"></i>Yes</button>
-  <button id="usefulNo" data-launch-modal="useful-no" class="button"><i class="fa fa-thumbs-down" aria-hidden="true"></i>No</button>
+  <button id="usefulYes" data-usefulness-launch-modal-param="useful-yes" data-action="click->usefulness#handleVote" class="button">
+    <i class="fa fa-thumbs-up" aria-hidden="true"></i>Yes</button>
+  <button id="usefulNo" data-usefulness-launch-modal-param="useful-no" data-action="click->usefulness#handleVote" class="button">
+    <i class="fa fa-thumbs-down" aria-hidden="true"></i>No</button>
   
-  <div class="modal" data-modal="useful-yes">
+  <div class="modal" id="useful-yes">
     <div class="wrapper">
       <section class="modalBody">
         <div class="modalGraphic"></div>
@@ -15,16 +17,16 @@
           <div><input name="reason" value="Used for training" id="yes-reason-2" type="radio" /><label for="yes-reason-2">Used for training</label></div>
           <div><input name="reason" value="Other" id="yes-reason-3" type="radio" /><label for="yes-reason-3">Other</label></div>
           <footer>
-            <button data-type="cancel" type="button" class="button">Cancel</button>
-            <button data-type="submit" type="button" class="button button-accent" value="yes">Submit</button>
+            <button data-action="click->usefulness#handleCancel" type="button" class="button">Cancel</button>
+            <button data-action="click->usefulness#handleSubmit" type="button" class="button button-accent" value="yes">Submit</button>
           </footer>
         </div>
       </section>
     </div>
-    <button class="modal-close" data-type='cancel' type="button">Close</button>
+    <button class="modal-close" data-action="click->usefulness#handleCancel" type="button">Close</button>
   </div>
 
-  <div class="modal" data-modal="useful-no">
+  <div class="modal" id="useful-no">
     <div class="wrapper">
       <section class="modalBody">
         <div class="modalGraphic blocky-lookng-down"></div>
@@ -37,46 +39,11 @@
           <div><input name="reason" value="Incorrect information" id="no-reason-3" type="radio" /><label for="no-reason-3">Incorrect information</label></div>
           <div><input name="reason" value="Other" id="no-reason-4" type="radio" /><label for="no-reason-4">Other</label></div>
           <footer>
-            <button data-type="cancel" class="button">Cancel</button>
-            <button data-type="submit" class="button button-accent" value="no">Submit</button>
+            <button data-action="click->usefulness#handleCancel" class="button">Cancel</button>
+            <button data-action="click->usefulness#handleSubmit" class="button button-accent" value="no">Submit</button>
         </div>
       </section>
     </div>
-    <button class="modal-close" data-type='cancel' type="button">Close</button>
+    <button class="modal-close" data-action="click->usefulness#handleCancel" type="button">Close</button>
   </div>
 </div>
-<script type="text/javascript">
-  // Allow buttons to display modals
-  $('[data-launch-modal').on('click', function(){
-    const modalName = $(this).attr('data-launch-modal');
-    $('[data-modal=' + modalName + ']').addClass('active');
-  });
-
-  // Allow buttons to close modals
-  $('[data-type=cancel]').on('click', function(){
-    $(this).parents('.modal').removeClass('active');
-  });
-
-  $('[data-type=submit]').on('click', function(){
-    // Submit usefulness feedback
-    const documentId = $(this).parents('[data-document-id]').attr("data-document-id");
-    const location = $(this).val() == 'yes' ? '/api/upvote' : '/api/downvote';
-    const reason = $(this).parents('.modal').find('input[name="reason"]:checked').val();
-    post(location, {
-      id: documentId,
-      reason: reason,
-    });
-    // close the modal
-    $(this).parents('.modal').removeClass('active');
-  });
-
-  function post(location, payload){
-    fetch(location, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)})
-        .then(res => console.log(res, res.json().then(d => console.log(d))));
-  }
-  </script>
