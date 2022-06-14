@@ -5,6 +5,7 @@
   "main": "server/index.js",
   "dependencies": {
     "@google-cloud/datastore": "^6.6.2",
+    "@hotwired/stimulus": "^3.0.1",
     "cache-manager": "^3.3.0",
     "chai": "^4.2.0",
     "cheerio": "^1.0.0-rc.3",
@@ -22,7 +23,6 @@
     "lodash": "^4.17.21",
     "mime-types": "^2.1.27",
     "moment": "^2.27.0",
-    "node-sass": "^6.0.1",
     "passport": "^0.4.1",
     "passport-google-oauth20": "^2.0.0",
     "passport-slack-oauth2": "^1.0.2",
@@ -35,6 +35,7 @@
   },
   "devDependencies": {
     "concurrently": "^5.2.0",
+    "css-loader": "^6.7.1",
     "dotenv": "^8.6.0",
     "eslint": "^7.10.0",
     "eslint-config-standard": "^14.1.1",
@@ -43,24 +44,32 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "jest": "^26.6.3",
+    "mini-css-extract-plugin": "^2.6.0",
     "nock": "^13.0.3",
     "nodemon": "^2.0.4",
     "nyc": "^15.1.0",
+    "prettier": "^2.5.1",
+    "sass": "^1.52.1",
+    "sass-loader": "^13.0.0",
     "sinon": "^9.0.2",
+    "style-loader": "^3.3.1",
     "supertest": "^4.0.2",
-    "valid-url": "^1.0.9"
+    "ts-loader": "^9.3.0",
+    "typescript": "^4.7.3",
+    "valid-url": "^1.0.9",
+    "webpack": "^5.73.0",
+    "webpack-cli": "^4.9.2"
   },
   "scripts": {
     "start": "node -r dotenv/config server/index.js",
-    "build:main": "node-sass --include-path custom/styles --include-path styles/partials --source-map public/css/style.css.map --source-map-contents styles/style.scss public/css/style.css",
-    "build:inline": "node-sass --include-path custom/styles --include-path styles/partials styles/errors.scss public/css/errors.css",
-    "build": "npm run build:main && npm run build:inline",
+    "build": "npm run webpack",
     "debug": "node -r dotenv/config --inspect --inspect-brk server/index.js",
-    "watch": "npm run build && concurrently \"nodemon --inspect=0.0.0.0 -r dotenv/config -e js,ejs server/index.js\" \"nodemon -e scss --watch styles --watch custom/styles -x npm run build\"",
+    "watch": "npm run build && concurrently \"nodemon --inspect=0.0.0.0 -r dotenv/config -e js,ejs server/index.js\" \"nodemon -e scss,ts,js --watch styles --watch custom/styles --watch scripts -x npm run build\"",
     "test": "NODE_ENV=test PORT=3001 jest --setupFiles dotenv/config --setupTestFrameworkScriptFile='./test/utils/bootstrap.js' --forceExit",
     "test:cover": "NODE_ENV=test PORT=3001 nyc --include=server/** --reporter=html --reporter=text jest test/**/*.test.js --setupFiles dotenv/config --setupTestFrameworkScriptFile='./test/utils/bootstrap.js' --forceExit",
     "lint": "eslint ./server",
-    "gcp-build": "./bin/install_customizations && npm run build && ./bin/update_gae_pkg"
+    "gcp-build": "./bin/install_customizations && npm run build && ./bin/update_gae_pkg",
+    "webpack": "npx webpack --mode production"
   },
   "repository": {
     "type": "git",

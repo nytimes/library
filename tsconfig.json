@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "allowJs": true,
+    "moduleResolution": "node",
+    "sourceMap": true
+  },
+  "files": ["scripts/index.ts"]
+}

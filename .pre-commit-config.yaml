@@ -1,0 +1,27 @@
+repos:
+  # Run terraform fmt to fix our terraform styling
+  # Run terraform docs to generate documentation for our terraform code
+  # Run tflint to lint our terraform code
+  # Run tfsec to scan our terraform code for security problems
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.68.0 # Get the latest from: https://github.com/antonbabenko/pre-commit-terraform/releases
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_docs
+      # - id: terraform_tflint
+      # - id: terraform_tfsec
+      #   args:
+      #     - >
+      #       --args=--exclude-downloaded-modules
+      #       --exclude-path=.tfsec
+      # This takes a VERY long time to complete, disabling for now
+      # - id: terraform_checkov
+      #   args:
+      #     - --args=--directory=ops/terraform
+
+# # Lint Terragrunt HCL files, runs yapf to format our python files, and runs shellcheck to lint our bash scripts
+# - repo: https://github.com/gruntwork-io/pre-commit
+#   rev: v0.1.17 # Get the latest from: https://github.com/gruntwork-io/pre-commit/releases
+#   hooks:
+#     - id: shellcheck
+#     - id: yapf

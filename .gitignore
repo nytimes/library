@@ -13,3 +13,10 @@ coverage
 .npmrc*
 .vscode
 .idea
+
+.terraform
+*.tfstate
+.terragrunt-cache
+
+# Webpack Output
+public/bundle

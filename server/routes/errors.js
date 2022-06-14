@@ -17,7 +17,7 @@ async function loadInlineAssets() {
   // we could augment this function with a regex that replaces each URL pattern
   // in public/css/errors.css with the result of a call to assetDataURI()
   const cssLoader = async () => {
-    const css = await readFileAsync('public/css/errors.css')
+    const css = await readFileAsync('public/bundle/errors.css')
     assets.css = css.toString()
   }
 
