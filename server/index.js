@@ -33,6 +33,8 @@ if ((process.env.TRUST_PROXY || '').toUpperCase() === 'TRUE') {
 app.set('view engine', 'ejs')
 app.set('views', [path.join(__dirname, '../custom/layouts'), path.join(__dirname, '../layouts')])
 
+app.disable('x-powered-by')
+
 app.get('/healthcheck', (req, res) => {
   res.send('OK')
 })
