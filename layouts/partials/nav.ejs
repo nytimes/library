@@ -6,7 +6,7 @@
   <% } %>
   <h1 class="headline"><%= title %></h1>
   <div class="kicker">
-    <div class="attribution">
+    <div class="attribution" data-controller="attribution">
         <% if (locals.byline) { %>
           <p>
             By <span class="author"><%=locals.byline %></span>.
@@ -15,25 +15,13 @@
         <% if (locals.lastUpdatedBy || locals.byline) { %>
           <p>
             <% if (locals.lastUpdatedBy) { %>
-              Last edited by <span class="author"><%= lastUpdatedBy %></span><span class="date" data-date="<%= locals.modifiedAt %>"></span>.
+              Last edited by <span class="author"><%= lastUpdatedBy %></span><span class="date" data-attribution-target="modified" data-date="<%= locals.modifiedAt %>"></span>.
             <% } %>
             <% if (locals.byline) { %>
-              Created <span class="date" data-date="<%= locals.createdAt %>"></span>.
+              Created <span class="date" data-date="<%= locals.createdAt %>" data-attribution-target="created"></span>.
             <% } %>
           </p>
         <% } %>
-        <script>
-          (function() {
-            $('.date').each(function(i) {
-              const date = $(this)
-              const momentDate = moment(date.data('date'))
-              if (momentDate.isValid()) {
-                date.html(moment().diff(momentDate, 'years') > 1 ? ` on ${momentDate.format('MMMM D, YYYY')}` : ` ${momentDate.fromNow()}`)
-                date.attr('title', momentDate.format('MMMM D, YYYY'))
-              }
-            })
-          })()
-        </script>
       </p>
     </div>
 
