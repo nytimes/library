@@ -6,7 +6,7 @@
     <% }) %>
   <% } %>
   <% if (locals.editLink) { %>
-    <a class="button btn-footer" href="<%- editLink %>" id="edit-button" target="_blank"><%- template('footer.buttons.edit') %></a>
+    <a class="button btn-footer" href="<%- editLink %>" id="edit-button" target="_blank" data-controller="edit-button" data-action="click->edit-button#handleClick"><%- template('footer.buttons.edit') %></a>
   <% } %>
   <% if (locals.parentId) { %>
     <a class="button btn-footer" href="https://docs.google.com/document/u/0/create?usp=drive_web&folder=<%- parentId %>" %> target="_blank"><%- template('footer.buttons.create') %></a>
@@ -86,15 +86,5 @@
   function getFilenameStorage() {
     return JSON.parse(localStorage.getItem('filenames'))
   }
-
-  $(document).on('click', '#edit-button', function () {
-    $.ajax({
-      method: 'GET',
-      url: window.location.pathname,
-      data: {
-        edit: 1, // purge and keep out of cache temporarily
-      }
-    }) // no callback on this.
-  })
 
 </script>
