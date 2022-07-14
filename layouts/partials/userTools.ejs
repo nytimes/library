@@ -1,4 +1,4 @@
-<div class="user-tools">
+<div class="user-tools" data-controller="user-tools" data-action="mouseenter->user-tools#handleMouseEnter">
   <div id="user-profile">
     <a class="btn-user-whole" href="#me">
       <button class="button btn-user-initial"></button>
@@ -10,9 +10,9 @@
 
   <div id="me" class="overlay">
   	<a class="cancel" href="#"></a>
-  	<div class="popup">
+  	<div class="popup" data-user-tools-target="popup">
       <a class="close" href="#">&times;</a>
-      <i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>
+      <i class="fa fa-spinner fa-pulse" aria-hidden="true" data-user-tools-target="spinner"></i>
     </div>
 
 	</div>
