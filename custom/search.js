@@ -7,9 +7,11 @@ const log = require('../server/logger')
 
 const driveId = process.env.DRIVE_ID
 
-exports.run = async (query, driveType = 'team') => {
+exports.run = async (query, types, driveType = 'team') => {
   const authClient = await getAuth()
   let folderIds
+
+  console.log({ types })
 
   const drive = google.drive({version: 'v3', auth: authClient})
 

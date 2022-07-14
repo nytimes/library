@@ -1,12 +1,12 @@
 'use strict'
 
-const {requireWithFallback} = require('../utils')
-const search = requireWithFallback('./search')
+const {requireWithFallback} = require('../../server/utils')
+const search = require('../search')
 
 const router = require('express-promise-router')()
 
-const {getTree, getFilenames, getMeta, getTagged} = require('../list')
-const {getTemplates, sortDocs, stringTemplate, getConfig} = require('../utils')
+const {getTree, getFilenames, getMeta, getTagged} = require('../../server/list')
+const {getTemplates, sortDocs, stringTemplate, getConfig} = require('../../server/utils')
 
 router.get('/', handlePage)
 router.get('/:page', handlePage)
@@ -29,9 +29,9 @@ async function handlePage(req, res) {
   if (!pages.has(page)) return 'next'
 
   const template = `pages/${page}`
-  const {q, autocomplete} = req.query
+  const {q, autocomplete, types} = req.query
   if (page === 'search' && q) {
-    return search.run(q, driveType).then((results) => {
+    return search.run(q, types, driveType).then((results) => {
       // special rule for the autocomplete case, go directly to the item if we find it.
       if (autocomplete) {
         // filter here first to make sure only _one_ document exists with this exact name
