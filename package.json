@@ -81,8 +81,8 @@
     "url": "https://github.com/nytimes/library/issues"
   },
   "engines": {
-    "node": ">=10.0",
-    "npm": ">=6.5.x"
+    "node": ">=16.0",
+    "npm": ">=8.0"
   },
   "homepage": "https://github.com/nytimes/library#readme"
 }
