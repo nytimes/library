@@ -1,0 +1,49 @@
+<div id="usefulness-feedback" data-controller="usefulness" data-usefulness-document-id=<%= id %>>
+  Was this helpful?
+  <button id="usefulYes" data-usefulness-launch-modal-param="usefulYes" data-action="click->usefulness#handleVote" class="button">
+    <i class="fa fa-thumbs-up" aria-hidden="true"></i>Yes</button>
+  <button id="usefulNo" data-usefulness-launch-modal-param="usefulNo" data-action="click->usefulness#handleVote" class="button">
+    <i class="fa fa-thumbs-down" aria-hidden="true"></i>No</button>
+  
+  <div class="modal" id="useful-yes" data-usefulness-target="usefulYes">
+    <div class="wrapper">
+      <section class="modalBody">
+        <div class="modalGraphic"></div>
+        <div class="modalContent">
+          <header>
+            What is the reason for your feedback?
+          </header>
+          <div><input name="reason" value="1" id="yes-reason-1" type="radio" data-usefulness-target="reason" /><label for="yes-reason-1">Used for growth</label></div>
+          <div><input name="reason" value="2" id="yes-reason-2" type="radio" data-usefulness-target="reason"/><label for="yes-reason-2">Used for training</label></div>
+          <div><input name="reason" value="3" id="yes-reason-3" type="radio" data-usefulness-target="reason"/><label for="yes-reason-3">Other</label></div>
+          <footer>
+            <button data-action="click->usefulness#handleCancel" type="button" class="button">Cancel</button>
+            <button data-action="click->usefulness#handleSubmit" type="button" class="button button-accent" value="yes">Submit</button>
+          </footer>
+        </div>
+      </section>
+    </div>
+    <button class="modal-close" data-action="click->usefulness#handleCancel" type="button">Close</button>
+  </div>
+
+  <div class="modal" id="useful-no" data-usefulness-target="usefulNo">
+    <div class="wrapper">
+      <section class="modalBody">
+        <div class="modalGraphic blocky-lookng-down"></div>
+        <div class="modalContent">
+          <header>
+            What is the reason for your feedback?
+          </header>
+          <div><input name="reason" value="4" id="no-reason-1" type="radio" data-usefulness-target="reason"/><label for="no-reason-1">Not relevant</label></div>
+          <div><input name="reason" value="5" id="no-reason-2" type="radio" data-usefulness-target="reason"/><label for="no-reason-2">Hard to understand</label></div>
+          <div><input name="reason" value="6" id="no-reason-3" type="radio" data-usefulness-target="reason"/><label for="no-reason-3">Incorrect information</label></div>
+          <div><input name="reason" value="3" id="no-reason-4" type="radio" data-usefulness-target="reason"/><label for="no-reason-4">Other</label></div>
+          <footer>
+            <button data-action="click->usefulness#handleCancel" class="button">Cancel</button>
+            <button data-action="click->usefulness#handleSubmit" class="button button-accent" value="no">Submit</button>
+        </div>
+      </section>
+    </div>
+    <button class="modal-close" data-action="click->usefulness#handleCancel" type="button">Close</button>
+  </div>
+</div>

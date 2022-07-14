@@ -1,0 +1,125 @@
+// =Overrides
+
+// override poor usage of z-index from upstream 
+.masthead {
+  z-index: 2;
+}
+
+.search-container .icon {
+  z-index: 1;
+}
+
+// =General use
+
+.wrapper {
+  padding: 0 1rem;
+}
+
+.button-accent {
+  color: #fff;
+  background-color: $accent;
+  border-color: $accent;
+}
+
+// =Specific
+
+#usefulness-feedback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  max-width: 20rem;
+  margin: 0 auto;
+  margin-top: 4rem;
+  padding: 1rem;
+  background-color: $gray-70;
+  > button {
+    padding: .25rem .5rem;
+    background-color: #fff;
+    i {
+      margin-right: .25rem;
+    }
+  }
+}
+
+
+.modal {
+  display: none;
+  &.active {
+    display: flex;
+  }
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  height: 100vh;
+  width: 100%;
+  background-color: rgba(0,0,0,.25);
+
+  .wrapper {
+    position: relative;
+    z-index: 3;
+  }
+}
+.modalBody {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: .5rem 1rem;
+  background-color: #fff;
+  box-shadow: 5px 5px 0px 0px $gray-25;
+
+  transition: .5s;
+  @media screen and ( min-width:35rem ) {
+    gap: 1rem;
+    padding: 1rem 2rem;
+  }
+
+  .modalGraphic {
+    height: 5rem;
+    width: 5rem;
+    min-width: 5rem;
+    
+    transition: .5s;
+    @media screen and ( min-width:35rem ) {
+      height: 8rem;
+      width: 8rem;
+    }
+    
+    background-image: url(/public/images/blocky-arms-up.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 75%;
+    background-color: #88caa6;
+    border-radius: 50%;
+
+    &.blocky-lookng-down {
+      background-image: url(/public/images/blocky-looking-down.svg);
+    }
+  }
+
+  header {
+    margin-bottom: 1rem;
+    padding-bottom: .5rem;
+    border-bottom: 1px solid $gray-60;
+    font-weight: bold;
+    color: $green-primary;
+  }
+  footer {
+    margin-top: 1rem;
+  }
+  input[type=radio] {
+    margin-right: .25rem;
+  }
+}
+
+.modal-close {
+  height: 100vh;
+  width: 100%;
+  position: fixed;
+  background: none;
+  border: none;
+}
