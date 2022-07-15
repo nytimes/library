@@ -7,10 +7,16 @@ class Attribution extends Controller {
 
   createdTarget: HTMLElement
   modifiedTarget: HTMLElement
+  hasCreatedTarget: Boolean
+  hasModifiedTarget: Boolean
 
   connect() {
-    // Format dates
-    const dateElements = [this.createdTarget, this.modifiedTarget]
+   // Exclude targets that don't exist
+    const dateElements = [
+      ... this.hasCreatedTarget ? [this.createdTarget] : [],
+      ... this.hasModifiedTarget ? [this.modifiedTarget] :[]
+    ]
+     // Format dates
     dateElements.forEach(element => {
       const momentDate = moment(element.dataset.date)
       if (momentDate.isValid()) {
