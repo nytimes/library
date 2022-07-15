@@ -26,28 +26,6 @@ $(document).ready(function() {
     }
   }
 
-  function filenameMatcher(q, cb) {
-    const substrRegex = new RegExp(q, 'i')
-    const filenames = getFilenameStorage().filenames
-    cb(filenames.filter((str) => substrRegex.test(str)))
-  }
-
-  var $searchBox = $('#search-box')
-  // setup typeahead
-  $searchBox.typeahead({
-    hilight: true
-  }, {
-    name: 'documents',
-    source: filenameMatcher
-  })
-
-  // when the typeahead selects a result, immediately submit the form
-  // and tell the backend it was an autocomplete so we can go there directly.
-  $searchBox.on('typeahead:select', function (event, selectedItem) {
-    var $form = $searchBox.closest('form')
-    $form.append('<input type="hidden" name="autocomplete" value="1"/>')
-    $form.submit()
-  })
 })
 
 

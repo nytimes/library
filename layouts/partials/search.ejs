@@ -1,9 +1,22 @@
-<div class="search-topper">
-  <form method="GET" action="/search" class="search-container">
+<div class="search-topper" data-controller="search">
+  <form method="GET" action="/search" class="search-container" data-search-target="form">
     <% const placeholder = template('search.placeholder')%>
     <% const focus = locals.focus || '' %>
     <% const msgOnFocus = placeholder || '' %>
-    <input <%= focus %> id="search-box" class="twitter-typeahead" type="text" name="q" value="<%= locals.q %>" placeholder="<%- placeholder %>" />
+    <input
+      data-search-target="searchInput"
+      data-action="keydown->search#handleKeyUp input->search#handleInput"
+      <%= focus %>
+      id="search-box"
+      class="twitter-typeahead"
+      type="text"
+      name="q"
+      value="<%= locals.q %>"
+      placeholder="<%- placeholder %>"
+      list="list"
+    />
+    <datalist id="list" data-search-target="list">
+    </datalist>
     <button class="icon"><i class="fa fa-search"></i></button>
   </form>
 
