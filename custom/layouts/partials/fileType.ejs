@@ -35,7 +35,13 @@
     'application/vnd.openxmlformats-officedocument.presentationml.presentation': {
       name: 'PowerPoint',
       icon_class: 'fa-solid fa-file-powerpoint'
+    },
+    'video/mp4': {
+      name: 'Video',
+      icon_class: 'fa-solid fa-video'
     }
   };
 %>
-<span>File Type: <i class="<%= fileTypes[mimeType].icon_class %>"></i> <%= fileTypes[mimeType].name %></span>
+<% if (fileTypes[mimeType]) { %>
+  <span>File Type: <i class="<%= fileTypes[mimeType].icon_class %>"></i> <%= fileTypes[mimeType].name %></span>
+<% } %>
