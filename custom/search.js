@@ -11,8 +11,6 @@ exports.run = async (query, types, driveType = 'team') => {
   const authClient = await getAuth()
   let folderIds
 
-  console.log({ types })
-
   const drive = google.drive({version: 'v3', auth: authClient})
 
   if (driveType === 'folder') {
@@ -21,7 +19,9 @@ exports.run = async (query, types, driveType = 'team') => {
 
   const excludedFolders = await getExcludedFolders(drive)
 
-  const files = await fullSearch({drive, query, folderIds, driveType, excludedFolders})
+  const mimeTypes = convertToMimeType(types)
+
+  const files = await fullSearch({drive, query, folderIds, driveType, excludedFolders, mimeTypes})
     .catch((err) => {
       log.error(`Error when searching for ${query}, ${err}`)
       throw err
@@ -34,8 +34,8 @@ exports.run = async (query, types, driveType = 'team') => {
   return fileMetas
 }
 
-async function fullSearch({drive, query, folderIds, results = [], nextPageToken: pageToken, driveType, excludedFolders}) {
-  const options = getOptions(query, folderIds, driveType, excludedFolders)
+async function fullSearch({drive, query, folderIds, results = [], nextPageToken: pageToken, driveType, excludedFolders, mimeTypes}) {
+  const options = getOptions(query, folderIds, driveType, excludedFolders, mimeTypes)
 
   if (pageToken) {
     options.pageToken = pageToken
@@ -91,7 +91,7 @@ async function getAllFolders({nextPageToken: pageToken, drive, parentIds = [driv
   return combined.map((folder) => folder.id)
 }
 
-function getOptions(query, folderIds, driveType, excludedFolders) {
+function getOptions(query, folderIds, driveType, excludedFolders, mimeTypes) {
   const fields = '*'
 
   if (driveType === 'folder') {
@@ -109,9 +109,17 @@ function getOptions(query, folderIds, driveType, excludedFolders) {
     excludeFolderQuery = excludedFolders.map((folder) => `AND NOT '${folder}' in parents`).join(' ')
   }
 
+  let mimeTypeFilterQuery = '';
+  if (Array.isArray(mimeTypes)) {
+    mimeTypeFilterQuery = `AND (${mimeTypes.map(mimeType => `mimeType = '${mimeType}'`).join(' or ')})`
+  }
+
+  const q = `fullText contains ${JSON.stringify(query)} AND mimeType != 'application/vnd.google-apps.folder' ${excludeFolderQuery} ${mimeTypeFilterQuery} AND trashed = false`
+  console.log({ q })
+
   return {
     ...list.commonListOptions.team,
-    q: `fullText contains ${JSON.stringify(query)} AND mimeType != 'application/vnd.google-apps.folder' ${excludeFolderQuery} AND trashed = false`,
+    q: `fullText contains ${JSON.stringify(query)} AND mimeType != 'application/vnd.google-apps.folder' ${excludeFolderQuery} ${mimeTypeFilterQuery} AND trashed = false`,
     teamDriveId: driveId,
     fields
   }
@@ -134,4 +142,28 @@ async function getExcludedFolders(drive) {
   const result = await Promise.all(subfolders)
 
   return [...folders, ...result.flat()]
+}
+
+function convertToMimeType(type_param) {
+  if (!type_param) return [];
+
+  const types = type_param.split(',')
+  console.log({ type_param, types })
+
+  return types.map(filetype => mimeTypes[filetype])
+              .filter(m => m != null)
+}
+
+const mimeTypes = {
+  'png': 'image/png',
+  'jpg': 'image/jpg',
+  'svg': 'image/svg+xml',
+  'pdf': 'application/pdf',
+  'docs': 'application/vnd.google-apps.document',
+  'sheets': 'application/vnd.google-apps.spreadsheet',
+  'slides': 'application/vnd.google-apps.presentation',
+  'drawings': 'application/vnd.google-apps.drawing',
+  'shortcut': 'application/vnd.google-apps.shortcut',
+  'powerpoint': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  'video': 'video/mp4'
 }
