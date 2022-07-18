@@ -114,9 +114,6 @@ function getOptions(query, folderIds, driveType, excludedFolders, mimeTypes) {
     mimeTypeFilterQuery = `AND (${mimeTypes.map(mimeType => `mimeType = '${mimeType}'`).join(' or ')})`
   }
 
-  const q = `fullText contains ${JSON.stringify(query)} AND mimeType != 'application/vnd.google-apps.folder' ${excludeFolderQuery} ${mimeTypeFilterQuery} AND trashed = false`
-  console.log({ q })
-
   return {
     ...list.commonListOptions.team,
     q: `fullText contains ${JSON.stringify(query)} AND mimeType != 'application/vnd.google-apps.folder' ${excludeFolderQuery} ${mimeTypeFilterQuery} AND trashed = false`,
@@ -144,11 +141,15 @@ async function getExcludedFolders(drive) {
   return [...folders, ...result.flat()]
 }
 
+// Convert a comma-delimited types parameter to an array of mime types.  
+// The following types are allowed:
+// png, jpg, svg, pdf, docs (Google Docs), sheets (Google Sheets), 
+// slides (Google Slides), drawings (Google Drawings), 
+// shortcut (Google Shortcuts), powerpoint, video
 function convertToMimeType(type_param) {
   if (!type_param) return [];
 
   const types = type_param.split(',')
-  console.log({ type_param, types })
 
   return types.map(filetype => mimeTypes[filetype])
               .filter(m => m != null)
