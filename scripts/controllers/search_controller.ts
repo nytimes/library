@@ -15,12 +15,13 @@ class SearchController extends Controller {
   }
 
   // Re/generate suggested results
-  handleKeyUp(event) {
+  handleKeyUp(event: KeyboardEvent) {
+
     if(event.key) {
       this.keypress = true
     }
-    this.#filenameMatcher(this.searchInputTarget.value, (list) => {
-      const dataListOptions = list.map((item) => {
+    this.#filenameMatcher(this.searchInputTarget.value, (list: Array<string>) => {
+      const dataListOptions = list.map((item: string) => {
         return `<option>${item}</option>`
       }).join('')
       this.listTarget.innerHTML = dataListOptions
@@ -29,7 +30,7 @@ class SearchController extends Controller {
 
   // when the typeahead selects a result, immediately submit the form
   // and tell the backend it was an autocomplete so we can go there directly.
-  handleInput(event) {
+  handleInput() {
     if (this.keypress === false) {
       this.formTarget.insertAdjacentHTML('beforeend', '<input type="hidden" name="autocomplete" value="1"/>');
       this.formTarget.submit()

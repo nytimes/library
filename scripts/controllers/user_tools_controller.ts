@@ -40,7 +40,7 @@ class UserTools extends Controller {
     })
   }
 
-  #addElements = (data, elementAttributes) => {
+  #addElements = (data: Array<any>, elementAttributes: ElementAttributes) => {
 
     if (!data || data.length == 0) {
       if (elementAttributes.emptyText) {
@@ -49,22 +49,22 @@ class UserTools extends Controller {
       return;
     }
 
-    var items = data.map(function(el) {
-    var item = el.doc;
-    var folder = (item.folder || {}).prettyName || ''; // lets not try to show a folder if there isn't one
-    var path = item.path ? item.path : '#';
-    return [
-      '<li>',
-        '<a href="' + path + '">',
-          '<p class="docs-title">' + item.prettyName + '</p>',
-          '<p class="docs-attr">',
-            '<span class="docs-folder">' + folder + '</span>',
-            '<span class="timestamp">(' + el.lastViewed + ')</span>',
-          '</p>',
-         '</a>',
-      '</li>'
-      // use .join() to turn to html string
-      ].join('')
+    var items = data.map(function(viewedDocument: ViewedDocument) {
+      var doc = viewedDocument.doc;
+      var folder = (doc.folder || {}).prettyName || ''; // lets not try to show a folder if there isn't one
+      var path = doc.path ? doc.path : '#';
+      return [
+        '<li>',
+          '<a href="' + path + '">',
+            '<p class="docs-title">' + doc.prettyName + '</p>',
+            '<p class="docs-attr">',
+              '<span class="docs-folder">' + folder + '</span>',
+              '<span class="timestamp">(' + viewedDocument.lastViewed + ')</span>',
+            '</p>',
+          '</a>',
+        '</li>'
+        // use .join() to turn to html string
+        ].join('')
     });
 
     var className = elementAttributes.name.toLowerCase().replace(' ', '-') + '-content';
@@ -79,6 +79,23 @@ class UserTools extends Controller {
 
   }
 
+}
+
+interface ElementAttributes {
+  name: string
+  emptyText?: string
+}
+interface ViewedDocument {
+  doc: Document
+  lastViewed: string
+}
+interface Document {
+  folder: Folder
+  prettyName: string
+  path: string
+}
+interface Folder {
+  prettyName: string
 }
 
 export default UserTools
