@@ -4,6 +4,7 @@ const {google} = require('googleapis')
 const {getAuth} = require('../server/auth')
 const list = require('../server/list')
 const log = require('../server/logger')
+const {mimeTypes} = require('./common/fileTypes')
 
 const driveId = process.env.DRIVE_ID
 
@@ -153,18 +154,4 @@ function convertToMimeType(type_param) {
 
   return types.map(filetype => mimeTypes[filetype])
               .filter(m => m != null)
-}
-
-const mimeTypes = {
-  'png': 'image/png',
-  'jpg': 'image/jpg',
-  'svg': 'image/svg+xml',
-  'pdf': 'application/pdf',
-  'docs': 'application/vnd.google-apps.document',
-  'sheets': 'application/vnd.google-apps.spreadsheet',
-  'slides': 'application/vnd.google-apps.presentation',
-  'drawings': 'application/vnd.google-apps.drawing',
-  'shortcut': 'application/vnd.google-apps.shortcut',
-  'powerpoint': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-  'video': 'video/mp4'
 }

@@ -1,12 +1,13 @@
 'use strict'
 
-const {requireWithFallback} = require('../../server/utils')
 const search = require('../search')
 
 const router = require('express-promise-router')()
 
 const {getTree, getFilenames, getMeta, getTagged} = require('../../server/list')
 const {getTemplates, sortDocs, stringTemplate, getConfig} = require('../../server/utils')
+
+const {iconTypes} = require('../common/fileTypes')
 
 router.get('/', handlePage)
 router.get('/:page', handlePage)
@@ -41,7 +42,7 @@ async function handlePage(req, res) {
 
       res.format({
         html: () => {
-          res.render(template, {q, results, template: stringTemplate})
+          res.render(template, {q, results, template: stringTemplate, iconTypes})
         },
 
         json: () => {
