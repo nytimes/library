@@ -19,6 +19,14 @@ resource "google_project_iam_binding" "main" {
   ]
 }
 
+resource "google_project_iam_binding" "main_secretmanager" {
+  project = var.project_id
+  role    = "roles/secretmanager.secretAccessor"
+  members = [
+    "serviceAccount:${google_service_account.main.email}"
+  ]
+}
+
 resource "google_secret_manager_secret" "main_publickey" {
   count     = var.use_secretsmanager ? 1 : 0
   secret_id = "${var.service_account_id}-public-key"

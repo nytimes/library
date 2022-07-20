@@ -6,6 +6,8 @@ on:
 jobs:
   deploy-dev:
     runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.sha }}
     steps:
       - name: Checking Repository
         uses: actions/checkout@v2
@@ -17,4 +19,4 @@ jobs:
           service_account_key: '${{ secrets.DEV_GCP_SA_KEY }}'
 
       - name: Deploy to dev GAE project
-        run: 'gcloud app deploy app.yaml --quiet --no-promote --version v1'
+        run: 'gcloud app deploy app.yaml --quiet --version ${{ env.TAG }}'
