@@ -10,17 +10,3 @@ resource "google_app_engine_application" "app" {
   database_type = var.database_type
   location_id   = local.location_id
 }
-
-data "google_app_engine_default_service_account" "default" {
-}
-
-# Grant the app engine default account the ability to access secret manager
-
-
-resource "google_project_iam_binding" "default" {
-  project = var.project_id
-  role    = "roles/secretmanager.secretAccessor"
-  members = [
-    "serviceAccount:${data.google_app_engine_default_service_account.default.email}"
-  ]
-}

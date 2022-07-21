@@ -19,10 +19,15 @@ resource "google_project_iam_binding" "main" {
   ]
 }
 
+data "google_app_engine_default_service_account" "default" {
+}
+
+# Grant the app engine default account the ability to access secret manager
 resource "google_project_iam_binding" "main_secretmanager" {
   project = var.project_id
   role    = "roles/secretmanager.secretAccessor"
   members = [
+    "serviceAccount:${data.google_app_engine_default_service_account.default.email}",
     "serviceAccount:${google_service_account.main.email}"
   ]
 }
