@@ -59,10 +59,12 @@ const fileTypes = [
     name: 'Video',
     icon_class: 'fa-solid fa-video'
   },
-]
+];
 
 const mimeTypes = fileTypes.reduce((a, v) => ({ ...a, [v.type]: v.mime }), {});
 
 const iconTypes = fileTypes.reduce((a, v) => ({ ...a, [`${v.mime}`]: { name: v.name, icon_class: v.icon_class }}), {});
 
-module.exports = { mimeTypes, iconTypes }
+const fileTypeNames = fileTypes.reduce((a, v) => ({ ...a, [v.name]: v.type }), {});
+
+module.exports = { mimeTypes, iconTypes, fileTypeNames }

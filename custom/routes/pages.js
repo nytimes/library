@@ -7,7 +7,7 @@ const router = require('express-promise-router')()
 const {getTree, getFilenames, getMeta, getTagged} = require('../../server/list')
 const {getTemplates, sortDocs, stringTemplate, getConfig} = require('../../server/utils')
 
-const {iconTypes} = require('../common/fileTypes')
+const {iconTypes, fileTypeNames} = require('../common/fileTypes')
 
 router.get('/', handlePage)
 router.get('/:page', handlePage)
@@ -67,7 +67,7 @@ async function handlePage(req, res) {
     const categories = buildDisplayCategories(tree)
     res.format({
       html: () => {
-        res.render(template, {...categories, template: stringTemplate})
+        res.render(template, {...categories, template: stringTemplate, fileTypeNames})
       },
 
       json: () => {
