@@ -57,13 +57,13 @@
 
   function renderUserInfo(data) {
     var username = data.email || template('footer.defaultEmail');
-    $('.user-fullname').text(username);
+    document.querySelector('.user-fullname').innerHTML = username;
 
     var initials = username.split('@')[0].split('.').map(function(name) {
       return name[0].toUpperCase();
     });
 
-    $('.btn-user-initial').text(initials.join(''));
+    document.querySelector('.btn-user-initial').innerHTML = initials.join('');
   }
 
   // ajax for latest filenames, req will 304 and serve cache if unchanged
