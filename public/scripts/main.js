@@ -1,7 +1,5 @@
 $(document).ready(function() {
-  var $window = $(window)
-  var $document = $(document)
-  var $html = $('html')
+  var html = document.querySelector('html');
 
   // We don't use this feature
   // $("pre code").html(function (index, html) {
@@ -15,15 +13,14 @@ $(document).ready(function() {
   //   }).join('');
   // });
 
-  $window.on('hashchange', correctHashScroll)
+  window.addEventListener('hashchange', correctHashScroll);
   correctHashScroll()
 
   function correctHashScroll() {
-    var currentScroll = $document.scrollTop();
-    var mastheadHeight = $('#masthead').outerHeight() + 15; // extra padding
+    var currentScroll = html.scrollTop;
+    var mastheadHeight = document.getElementById('masthead').offsetHeight + 15; // extra padding
     if (window.location.hash && currentScroll > mastheadHeight) {
-      console.log('reducing scroll from ' + currentScroll)
-      $document.scrollTop(currentScroll - mastheadHeight)
+      html.scrollTop = currentScroll - mastheadHeight;
     }
   }
 
