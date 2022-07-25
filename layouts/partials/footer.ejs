@@ -35,10 +35,15 @@
   <% } %>
 
   // get the userinfo then fire a pageview (can't cache in the page)
-  $.ajax({
-    method: 'GET',
-    url: '/whoami.json'
-  }).always(function (data) {
+  fetch(
+    '/whoami.json',
+    {
+      method: 'GET',
+    }
+  )
+  .then(response => response.json())
+  .then(data => {
+    console.log(data)
     var userId = (data || {}).analyticsUserId;
     if (userId) {
       ga('set', 'userId', userId)
