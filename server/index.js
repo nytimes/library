@@ -10,40 +10,7 @@ const getSecret = async (client, projectId, name, isBase64 = false) => {
   return isBase64 ? Buffer.from(payload, 'base64') : payload;
 }
 
-(async () => {
-
-  console.log('Loading up environment variables...')
-
-  const gcpMetadata = require('gcp-metadata');
-  const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
-
-  // GCP Metadata is only available to the deployed instance.
-  // Running locally, you would still use the .env file.
-  const isDeployedInstance = await gcpMetadata.isAvailable();
-
-  if (isDeployedInstance) {
-    const projectId = await gcpMetadata.project('project-id');
-
-    // Get Variable
-    const client = new SecretManagerServiceClient()
-
-    process.env.APPROVED_DOMAINS = await getSecret(client, projectId, 'APPROVED_DOMAINS', false);
-    process.env.DRIVE_ID = await getSecret(client, projectId, 'DRIVE_ID', false);
-    process.env.DRIVE_TYPE = await getSecret(client, projectId, 'DRIVE_TYPE', false);
-    process.env.EXCLUDE_FOLDERS = await getSecret(client, projectId, 'EXCLUDE_FOLDERS', false);
-    process.env.GCP_PROJECT_ID = await getSecret(client, projectId, 'GCP_PROJECT_ID', false);
-    process.env.NODE_ENV = await getSecret(client, projectId, 'NODE_ENV', false);
-    process.env.REDIRECT_URL = await getSecret(client, projectId, 'REDIRECT_URL', false);
-    process.env.GOOGLE_APPLICATION_JSON = await getSecret(client, projectId, 'GOOGLE_APPLICATION_JSON', true);
-    process.env.GOOGLE_APPLICATION_CREDENTIALS = await getSecret(client, projectId, 'GOOGLE_APPLICATION_CREDENTIALS', false);
-    process.env.GOOGLE_APPLICATION_PUBLIC_KEY = await getSecret(client, projectId, 'GOOGLE_APPLICATION_PUBLIC_KEY', true);
-    process.env.GOOGLE_CLIENT_ID = await getSecret(client, projectId, 'GOOGLE_CLIENT_ID', false);
-    process.env.GOOGLE_CLIENT_SECRET = await getSecret(client, projectId, 'GOOGLE_CLIENT_SECRET', false);
-    process.env.SESSION_SECRET = await getSecret(client, projectId, 'SESSION_SECRET', false);
-  }
-
-  // Original Code
-
+const startServer = () => {
   const path = require('path')
 
   const express = require('express')
@@ -147,6 +114,38 @@ const getSecret = async (client, projectId, name, isBase64 = false) => {
   }
 
   module.exports = app
+}
 
+(async () => {
+  const gcpMetadata = require('gcp-metadata');
+  const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
 
+  // GCP Metadata is only available to the deployed instance.
+  // Running locally, you would still use the .env file.
+  const isDeployedInstance = await gcpMetadata.isAvailable();
+
+  if (isDeployedInstance) {
+    // We're on GCP here.  Load up environment variables from 
+    // Secrets Manager
+    const projectId = await gcpMetadata.project('project-id');
+
+    // Get Variable
+    const client = new SecretManagerServiceClient()
+
+    process.env.APPROVED_DOMAINS = await getSecret(client, projectId, 'APPROVED_DOMAINS', false);
+    process.env.DRIVE_ID = await getSecret(client, projectId, 'DRIVE_ID', false);
+    process.env.DRIVE_TYPE = await getSecret(client, projectId, 'DRIVE_TYPE', false);
+    process.env.EXCLUDE_FOLDERS = await getSecret(client, projectId, 'EXCLUDE_FOLDERS', false);
+    process.env.GCP_PROJECT_ID = await getSecret(client, projectId, 'GCP_PROJECT_ID', false);
+    process.env.NODE_ENV = await getSecret(client, projectId, 'NODE_ENV', false);
+    process.env.REDIRECT_URL = await getSecret(client, projectId, 'REDIRECT_URL', false);
+    process.env.GOOGLE_APPLICATION_JSON = await getSecret(client, projectId, 'GOOGLE_APPLICATION_JSON', true);
+    process.env.GOOGLE_APPLICATION_CREDENTIALS = await getSecret(client, projectId, 'GOOGLE_APPLICATION_CREDENTIALS', false);
+    process.env.GOOGLE_APPLICATION_PUBLIC_KEY = await getSecret(client, projectId, 'GOOGLE_APPLICATION_PUBLIC_KEY', true);
+    process.env.GOOGLE_CLIENT_ID = await getSecret(client, projectId, 'GOOGLE_CLIENT_ID', false);
+    process.env.GOOGLE_CLIENT_SECRET = await getSecret(client, projectId, 'GOOGLE_CLIENT_SECRET', false);
+    process.env.SESSION_SECRET = await getSecret(client, projectId, 'SESSION_SECRET', false);
+  }
+
+  startServer();
 })();
