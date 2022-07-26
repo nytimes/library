@@ -38,18 +38,24 @@
   var lastFilenameFetch = getFilenameStorage()
   var now = new Date().getTime()
   if (!lastFilenameFetch || now - lastFilenameFetch.lastFetched > 600000) { // 10 min
-    $.ajax({
-      method: 'GET',
-      url: '/filename-listing.json',
-      json: true
-    }).then(function(data, textStatus, xhr) {
-      if (xhr.status !== 200) return; // if ajax fails, continue with old listing
-
+    fetch(
+      '/filename-listing.json',
+      {
+        method: 'GET',
+      }
+    )
+    .then((response) =>{
+        if (response.status !== 200) return; // if request fails, continue with old listing
+        return response.json()
+      }
+    )
+    .then(data => {
+      console.log(data)
       var lastFetched = new Date().getTime()
       var uniqueNames = new Set(data.filenames)
       var data = {lastFetched: lastFetched, filenames: Array.from(uniqueNames)}
       localStorage.setItem('filenames', JSON.stringify(data))
-    })
+    });
   }
 
   function getFilenameStorage() {
