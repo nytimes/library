@@ -34,43 +34,6 @@
     ga('set', 'contentGroup2', <%- JSON.stringify(locals.topLevelFolder) %>);
   <% } %>
 
-  // get the userinfo then fire a pageview (can't cache in the page)
-  fetch(
-    '/whoami.json',
-    {
-      method: 'GET',
-    }
-  )
-  .then(response => response.json())
-  .then(data => {
-    console.log(data)
-    var userId = (data || {}).analyticsUserId;
-    if (userId) {
-      ga('set', 'userId', userId)
-
-      // We don't use this feature
-      // if(window.location.pathname === '/') {
-      //   $(document).ready(function() {
-      //     personalizeHomepage(userId)
-      //   })
-      // }
-    }
-
-    ga('send', 'pageview');
-    renderUserInfo(data);
-  });
-
-  function renderUserInfo(data) {
-    var username = data.email || template('footer.defaultEmail');
-    document.querySelector('.user-fullname').innerHTML = username;
-
-    var initials = username.split('@')[0].split('.').map(function(name) {
-      return name[0].toUpperCase();
-    });
-
-    document.querySelector('.btn-user-initial').innerHTML = initials.join('');
-  }
-
   // ajax for latest filenames, req will 304 and serve cache if unchanged
   var lastFilenameFetch = getFilenameStorage()
   var now = new Date().getTime()

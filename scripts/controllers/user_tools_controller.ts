@@ -1,14 +1,43 @@
 import { Controller } from '@hotwired/stimulus'
 
 class UserTools extends Controller {
-  static targets = [ "popup", "spinner" ]
+  static targets = [ "fullname", "popup", "spinner", "userbutton", "usertools" ]
 
   initialized: Boolean
+  fullnameTarget: HTMLElement
   popupTarget: HTMLElement
+  usertoolsTarget: HTMLElement
   spinnerTarget: HTMLElement
+  userbuttonTarget: HTMLElement
 
   initialize(): void {
     this.initialized = false;
+  }
+
+  connect() {
+    // get the userinfo then fire a pageview (can't cache in the page)
+    fetch(
+      '/whoami.json',
+      {
+        method: 'GET',
+      }
+    )
+    .then(response => response.json())
+    .then(data => {
+      var userId = (data || {}).analyticsUserId;
+      if (userId) {
+        window['ga']('set', 'userId', userId)
+
+        // We don't use this feature
+        // if(window.location.pathname === '/') {
+        //   $(document).ready(function() {
+        //     personalizeHomepage(userId)
+        //   })
+        // }
+      }
+      window['ga']('send', 'pageview');
+      this.#renderUserInfo(data);
+    });
   }
 
   handleMouseEnter = () => {
@@ -79,6 +108,17 @@ class UserTools extends Controller {
 
   }
 
+  #renderUserInfo(data: WhoAmI) {
+    var username = data.email || this.usertoolsTarget.dataset.defaultEmail;
+    document.querySelector('.user-fullname').innerHTML = username;
+
+    var initials = username.split('@')[0].split('.').map(function(name: string) {
+      return name[0].toUpperCase();
+    });
+
+    document.querySelector('.btn-user-initial').innerHTML = initials.join('');
+  }
+
 }
 
 interface ElementAttributes {
@@ -96,6 +136,11 @@ interface Document {
 }
 interface Folder {
   prettyName: string
+}
+interface WhoAmI {
+  analyticsUserId: string,
+  email: string,
+  userId: string,
 }
 
 export default UserTools
