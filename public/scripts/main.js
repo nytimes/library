@@ -1,4 +1,4 @@
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", function() {
   var html = document.querySelector('html');
 
   // We don't use this feature
