@@ -21,7 +21,7 @@ locals {
 }
 
 inputs = {
-  project_id                   = local.project_id.locals.project_id
+  project_id = local.project_id.locals.project_id
   # This naming scheme does not match dev due to the resources being created prior to the terraform code being written
   # We could ensure both environments match, but that would require a resource recreation which is not ideal.
   service_account_id           = local.resource_prefix

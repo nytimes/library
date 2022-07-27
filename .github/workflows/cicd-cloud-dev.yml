@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      NODE_ENV: development
     steps:
       - name: Checking Repository
         uses: actions/checkout@v2
@@ -17,22 +19,5 @@ jobs:
         uses: actions/setup-node@v1
         with: 
            node-version: '16.x'
-        env:
-          # Assign Environment
-          environment: ${{ secrets.NODE_ENV }}
-          # Google oAuth credentials
-          google_client_id: ${{ secrets.GOOGLE_CLIENT_ID }} 
-          google_client_secret: ${{ secrets.GOOGLE_CLIENT_SECRET }} 
-          session_secret: ${{ secrets.SESSION_SECRET }} 
-          google_application_json: ${{ secrets.GOOGLE_APPLICATION_JSON }} 
-          google_application_credentials: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }} 
-          gcp_project_id: ${{ secrets.GCP_PROJECT_ID }} 
-          # comma separated list of approved access domains or email addresses (regex is supported).
-          approved_domains: ${{ secrets.APPROVED_DOMAINS }} 
-          # Google drive Configuration
-          # team or folder ("folder" if using a folder instead of a team drive)
-          drive_type: ${{ secrets.DRIVE_TYPE }} 
-          # the ID of your team's drive or shared folder. The string of random numbers and letters at the end of your team drive or folder url.
-          drive_id: ${{ secrets.DRIVE_ID }} 
       - run: npm ci
       - run: npm run build

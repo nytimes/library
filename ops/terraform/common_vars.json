@@ -1,0 +1,22 @@
+[
+  {
+    "name": "GOOGLE_APPLICATION_CREDENTIALS",
+    "value": "parse_json"
+  },
+  {
+    "name": "DRIVE_TYPE",
+    "value": "team"
+  },
+  {
+    "name": "APPROVED_DOMAINS",
+    "value": "adhocteam.us"
+  },
+  {
+    "name": "DRIVE_ID",
+    "value": "0AGH6czafBGryUk9PVA"
+  },
+  {
+    "name": "EXCLUDE_FOLDERS",
+    "value": "1eg1nvVmfER1_824VPO2WzOG2EXXTwE0l,179O1Oq8pkD69D_hJKe2BxTvHanp9HGMB"
+  }
+]
