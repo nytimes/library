@@ -65,14 +65,16 @@
   "scripts": {
     "start": "node -r dotenv/config server/bootstrap.js",
     "build": "npm run webpack",
+    "build:dev": "npm run webpack:dev",
     "debug": "node -r dotenv/config --inspect --inspect-brk server/bootstrap.js",
-    "watch": "npm run build && concurrently \"nodemon --inspect=0.0.0.0 -r dotenv/config -e js,ejs server/bootstrap.js\" \"nodemon -e scss,ts,js --watch styles --watch custom/styles --watch scripts -x npm run build\"",
+    "watch": "npm run build:dev && concurrently \"nodemon --inspect=0.0.0.0 -r dotenv/config -e js,ejs server/bootstrap.js\" \"nodemon -e scss,ts,js --watch styles --watch custom/styles --watch scripts -x npm run build:dev\"",
     "test": "NODE_ENV=test PORT=3001 jest --setupFiles dotenv/config --setupTestFrameworkScriptFile='./test/utils/bootstrap.js' --forceExit",
     "test:cover": "NODE_ENV=test PORT=3001 nyc --include=server/** --reporter=html --reporter=text jest test/**/*.test.js --setupFiles dotenv/config --setupTestFrameworkScriptFile='./test/utils/bootstrap.js' --forceExit",
     "lint": "eslint ./server",
     "lint:fix": "eslint ./server --fix",
     "gcp-build": "./bin/install_customizations && npm run build && ./bin/update_gae_pkg",
-    "webpack": "npx webpack --mode production"
+    "webpack": "npx webpack --mode=production",
+    "webpack:dev": "npx webpack --mode=development"
   },
   "repository": {
     "type": "git",
