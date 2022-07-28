@@ -17,7 +17,7 @@ const pkg = require(pkgPath)
 const {dotenv} = pkg.devDependencies
 
 // update the start config to use .env, add as normal dep
-pkg.scripts.start = `node -r dotenv/config server/index`
+pkg.scripts.start = `node -r dotenv/config server/bootstrap`
 pkg.dependencies = Object.assign({}, pkg.dependencies, {dotenv}, customPkg.dependencies)
 
 // write the updates package.json to disk

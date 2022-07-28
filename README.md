@@ -97,6 +97,54 @@ The original NYTimes Library was built with [`node-sass`](https://github.com/sas
 
 Previously, the npm build scripts used `node-sass` and `--include-paths` command line parameters where the earlier paths took precedence over later paths in the command.  This is different from the Webpack `sass-loader` which uses the concept of entry points and imports the SASS references as indicated in the entry point files.  Due to this difference, new custom `errors.scss` and `style.scss` were created to correctly import the files in correct order.
 
+### Linting with ESLint
+
+To run eslint to check the server code base, run:
+
+```
+npm run lint
+```
+
+To autofix errors, run:
+
+```
+npm run lint:fix
+```
+
+### Environment Variables Listing
+
+The following are the available environment variables and its intended purpose:
+
+- `ALLOW_INLINE_CODE` - Set to `true` for inline code formatter option.
+- `APPROVED_DOMAINS` - Comma-delimited list of approved email domains for login.
+- `DRIVE_ID` - The Google Drive ID to be used as the basis of Content Library
+- `DRIVE_TIMEOUT` - Time out value for accessing Google Drive.  The default value is 10 seconds if not set.
+- `DRIVE_TYPE` - The type of shared drive. If it is a shared folder, set to `folder`.  Otherwise, set to `team`.
+- `EDIT_CACHE_DELAY` - Set the cache duration.  The default value is 3600.
+- `GA_TRACKING_ID` - Google Analytics Tracking ID
+- `GCP_PROJECT_ID` - Google Cloud Project ID used to connect to Google Cloud DataStore
+- `GOOGLE_APPLICATION_CREDENTIALS` - Path to the credential `.json` file or `parse_json` to parse the JSON value in `GOOGLE_APPLICATION_JSON`.
+- `GOOGLE_APPLICATION_JSON` - Service Account JSON credential.
+- `GOOGLE_CLIENT_ID` - Google OAuth Client ID if `google` OAuth strategy is set.
+- `GOOGLE_CLIENT_SECRET` - Google OAuth Client SEcret if `google` OAuth strategy is set.
+- `LOG_LEVEL` - Sets the application log level.  Defaults to `debug` in development and `info` in non-development environments.  See [Winston](https://github.com/winstonjs/winston#logging) for the log level settings.
+- `LIST_UPDATE_DELAY` - Set the frequency of the file tree update.  The default value is 15 if not set.
+- `NODE_ENV` - Currently running node environment.  This can be `development`, `test` or `production`.
+  - `development` - Does not use Google to authenticate user, instead it uses the email specified in the `TEST_EMAIL` environment variable or `test@example.com`.  It will look for the `./auth.json` file if the `GOOGLE_APPLICATION_CREDENTIALS` is not set.  It sets the log level to `DEBUG`.  This setting is intended for local development.
+  - `test` - It sets the log level to `INFO`. Sets [winston](https://github.com/winstonjs/winston) as the logger. This setting is intended for unit tests.
+  - `production` - It sets the log level to `INFO`.
+- `OAUTH_STRATEGY` - Sets OAuth strategy and can be either `Slack` or `google`.  The default value is `google` if not set.
+- `PORT` - Port Express.js is listening on.  The default value is 3000 if not set.
+- `REDIRECT_URL` - OAuth callback URL
+- `SESSION_SECRET` - Key used to encrypt session data.
+- `SLACK_CLIENT_ID` - Slack OAuth Client ID if `Slack` OAuth strategy is set.
+- `SLACK_CLIENT_SECRET` - Slack OAuth Client Secret if `Slack` OAuth strategy is set.
+- `TEST_EMAIL` - Sets the email address of the logged in user when `NODE_ENV` is set to `development`. 
+- `TRUST_PROXY` - The trust proxy flag tells the app to use https for links and redirect urls if it sees indications that the request passed through a proxy and was originally sent using https.
+
+AdHoc Custom Environment Variables
+- `EXCLUDE_FOLDERS` - Comma-delimiated folder IDs to be excluded from search.
+
 ---
 ## Demo Site & User Guide
 

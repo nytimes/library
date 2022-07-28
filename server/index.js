@@ -97,7 +97,7 @@ app.use(errorPages)
 
 // If we are called directly, listen on port 3000, otherwise don't
 
-if (require.main === module) {
+if (process.env.NODE_ENV !== 'test') {
   app.listen(parseInt(process.env.PORT || '3000', 10))
 }
 
