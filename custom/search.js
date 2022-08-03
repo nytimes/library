@@ -4,10 +4,11 @@ const {google} = require('googleapis')
 const {getAuth} = require('../server/auth')
 const list = require('../server/list')
 const log = require('../server/logger')
+const {mimeTypes} = require('./common/fileTypes')
 
 const driveId = process.env.DRIVE_ID
 
-exports.run = async (query, driveType = 'team') => {
+exports.run = async (query, types, driveType = 'team') => {
   const authClient = await getAuth()
   let folderIds
 
@@ -19,7 +20,9 @@ exports.run = async (query, driveType = 'team') => {
 
   const excludedFolders = await getExcludedFolders(drive)
 
-  const files = await fullSearch({drive, query, folderIds, driveType, excludedFolders})
+  const mimeTypes = convertToMimeType(types)
+
+  const files = await fullSearch({drive, query, folderIds, driveType, excludedFolders, mimeTypes})
     .catch((err) => {
       log.error(`Error when searching for ${query}, ${err}`)
       throw err
@@ -32,8 +35,8 @@ exports.run = async (query, driveType = 'team') => {
   return fileMetas
 }
 
-async function fullSearch({drive, query, folderIds, results = [], nextPageToken: pageToken, driveType, excludedFolders}) {
-  const options = getOptions(query, folderIds, driveType, excludedFolders)
+async function fullSearch({drive, query, folderIds, results = [], nextPageToken: pageToken, driveType, excludedFolders, mimeTypes}) {
+  const options = getOptions(query, folderIds, driveType, excludedFolders, mimeTypes)
 
   if (pageToken) {
     options.pageToken = pageToken
@@ -89,7 +92,7 @@ async function getAllFolders({nextPageToken: pageToken, drive, parentIds = [driv
   return combined.map((folder) => folder.id)
 }
 
-function getOptions(query, folderIds, driveType, excludedFolders) {
+function getOptions(query, folderIds, driveType, excludedFolders, mimeTypes) {
   const fields = '*'
 
   if (driveType === 'folder') {
@@ -107,9 +110,14 @@ function getOptions(query, folderIds, driveType, excludedFolders) {
     excludeFolderQuery = excludedFolders.map((folder) => `AND NOT '${folder}' in parents`).join(' ')
   }
 
+  let mimeTypeFilterQuery = '';
+  if (Array.isArray(mimeTypes)) {
+    mimeTypeFilterQuery = `AND (${mimeTypes.map(mimeType => `mimeType = '${mimeType}'`).join(' or ')})`
+  }
+
   return {
     ...list.commonListOptions.team,
-    q: `fullText contains ${JSON.stringify(query)} AND mimeType != 'application/vnd.google-apps.folder' ${excludeFolderQuery} AND trashed = false`,
+    q: `fullText contains ${JSON.stringify(query)} AND mimeType != 'application/vnd.google-apps.folder' ${excludeFolderQuery} ${mimeTypeFilterQuery} AND trashed = false`,
     teamDriveId: driveId,
     fields
   }
@@ -132,4 +140,18 @@ async function getExcludedFolders(drive) {
   const result = await Promise.all(subfolders)
 
   return [...folders, ...result.flat()]
+}
+
+// Convert a comma-delimited types parameter to an array of mime types.  
+// The following types are allowed:
+// png, jpg, svg, pdf, docs (Google Docs), sheets (Google Sheets), 
+// slides (Google Slides), drawings (Google Drawings), 
+// shortcut (Google Shortcuts), powerpoint, video
+function convertToMimeType(type_param) {
+  if (!type_param) return [];
+
+  const types = type_param.split(',')
+
+  return types.map(filetype => mimeTypes[filetype])
+              .filter(m => m != null)
 }

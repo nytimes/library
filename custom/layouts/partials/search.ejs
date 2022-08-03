@@ -1,0 +1,59 @@
+<div data-controller="searchfilter">
+  <div class="search-topper">
+    <form method="GET" action="/search" class="search-container">
+      <% const placeholder = template('search.placeholder')%>
+      <% const focus = locals.focus || '' %>
+      <% const msgOnFocus = placeholder || '' %>
+      <input <%= focus %> id="search-box" class="twitter-typeahead" type="text" name="q" value="<%= locals.q %>" placeholder="<%- placeholder %>" />
+      <input type="hidden" name="types" data-searchfilter-target="types" value="" />
+      <button class="icon"><i class="fa fa-search"></i></button>
+    </form>
+ 
+    <% const style = locals.style || 'plaintext' %>
+    <div class="additional-menus <%= style %>">
+      <a href="/categories"><button type="button" class="button btn-<%= style %>"><%- template('landing.viewAll') %></button></a>
+      <%# <a href="#"><button type="button" class="btn-plaintext">Onboarding Guide</button></a>%>
+    </div>
+ 
+    <div id="filterTools">
+        <div> <span data-searchfilter-target="filteredByLabel"></span><span data-searchfilter-target="typesDesc"></span></div>
+        <button
+          data-action="click->searchfilter#summonModal"
+          class="button"
+          type="button"
+        >Filter Search</button>
+    </div>
+  </div>
+
+  <div class="modal" data-searchfilter-target="modal">
+    <div class="wrapper">
+      <section class="modalBody" data-searchfilter-target="modalBody">
+        <div class="modalContent">
+          <header>
+            Filter your search?
+          </header>
+          <p>Filter by File Type</p>
+          <div class="filetype-checkbox-container">
+          <% const fileTypeKeys = Object.keys(fileTypeNames).sort() %>
+          <% for (const key of fileTypeKeys) { %>
+            <div>
+                <input type="checkbox" data-searchfilter-target="checkbox" value="<%= fileTypeNames[key] %>" id="<%= key %>"><label for="<%= key %>"><%= key %></label>
+            </div>
+          <% } %>
+          </div>
+          <footer>
+            <button type="button" data-action="click->searchfilter#dismissModal" class="button">Cancel</button>
+            <button type="button" data-action="click->searchfilter#onSubmit" class="button button-accent">Submit</button>
+          </footer>
+        </div>
+      </section>
+    </div>
+    <button
+      class="modal-close"
+      data-action="click->searchfilter#dismissModal"
+      type="button"
+      data-searchfilter-target="backdrop"
+    >
+      Close</button>
+  </div>
+</div>

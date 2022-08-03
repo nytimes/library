@@ -56,7 +56,6 @@
   z-index: 3;
   height: 100vh;
   width: 100%;
-  background-color: rgba(0,0,0,.25);
 
   .wrapper {
     position: relative;
@@ -72,7 +71,18 @@
   background-color: #fff;
   box-shadow: 5px 5px 0px 0px $gray-25;
 
-  transition: .5s;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  transform: scale(.9);
+  opacity: 0;
+  position: relative;
+  top: -1rem;
+  &.active {
+    transform: scale(1);
+    opacity: 1;
+    top: 0rem;
+  }
+  
   @media screen and ( min-width:35rem ) {
     gap: 1rem;
     padding: 1rem 2rem;
@@ -122,4 +132,40 @@
   position: fixed;
   background: none;
   border: none;
+  text-indent: -1000rem; // hide from sighted users
+
+  transition: all .1s ease-in 0s;
+  background-color: rgba(0,0,0,0);
+  &.active {
+    background-color: rgba(0,0,0,.25);
+  }
+}
+
+/* Index Search Filter */
+.search-topper {
+  flex-direction: column; 
+  gap: 1rem; 
+  align-items: center;
+}
+
+.search-container {
+  display: flex;
+}
+
+.filetype-checkbox-container {
+  columns: 2;
+  label {
+    margin-left: .25rem;
+  }
+}
+
+#filterTools {
+  width: calc(100% - 20px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  button {
+    min-width: 8rem;
+  }
 }

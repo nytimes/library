@@ -1,5 +1,6 @@
 import { Application } from "@hotwired/stimulus"
 import UsefulnessController from './controllers/usefulness_controller'
+import SearchFilterController from './controllers/search_filter_controller'
 
 // Import controllers here
 // Example:
@@ -11,3 +12,4 @@ const application = Application.start()
 // Example:
 // application.register("hello", HelloController)
 application.register('usefulness', UsefulnessController)
+application.register('searchfilter', SearchFilterController)

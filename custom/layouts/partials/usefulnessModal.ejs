@@ -7,7 +7,7 @@
   
   <div class="modal" id="useful-yes" data-usefulness-target="usefulYes">
     <div class="wrapper">
-      <section class="modalBody">
+      <section class="modalBody" data-usefulness-target="usefulYesBody">
         <div class="modalGraphic"></div>
         <div class="modalContent">
           <header>
@@ -23,12 +23,12 @@
         </div>
       </section>
     </div>
-    <button class="modal-close" data-action="click->usefulness#handleCancel" type="button">Close</button>
+    <button class="modal-close" data-action="click->usefulness#handleCancel" type="button"  data-usefulness-target="usefulYesBackdrop">Close</button>
   </div>
 
   <div class="modal" id="useful-no" data-usefulness-target="usefulNo">
     <div class="wrapper">
-      <section class="modalBody">
+      <section class="modalBody" data-usefulness-target="usefulNoBody">
         <div class="modalGraphic blocky-lookng-down"></div>
         <div class="modalContent">
           <header>
@@ -44,6 +44,6 @@
         </div>
       </section>
     </div>
-    <button class="modal-close" data-action="click->usefulness#handleCancel" type="button">Close</button>
+    <button class="modal-close" data-action="click->usefulness#handleCancel" type="button" data-usefulness-target="usefulNoBackdrop">Close</button>
   </div>
 </div>

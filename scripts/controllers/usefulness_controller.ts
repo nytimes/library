@@ -4,20 +4,29 @@ class UsefulnessController extends Controller {
     launchModal: String | null
     reasonTargets: any
     usefulYesTarget: any
+    usefulYesBackdropTarget: any;
+    usefulYesBodyTarget: any;
     usefulNoTarget: any
+    usefulNoBackdropTarget: any;
+    usefulNoBodyTarget: any;
 
     initialize() {
       this.launchModal = ''
     }
   
     static get targets() {
-      return ['reason', 'usefulYes', 'usefulNo']
+      return ['reason', 'usefulYes', 'usefulYesBody', 'usefulYesBackdrop', 'usefulNo', 'usefulNoBody', 'usefulNoBackdrop']
     }
   
     handleVote(event: any) {
       this.launchModal = event.params.launchModal
 
       this[`${this.launchModal}Target`].classList.add('active')
+      setTimeout(() => {
+        this[`${this.launchModal}BackdropTarget`].classList.add('active')
+        this[`${this.launchModal}BodyTarget`].classList.add('active')
+      }, 10)
+
     }
   
     handleCancel() {
@@ -40,7 +49,12 @@ class UsefulnessController extends Controller {
     }
   
     closeModal() {
-      this[`${this.launchModal}Target`].classList.remove('active')
+      this[`${this.launchModal}BodyTarget`].classList.remove('active')
+      this[`${this.launchModal}BackdropTarget`].classList.remove('active')
+      setTimeout((launchModal) => {
+        this[`${launchModal}Target`].classList.remove('active')
+      }, 200, this.launchModal )
+
       this.launchModal = ''
     }
   

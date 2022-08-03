@@ -80,6 +80,7 @@ For example, to create a custom page handler:
 
 This would be useful in cases if you wanted to modify data without resorting to middleware.  An example would be adding a property to the response without writing middleware to parse the payload or override `response.send()`.
 
+*NOTE ON CUSTOMIZATION:* When customizing handlers, etc. be sure you check the `require()` references.  This can be frustrating when you start customizing and it never reaches your code.  This is due to the `require()` statements failing in the `requireWithFallback()` function when fails will require the original code. (See step 3 above)
 
 ### TypeScript and Stimulus.js
 

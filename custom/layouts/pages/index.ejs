@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <%- include('partials/head', {title: template('branding.prettyName')}) %>
+  <body>
+
+    <header id="masthead" class="masthead" role="banner">
+      <div class="container">
+        <%- include('partials/userTools') %>
+      </div>
+    </header>
+    
+    <div id="main-search-page">
+      <div class="main-item">
+        <%- include('partials/branding', {context: 'home'}) %>
+        <div class="tagline">
+          <p><%- template('landing.tagline') %> <%- template('landing.quickLink') %></p>
+        </div>
+        <%- include('partials/search', {style: 'homepage', focus: 'autofocus', msgOnFocus: template('search.placeholder')}) %>
+
+        <div class="featured-cat">
+          <% if (modules.length) { 
+            modules.forEach((module, i, all) => {
+          %>
+            <%- include('partials/landingModule', module) %>
+          <%  })  
+          } else { %>
+          <!-- Eventually we might display a warning here about why this space is empty. -->
+          <% } %>
+        </div>
+
+      </div>
+      <%- include('partials/footer', {style: 'homepage', pageType: 'homepage'}) %>
+    </div>
+  </body>
+</html>
