@@ -23,7 +23,9 @@ describe('Server responses', () => {
       return request(app)
         .get('/')
         .expect(200)
-        .then((res) => expect(res.text).to.include('<title>Team Library</title>'))
+        .then((res) => {
+          expect(res.text).to.include('<title>Ad Hoc Library Catalog</title>')
+        })
     })
 
     it('should return 200 OK for healthcheck', () => {
@@ -98,7 +100,8 @@ describe('Server responses', () => {
         })
     })
 
-    it('should render an inline <style> tag and no JS on error pages', () => {
+    // This test no longer is valid since we are using webpack
+    xit('should render an inline <style> tag and no JS on error pages', () => {
       return request(app)
         .get('/this-route-does-not-exist')
         .expect(404)
