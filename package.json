@@ -67,6 +67,7 @@
     "build": "npm run webpack",
     "build:dev": "npm run webpack:dev",
     "debug": "node -r dotenv/config --inspect --inspect-brk server/bootstrap.js",
+    "debug:test": "NODE_ENV=test PORT=3001 node --inspect-brk node_modules/.bin/jest --runInBand --setupFiles dotenv/config --setupTestFrameworkScriptFile='./test/utils/bootstrap.js' --forceExit",
     "watch": "npm run build:dev && concurrently \"nodemon --inspect=0.0.0.0 -r dotenv/config -e js,ejs server/bootstrap.js\" \"nodemon -e scss,ts,js --watch styles --watch custom/styles --watch scripts -x npm run build:dev\"",
     "test": "NODE_ENV=test PORT=3001 jest --setupFiles dotenv/config --setupTestFrameworkScriptFile='./test/utils/bootstrap.js' --forceExit",
     "test:cover": "NODE_ENV=test PORT=3001 nyc --include=server/** --reporter=html --reporter=text jest test/**/*.test.js --setupFiles dotenv/config --setupTestFrameworkScriptFile='./test/utils/bootstrap.js' --forceExit",
