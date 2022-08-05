@@ -35,7 +35,7 @@ class SearchFilterController extends Controller {
     }, 200)
   }
 
-  onSubmit(): void {
+  onConfirm(): void {
     this.selectedTypes = this.checkboxTargets.filter(x => x.checked).map(x => x.value);
     this.updateHiddenField();
     this.filteredByLabelTarget.innerHTML = this.selectedTypes.length ? 'Filtered by: ' : '';
