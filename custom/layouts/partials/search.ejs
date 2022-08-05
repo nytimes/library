@@ -40,6 +40,11 @@
                 <input type="checkbox" data-searchfilter-target="checkbox" value="<%= fileTypeNames[key] %>" id="<%= key %>"><label for="<%= key %>"><%= key %></label>
             </div>
           <% } %>
+          <div>
+            <button data-action="click->searchfilter#selectAll">All</button>
+            <button data-action="click->searchfilter#selectDocuments">Documents</button>
+            <button data-action="click->searchfilter#selectNone">None</button>
+          </div>
           </div>
           <footer>
             <button type="button" data-action="click->searchfilter#dismissModal" class="button">Cancel</button>

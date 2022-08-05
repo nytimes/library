@@ -11,28 +11,28 @@ class SearchFilterController extends Controller {
   typesDescTarget: HTMLElement;
   selectedTypes: String[] = [];
 
+  documentTypes = ['docs', 'pdf', 'slides'];
+
   static targets = ['backdrop', 'filteredByLabel', 'types', 'modal', 'modalBody', 'checkbox', 'typesDesc'];
 
   connect(): void {
-    console.log('SearchFilterController connected')
     this.updateHiddenField();
   }
 
   summonModal(): void {
-    console.log('summonModal')
-    this.modalTarget.classList.add('active')
+    this.modalTarget.classList.add('active');
     setTimeout(() => {
-      this.backdropTarget.classList.add('active')
-      this.modalBodyTarget.classList.add('active')
-    }, 10)
+      this.backdropTarget.classList.add('active');
+      this.modalBodyTarget.classList.add('active');
+    }, 10);
   }
 
   dismissModal(): void {
-    this.modalBodyTarget.classList.remove('active')
-    this.backdropTarget.classList.remove('active')
+    this.modalBodyTarget.classList.remove('active');
+    this.backdropTarget.classList.remove('active');
     setTimeout(() => {
-      this.modalTarget.classList.remove('active')
-    }, 200)
+      this.modalTarget.classList.remove('active');
+    }, 200);
   }
 
   onConfirm(): void {
@@ -45,6 +45,21 @@ class SearchFilterController extends Controller {
 
   updateHiddenField(): void {
     this.typesTarget.value = this.selectedTypes.join(',');
+  }
+
+  selectAll(): void {
+    this.checkboxTargets.forEach(target => target.checked = true);
+    this.selectedTypes = this.checkboxTargets.map(x => x.value);
+  }
+
+  selectDocuments(): void {
+    this.selectedTypes = this.documentTypes;
+    this.checkboxTargets.forEach(target => target.checked = this.documentTypes.indexOf(target.value) !== -1);
+  }
+
+  selectNone(): void {
+    this.selectedTypes = [];
+    this.checkboxTargets.forEach(target => target.checked = false);
   }
 }
 
