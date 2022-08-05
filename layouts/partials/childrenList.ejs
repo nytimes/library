@@ -1,4 +1,4 @@
-<div class="children-container">
+<div class="children-container" data-controller="children-list">
   <% if (locals.kicker) { %>
     <h3>
     <% if (locals.link) { %><a href="<%= link %>"><% } %>
@@ -6,8 +6,8 @@
     <% if (locals.link) { %></a><% } %>
     </h3>
   <% } %>
-  <div class="children-view hide">
-    <ul class="children">
+  <div class="children-view hide" data-children-list-target="expandable">
+    <ul class="children"  data-children-list-target="children">
       <% children.forEach((link) => { %>
         <% const type = link.resourceType %>
         <li class="type-<%= type %>">
@@ -31,4 +31,7 @@
       <% }) %>
     </ul>
   </div>
+  <button data-action="click->children-list#toggle" data-children-list-target="toggle" class="seeMore-button">
+    See more
+  </button>
 </div>

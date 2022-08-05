@@ -14,10 +14,12 @@ class SearchFilterController extends Controller {
   static targets = ['backdrop', 'filteredByLabel', 'types', 'modal', 'modalBody', 'checkbox', 'typesDesc'];
 
   connect(): void {
+    console.log('SearchFilterController connected')
     this.updateHiddenField();
   }
 
   summonModal(): void {
+    console.log('summonModal')
     this.modalTarget.classList.add('active')
     setTimeout(() => {
       this.backdropTarget.classList.add('active')

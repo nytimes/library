@@ -97,8 +97,8 @@
 
   .g-left-panel {
     float: left;
-    position: relative;
-    top: 8px;
+    position: sticky;
+    top: 60px;
     width: 220px;
     font-weight: 300;
     padding: 10px 20px;
