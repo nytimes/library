@@ -9,12 +9,6 @@
       <button class="icon"><i class="fa fa-search"></i></button>
     </form>
  
-    <% const style = locals.style || 'plaintext' %>
-    <div class="additional-menus <%= style %>">
-      <a href="/categories"><button type="button" class="button btn-<%= style %>"><%- template('landing.viewAll') %></button></a>
-      <%# <a href="#"><button type="button" class="btn-plaintext">Onboarding Guide</button></a>%>
-    </div>
- 
     <div id="filterTools">
         <div> <span data-searchfilter-target="filteredByLabel"></span><span data-searchfilter-target="typesDesc"></span></div>
         <button
@@ -23,6 +17,13 @@
           type="button"
         >Filter Search</button>
     </div>
+
+    <% const style = locals.style || 'plaintext' %>
+    <div class="additional-menus <%= style %>">
+      <a href="/categories"><button type="button" class="button btn-<%= style %>"><%- template('landing.viewAll') %></button></a>
+      <%# <a href="#"><button type="button" class="btn-plaintext">Onboarding Guide</button></a>%>
+    </div>
+
   </div>
 
   <div class="modal" data-searchfilter-target="modal">
