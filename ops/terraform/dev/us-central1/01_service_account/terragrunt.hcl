@@ -25,4 +25,5 @@ inputs = {
   service_account_id           = "${local.resource_prefix}-${local.environment}"
   service_account_display_name = "${local.resource_prefix}-${local.environment}"
   use_secretsmanager           = true
+  create_gha                   = true
 }
