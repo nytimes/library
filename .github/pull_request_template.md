@@ -1,16 +1,24 @@
-### Description of Change
-<!-- Thanks for contributing! Please describe your addition and review the requirements below. Review the contributor's guide before submitting your pull request: https://github.com/nytimes/library/blob/master/CONTRIBUTING.md -->
+### Closes #XXXX
 
-### Related Issue
+<!-- If only part of a change, use Part of #XXXX instead -->
 
-### Motivation and Context
+<!-- summarize the problem described in the related issue -->
 
-### Checklist
-<!-- Cross out items that don't apply and leave a short description of why the item isn't relevant. Check off ([x]) items you complete. -->
+### Proposed changes:
 
-- [ ] Ran `npm run lint` and updated code style accordingly
-- [ ] `npm run test` passes
-- [ ] PR has a description and all contributors/stakeholder are noted/cc'ed
-- [ ] tests are updated and/or added to cover new code
-- [ ] relevant documentation is changed and/or added
+- < Bulleted summary of changes >
+-
 
+<!-- Add detailed discussion of changes here -->
+<!-- Insert screenshots if needed (drag images here) -->
+
+### Acceptance criteria validation
+
+<!-- Were you able to fully test the acceptance criteria on the related ticket? -->
+
+- [ ] Fulfilled Acceptance Criteria
+
+  <!-- If not, why not? -->
+
+- [ ] Tests added to cover the change
+  <!-- If not, why not? -->
