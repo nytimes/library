@@ -24,3 +24,11 @@ variable "use_secretsmanager" {
   type        = bool
   default     = false
 }
+
+# Optional variable to create a service account for GHA
+
+variable "create_gha" {
+  description = "Set to true to create the Github actions service account. Defaults to false"
+  type        = bool
+  default     = false
+}

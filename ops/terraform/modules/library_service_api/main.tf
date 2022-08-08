@@ -3,7 +3,8 @@ locals {
     [
       "datastore.googleapis.com",
       "drive.googleapis.com",
-      "iap.googleapis.com"
+      "iap.googleapis.com",
+      "iamcredentials.googleapis.com"
     ],
     var.additional_services_to_enable
   )
