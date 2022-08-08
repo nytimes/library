@@ -1,7 +1,8 @@
 'use strict'
 
-const log = require('../logger')
-const {assetDataURI, readFileAsync, stringTemplate} = require('../utils')
+const log = require('../../server/logger')
+const {assetDataURI, readFileAsync, stringTemplate} = require('../../server/utils')
+const {fileTypeNames} = require('../common/fileTypes')
 
 let assetCache
 
@@ -70,7 +71,8 @@ module.exports = async (err, req, res, next) => {
       res.render(`errors/${code}`, {
         inlineCSS: inlined.css,
         err,
-        template: inlined.stringTemplate
+        template: inlined.stringTemplate,
+        fileTypeNames
       })
     },
 
