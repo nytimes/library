@@ -2,16 +2,18 @@
 
 const router = require('express-promise-router')()
 
-const log = require('../logger')
-const {getMeta} = require('../list')
-const {fetchDoc, cleanName} = require('../docs')
-const {getTemplates, sortDocs, stringTemplate} = require('../utils')
-const {parseUrl} = require('../urlParser')
+const log = require('../../server/logger')
+const {getMeta} = require('../../server/list')
+const {fetchDoc, cleanName} = require('../../server/docs')
+const {getTemplates, sortDocs, stringTemplate} = require('../../server/utils')
+const {parseUrl} = require('../../server/urlParser')
 
 router.get('*', handleCategory)
 module.exports = router
 
 const categories = getTemplates('categories')
+
+const {fileTypeNames} = require('../common/fileTypes')
 
 async function handleCategory(req, res) {
   log.info(`GET ${req.path}`)
@@ -71,7 +73,8 @@ async function handleCategory(req, res) {
     content: html,
     byline,
     createdBy,
-    sections
+    sections,
+    fileTypeNames
   })
 
   res.format({
