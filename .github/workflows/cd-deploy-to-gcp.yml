@@ -14,7 +14,7 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        environment: [dev]
+        environment: [dev, prod]
         include:
           - environment: dev
             PROJECT_ID: DEV_PROJECT_ID
