@@ -173,3 +173,16 @@
     min-width: 8rem;
   }
 }
+
+#quickSelections {
+  display: flex; 
+  flex-direction: column;
+  p {
+    margin: 0;
+    margin-top: 1.5rem;
+  }
+  div.selections {
+    display: flex; 
+    flex-direction: row;
+  }
+}
