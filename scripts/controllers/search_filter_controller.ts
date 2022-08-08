@@ -13,6 +13,8 @@ class SearchFilterController extends Controller {
 
   documentTypes = ['docs', 'pdf', 'slides'];
 
+  imageTypes = ['drawings', 'jpg', 'png', 'svg'];
+
   static targets = ['backdrop', 'filteredByLabel', 'types', 'modal', 'modalBody', 'checkbox', 'typesDesc'];
 
   connect(): void {
@@ -55,6 +57,11 @@ class SearchFilterController extends Controller {
   selectDocuments(): void {
     this.selectedTypes = this.documentTypes;
     this.checkboxTargets.forEach(target => target.checked = this.documentTypes.indexOf(target.value) !== -1);
+  }
+
+  selectImages(): void {
+    this.selectedTypes = this.imageTypes;
+    this.checkboxTargets.forEach(target => target.checked = this.imageTypes.indexOf(target.value) !== -1);
   }
 
   selectNone(): void {
