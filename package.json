@@ -12,7 +12,7 @@
     "cheerio": "^1.0.0-rc.3",
     "deepmerge": "^4.2.2",
     "dotenv": "^8.6.0",
-    "ejs": "^3.1.5",
+    "ejs": "^3.1.7",
     "express": "^4.17.1",
     "express-promise-router": "^4.0.1",
     "express-session": "^1.17.1",
