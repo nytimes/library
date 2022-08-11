@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
-  <%- include('partials/head', {title: template('search.results.title', locals.q)}) %>
+  <%- include('partials/head', {title: template('search.results.title', locals.q || "''")}) %>
   
   <!-- Font Awesome used for displaying FileType Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" 
         integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" 
         crossorigin="anonymous" referrerpolicy="no-referrer" />
   <body>
-    <%- include('partials/header', {parentLinks: [], title: template('search.results.title', locals.q)}) %>
+    <%- include('partials/header', {parentLinks: [], title: template('search.results.title', locals.q || "''")}) %>
 
     <%- include('partials/nav') %>
 
@@ -31,7 +31,7 @@
           </div>
           <% }) %>
         <% }  else { %>
-          <h3 class="search-kicker"><%- template('search.results.none.kicker', locals.q) %></h3>
+          <h3 class="search-kicker"><%- template('search.results.none.kicker', locals.q || '') %></h3>
           <p><%- template('search.results.none.suggestion') %></p>
         <% } %>
       </div>

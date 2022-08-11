@@ -7,10 +7,36 @@
 
 .search-container .icon {
   z-index: 1;
+
+  // Override original size so button does not overlap drop shadow
+  height: 49px !important;
+  width: 51px !important;
 }
 
 #me .fa-spinner.hide {
   display: none;
+}
+
+.button.btn-homepage {
+  color: #000;
+  margin: 10px 0 0 0;
+  font-size: 14px;
+  background-color: white;
+  border: 1px solid #404040;
+  border-radius: 0;
+  color: black;
+  box-shadow: 2.5px 2.5px 0px -1px $gray-25;
+  padding: 5px 12px;
+}
+
+.button.btn-homepage:hover {
+  color: #000;
+  background-color: $gray-60;
+  box-shadow: 2.5px 2.5px 0px -1px $gray-25;
+}
+
+#search-box {
+  width: 100%;
 }
 
 // =General use
@@ -19,10 +45,12 @@
   padding: 0 1rem;
 }
 
-.button-accent {
-  color: #fff;
-  background-color: $accent;
-  border-color: $accent;
+.button.button-accent {
+  background-color: #97d4ff !important;
+}
+
+.button.button-accent:hover {
+  background-color: #0095ff !important;
 }
 
 // =Specific
@@ -145,22 +173,16 @@
   }
 }
 
-/* Index Search Filter */
+/* Search Filter */
 .search-topper {
   flex-direction: column; 
   gap: 1rem; 
   align-items: center;
+  display: flex;
 }
 
 .search-container {
   display: flex;
-}
-
-.filetype-checkbox-container {
-  columns: 2;
-  label {
-    margin-left: .25rem;
-  }
 }
 
 #filterTools {
@@ -172,4 +194,43 @@
   button {
     min-width: 8rem;
   }
+}
+
+.filetype-buttons {
+  margin-top: -0.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.filetype-checkbox-container {
+  display: flex; 
+  flex-direction: row;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  label {
+    margin-left: 0.1rem;
+  }
+
+  .filetype-column {
+    display: flex; 
+    flex-direction: column;
+
+    .header {
+      font-weight: bold;
+    }
+
+    .checkbox-column {
+      margin-top: 0.25rem;
+      display: flex; 
+      flex-direction: column; 
+      margin-left: 1rem; 
+      margin-bottom: 0.2rem;
+      width: 10rem;
+      gap: 0.08rem;
+    }
+  }
+}
+
+.additional-menus {
+  margin-top: 0px;
 }

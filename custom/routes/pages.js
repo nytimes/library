@@ -42,7 +42,7 @@ async function handlePage(req, res) {
 
       res.format({
         html: () => {
-          res.render(template, {q, results, template: stringTemplate, iconTypes})
+          res.render(template, {q, results, template: stringTemplate, iconTypes, fileTypeNames})
         },
 
         json: () => {
@@ -53,7 +53,8 @@ async function handlePage(req, res) {
             modifiedAt: result.modifiedTime,
             createdAt: result.createdTime,
             id: result.id,
-            resourceType: result.resourceType
+            resourceType: result.resourceType,
+            fileTypeNames
           })))
         }
       })
@@ -78,14 +79,15 @@ async function handlePage(req, res) {
           modifiedAt: category.modifiedTime,
           createdAt: category.createdTime,
           id: category.id,
-          resourceType: category.resourceType
+          resourceType: category.resourceType,
+          fileTypeNames
         })))
       }
     })
     return
   }
 
-  res.render(template, {template: stringTemplate})
+  res.render(template, {template: stringTemplate, fileTypeNames})
 }
 
 function buildDisplayCategories(tree) {

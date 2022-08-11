@@ -1,0 +1,38 @@
+<div class="g-upper-body">
+  <%- include('search') %>
+  <% if (locals.title) { %>
+  <% if (locals.duplicates) { %>
+    <%- include('partials/warning', {message: template('warning.duplicate', locals.duplicates, locals.parentId) }) %>
+  <% } %>
+  <h1 class="headline"><%= title %></h1>
+  <div class="kicker">
+    <div class="attribution" data-controller="attribution">
+        <% if (locals.byline) { %>
+          <p>
+            By <span class="author"><%=locals.byline %></span>.
+          </p>
+        <% } %>
+        <% if (locals.lastUpdatedBy || locals.byline) { %>
+          <p>
+            <% if (locals.lastUpdatedBy) { %>
+              Last edited by <span class="author"><%= lastUpdatedBy %></span><span class="date" data-attribution-target="modified" data-date="<%= locals.modifiedAt %>"></span>.
+            <% } %>
+            <% if (locals.byline) { %>
+              Created <span class="date" data-date="<%= locals.createdAt %>" data-attribution-target="created"></span>.
+            <% } %>
+          </p>
+        <% } %>
+      </p>
+    </div>
+
+    <% if (locals.editLink) { %>
+      <div class="tool">
+        <a href="<%- editLink %>&edit=1" target="_blank">Edit<i class="fa fa-pencil" aria-hidden="true"></i></a>
+
+      </div>
+    <% } %>
+
+  </div>
+  <% } %>
+
+</div>

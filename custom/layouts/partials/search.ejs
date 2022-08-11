@@ -1,28 +1,21 @@
 <div data-controller="searchfilter">
   <div class="search-topper">
     <form method="GET" action="/search" class="search-container">
-      <% const placeholder = template('search.placeholder')%>
-      <% const focus = locals.focus || '' %>
-      <% const msgOnFocus = placeholder || '' %>
-      <input <%= focus %> id="search-box" class="twitter-typeahead" type="text" name="q" value="<%= locals.q %>" placeholder="<%- placeholder %>" />
-      <input type="hidden" name="types" data-searchfilter-target="types" value="" />
-      <button class="icon"><i class="fa fa-search"></i></button>
+      <% const placeholder=template('search.placeholder')%>
+        <% const focus=locals.focus || '' %>
+          <% const msgOnFocus=placeholder || '' %>
+            <input <%=focus %> id="search-box" class="twitter-typeahead" type="text" name="q" value="<%= locals.q %>"
+              placeholder="<%- placeholder %>" />
+                <input type="hidden" name="types" data-searchfilter-target="types" value="" />
+                <button class="icon"><i class="fa fa-search"></i></button>
     </form>
- 
-    <% const style = locals.style || 'plaintext' %>
-    <div class="additional-menus <%= style %>">
-      <a href="/categories"><button type="button" class="button btn-<%= style %>"><%- template('landing.viewAll') %></button></a>
-      <%# <a href="#"><button type="button" class="btn-plaintext">Onboarding Guide</button></a>%>
-    </div>
- 
+
     <div id="filterTools">
-        <div> <span data-searchfilter-target="filteredByLabel"></span><span data-searchfilter-target="typesDesc"></span></div>
-        <button
-          data-action="click->searchfilter#summonModal"
-          class="button"
-          type="button"
-        >Filter Search</button>
+      <div> <span data-searchfilter-target="filteredByLabel"></span><span data-searchfilter-target="typesDesc"></span>
+      </div>
+      <button data-action="click->searchfilter#summonModal" class="button btn-homepage" type="button">Filter Search</button>
     </div>
+
   </div>
 
   <div class="modal" data-searchfilter-target="modal">
@@ -33,27 +26,67 @@
             Filter your search?
           </header>
           <p>Filter by File Type</p>
+          <div class="filetype-buttons">
+            <button data-action="click->searchfilter#selectAll" class="button btn-homepage">All</button>
+            <button data-action="click->searchfilter#selectNone" class="button btn-homepage">None</button>
+          </div>
           <div class="filetype-checkbox-container">
-          <% const fileTypeKeys = Object.keys(fileTypeNames).sort() %>
-          <% for (const key of fileTypeKeys) { %>
-            <div>
-                <input type="checkbox" data-searchfilter-target="checkbox" value="<%= fileTypeNames[key] %>" id="<%= key %>"><label for="<%= key %>"><%= key %></label>
+            <div class="filetype-column">
+              <div><input type="checkbox" id="select-docs-checkbox" data-searchfilter-target="allDocs"
+                  data-action="click->searchfilter#toggleDocs"><label for="select-docs-checkbox"
+                  class="header">Documents</label></div>
+              <div class="checkbox-column">
+                <div><input type="checkbox" data-searchfilter-target="checkbox"
+                    data-action="click->searchfilter#checkAllDocsSelected" value="docs" id="docs"><label for="docs">Google
+                    Docs</label></div>
+                <div><input type="checkbox" data-searchfilter-target="checkbox"
+                    data-action="click->searchfilter#checkAllDocsSelected" value="slides" id="slides"><label for="slides">Google
+                    Slides</label></div>
+                <div><input type="checkbox" data-searchfilter-target="checkbox"
+                    data-action="click->searchfilter#checkAllDocsSelected" value="pdf" id="pdf"><label for="pdf">PDF</label>
+                </div>
+              </div>
             </div>
-          <% } %>
+            <div class="filetype-column">
+              <div><input type="checkbox" id="select-images-checkbox" data-searchfilter-target="allImages"
+                  data-action="click->searchfilter#toggleImages"><label for="select-images-checkbox"
+                  class="header">Images</label></div>
+              <div class="checkbox-column">
+                <div><input type="checkbox" data-searchfilter-target="checkbox"
+                    data-action="click->searchfilter#checkAllImagesSelected" value="drawings" id="drawings"><label
+                    for="drawings">Google Drawings</label></div>
+                <div><input type="checkbox" data-searchfilter-target="checkbox"
+                    data-action="click->searchfilter#checkAllImagesSelected" value="jpg" id="jpg"><label for="jpg">JPG</label>
+                </div>
+                <div><input type="checkbox" data-searchfilter-target="checkbox"
+                    data-action="click->searchfilter#checkAllImagesSelected" value="png" id="png"><label for="png">PNG</label>
+                </div>
+                <div><input type="checkbox" data-searchfilter-target="checkbox"
+                    data-action="click->searchfilter#checkAllImagesSelected" value="svg" id="svg"><label for="svg">SVG</label>
+                </div>
+              </div>
+            </div>
+            <div class="filetype-column">
+              <span class="header">Misc</span>
+              <div class="checkbox-column">
+                <div><input type="checkbox" data-searchfilter-target="checkbox" value="sheets" id="sheets"><label
+                    for="sheets">Google Sheets</label></div>
+                <div><input type="checkbox" data-searchfilter-target="checkbox" value="shortcut" id="shortcut"><label
+                    for="shortcut">Google Shortcut</label></div>
+                <div><input type="checkbox" data-searchfilter-target="checkbox" value="video" id="video"><label
+                    for="video">Video</label></div>
+              </div>
+            </div>
           </div>
           <footer>
-            <button type="button" data-action="click->searchfilter#dismissModal" class="button">Cancel</button>
-            <button type="button" data-action="click->searchfilter#onSubmit" class="button button-accent">Submit</button>
+            <button type="button" data-action="click->searchfilter#dismissModal" class="button btn-homepage">Cancel</button>
+            <button type="button" data-action="click->searchfilter#onConfirm" class="button button-accent btn-homepage">Okay</button>
           </footer>
         </div>
       </section>
     </div>
-    <button
-      class="modal-close"
-      data-action="click->searchfilter#dismissModal"
-      type="button"
-      data-searchfilter-target="backdrop"
-    >
+    <button class="modal-close" data-action="click->searchfilter#dismissModal" type="button"
+      data-searchfilter-target="backdrop">
       Close</button>
   </div>
 </div>
