@@ -35,21 +35,17 @@ exports.run = async (query, types, driveType = 'team') => {
   return fileMetas
 }
 
-async function fullSearch({drive, query, folderIds, results = [], nextPageToken: pageToken, driveType, excludedFolders, mimeTypes}) {
+async function fullSearch({drive, query, folderIds, results = [], nextPageToken, driveType, excludedFolders, mimeTypes}) {
   const options = getOptions(query, folderIds, driveType, excludedFolders, mimeTypes)
 
-  if (pageToken) {
-    console.log('has token');
-    options.pageToken = pageToken;
-    options.nextPageToken = pageToken;
+  if (nextPageToken) {
+    options.nextPageToken = nextPageToken
   }
 
   const {data} = await drive.files.list(options)
 
-  const {files, nextPageToken} = data
+  const {files} = data
   const total = results.concat(files)
-
-  console.log(options);
 
   if (nextPageToken) {
     return fullSearch({drive, query, results: total, nextPageToken, folderIds, driveType})
@@ -59,21 +55,21 @@ async function fullSearch({drive, query, folderIds, results = [], nextPageToken:
 }
 
 // Grab all folders in directory to search through in shared drive
-async function getAllFolders({nextPageToken: pageToken, drive, parentIds = [driveId], foldersSoFar = []} = {}) {
+async function getAllFolders({nextPageToken, drive, parentIds = [driveId], foldersSoFar = []} = {}) {
   const options = {
     ...list.commonListOptions.folder,
     q: `(${parentIds.map((id) => `'${id}' in parents`).join(' or ')}) AND mimeType = 'application/vnd.google-apps.folder'`,
     fields: 'files(id,name,mimeType,parents)'
   }
 
-  if (pageToken) {
-    options.pageToken = pageToken
-    options.nextPageToken = pageToken;
+  if (nextPageToken) {
+    options.pageToken = nextPageToken
+    options.nextPageToken = nextPageToken
   }
 
   const {data} = await drive.files.list(options)
 
-  const {files, nextPageToken} = data
+  const {files} = data
   const combined = foldersSoFar.concat(files)
 
   if (nextPageToken) {
