@@ -39,13 +39,17 @@ async function fullSearch({drive, query, folderIds, results = [], nextPageToken:
   const options = getOptions(query, folderIds, driveType, excludedFolders, mimeTypes)
 
   if (pageToken) {
-    options.pageToken = pageToken
+    console.log('has token');
+    options.pageToken = pageToken;
+    options.nextPageToken = pageToken;
   }
 
   const {data} = await drive.files.list(options)
 
   const {files, nextPageToken} = data
   const total = results.concat(files)
+
+  console.log(options);
 
   if (nextPageToken) {
     return fullSearch({drive, query, results: total, nextPageToken, folderIds, driveType})
@@ -64,6 +68,7 @@ async function getAllFolders({nextPageToken: pageToken, drive, parentIds = [driv
 
   if (pageToken) {
     options.pageToken = pageToken
+    options.nextPageToken = pageToken;
   }
 
   const {data} = await drive.files.list(options)
