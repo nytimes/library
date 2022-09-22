@@ -9,11 +9,15 @@ const log = require('./logger');
   const isDeployedInstance = await gcpMetadata.isAvailable()
 
   if (isDeployedInstance) {
-    log.info('App Engine deployed instance detected...')
+    log.info('Running on a supported Google Cloud Platform instance...')
 
     // We're on GCP here.  Load up environment variables from
     // Secrets Manager
-    const projectId = await gcpMetadata.project('project-id')
+    // If GCP_PROJECT_ID is set, use the value set on the container
+    // if not set, pull the project ID from the GCP metadata
+    // note that on the platform dev GKE cluster, it will be the project ID
+    // of the cluster, where the app container is running in.
+    const projectId = process.env.GCP_PROJECT_ID ? process.env.GCP_PROJECT_ID : await gcpMetadata.project('project-id')
 
     log.info(`Loading environment variables for project: ${projectId}`)
 

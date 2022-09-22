@@ -1,3 +1,6 @@
 node_modules/
 *.env*
 **/*.auth*
+ops/
+.github/
+.git/

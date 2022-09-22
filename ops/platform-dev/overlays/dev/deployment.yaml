@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: content-library
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: content-library
+    spec:
+      containers:
+      - name: content-library
+        image: gcr.io/adhoc-dev-service-platform/content-library:latest
+        env:
+          - name: "GCP_PROJECT_ID"
+            value: "content-library-development"

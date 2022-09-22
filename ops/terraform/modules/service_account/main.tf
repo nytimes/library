@@ -82,6 +82,16 @@ resource "google_project_iam_binding" "main_secretmanager" {
   ]
 }
 
+# Allows the main service account to view the GCP Secrets manager object
+resource "google_project_iam_binding" "main_secretmanager_metadata" {
+  project = var.project_id
+  role    = "roles/secretmanager.viewer"
+  members = [
+    "serviceAccount:${data.google_app_engine_default_service_account.default.email}",
+    "serviceAccount:${google_service_account.main.email}"
+  ]
+}
+
 resource "google_secret_manager_secret" "main_privatekey" {
   count     = var.use_secretsmanager ? 1 : 0
   secret_id = "GOOGLE_APPLICATION_JSON"

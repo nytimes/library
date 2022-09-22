@@ -27,4 +27,5 @@ inputs = {
   service_account_id           = local.resource_prefix
   service_account_display_name = local.resource_prefix
   use_secretsmanager           = true
+  create_gha                   = true
 }
