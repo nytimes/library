@@ -24,7 +24,7 @@ jobs:
           service_account: '${{ secrets.ADHOC_GCR_PLATFORM_DEV_WORKLOAD_IDENTITY_EMAIL }}'
 
       - name: Setup cloud SDK with Dev project info
-        uses: 'google-github-actions/setup-gcloud@v0.6.0'
+        uses: 'google-github-actions/setup-gcloud@v0.6.2'
         with:
           project_id: '${{ secrets.ADHOC_GCR_PLATFORM_DEV_PROJECT_ID }}'
 
