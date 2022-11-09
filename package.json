@@ -72,8 +72,7 @@
     "url": "https://github.com/nytimes/library/issues"
   },
   "engines": {
-    "node": ">=10.x",
-    "npm": ">=6.5.x"
+    "node": "16.x"
   },
   "homepage": "https://github.com/nytimes/library#readme"
 }
