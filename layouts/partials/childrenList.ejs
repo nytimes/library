@@ -1,7 +1,7 @@
 <div class="children-container">
   <% if (locals.kicker) { %>
     <h3>
-    <% if (locals.link) { %><a href="/library<%= link %>"><% } %>
+    <% if (locals.link) { %><a href="<%= formatUrl(locals.link) %>"><% } %>
     <%= kicker %>
     <% if (locals.link) { %></a><% } %>
     </h3>
@@ -24,7 +24,7 @@
           }
           const iconName = iconMap[type] || 'external-link'
           const className = `fa-${iconName}`
-          const href = link.url.match(/^https?:\/\//) ? link.url : `/library${link.url}`
+          const href = formatUrl(link.url)
           %>
           <i class="fa foldericon <%= className %>" aria-hidden="true"></i>
           <a class="content-link" href="<%= href %>" ><%= link.name %></a>

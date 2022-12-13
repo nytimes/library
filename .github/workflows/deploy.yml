@@ -35,6 +35,7 @@ jobs:
           echo GOOGLE_CLIENT_ID >> .env
           echo GOOGLE_CLIENT_SECRET >> .env
           echo SESSION_SECRET >> .env
+          echo PATH_PREFIX=$PATH_PREFIX >> .env
 
           echo $LIBRARY_SA_CREDENTIALS | base64 -d > ./server/.auth.json
 
@@ -48,6 +49,7 @@ jobs:
           APPROVED_DOMAINS: "(.*)"
           GOOGLE_APPLICATION_CREDENTIALS: ./server/.auth.json
           CUSTOMIZATION_GIT_REPO: https://github.com/newsguildny/library-customizations
+          PATH_PREFIX: /library/
           DRIVE_ID: ${{ secrets.DRIVE_ID }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}

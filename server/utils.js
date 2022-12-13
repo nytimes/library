@@ -136,3 +136,11 @@ exports.assetDataURI = async (filePath) => {
   const src = `data:${mimeType};base64,${data}`
   return src
 }
+
+exports.pathPrefix = process.env.PATH_PREFIX || '/'
+
+exports.formatUrl = (url) => {
+  if (url.match(/^https?:\/\//)) return url
+  if (url.startsWith('/')) return exports.pathPrefix + url.slice(1)
+  return exports.pathPrefix + url
+}
