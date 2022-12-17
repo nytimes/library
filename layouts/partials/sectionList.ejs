@@ -2,7 +2,7 @@
 <ul class="section">
   <% sections.forEach((section) => { %>
     <li>
-      <a href="<%- formatUrl(section.url) %>" ><%= section.name %></a>
+      <a href="<%- section.url %>" ><%= section.name %></a>
     </li>
 
     <% if (section.subsections.length) { %>
@@ -11,7 +11,7 @@
       <ul class="subsection">
         <% section.subsections.forEach((subsection) => { %>
         <li>
-          <a href="<%- formatUrl(subsection.url) %>"><%= subsection.name %></a>
+          <a href="<%- subsection.url %>"><%= subsection.name %></a>
         </li>
         <% }) %>
       </ul>
