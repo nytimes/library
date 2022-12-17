@@ -5,7 +5,7 @@ const router = require('express-promise-router')()
 const log = require('../logger')
 const {getMeta} = require('../list')
 const {fetchDoc, cleanName} = require('../docs')
-const {getTemplates, sortDocs, stringTemplate, formatUrl} = require('../utils')
+const {getTemplates, sortDocs, stringTemplate, formatUrl, pathPrefix} = require('../utils')
 const {parseUrl} = require('../urlParser')
 
 router.get('*', handleCategory)
@@ -44,7 +44,8 @@ async function handleCategory(req, res) {
     id,
     template: stringTemplate,
     duplicates,
-    formatUrl
+    formatUrl,
+    pathPrefix
   })
 
   // if this is a folder, just render from the generic data
@@ -73,7 +74,8 @@ async function handleCategory(req, res) {
     byline,
     createdBy,
     sections,
-    formatUrl
+    formatUrl,
+    pathPrefix
   })
 
   res.format({

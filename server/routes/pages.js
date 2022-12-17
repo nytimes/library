@@ -5,7 +5,7 @@ const search = require('../search')
 const router = require('express-promise-router')()
 
 const {getTree, getFilenames, getMeta, getTagged} = require('../list')
-const {getTemplates, formatUrl, sortDocs, stringTemplate, getConfig} = require('../utils')
+const {getTemplates, formatUrl, pathPrefix, sortDocs, stringTemplate, getConfig} = require('../utils')
 
 router.get('/', handlePage)
 router.get('/:page', handlePage)
@@ -40,7 +40,7 @@ async function handlePage(req, res) {
 
       res.format({
         html: () => {
-          res.render(template, {q, results, template: stringTemplate, formatUrl})
+          res.render(template, {q, results, template: stringTemplate, formatUrl, pathPrefix})
         },
 
         json: () => {
@@ -65,7 +65,7 @@ async function handlePage(req, res) {
     const categories = buildDisplayCategories(tree)
     res.format({
       html: () => {
-        res.render(template, {...categories, template: stringTemplate, formatUrl})
+        res.render(template, {...categories, template: stringTemplate, formatUrl, pathPrefix})
       },
 
       json: () => {
@@ -83,7 +83,7 @@ async function handlePage(req, res) {
     return
   }
 
-  res.render(template, {template: stringTemplate, formatUrl})
+  res.render(template, {template: stringTemplate, formatUrl, pathPrefix})
 }
 
 function buildDisplayCategories(tree) {

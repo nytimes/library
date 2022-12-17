@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-  <%- include('partials/head', {title: template('error.404.title'), formatUrl}) %>
+  <%- include('partials/head', {title: template('error.404.title'), formatUrl, pathPrefix}) %>
   <body>
     <%- include('partials/header', {title: template('error.404.title'), parentLinks: [], formatUrl}) %>
     <div id="main-search-page">

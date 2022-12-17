@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-  <%- include('partials/head', {title: template('search.results.title', locals.q), formatUrl}) %>
+  <%- include('partials/head', {title: template('search.results.title', locals.q), formatUrl, pathPrefix}) %>
   <body>
     <%- include('partials/header', {parentLinks: [], title: template('search.results.title', locals.q)}) %>
 

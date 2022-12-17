@@ -78,7 +78,7 @@ $(document).ready(function() {
       var path = item.path ? item.path : '#';
       return [
       '<li>',
-        '<a href="/library' + path + '">',
+        '<a href="' + formatUrl(path) + '">',
           '<p class="docs-title">' + item.prettyName + '</p>',
           '<p class="docs-attr">',
             '<span class="docs-folder">' + folder + '</span>',
@@ -136,7 +136,7 @@ function personalizeHomepage(userId) {
       // kill existing elements that on the mostViewed list to avoid dupes
       $('ul.teams-cat-list li[data-team-id="' + el.team.id + '"]').detach()
 
-      return '<li><a class="button btn-cat" href="/library' + el.team.path + '">' + el.team.prettyName + '</a></li>'
+      return '<li><a class="button btn-cat" href="' + formatUrl(el.team.path) + '">' + el.team.prettyName + '</a></li>'
     }).join('')
 
     $('ul.teams-cat-list').prepend(items)

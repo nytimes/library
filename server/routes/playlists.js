@@ -5,7 +5,7 @@ const router = require('express-promise-router')()
 const log = require('../logger')
 const {getMeta, getPlaylist} = require('../list')
 const {fetchDoc, cleanName} = require('../docs')
-const {stringTemplate, formatUrl} = require('../utils')
+const {stringTemplate, formatUrl, pathPrefix} = require('../utils')
 const {parseUrl} = require('../urlParser')
 
 router.get('*', handlePlaylist)
@@ -67,7 +67,8 @@ function preparePlaylistOverview(playlistMeta, values, breadcrumb) {
     lastUpdatedBy: (playlistMeta.lastModifyingUser || {}).displayName,
     createdAt: playlistMeta.createdTime,
     editLink: playlistMeta.mimeType === 'text/html' ? playlistMeta.folder.webViewLink : playlistMeta.webViewLink,
-    formatUrl
+    formatUrl,
+    pathPrefix
   })
 
   return renderData
@@ -117,7 +118,8 @@ async function preparePlaylistPage(data, url, parent) {
     previous,
     next,
     playlistName: parent.prettyName,
-    formatUrl
+    formatUrl,
+    pathPrefix
   }
 }
 
