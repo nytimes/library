@@ -48,7 +48,7 @@ jobs:
           TRUST_PROXY: true
           APPROVED_DOMAINS: "(.*)"
           GOOGLE_APPLICATION_CREDENTIALS: ./server/.auth.json
-          CUSTOMIZATION_GIT_REPO: https://github.com/newsguildny/library-customizations
+          CUSTOMIZATION_GIT_REPO: https://github.com/newsguildny/tech-library-customizations
           PATH_PREFIX: /library/
           DRIVE_ID: ${{ secrets.DRIVE_ID }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
