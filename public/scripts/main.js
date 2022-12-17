@@ -75,10 +75,10 @@ $(document).ready(function() {
     var items = data.map(function(el) {
       var item = el.doc;
       var folder = (item.folder || {}).prettyName || ''; // lets not try to show a folder if there isn't one
-      var path = item.path ? item.path : '#';
+      var path = item.path ? formatUrl(item.path) : '#';
       return [
       '<li>',
-        '<a href="' + formatUrl(path) + '">',
+        '<a href="' + path + '">',
           '<p class="docs-title">' + item.prettyName + '</p>',
           '<p class="docs-attr">',
             '<span class="docs-folder">' + folder + '</span>',
