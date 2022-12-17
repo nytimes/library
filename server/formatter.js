@@ -4,7 +4,7 @@ const qs = require('querystring')
 const unescape = require('unescape')
 const hljs = require('highlight.js')
 const list = require('./list')
-const { formatUrl } = require('./utils')
+const {formatUrl} = require('./utils')
 
 /* Your one stop shop for all your document processing needs. */
 
