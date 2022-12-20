@@ -48,7 +48,7 @@ async function fullSearch({drive, query, folderIds, results = [], nextPageToken:
   const total = results.concat(files)
 
   if (nextPageToken) {
-    return fullSearch({drive, query, results: total, nextPageToken, folderIds, driveType})
+    return fullSearch({drive, query, results: total, nextPageToken, folderIds, driveType, excludedFolders, mimeTypes})
   }
 
   return total
