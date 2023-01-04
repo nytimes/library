@@ -2,10 +2,13 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: content-library-prod
 
-bases:
-  - ../../base
 
-patches:
-  - ./serviceaccount.yaml
-  - ./deployment.yaml
-  - ./ingress.yaml
+patchesStrategicMerge:
+- ./serviceaccount.yaml
+- ./deployment.yaml
+- ./ingress.yaml
+resources:
+- ../../base
+images:
+- name: gcr.io/adhoc-dev-service-platform/content-library
+  newTag: 05fdf6ed75b3659ff58f371a22ea400f6e119e7c
