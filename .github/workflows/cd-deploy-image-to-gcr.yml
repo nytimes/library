@@ -79,7 +79,7 @@ jobs:
       # https://github.com/community/community/discussions/13836
       - name: Push kustomize edit into Github
         env:
-          GITHUB_ACCESS_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_ACCESS_TOKEN: ${{ secrets.ADHOC_GH_UTILITY_ACCESS_TOKEN }}
         run: |
           git config user.email "infrastructure@adhocteam.us"
           git config user.name "Ad Hoc Infrastructure Bot"
