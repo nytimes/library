@@ -17,16 +17,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: setup node ${{ matrix.node-version }}
+      - name: Setup node ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+          cache: npm
 
-      - name: install dependencies
+      - name: Install dependencies
         run: npm ci
 
-      - name: build
+      - name: Build
         run: npm run build
 
-      - name: test
+      - name: Test
         run: npm test
