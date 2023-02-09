@@ -28,5 +28,5 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }} # just to be safe
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.meta.outputs.tags }} # automatically tags with latest, version from tag
           labels: ${{ steps.meta.outputs.labels }}
