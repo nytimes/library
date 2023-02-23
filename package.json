@@ -21,7 +21,7 @@
     "lodash": "^4.17.21",
     "mime-types": "^2.1.27",
     "moment": "^2.27.0",
-    "node-sass": "^6.0.1",
+    "node-sass": "^7.0.0",
     "passport": "^0.4.1",
     "passport-google-oauth20": "^2.0.0",
     "passport-slack-oauth2": "^1.0.2",
