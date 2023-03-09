@@ -1,0 +1,8 @@
+{
+  "errorMessages": {
+    "noApprovedDomains": "You must set the APPROVED_DOMAINS environment variable to a list of domains or a regular expression.",
+    "noDriveType": "No DRIVE_TYPE env variable set. Please set it to 'team' or 'folder.'",
+    "noDriveID": "No DRIVE_ID env variable set. Set this environment variable to the ID of your drive or folder and restart the app.",
+    "noFilesFound": "No files found. Ensure your DRIVE_ID and DRIVE_TYPE environment variables are set correctly and that your service account's email is shared with your drive or folder.\n\nIf you just added the account, wait a minute and try again."
+  }
+}

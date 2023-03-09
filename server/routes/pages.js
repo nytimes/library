@@ -2,6 +2,9 @@
 
 const search = require('../search')
 
+const {getAuth} = require('../auth')
+const {errorMessages} = require('../errors/messages.json')
+
 const router = require('express-promise-router')()
 
 const {getTree, getFilenames, getMeta, getTagged} = require('../list')
@@ -62,6 +65,12 @@ async function handlePage(req, res) {
 
   if (page === 'categories' || page === 'index') {
     const tree = await getTree()
+    if (!tree.children) {
+      // pull the auth client email to make debugging easier:
+      const authClient = await getAuth()
+      const errMsg = errorMessages.noFilesFound.replace('email', `email (<code>${authClient.email}</code>)`)
+      throw new Error(errMsg)
+    }
     const categories = buildDisplayCategories(tree)
     res.format({
       html: () => {
