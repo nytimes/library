@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html>
-<%- include('../partials/head', {title}) %>
+<%- include('../partials/head', {title, formatUrl, pathPrefix}) %>
 
 <body>
   <h1 class="visually-hidden">Default template</h1>
-  <%- include('../partials/header', {title}) %>
-  <%- include ../partials/nav %>
+  <%- include('../partials/header', {title, formatUrl}) %>
+  <%- include('../partials/nav', {formatUrl}) %>
   <div class="g-body" id="playlist-page">
     <p class="playlist-navigation">
       <!-- include the text of the next item here? -->
-      <a id="previous" href="<%- previous.url %>">
+      <a id="previous" href="<%= formatUrl %><%- previous.url %>">
         <%- template('playlist.nav.previous') %>
         <%= previous.name %></a>
-      <a id="next" href="<%- next.url %>">
+      <a id="next" href="<%= formatUrl %><%- next.url %>">
         <%= next.name %>
         <%- template('playlist.nav.next') %></a>
     </p>
     <div class="g-left-panel">
-      <%- include('../partials/siblingList', {kicker: template('playlist.siblingList.heading', playlistName)}) %>
+      <%- include('../partials/siblingList', {kicker: template('playlist.siblingList.heading', playlistName, formatUrl)}) %>
     </div>
     <div class="g-main-content">
       <% if (locals.content) { %>
@@ -25,11 +25,11 @@
       <% } %>
       <p class="playlist-navigation">
           <!-- include the text of the next item here? -->
-        <a id="previous" href="<%- previous.url %>"><%- template('playlist.nav.previous') %> <%= previous.name %></a>
-        <a id="next" href="<%- next.url %>"><%= next.name %> <%- template('playlist.nav.next') %></a>
+          <a id="previous" href="<%= formatUrl %><%- previous.url %>"><%- template('playlist.nav.previous') %> <%= previous.name %></a>
+          <a id="next" href="<%= formatUrl %><%- next.url %>"><%= next.name %> <%- template('playlist.nav.next') %></a>
       </p>
     </div>
-    <%- include('../partials/footer', { pageType: 'playlist' }) %>
+    <%- include('../partials/footer', { pageType: 'playlist', formatUrl }) %>
   </div>
 </body>
 

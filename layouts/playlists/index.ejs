@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html>
-  <%- include ../partials/head %>
+  <%- include('../partials/head', {formatUrl, pathPrefix}) %>
   <body>
     <h1 class="visually-hidden">Default Playlist template</h1>
-    <%- include ../partials/header %>
-    <%- include ../partials/nav %>
+    <%- include('../partials/header', {formatUrl}) %>
+    <%- include('../partials/nav', {formatUrl}) %>
     <div class="g-body">
       <div class="g-main-content">
         <% if (locals.children && children.length) { %>
-        <%- include('../partials/childrenList', {children, kicker: template('playlist.childrenList.kicker', title)}) %>
+        <%- include('../partials/childrenList', {children, kicker: template('playlist.childrenList.kicker', title), formatUrl}) %>
         <% } %>
       </div>
 
-      <%- include('../partials/footer', { pageType: 'document', topLevelFolder: url.split('/')[1] }) %>
+      <%- include('../partials/footer', { pageType: 'document', topLevelFolder: url.split('/')[1], formatUrl }) %>
     </div>
   </body>
 </html>

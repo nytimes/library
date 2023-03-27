@@ -8,7 +8,7 @@ const itemsLimited = items.slice(0, 6)
   <ul class="<%= tag %>-cat-list">
     <% itemsLimited.forEach((item) => { 
       if (style === 'button') { %>
-        <li data-<%= tag %>-id="<%= item.id %>"><a class="button btn-cat" href="<%= item.path %>"><%= item.prettyName %></a></li>
+        <li data-<%= tag %>-id="<%= item.id %>"><a class="button btn-cat" href="<%= formatUrl(item.path) %>"><%= item.prettyName %></a></li>
       <% } else {
         const type = item.resourceType 
         const iconMap = {
@@ -25,12 +25,12 @@ const itemsLimited = items.slice(0, 6)
         const className = `fa-${iconName}` %>
         <li>
           <i class="fa foldericon <%= className %>" aria-hidden="true"></i>
-          <a href="<%= item.path %>"><%= item.prettyName %></a>
+          <a href="<%= formatUrl(item.path) %>"><%= item.prettyName %></a>
         </li>
     <% }
     }) 
     if (tag === 'featured') { %>
-      <li><a class="button btn-homepage" href="/categories"><%- template('landing.viewAll') %></a></li>
+      <li><a class="button btn-homepage" href="<%= formatUrl('/categories') %>"><%- template('landing.viewAll') %></a></li>
     <% } %>
   </ul>
 </div>

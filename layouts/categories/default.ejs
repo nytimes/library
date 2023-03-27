@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html>
-  <%- include('partials/head') %>
+  <%- include('partials/head', {formatUrl, pathPrefix}) %>
   <body>
     <h1 class="visually-hidden">Default template</h1>
-    <%- include('partials/header') %>
-    <%- include('partials/nav') %>
+    <%- include('partials/header', {formatUrl}) %>
+    <%- include('partials/nav', {formatUrl}) %>
     <div class="g-body">
       <div class="g-left-panel">
         <% if (locals.sections && locals.sections.length) { %>
           <!-- is this TOC -->
-          <%- include('partials/sectionList') %>
+          <%- include('partials/sectionList', {formatUrl}) %>
         <% } %>
         <!-- Hide sibling docs on normal pages -->
         <!-- <% if (locals.siblings && siblings.length) { %>
@@ -23,11 +23,11 @@
         <% } %>
 
         <% if (locals.children && children.length) { %>
-        <%- include('partials/childrenList', {children, kicker: template('folder.childrenList.kicker', title)}) %>
+        <%- include('partials/childrenList', {children, kicker: template('folder.childrenList.kicker', title), formatUrl}) %>
         <% } %>
       </div>
       <%- include('partials/imgModal') %>
-      <%- include('partials/footer', { pageType: 'document', topLevelFolder: url.split('/')[1] }) %>
+      <%- include('partials/footer', { pageType: 'document', topLevelFolder: url.split('/')[1], formatUrl }) %>
     </div>
   </body>
 </html>

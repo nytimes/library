@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html>
-  <%- include('partials/head', {title: template('error.404.title')}) %>
+  <%- include('partials/head', {title: template('error.404.title'), formatUrl, pathPrefix}) %>
   <body>
-    <%- include('partials/header', {title: template('error.404.title'), parentLinks: []}) %>
+    <%- include('partials/header', {title: template('error.404.title'), parentLinks: [], formatUrl}) %>
     <div id="main-search-page">
       <div class="main-item">
         <div class="tagline">
           <h1><%- template('error.404.heading') %></h1>
           <p><%- template('error.404.message') %></p>
         </div>
-        <%- include('partials/search', {style: 'homepage'}) %>
+        <%- include('partials/search', {style: 'homepage', formatUrl}) %>
       </div>
 
-      <%- include('partials/footer', {style: 'homepage'}) %>
+      <%- include('partials/footer', {style: 'homepage', formatUrl}) %>
     </div>
 
   </body>

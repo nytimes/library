@@ -1,5 +1,5 @@
 <div class="search-topper">
-  <form method="GET" action="/search" class="search-container">
+  <form method="GET" action="<%= formatUrl('/search') %>" class="search-container">
     <% const placeholder = template('search.placeholder')%>
     <% const focus = locals.focus || '' %>
     <% const msgOnFocus = placeholder || '' %>
@@ -9,7 +9,7 @@
 
   <% const style = locals.style || 'plaintext' %>
   <div class="additional-menus <%= style %>">
-    <a href="/categories"><button type="button" class="button btn-<%= style %>"><%- template('landing.viewAll') %></button></a>
+    <a href="<%= formatUrl('/categories') %>"><button type="button" class="button btn-<%= style %>"><%- template('landing.viewAll') %></button></a>
     <%# <a href="#"><button type="button" class="btn-plaintext">Onboarding Guide</button></a>%>
   </div>
 

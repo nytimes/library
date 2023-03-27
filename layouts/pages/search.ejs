@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
-  <%- include('partials/head', {title: template('search.results.title', locals.q)}) %>
+  <%- include('partials/head', {title: template('search.results.title', locals.q), formatUrl, pathPrefix}) %>
   <body>
     <%- include('partials/header', {parentLinks: [], title: template('search.results.title', locals.q)}) %>
 
-    <%- include('partials/nav') %>
+    <%- include('partials/nav', {formatUrl}) %>
 
     <div class="g-body">
       <div class="g-main-content" id="g-search-page">
@@ -12,10 +12,10 @@
           <h3 class="search-kicker"><%- template('search.results.kicker', locals.q) %></h3>
           <% results.forEach((res) => { %>
           <div class="search-result">
-            <h3><a href="<%= res.path %>"><%= res.prettyName %></a></h3>
+            <h3><a href="<%= formatUrl(res.path) %>"><%= res.prettyName %></a></h3>
             <p>
               <% if (res.folder) { %>
-                <%- template('search.results.label.folder', res.folder.path, res.folder.prettyName || 'Home')%>&nbsp;
+              <%- template('search.results.label.folder', formatUrl(res.folder.path), res.folder.prettyName || 'Home')%>&nbsp;
               <% } %>
               <% if (res.lastModifyingUser && res.lastModifyingUser.displayName) { %>
                 <%- template('search.results.label.person', res.lastModifyingUser.displayName) %>
@@ -30,7 +30,7 @@
         <% } %>
       </div>
 
-      <%- include('partials/footer', { pageType: 'search' }) %>
+      <%- include('partials/footer', { pageType: 'search', formatUrl }) %>
     </div>
   </body>
 </html>

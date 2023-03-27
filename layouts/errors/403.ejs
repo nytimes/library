@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
-  <%- include('partials/head', {title: template('error.403.title')}) %>
+  <%- include('partials/head', {title: template('error.403.title'), formatUrl, pathPrefix}) %>
   <body>
-    <%- include('partials/header', {title: template('error.403.title'), parentLinks: []}) %>
+    <%- include('partials/header', {title: template('error.403.title'), parentLinks: [], formatUrl}) %>
     <div id="main-search-page">
       <div class="main-item">
         <div class="tagline">
@@ -11,7 +11,7 @@
         </div>
       </div>
 
-      <%- include('partials/footer', {style: 'homepage'}) %>
+      <%- include('partials/footer', {style: 'homepage', formatUrl}) %>
     </div>
 
   </body>

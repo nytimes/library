@@ -6,7 +6,7 @@ const csp = require('helmet-csp')
 
 const {middleware: cache} = require('./cache')
 const {getMeta} = require('./list')
-const {allMiddleware, requireWithFallback} = require('./utils')
+const {formatUrl, allMiddleware, requireWithFallback} = require('./utils')
 const userInfo = require('./routes/userInfo')
 const pages = require('./routes/pages')
 const categories = require('./routes/categories')
@@ -32,26 +32,26 @@ if ((process.env.TRUST_PROXY || '').toUpperCase() === 'TRUE') {
 app.set('view engine', 'ejs')
 app.set('views', [path.join(__dirname, '../custom/layouts'), path.join(__dirname, '../layouts')])
 
-app.get('/healthcheck', (req, res) => {
+app.get(formatUrl('/healthcheck'), (req, res) => {
   res.send('OK')
 })
 
 app.use(csp({directives: customCsp}))
-app.use(userAuth)
+app.use(formatUrl('/'), userAuth)
 
 preload.forEach((middleware) => app.use(middleware))
 
-app.use(userInfo)
+app.use(formatUrl('/'), userInfo)
 
 // serve all files in the public folder
-app.use('/assets', express.static(path.join(__dirname, '../public')))
+app.use(formatUrl('/assets'), express.static(path.join(__dirname, '../public')))
 
 // strip trailing slashes from URLs
 app.get(/(.+)\/$/, (req, res, next) => {
   res.redirect(req.params[0])
 })
 
-app.get('/view-on-site/:docId', (req, res, next) => {
+app.get(formatUrl('/view-on-site/:docId'), (req, res, next) => {
   const {docId} = req.params
   const doc = getMeta(docId)
 
@@ -78,20 +78,20 @@ app.use((req, res, next) => {
   next()
 })
 
-app.use(pages)
-app.use(cache)
+app.use(formatUrl('/'), pages)
+app.use(formatUrl('/'), cache)
 
 // category pages will be cache busted when their last updated timestamp changes
-app.use(categories)
-app.use(playlists)
+app.use(formatUrl('/'), categories)
+app.use(formatUrl('/'), playlists)
 
 postload.forEach((middleware) => app.use(middleware))
 
 // if no page has been served, check for a redirect before erroring
-app.use(redirects)
+app.use(formatUrl('/'), redirects)
 
 // error handler for rendering the 404 and 500 pages, must go last
-app.use(errorPages)
+app.use(formatUrl('/'), errorPages)
 
 // If we are called directly, listen on port 3000, otherwise don't
 
