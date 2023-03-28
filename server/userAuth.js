@@ -7,7 +7,7 @@ const GoogleStrategy = require('passport-google-oauth20')
 const SlackStrategy = require('passport-slack-oauth2').Strategy
 
 const log = require('./logger')
-const {stringTemplate: template} = require('./utils')
+const {stringTemplate: template, formatUrl} = require('./utils')
 
 const router = require('express-promise-router')()
 const domains = new Set(process.env.APPROVED_DOMAINS.split(/,\s?/g))
@@ -15,7 +15,7 @@ const domains = new Set(process.env.APPROVED_DOMAINS.split(/,\s?/g))
 const authStrategies = ['google', 'Slack']
 let authStrategy = process.env.OAUTH_STRATEGY
 
-const callbackURL = process.env.REDIRECT_URL || '/auth/redirect'
+const callbackURL = process.env.REDIRECT_URL || formatUrl('/auth/redirect')
 if (!authStrategies.includes(authStrategy)) {
   log.warn(`Invalid oauth strategy ${authStrategy} specific, defaulting to google auth`)
   authStrategy = 'google'
@@ -77,8 +77,8 @@ router.get('/logout', (req, res) => {
   res.redirect('/')
 })
 
-router.get('/auth/redirect', passport.authenticate(authStrategy, {failureRedirect: '/login'}), (req, res) => {
-  res.redirect(req.session.authRedirect || '/')
+router.get('/auth/redirect', passport.authenticate(authStrategy, {failureRedirect: formatUrl('/login')}), (req, res) => {
+  res.redirect(req.session.authRedirect || formatUrl('/'))
 })
 
 router.use((req, res, next) => {
@@ -94,8 +94,8 @@ router.use((req, res, next) => {
   }
 
   log.info('User not authenticated')
-  req.session.authRedirect = req.path
-  res.redirect('/login')
+  req.session.authRedirect = formatUrl(req.path)
+  res.redirect(formatUrl('/login'))
 })
 
 function isAuthorized(user) {

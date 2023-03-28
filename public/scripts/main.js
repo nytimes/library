@@ -75,7 +75,7 @@ $(document).ready(function() {
     var items = data.map(function(el) {
       var item = el.doc;
       var folder = (item.folder || {}).prettyName || ''; // lets not try to show a folder if there isn't one
-      var path = item.path ? item.path : '#';
+      var path = item.path ? formatUrl(item.path) : '#';
       return [
       '<li>',
         '<a href="' + path + '">',
@@ -136,7 +136,7 @@ function personalizeHomepage(userId) {
       // kill existing elements that on the mostViewed list to avoid dupes
       $('ul.teams-cat-list li[data-team-id="' + el.team.id + '"]').detach()
 
-      return '<li><a class="button btn-cat" href="' + el.team.path + '">' + el.team.prettyName + '</a></li>'
+      return '<li><a class="button btn-cat" href="' + formatUrl(el.team.path) + '">' + el.team.prettyName + '</a></li>'
     }).join('')
 
     $('ul.teams-cat-list').prepend(items)

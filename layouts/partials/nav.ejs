@@ -1,8 +1,8 @@
 <div class="g-upper-body">
-  <%- include('search') %>
+  <%- include('search', {formatUrl}) %>
   <% if (locals.title) { %>
   <% if (locals.duplicates) { %>
-    <%- include('partials/warning', {message: template('warning.duplicate', locals.duplicates, locals.parentId) }) %>
+    <%- include('partials/warning', {message: template('warning.duplicate', locals.duplicates, locals.parentId), formatUrl}) %>
   <% } %>
   <h1 class="headline"><%= title %></h1>
   <div class="kicker">

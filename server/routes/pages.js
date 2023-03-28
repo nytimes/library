@@ -5,7 +5,7 @@ const search = require('../search')
 const router = require('express-promise-router')()
 
 const {getTree, getFilenames, getMeta, getTagged} = require('../list')
-const {getTemplates, sortDocs, stringTemplate, getConfig} = require('../utils')
+const {getTemplates, formatUrl, pathPrefix, sortDocs, stringTemplate, getConfig} = require('../utils')
 
 router.get('/', handlePage)
 router.get('/:page', handlePage)
@@ -35,12 +35,12 @@ async function handlePage(req, res) {
       if (autocomplete) {
         // filter here first to make sure only _one_ document exists with this exact name
         const exactMatches = results.filter((i) => i.prettyName === q)
-        if (exactMatches.length === 1) return res.redirect(exactMatches[0].path)
+        if (exactMatches.length === 1) return res.redirect(formatUrl(exactMatches[0].path))
       }
 
       res.format({
         html: () => {
-          res.render(template, {q, results, template: stringTemplate})
+          res.render(template, {q, results, template: stringTemplate, formatUrl, pathPrefix})
         },
 
         json: () => {
@@ -65,7 +65,7 @@ async function handlePage(req, res) {
     const categories = buildDisplayCategories(tree)
     res.format({
       html: () => {
-        res.render(template, {...categories, template: stringTemplate})
+        res.render(template, {...categories, template: stringTemplate, formatUrl, pathPrefix})
       },
 
       json: () => {
@@ -83,7 +83,7 @@ async function handlePage(req, res) {
     return
   }
 
-  res.render(template, {template: stringTemplate})
+  res.render(template, {template: stringTemplate, formatUrl, pathPrefix})
 }
 
 function buildDisplayCategories(tree) {

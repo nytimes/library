@@ -1,10 +1,10 @@
 <ul class="breadcrumb">
   <!-- <li class="breadcrumb-item">
-    <a class="content-link" href="/">Home </a> ⇾
+    <a class="content-link" href="<%= formatUrl("/") %>">Home </a> ⇾
   </li> -->
 <% parentLinks.forEach((link) => { %>
   <li class="breadcrumb-item">
-    ⇾ <a class="content-link" href="<%- link.url %>" ><%= link.name %> </a>
+    ⇾ <a class="content-link" href="<%= formatUrl(link.url) %>" ><%= link.name %> </a>
   </li>
 <% }) %>
   <li class="breadcrumb-item">

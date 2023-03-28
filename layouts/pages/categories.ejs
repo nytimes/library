@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html>
-  <%- include('partials/head', {title: template('landing.viewAll')}) %>
+  <%- include('partials/head', {title: template('landing.viewAll'), formatUrl, pathPrefix}) %>
   <body>
-    <%- include('partials/header', {parentLinks: [], title: template('landing.viewAll')}) %>
+    <%- include('partials/header', {parentLinks: [], title: template('landing.viewAll'), formatUrl}) %>
 
     <div class="g-upper-body">
-    <%- include('partials/nav') %>
+      <%- include('partials/nav', {formatUrl}) %>
     </div>
 
     <div id="category-page" class="g-body">
       <div class="g-main-content">
       <% all.forEach((category) => { %>
-        <%- include('partials/childrenList', {kicker: category.prettyName, children: category.children, link: category.path}) %>
+        <%- include('partials/childrenList', {kicker: category.prettyName, children: category.children, link: category.path, formatUrl}) %>
       <% }) %>
       </div>
       <script> seeMoreButton() </script>
-      <%- include('partials/footer', { pageType: 'category_index' }) %>
+      <%- include('partials/footer', { pageType: 'category_index', formatUrl }) %>
     </div>
   </body>
 </html>

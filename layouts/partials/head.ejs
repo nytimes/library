@@ -15,9 +15,16 @@
   <% if (locals.inlineCSS) { %>
     <style type="text/css"><%- inlineCSS %></style>
   <% } else { %>
-    <link href="/assets/css/style.css" rel="stylesheet">
+    <link href="<%= formatUrl('/assets/css/style.css') %>" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js"></script>
-    <script src="/assets/scripts/main.js" charset="utf-8"></script>
+    <script charset="utf-8">
+      function formatUrl(url) {
+        if (url.match(/^https?:\/\//)) return url
+        if (url.startsWith('/')) return "<%= pathPrefix %>" + url.slice(1)
+        return exports.pathPrefix + url
+      }
+    </script>
+    <script src="<%= formatUrl('/assets/scripts/main.js') %>" charset="utf-8"></script>
   <% } %>
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
   <link rel="shortcut icon" href="<%- template('branding.favicon') %>" type="image/x-icon" />

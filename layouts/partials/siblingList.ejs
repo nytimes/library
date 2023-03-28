@@ -10,7 +10,7 @@
       <% if (link.isCurrent) { %>
         <strong><%= link.name %></strong>
       <% } else { %>
-        <a class="content-link" href="<%- link.url %>" ><%= link.name %></a>
+        <a class="content-link" href="<%- formatUrl(link.url) %>" ><%= link.name %></a>
       <% } %>
     </li>
   <% }) %>

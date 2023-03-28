@@ -2,7 +2,7 @@
 <div class="<%= style %>">
   <% if (locals.pager) { %>
     <% pager.forEach((page, i) => { %>
-  <a class="button btn-footer" href="<%- page.link %>"><%= i + 1 %></a>
+  <a class="button btn-footer" href="<%- formatUrl(page.link) %>"><%= i + 1 %></a>
     <% }) %>
   <% } %>
   <% if (locals.editLink) { %>
@@ -37,13 +37,13 @@
   // get the userinfo then fire a pageview (can't cache in the page)
   $.ajax({
     method: 'GET',
-    url: '/whoami.json'
+    url: '<%= formatUrl("/whoami.json") %>'
   }).always(function (data) {
     var userId = (data || {}).analyticsUserId;
     if (userId) {
       ga('set', 'userId', userId)
 
-      if(window.location.pathname === '/') {
+      if(window.location.pathname === '<%= formatUrl("/") %>') {
         $(document).ready(function() {
           personalizeHomepage(userId)
         })
@@ -71,7 +71,7 @@
   if (!lastFilenameFetch || now - lastFilenameFetch.lastFetched > 600000) { // 10 min
     $.ajax({
       method: 'GET',
-      url: '/filename-listing.json',
+      url: '<%= formatUrl("/filename-listing.json") %>',
       json: true
     }).then(function(data, textStatus, xhr) {
       if (xhr.status !== 200) return; // if ajax fails, continue with old listing
