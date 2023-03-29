@@ -22,7 +22,7 @@
     "mime-types": "^2.1.27",
     "moment": "^2.29.4",
     "node-sass": "^7.0.3",
-    "passport": "^0.4.1",
+    "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-slack-oauth2": "^1.0.2",
     "pretty": "^2.0.0",
