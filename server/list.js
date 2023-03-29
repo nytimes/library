@@ -8,7 +8,7 @@ const cache = require('./cache')
 const log = require('./logger')
 const {getAuth} = require('./auth')
 const {isSupported} = require('./utils')
-const docs = require('./docs')
+const {slugify, cleanName} = require('./utils')
 
 const driveType = process.env.DRIVE_TYPE
 const driveId = process.env.DRIVE_ID
@@ -171,8 +171,8 @@ function produceTree(files, firstParent) {
 
     // prepare data for the individual file and store later for reference
     // FIXME: consider how to remove circular dependency here.
-    const prettyName = docs.cleanName(name)
-    const slug = docs.slugify(prettyName)
+    const prettyName = cleanName(name)
+    const slug = slugify(prettyName)
     const tagString = (name.match(/\|\s*([^|]+)$/i) || [])[1] || ''
     const tags = tagString.split(',')
       .map((t) => t.trim().toLowerCase())

@@ -4,8 +4,8 @@ const router = require('express-promise-router')()
 
 const log = require('../logger')
 const {getMeta, getPlaylist} = require('../list')
-const {fetchDoc, cleanName} = require('../docs')
-const {stringTemplate, formatUrl, pathPrefix} = require('../utils')
+const {fetchDoc} = require('../docs')
+const {stringTemplate, formatUrl, pathPrefix, cleanName} = require('../utils')
 const {parseUrl} = require('../urlParser')
 
 router.get('*', handlePlaylist)
