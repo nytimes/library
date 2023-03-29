@@ -2,36 +2,19 @@
 
 const {google} = require('googleapis')
 const cheerio = require('cheerio')
-const slugify = require('slugify')
 const xlsx = require('xlsx')
 
 const cache = require('./cache')
 const formatter = require('./formatter')
 const log = require('./logger')
 const {getAuth} = require('./auth')
+const {slugify} = require('./utils')
 
 const supportedTypes = new Set(['document', 'spreadsheet', 'text/html'])
 
 const revisionSupportedArr = ['document', 'spreadsheet', 'presentation']
 const revisionSupported = new Set(revisionSupportedArr)
 const revisionMimeSupported = new Set(revisionSupportedArr.map((x) => `application/vnd.google-apps.${x}`))
-
-exports.cleanName = (name = '') => {
-  return name
-    .trim()
-    // eslint-disable-next-line no-useless-escape
-    .replace(/^(\d+[-–—_\s]*)([^\d\/\-^\s]+)/, '$2') // remove leading numbers and delimiters
-    .replace(/\s*\|\s*([^|]+)$/i, '') // remove trailing pipe and tags
-    .replace(/\.[^.]+$/, '') // remove file extensions
-}
-
-exports.slugify = (text = '') => {
-  // convert non alpha numeric into whitespace, rather than removing
-  const alphaNumeric = text.replace(/[^\p{L}\p{N}]+/ug, ' ')
-  return slugify(alphaNumeric, {
-    lower: true
-  })
-}
 
 exports.fetchDoc = async (id, resourceType, req) => {
   const data = await cache.get(id)

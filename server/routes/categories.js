@@ -4,7 +4,8 @@ const router = require('express-promise-router')()
 
 const log = require('../logger')
 const {getMeta} = require('../list')
-const {fetchDoc, cleanName} = require('../docs')
+const {fetchDoc} = require('../docs')
+const {cleanName} = require('../utils')
 const {getTemplates, sortDocs, stringTemplate, formatUrl, pathPrefix} = require('../utils')
 const {parseUrl} = require('../urlParser')
 
