@@ -170,7 +170,6 @@ function produceTree(files, firstParent) {
     const {parents, id, name, mimeType} = resource
 
     // prepare data for the individual file and store later for reference
-    // FIXME: consider how to remove circular dependency here.
     const prettyName = cleanName(name)
     const slug = slugify(prettyName)
     const tagString = (name.match(/\|\s*([^|]+)$/i) || [])[1] || ''
