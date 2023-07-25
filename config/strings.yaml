@@ -3,9 +3,9 @@
 
 # base config in partials/branding, partials/head
 branding:
-  name: MIT Open
-  prettyName: Open
-  org: Open Learning
+  name: Library
+  prettyName: Team Library
+  org: Your Organization
   icon: /assets/images/icon-logo.svg
   favicon: /assets/images/library.ico
 
