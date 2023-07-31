@@ -5,6 +5,7 @@
   "main": "server/index.js",
   "dependencies": {
     "@google-cloud/datastore": "^5.1.0",
+    "@node-saml/passport-saml": "^4.0.4",
     "cache-manager": "^3.3.0",
     "chai": "^4.2.0",
     "cheerio": "^1.0.0-rc.3",
