@@ -5,6 +5,7 @@ const session = require('express-session')
 const crypto = require('crypto')
 const GoogleStrategy = require('passport-google-oauth20')
 const SlackStrategy = require('passport-slack-oauth2').Strategy
+const samlStrategy = require('passport-saml').Strategy
 
 const log = require('./logger')
 const {stringTemplate: template, formatUrl} = require('./utils')
@@ -12,7 +13,7 @@ const {stringTemplate: template, formatUrl} = require('./utils')
 const router = require('express-promise-router')()
 const domains = new Set(process.env.APPROVED_DOMAINS.split(/,\s?/g))
 
-const authStrategies = ['google', 'Slack']
+const authStrategies = ['google', 'Slack', 'saml']
 let authStrategy = process.env.OAUTH_STRATEGY
 
 const callbackURL = process.env.REDIRECT_URL || formatUrl('/auth/redirect')
@@ -22,6 +23,7 @@ if (!authStrategies.includes(authStrategy)) {
 }
 
 const isSlackOauth = authStrategy === 'Slack'
+const isSamlAuth = authStrategy === 'saml'
 if (isSlackOauth) {
   passport.use(new SlackStrategy({
     clientID: process.env.SLACK_CLIENT_ID,
@@ -35,6 +37,27 @@ if (isSlackOauth) {
     done(null, profile)
   }
   ))
+} else if (isSamlAuth) {
+  passport.use(new samlStrategy({
+    callbackUrl: callbackURL,
+    entryPoint: process.env.SAML_ENTRYPOINT_URL,
+    issuer: process.env.SAML_CERT_ISSUER,
+    cert: process.env.SAML_CERTIFICATE,
+    privateKey: process.env.SAML_PRIVATE_KEY,
+    decryptionPvk: process.env.SAML_DECRYPTION_PRIVATE_KEY,
+    wantAssertionsSigned: true,
+    metadataOrganization: {
+      OrganizationName: {'#text': process.env.SAML_ORG_NAME},
+      OrganizationDisplayName: {'#text': process.env.SAML_ORG_DISPLAY_NAME},
+      OrganizationURL: {'#text': process.env.SAML_ORG_URL}
+    },
+    metadataContactPerson: [{
+      '@contactType': 'support',
+      GivenName: process.env.SAML_CONTACT_NAME,
+      EmailAddress: process.env.SAML_CONTACT_EMAIL
+    }]
+  },
+  (profile, done) => done(null, profile)))
 } else {
   // default to google auth
   passport.use(new GoogleStrategy.Strategy({
@@ -70,7 +93,7 @@ const googleLoginOptions = {
   prompt: 'select_account'
 }
 
-router.get('/login', passport.authenticate(authStrategy, isSlackOauth ? {} : googleLoginOptions))
+router.get('/login', passport.authenticate(authStrategy, isSlackOauth || isTouchstoneSamlAuth ? {} : googleLoginOptions))
 
 router.get('/logout', (req, res) => {
   req.logout()
@@ -79,6 +102,18 @@ router.get('/logout', (req, res) => {
 
 router.get('/auth/redirect', passport.authenticate(authStrategy, {failureRedirect: formatUrl('/login')}), (req, res) => {
   res.redirect(req.session.authRedirect || formatUrl('/'))
+})
+
+router.get('/metadata', function (req, res) {
+  if (isSamlAuth) {
+    res.type('application/xml')
+    res.send((samlStrategy.generateServiceProviderMetadata(
+      process.env.SAML_MD_DECRYPTION_CERT,
+      process.env.SAML_MD_SIGNING_CERT
+    )))
+  } else {
+    res.redirect(formatUrl('/'))
+  }
 })
 
 router.use((req, res, next) => {
@@ -119,7 +154,7 @@ function setUserInfo(req) {
     }
     return
   }
-  const email = isSlackOauth ? req.session.passport.user.email : req.session.passport.user.emails[0].value
+  const email = isSlackOauth || isSamlAuth ? req.session.passport.user.email : req.session.passport.user.emails[0].value
   req.userInfo = req.userInfo ? req.userInfo : {
     userId: req.session.passport.user.id,
     analyticsUserId: md5(req.session.passport.user.id + 'library'),
