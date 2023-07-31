@@ -108,8 +108,8 @@ router.get('/metadata', function (req, res) {
   if (isSamlAuth) {
     res.type('application/xml')
     res.send((samlStrategy.generateServiceProviderMetadata(
-      process.env.SAML_MD_DECRYPTION_CERT,
-      process.env.SAML_MD_SIGNING_CERT
+      process.env.SAML_SP_DECRYPTION_CERT,
+      process.env.SAML_SP_SIGNING_CERT
     )))
   } else {
     res.redirect(formatUrl('/'))
