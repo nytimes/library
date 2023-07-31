@@ -5,7 +5,7 @@ const session = require('express-session')
 const crypto = require('crypto')
 const GoogleStrategy = require('passport-google-oauth20')
 const SlackStrategy = require('passport-slack-oauth2').Strategy
-const samlStrategy = require('passport-saml').Strategy
+const samlStrategy = require('@node-saml/passport-saml').Strategy
 
 const log = require('./logger')
 const {stringTemplate: template, formatUrl} = require('./utils')
@@ -93,7 +93,7 @@ const googleLoginOptions = {
   prompt: 'select_account'
 }
 
-router.get('/login', passport.authenticate(authStrategy, isSlackOauth || isTouchstoneSamlAuth ? {} : googleLoginOptions))
+router.get('/login', passport.authenticate(authStrategy, isSlackOauth || isSamlAuth ? {} : googleLoginOptions))
 
 router.get('/logout', (req, res) => {
   req.logout()
