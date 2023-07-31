@@ -5,7 +5,7 @@ const session = require('express-session')
 const crypto = require('crypto')
 const GoogleStrategy = require('passport-google-oauth20')
 const SlackStrategy = require('passport-slack-oauth2').Strategy
-const samlStrategy = require('@node-saml/passport-saml').Strategy
+const SamlStrategy = require('@node-saml/passport-saml').Strategy
 
 const log = require('./logger')
 const {stringTemplate: template, formatUrl} = require('./utils')
@@ -24,8 +24,9 @@ if (!authStrategies.includes(authStrategy)) {
 
 const isSlackOauth = authStrategy === 'Slack'
 const isSamlAuth = authStrategy === 'saml'
+let activeStrategy
 if (isSlackOauth) {
-  passport.use(new SlackStrategy({
+  activeStrategy = new SlackStrategy({
     clientID: process.env.SLACK_CLIENT_ID,
     clientSecret: process.env.SLACK_CLIENT_SECRET,
     skipUserProfile: false,
@@ -36,9 +37,9 @@ if (isSlackOauth) {
     // optionally persist user data into a database
     done(null, profile)
   }
-  ))
+  )
 } else if (isSamlAuth) {
-  passport.use(new samlStrategy({
+  activeStrategy = new SamlStrategy({
     callbackUrl: callbackURL,
     entryPoint: process.env.SAML_ENTRYPOINT_URL,
     issuer: process.env.SAML_CERT_ISSUER,
@@ -57,17 +58,18 @@ if (isSlackOauth) {
       EmailAddress: process.env.SAML_CONTACT_EMAIL
     }]
   },
-  (profile, done) => done(null, profile)))
+  (profile, done) => done(null, profile), (profile, done) => done(null, profile))
 } else {
   // default to google auth
-  passport.use(new GoogleStrategy.Strategy({
+  activeStrategy = new GoogleStrategy.Strategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL,
     userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo',
     passReqToCallback: true
-  }, (request, accessToken, refreshToken, profile, done) => done(null, profile)))
+  }, (request, accessToken, refreshToken, profile, done) => done(null, profile))
 }
+passport.use(activeStrategy)
 
 const md5 = (data) => crypto.createHash('md5').update(data).digest('hex')
 
@@ -104,10 +106,10 @@ router.get('/auth/redirect', passport.authenticate(authStrategy, {failureRedirec
   res.redirect(req.session.authRedirect || formatUrl('/'))
 })
 
-router.get('/metadata', function (req, res) {
+router.get('/metadata.xml', (req, res) => {
   if (isSamlAuth) {
     res.type('application/xml')
-    res.send((samlStrategy.generateServiceProviderMetadata(
+    res.send((activeStrategy.generateServiceProviderMetadata(
       process.env.SAML_SP_DECRYPTION_CERT,
       process.env.SAML_SP_SIGNING_CERT
     )))
