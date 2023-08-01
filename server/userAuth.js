@@ -47,6 +47,7 @@ if (isSlackOauth) {
     privateKey: process.env.SAML_PRIVATE_KEY,
     decryptionPvk: process.env.SAML_DECRYPTION_PRIVATE_KEY,
     wantAssertionsSigned: true,
+    identifierFormat: process.env.SAML_IDENTIFIER_FORMAT,
     metadataOrganization: {
       OrganizationName: {'#text': process.env.SAML_ORG_NAME},
       OrganizationDisplayName: {'#text': process.env.SAML_ORG_DISPLAY_NAME},
