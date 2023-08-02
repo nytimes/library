@@ -60,17 +60,20 @@ if (isSlackOauth) {
     }]
   },
   (profile, done) => {
+    console.log(profile)
     return done(null, {
       id: profile.eppn,
       email: profile.mail,
-      affiliation: profile.affiliation,
-      displayName: profile.displayName
+      saml: {
+        nameID: profile.eppn,
+      }
     })
   }, (profile, done) => done(null, {
     id: profile.eppn,
     email: profile.mail,
-    affiliation: profile.affiliation,
-    displayName: profile.displayName
+    saml: {
+      nameID: profile.eppn,
+    }
   }))
 } else {
   // default to google auth
