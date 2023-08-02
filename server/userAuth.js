@@ -60,19 +60,19 @@ if (isSlackOauth) {
     }]
   },
   (profile, done) => {
-    console.log(profile)
+    log.info(profile)
     return done(null, {
       id: profile.eppn,
       email: profile.mail,
       saml: {
-        nameID: profile.eppn,
+        nameID: profile.eppn
       }
     })
   }, (profile, done) => done(null, {
     id: profile.eppn,
     email: profile.mail,
     saml: {
-      nameID: profile.eppn,
+      nameID: profile.eppn
     }
   }))
 } else {
@@ -118,7 +118,7 @@ router.get('/logout', (req, res) => {
   res.redirect('/')
 })
 
-router.get('/auth/redirect', passport.authenticate(authStrategy, {failureRedirect: formatUrl('/login')}), (req, res) => {
+router.get('/auth/redirect', passport.authenticate(authStrategy, {failureRedirect: formatUrl('/login'), failureMessage: true}), (req, res) => {
   res.redirect(req.session.authRedirect || formatUrl('/'))
 })
 
