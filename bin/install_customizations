@@ -11,7 +11,14 @@ if ! [[ -z ${CUSTOMIZATION_GIT_REPO} ]];
     echo "Cloning custom repo...";
     # remove custom to allow for cloning to that directory name
     rm -rf ./custom;
-    git clone $CUSTOMIZATION_GIT_REPO custom;
+    # clone specific branch if env set
+    if ! [[ -z ${CUSTOMIZATION_GIT_REPO_BRANCH} ]];
+      then
+        echo "Cloning custom repo and branch...";
+        git clone -b $CUSTOMIZATION_GIT_REPO_BRANCH $CUSTOMIZATION_GIT_REPO custom;
+      else
+        git clone $CUSTOMIZATION_GIT_REPO custom;
+    fi;
     echo "Installing custom packages...";
     cd ./custom;
     npm i;
