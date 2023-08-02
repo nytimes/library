@@ -61,13 +61,13 @@ if (isSlackOauth) {
   },
   (profile, done) => {
     return done(null, {
-      id: profile.eduPersonPrincipalName,
+      id: profile.eppn,
       email: profile.mail,
       affiliation: profile.affiliation,
       displayName: profile.displayName
     })
   }, (profile, done) => done(null, {
-    id: profile.eduPersonPrincipalName,
+    id: profile.eppn,
     email: profile.mail,
     affiliation: profile.affiliation,
     displayName: profile.displayName
