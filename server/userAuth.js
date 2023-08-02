@@ -66,7 +66,12 @@ if (isSlackOauth) {
       affiliation: profile.affiliation,
       displayName: profile.displayName
     })
-  }, (profile, done) => done(null, profile))
+  }, (profile, done) => done(null, {
+    id: profile.eduPersonPrincipalName,
+    email: profile.mail,
+    affiliation: profile.affiliation,
+    displayName: profile.displayName
+  }))
 } else {
   // default to google auth
   activeStrategy = new GoogleStrategy.Strategy({
