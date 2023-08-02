@@ -143,6 +143,7 @@ router.get('/metadata.xml', (req, res) => {
 router.use((req, res, next) => {
   const isDev = process.env.NODE_ENV === 'development'
   const passportUser = (req.session.passport || {}).user || {}
+  log.info(JSON.stringify(passportUser, null, 1))
   if (isDev || (req.isAuthenticated() && isAuthorized(passportUser))) {
     setUserInfo(req)
     return next()
