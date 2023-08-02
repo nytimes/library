@@ -60,7 +60,6 @@ if (isSlackOauth) {
     }]
   },
   (profile, done) => {
-    log.info(profile)
     return done(null, {
       id: profile.eppn,
       email: profile.mail,
@@ -118,9 +117,16 @@ router.get('/logout', (req, res) => {
   res.redirect('/')
 })
 
-router.get('/auth/redirect', passport.authenticate(authStrategy, {failureRedirect: formatUrl('/login'), failureMessage: true}), (req, res) => {
-  res.redirect(req.session.authRedirect || formatUrl('/'))
-})
+if (!isSamlAuth) {
+  router.get('/auth/redirect', passport.authenticate(authStrategy, {
+    failureRedirect: formatUrl('/login'),
+    failureMessage: true
+  }), (req, res) => {
+    res.redirect(req.session.authRedirect || formatUrl('/'))
+  })
+} else {
+  router.post('/auth/redirect/', passport.authenticate(authStrategy, {failureRedirect: '/', failureFlash: true}), (req, res) => { res.redirect('/') })
+}
 
 router.get('/metadata.xml', (req, res) => {
   if (isSamlAuth) {
