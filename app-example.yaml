@@ -1,0 +1,13 @@
+runtime: nodejs18
+instance_class: F4
+env_variables:
+  APPROVED_DOMAINS: ryan@meeno.com,asher@meeno.com,hillary@meeno.com,jairam@meeno.com,junaid@meeno.com,kevin@meeno.com,luke@meeno.com,madelaine@meeno.com,renate@meeno.com,zac@meeno.com,amy@meeno.com,abdou@meeno.com,caro@meeno.com,ted@meeno.com
+  DRIVE_TYPE: team
+  DRIVE_ID: 0ANnO9svndJTCUk9PVA
+  GCP_PROJECT_ID: meeno-library
+  GOOGLE_CLIENT_ID: 320801826520-iegtdb9e5npie5par35mrl059vtavj18.apps.googleusercontent.com
+  GOOGLE_CLIENT_SECRET: '[INSERT CLIENT SECRET HERE]'
+  SESSION_SECRET: '[INSERT SESSION SECRET HERE]'
+  REDIRECT_URL: https://meeno-library.uc.r.appspot.com/auth/redirect
+  GOOGLE_APPLICATION_CREDENTIALS: parse_json
+  GOOGLE_APPLICATION_JSON: '[INSERT SERVICE KEY HERE]'

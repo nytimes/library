@@ -1,0 +1,17 @@
+### Default String Configuration
+### Add custom strings in custom/strings.yaml
+
+# base config in partials/branding, partials/head
+branding:
+  name: Meeno Library
+  prettyName: Meeno Library
+  org: Meeno
+  icon: /assets/images/icon-logo.svg
+  favicon: /assets/images/library.ico
+
+landing:
+  tagline: One place for Meeno's documents.
+
+footer:
+  helpText: Questions? Contact Meeno's administrators.
+  defaultEmail: ryan@meeno.com

@@ -122,18 +122,17 @@ A sample customization repo is provided at [nytimes/library-customization-exampl
 
 
 ## Deploying the app
-Wherever you deploy Library, you'll likely want to [set up a Google service account](https://console.cloud.google.com/iam-admin/serviceaccounts) and [OAuth 2.0 client](https://developers.google.com/identity/protocols/OAuth2) Set up your service account with API access to Drive and Cloud Datastore.
+
+Meeno deploys the app using the following command:
+
+```commandline
+gcloud app deploy --project=meeno-library
+```
 
 If you wish to deploy Library with customizations, create a git repo with the files you would like to include. Set the `CUSTOMIZATION_GIT_REPO` environment variable to the cloning URL. Files in the repo and packages specified in the `package.json` will be included in your library installation.
 
 For more detailed instructions, consult the Getting Started section of the demo site: https://nyt-library-demo.herokuapp.com/get-started
 
-### Using Heroku
-
-This button can quickly deploy to Heroku:
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://nyti.ms/2CrT2y2)
-
-Set your app's `GOOGLE_APPLICATION_JSON`, `GOOGLE_CLIENT_ID`, and `GOOGLE_CLIENT_SECRET` with values from the service account and Oauth client. Add *<your-heroku-app-url\>.com* as an authorized domain in the general OAuth consent screen setup and then add *http://<your-heroku-app-url\>.com/auth/redirect* as the callback url in the OAuth credential setup itself.
 
 ### Using Google App Engine
 You can also deploy Library to GAE, using the included `app.yaml`. Note that you will need to enable billing on your GCP project in order to use Google App Engine. More detailed instructions are provided on the [demo site](https://nyt-library-demo.herokuapp.com/get-started/deploying-library-google-app-engine).
