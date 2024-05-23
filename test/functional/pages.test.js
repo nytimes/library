@@ -118,7 +118,7 @@ describe("Server responses", () => {
         });
     });
 
-    it.skip("should render an inline <style> tag and no JS on error pages", () => {
+    it("should render an inline <style> tag and no JS on error pages", () => {
       return request(app)
         .get("/this-route-does-not-exist")
         .expect(404)
