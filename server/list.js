@@ -240,7 +240,7 @@ async function setRedirects(oldDocsInfo, newDocsInfo) {
     // if no lastPath, file is a new addition to the drive
     if (currPath && lastPath && currPath !== lastPath) {
       log.info(`Doc ${id} moved, REDIRECT ${lastPath} → ${currPath}`)
-      cache.add(lastPath, new Date(), {redirect: currPath})
+      cache.add(lastPath, new Date(), {redirect: currPath}, 0)
     }
   })
 }
