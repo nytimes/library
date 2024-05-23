@@ -6,28 +6,44 @@ const list = require('./list')
 const log = require('./logger')
 
 const driveId = process.env.DRIVE_ID
+const MAX_FOLDERS_TO_SEARCH = 100 // got 413 entity too large at 129, this gives us some headroom
 
 exports.run = async (query, driveType = 'team') => {
   const authClient = await getAuth()
-  let folderIds
-
   const drive = google.drive({version: 'v3', auth: authClient})
 
+  let folderIdBatches = []
+
   if (driveType === 'folder') {
-    folderIds = await getAllFolders({drive})
+    let allFolderIds = await getAllFolders({drive})
+    while (allFolderIds.length > 0) {
+      folderIdBatches.push(allFolderIds.splice(0, MAX_FOLDERS_TO_SEARCH))
+    }
+
+    log.debug(`searching ${allFolderIds.length} folders in chunks of ${MAX_FOLDERS_TO_SEARCH}`)
+
   }
 
-  const files = await fullSearch({drive, query, folderIds, driveType})
-    .catch((err) => {
-      log.error(`Error when searching for ${query}, ${err}`)
-      throw err
-    })
+  if (folderIdBatches.length === 0) {
+    folderIdBatches.push([])
+  }
 
-  const fileMetas = files
-    .map((file) => { return list.getMeta(file.id) || {} })
-    .filter(({path, tags}) => (path || '').split('/')[1] !== 'trash' && !(tags || []).includes('hidden'))
+  try {
+    const files = (await Promise.all(
+      folderIdBatches.map((folderIds) =>
+        fullSearch({drive, query, folderIds, driveType})
+      )
+    )).reduce((files, fileBatch) => files.concat(fileBatch), [])
 
-  return fileMetas
+    const fileMetas = files
+      .map((file) => { return list.getMeta(file.id) || {} })
+      .filter(({path, tags}) => (path || '').split('/')[1] !== 'trash' && !(tags || []).includes('hidden'))
+
+    return fileMetas
+  } catch (err) {
+    log.error(`Error when searching for ${query}, ${err}`)
+    throw err
+  }
 }
 
 async function fullSearch({drive, query, folderIds, results = [], nextPageToken: pageToken, driveType}) {
