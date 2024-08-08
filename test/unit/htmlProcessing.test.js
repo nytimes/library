@@ -19,9 +19,20 @@ describe('HTML processing', () => {
     processedHTML: null
   }
   beforeAll(() => {
+    // General supported formats
     testGlobal.rawHTML = fs.readFileSync(docPath, {encoding: 'utf8'})
     testGlobal.processedHTML = stubbedProcessedDoc(testGlobal.rawHTML).html
     testGlobal.output = cheerio.load(testGlobal.processedHTML)
+
+    // Supported formats with inline code enabled
+    jest.resetModules()
+    process.env.ALLOW_INLINE_CODE = 'true'
+    // remove formatter from require cache to recognize changed env variable
+    delete require.cache[require.resolve('../../server/formatter')]
+    getProcessedDocAttributes = require('../../server/formatter').getProcessedDocAttributes
+    const rawHTML = fs.readFileSync(docPath, {encoding: 'utf8'})
+    const processedHTML = stubbedProcessedDoc(rawHTML).html
+    testGlobal.codeEnabledOut = cheerio.load(processedHTML)
   })
 
   it('does not throw when revision data is unavailable', () => {
@@ -143,17 +154,6 @@ describe('HTML processing', () => {
     })
 
     describe('with inline code enabled', () => {
-      beforeAll(() => {
-        jest.resetModules()
-        process.env.ALLOW_INLINE_CODE = 'true'
-        // remove formatter from require cache to recognize changed env variable
-        delete require.cache[require.resolve('../../server/formatter')]
-        getProcessedDocAttributes = require('../../server/formatter').getProcessedDocAttributes
-        const rawHTML = fs.readFileSync(docPath, {encoding: 'utf8'})
-        const processedHTML = stubbedProcessedDoc(rawHTML).html
-        testGlobal.codeEnabledOut = cheerio.load(processedHTML)
-      })
-
       it('does not modify code block content', () => {
         const codeBlock = testGlobal.codeEnabledOut("pre:contains('codeblocks will not')")
         assert.match(codeBlock.html(), /&lt;.*%-.*%&gt;/)
