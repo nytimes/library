@@ -109,6 +109,11 @@ function formatCode(html) {
     return formatCodeBlock(content)
   })
 
+  // Expand native code blocks
+  html = html.replace(/<p>&#xEC03;(.*?)&#xEC02;<\/p>/ig, (match, content) => {
+    return formatCodeBlock(content)
+  })
+
   // Replace double backticks with <code>, for supporting backticks in inline code blocks
   html = html.replace(/``(.+?`?)``/g, (match, content) => {
     return `<code>${formatCodeContent(content)}</code>`

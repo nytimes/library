@@ -5,6 +5,7 @@ const {assert} = require('chai')
 let {getProcessedDocAttributes} = require('../../server/formatter')
 
 const docPath = path.join(__dirname, '../fixtures/supportedFormats.html')
+const docPathNativeCode = path.join(__dirname, '../fixtures/supportedFormats.nativeCode.html')
 
 // helper function to stub the doc and get a section of the returned document
 function stubbedProcessedDoc(unprocessedHtml, editorName) {
@@ -21,6 +22,12 @@ describe('HTML processing', () => {
     testGlobal.general.rawHTML = fs.readFileSync(docPath, {encoding: 'utf8'})
     testGlobal.general.processedHTML = stubbedProcessedDoc(testGlobal.general.rawHTML).html
     testGlobal.general.output = cheerio.load(testGlobal.general.processedHTML)
+
+    // Native code
+    testGlobal.native = {}
+    testGlobal.native.rawHTML = fs.readFileSync(docPathNativeCode, {encoding: 'utf8'})
+    testGlobal.native.processedHTML = stubbedProcessedDoc(testGlobal.native.rawHTML).html
+    testGlobal.native.output = cheerio.load(testGlobal.native.processedHTML)
 
     // Supported formats with inline code enabled
     jest.resetModules()
@@ -133,6 +140,18 @@ describe('HTML processing', () => {
     it('retains inline code backticks', () => {
       const codeBlock = testGlobal.general.output("code:contains('backtick')")
       assert.match(codeBlock.html(), /`backtick`/)
+    })
+  })
+
+  describe('native code block handling', () => {
+    it('formats the code block', () => {
+      const codeBlock = testGlobal.native.output('pre > code')
+      assert.exists(codeBlock.html())
+    })
+
+    it('removes code block marker unicode characters', () => {
+      assert.notInclude(testGlobal.native.processedHTML, '&#xEC03;')
+      assert.notInclude(testGlobal.native.processedHTML, '&#xEC02;')
     })
   })
 
