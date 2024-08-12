@@ -110,8 +110,8 @@ function formatCode(html) {
   })
 
   // Expand native code blocks
-  html = html.replace(/<p>&#xEC03;(.*?)&#xEC02;<\/p>/ig, (match, content) => {
-    return formatCodeBlock(content)
+  html = html.replace(/<p>&#xEC03;(.*?)&#xEC02;(.*?)<\/p>/ig, (match, content, tailingPara) => {
+    return `${formatCodeBlock(content)}<p>${tailingPara}</p>`
   })
 
   // Replace double backticks with <code>, for supporting backticks in inline code blocks

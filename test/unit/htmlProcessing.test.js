@@ -144,9 +144,10 @@ describe('HTML processing', () => {
   })
 
   describe('native code block handling', () => {
-    it('formats the code block', () => {
+    it('formats the code blocks', () => {
       const codeBlock = testGlobal.native.output('pre > code')
       assert.exists(codeBlock.html())
+      assert.equal(codeBlock.length, 2)
     })
 
     it('removes code block marker unicode characters', () => {
