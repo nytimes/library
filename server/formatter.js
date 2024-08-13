@@ -110,8 +110,11 @@ function formatCode(html) {
   })
 
   // Expand native code blocks
-  html = html.replace(/<p>&#xEC03;(.*?)&#xEC02;(.*?)<\/p>/ig, (match, content, tailingPara) => {
-    return `${formatCodeBlock(content)}<p>${tailingPara}</p>`
+  // Google docs interleaves the end-of-code marker with the following tag. eg:
+  // <p>&#xEC03;my code block</p><h2>&#xEC02;my heading</h2>
+  // Make sure we match and retain the following tag
+  html = html.replace(/<p>&#xEC03;(.*?)<\/p>(<[^>]*>)&#xEC02;/ig, (match, content, followingTag) => {
+    return `${formatCodeBlock(content)}${followingTag}`
   })
 
   // Replace double backticks with <code>, for supporting backticks in inline code blocks

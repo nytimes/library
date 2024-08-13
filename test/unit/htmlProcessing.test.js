@@ -147,7 +147,12 @@ describe('HTML processing', () => {
     it('formats the code blocks', () => {
       const codeBlock = testGlobal.native.output('pre > code')
       assert.exists(codeBlock.html())
-      assert.equal(codeBlock.length, 2)
+      assert.equal(codeBlock.length, 3)
+    })
+
+    it('leaves the trailing heading intact', () => {
+      const heading = testGlobal.native.output('h2')
+      assert.equal(heading.html(), 'Heading following a code block')
     })
 
     it('removes code block marker unicode characters', () => {
