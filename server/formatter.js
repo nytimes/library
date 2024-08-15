@@ -109,6 +109,12 @@ function formatCode(html) {
     return formatCodeBlock(content)
   })
 
+  // Preformat native code blocks
+  // Unnest native code block start and end markers
+  html = html.replace(/<span[^>]*>(&#xEC0[23];)<\/span>/ig, (match, marker) => {
+    return marker
+  })
+
   // Expand native code blocks
   // Google docs interleaves the end-of-code marker with the following tag. eg:
   // <p>&#xEC03;my code block</p><h2>&#xEC02;my heading</h2>
