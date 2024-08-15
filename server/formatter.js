@@ -119,7 +119,7 @@ function formatCode(html) {
   // Google docs interleaves the end-of-code marker with the following tag. eg:
   // <p>&#xEC03;my code block</p><h2>&#xEC02;my heading</h2>
   // Make sure we match and retain the following tag
-  html = html.replace(/<p>&#xEC03;(.*?)<\/p>(<[^>]*>)&#xEC02;/ig, (match, content, followingTag) => {
+  html = html.replace(/<p[^>]*>&#xEC03;(.*?)<\/p>(<[^>]*>)&#xEC02;/ig, (match, content, followingTag) => {
     return `${formatCodeBlock(content)}${followingTag}`
   })
 
@@ -155,7 +155,7 @@ function formatCode(html) {
 
 function formatCodeBlock(content) {
   // strip interior <p> tags added by google
-  content = content.replace(/(?:<\/p><p>|<br\/?>)/g, '\n').replace(/<\/?p>/g, '').trim()
+  content = content.replace(/(?:<\/p><p[^>]*>|<br\/?>)/g, '\n').replace(/<\/?p>/g, '').trim()
   // try to find language hint within text block
   const [, lang] = content.match(/^(.+?)\n/) || []
 
