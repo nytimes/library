@@ -5,13 +5,27 @@ const {getAuth} = require('./auth')
 const list = require('./list')
 const log = require('./logger')
 
+const { fetchDoc } = require('./docs');
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+
 const driveId = process.env.DRIVE_ID
+
+const genAI = new GoogleGenerativeAI(process.env.LLM_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 exports.run = async (query, driveType = 'team') => {
   const authClient = await getAuth()
+
   let folderIds
 
   const drive = google.drive({version: 'v3', auth: authClient})
+
+  const useLLM = query.includes('?');
+
+  if (useLLM) {
+    var oldQuery = query
+    query = ""
+  }
 
   if (driveType === 'folder') {
     folderIds = await getAllFolders({drive})
@@ -26,13 +40,63 @@ exports.run = async (query, driveType = 'team') => {
   const fileMetas = files
     .map((file) => { return list.getMeta(file.id) || {} })
     .filter(({path, tags}) => (path || '').split('/')[1] !== 'trash' && !(tags || []).includes('hidden'))
+  
 
-  return fileMetas
+  if (!useLLM) {
+    return fileMetas;
+  }
+
+  let docsIds = []
+  for (const { id, mimeType } of fileMetas) {
+    if (mimeType === 'application/vnd.google-apps.document') {
+      docsIds.push(id);
+    }
+  };
+
+
+  async function docHTML(docId) {
+    try {
+      const response = await fetchDoc(docId, "document", {})
+    const htmlContent = response.html;
+    return htmlContent;
+    } catch (error) {
+      console.error(`Error fetching document`);
+      return null;
+    }
+  }
+
+
+  console.log("TESTING")
+  console.log(oldQuery)
+
+  const llmQuery = `Here is a question: ${oldQuery}
+  Based off of the following documents, answer the question in
+  a specific and instructive manner. If you cannot find an answer in the documents,
+  please write "No answer could be found."
+  `
+
+  Promise.all(docsIds.map(docHTML)).then((content) => {
+    LLMCall(content, llmQuery)
+  });
 }
+
+
+async function LLMCall(chunks, query) {
+  console.log("SENDING LLM QUERY")
+  let prompt = query + chunks.join("\n")
+  console.log(prompt)
+  console.log(prompt.length)
+  // const result = await model.generateContent(prompt);
+  // console.log(result.response.text());  
+}
+
+
 
 async function fullSearch({drive, query, folderIds, results = [], nextPageToken: pageToken, driveType}) {
   const options = getOptions(query, folderIds, driveType)
 
+  console.log("HELLO TESTING")
+  
   if (pageToken) {
     options.pageToken = pageToken
   }
@@ -106,3 +170,30 @@ function getOptions(query, folderIds, driveType) {
     fields
   }
 }
+
+// // If someone wanted to use an LLM with a smaller token limit, they can
+// // use this function to chunk their docs content and send the chunks
+// // as seperate API requests.
+
+// function divideContent(content, threshold) {
+//   const blocks = [];
+//   let currentBlock = [];
+
+//   content.forEach(item => {
+//     if (currentBlock.join(" ").length + item.length <= threshold) {
+//       currentBlock.push(item)
+//     }
+//     else {
+//       if (currentBlock.length > 0) {
+//         blocks.push(currentBlock);
+//       }
+//       currentBlock = [item]
+//     }
+//   });
+
+//   if (currentBlock.length > 0) {
+//     blocks.push(currentBlock);
+//   }
+
+//   return blocks
+// }
