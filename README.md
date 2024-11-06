@@ -1,8 +1,8 @@
 ### Implementing LLM into search function
 
 - [x] LLM request working on backend
-- [ ] Implement chunking for large libraries
-- [ ] Prompt engineer for better results
+- [x] Implement chunking for large libraries
+- [x] Prompt engineer for better results
 - [ ] LLM working on frontend
 - [ ] Testing and documentation
 
