@@ -43,13 +43,18 @@ exports.run = async (query, driveType = 'team') => {
       throw err
     })
 
-  const fileMetas = files
-    .map((file) => { return list.getMeta(file.id) || {} })
-    .filter(({path, tags}) => (path || '').split('/')[1] !== 'trash' && !(tags || []).includes('hidden'))
-  
+
+  function filterMetas(files) {
+    return files
+      .map((file) => { return list.getMeta(file.id) || {} })
+      .filter(({path, tags}) => (path || '').split('/')[1] !== 'trash' && !(tags || []).includes('hidden'))
+
+  }
+
+  const fileMetas = filterMetas(files);
 
   if (!useLLM) {
-    return fileMetas;
+    return fileMetas
   }
 
   let docsIds = []
@@ -83,12 +88,14 @@ exports.run = async (query, driveType = 'team') => {
   bias based off of order. If you are positive that no answer can be found in the
   documents, respond "${nullAnswer}".`
   
-  const prompt = `\nHere is the question to answer: ${oldQuery}`
-  const docRegex = /\(doc-id=([^\)]+)\)/g;
-  const tokenLimit = 1000000
+  const prompt = `\nHere is the question to answer: ${oldQuery}`;
+  const docRegex = /(?<=\(doc-id=)[\w-]+(?=\))/;
+  const filterRegex = /\(doc-id=([^\)]+)\)/g;
+  const tokenLimit = 1000000;
+  var foundDocs = new Set();
 
   // Promise chaining so requests happen in parallel.
-  Promise.all(docsIds.map(docHTML))
+  const res = await Promise.all(docsIds.map(docHTML))
   .then((content) => {
     let chunks = divideContent(content, tokenLimit);
 
@@ -98,8 +105,6 @@ exports.run = async (query, driveType = 'team') => {
   })
   .then((responses) => {
     var filtered = responses.filter(response => !response.includes(nullAnswer))
-    var foundDocs = new Set();
-
     filtered.forEach(response => {
       foundDocs.add(...response.match(docRegex))
     })
@@ -111,12 +116,17 @@ exports.run = async (query, driveType = 'team') => {
       return LLMCall(filtered, consolidate)
     }
     const validResp = filtered.length == 1
-    return validResp ? filtered[0].replace(docRegex, "").trim() : nullAnswer;
+    return validResp ? filtered[0].replace(filterRegex, "").trim() : nullAnswer;
   })
-  .then((result) => {
-    console.log(result)
+  .then(async (result) => {
+    console.log(result);
+    console.log("HEYO");
+    const testing = await docIDsToMetaData(foundDocs, drive);
+    console.log(testing)
+    return filterMetas(testing);
   })
   .catch(error => console.error("Error processing responses:", error));
+  return res;
 }
 
 
@@ -126,6 +136,27 @@ async function LLMCall(docs, query) {
   console.log(prompt.length)
   const result = await model.generateContent(prompt);
   return result.response.text();
+}
+
+async function docIDsToMetaData(docIds, drive) {
+  const docIdArray = [...docIds];  
+  const files = docIdArray.map(async (docID) => {
+    try {
+      const response = await drive.files.get({
+        fileId: docID, // Correct property name for file ID
+        includeItemsFromAllDrives: true,
+        supportsAllDrives: true,
+        fields: '*'  // `pageSize` is not needed here since we're getting a single file
+      });
+      return response.data;
+    } catch (error) {
+      console.error(`Failed to retrieve file with ID ${docID}:`, error);
+      return null;
+    }
+  });
+
+  const fileData = await Promise.all(files);
+  return fileData.filter(file => file !== null);
 }
 
 
