@@ -31,16 +31,43 @@ async function handlePage(req, res) {
   const {q, autocomplete} = req.query
   if (page === 'search' && q) {
     return search.run(q, driveType).then((results) => {
+      console.log(results.length)
+      // AI Search
+      if (results.length > 1) {
+        console.log("LLM response recieved.")
+        var llmResponse = results[0]
+        results = results[1]
+        res.format({
+          html: () => {
+            res.render("pages/llmquery", {q, results, llmResponse, template: stringTemplate, formatUrl, pathPrefix})
+          },
+  
+          json: () => {
+            res.json(results.map((result) => ({
+              url: result.path,
+              title: result.prettyName,
+              lastUpdatedBy: (result.lastModifyingUser || {}).displayName,
+              modifiedAt: result.modifiedTime,
+              createdAt: result.createdTime,
+              id: result.id,
+              resourceType: result.resourceType
+            })))
+          }
+        })
+        return
+      } 
+      results = results[0]
       // special rule for the autocomplete case, go directly to the item if we find it.
       if (autocomplete) {
         // filter here first to make sure only _one_ document exists with this exact name
         const exactMatches = results.filter((i) => i.prettyName === q)
         if (exactMatches.length === 1) return res.redirect(formatUrl(exactMatches[0].path))
       }
-
       res.format({
         html: () => {
-          res.render(template, {q, results, template: stringTemplate, formatUrl, pathPrefix})
+          // res.render(template, {q, results, template: stringTemplate, formatUrl, pathPrefix})
+          let llmResponse = "Rawls believed that two principles of justice emerge from the original position in a serial order of importance. The first principle, which takes priority over the second, is that “each person is to have an equal right to the most extensive scheme of equal basic liberties compatible with a similar scheme of liberties for others” (Rawls 1999, 53). The second is that “social and economic inequalities are to be arranged so that they are both (a) to the greatest expected benefit of the least advantaged and (b) attached to offices and positions open to all under conditions of fair equality of opportunity” (Rawls 1999, 72)."
+          res.render("pages/llmquery", {q, results, llmResponse, template: stringTemplate, formatUrl, pathPrefix})
         },
 
         json: () => {

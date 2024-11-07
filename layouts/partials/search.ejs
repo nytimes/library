@@ -14,3 +14,28 @@
   </div>
 
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchContainers = document.getElementsByClassName('twitter-typeahead');
+    const searchIcon = document.querySelector(".icon i");
+    const searchBox = document.getElementById('search-box');
+
+    searchBox.addEventListener('input', function() {
+      // Check if the input value includes a question mark
+      if (searchBox.value.includes('?')) {
+        searchIcon.classList.remove("fa-search")
+        searchIcon.classList.add("fa-search-plus")
+        for (let i = 0; i < searchContainers.length; i++) {
+          searchContainers[i].style.backgroundColor = 'rgb(172, 176, 255)';
+        }
+      } else {
+        for (let i = 0; i < searchContainers.length; i++) {
+          searchContainers[i].style.backgroundColor = '';
+          searchIcon.classList.remove("fa-search-plus")
+          searchIcon.classList.add("fa-search")
+        }
+      }
+    });
+  });
+</script>
