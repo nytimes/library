@@ -1,0 +1,85 @@
+.animated-gradient-text {
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 0;
+  background: linear-gradient(90deg, #ff6ec4, #7873f5, #3ca9f4, #f3f4f5);
+  background-size: 400%;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: gradient-animation 5s ease-in-out infinite;
+}
+
+#llm-response-box {
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(243, 243, 243, 0.95),
+      rgba(243, 243, 243, 0.95)
+    )
+    padding-box,
+    conic-gradient(
+      from var(--bg-angle),
+      #ff6ec4,
+      #7873f5,
+      #3ca9f4,
+      #f3f4f5,
+      #ff6ec4
+    )
+    border-box;
+  
+  border: 2px solid transparent;
+  border-radius: 15px;
+  position: relative;
+  animation: spin 5s linear infinite;
+  color: #333;
+}
+
+#llm-response {
+  font-size: 15px;
+  padding: 15px;
+}
+
+#llm-response::selection {
+  background-color: rgb(172, 176, 255);
+}
+
+#disclaimer {
+  font-size: 13px;
+  padding-bottom: 10px;
+  text-align: center;
+  margin-top: 10px;
+  font-style: italic;
+  color: #666;
+  white-space: wrap
+}
+
+/* Keyframes for gradient animation */
+@keyframes gradient-animation {
+  0% { background-position: 0%; }
+  50% { background-position: 100%; }
+  100% { background-position: 0%; }
+}
+
+@property --bg-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes spin {
+  to {
+    --bg-angle: 360deg;
+  }
+}
+
+@keyframes search-animation {
+  0% {
+    background-color: rgb(172, 176, 255);
+  }
+  50% {
+    background-color: #3ca9f4;
+  }
+  100% {
+    background-color: rgb(172, 176, 255);
+  }
+}

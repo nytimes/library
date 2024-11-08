@@ -4,7 +4,7 @@
     <% const focus = locals.focus || '' %>
     <% const msgOnFocus = placeholder || '' %>
     <input <%= focus %> id="search-box" class="twitter-typeahead" type="text" name="q" value="<%= locals.q %>" placeholder="<%- placeholder %>" />
-    <button class="icon"><i class="fa fa-search"></i></button>
+    <button class="icon" id="searching-button"><i id="searching-icon" class="fa fa-search"></i></button>
   </form>
 
   <% const style = locals.style || 'plaintext' %>
@@ -14,34 +14,3 @@
   </div>
 
 </div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const searchIcon = document.querySelector(".icon i");
-    const searchBox = document.getElementById('search-box');
-    function aiMode() {
-      if (searchBox.value.includes('?')) {
-        searchIcon.classList.remove("fa-search")
-        searchIcon.classList.add("fa-search-plus")
-        for (let i = 0; i < searchContainers.length; i++) {
-          searchContainers[i].style.backgroundColor = 'rgb(172, 176, 255)';
-        }
-      } else {
-        for (let i = 0; i < searchContainers.length; i++) {
-          searchContainers[i].style.backgroundColor = '';
-          searchIcon.classList.remove("fa-search-plus")
-          searchIcon.classList.add("fa-search")
-        }
-      }
-    }
-    const loadingInterval = setInterval(() => {
-    const searchContainers = document.getElementsByClassName('twitter-typeahead');
-    if (searchContainers.length > 0) {
-      clearInterval(loadingInterval);
-      aiMode();
-    }
-  }, 100);
-    const searchContainers = document.getElementsByClassName('twitter-typeahead');
-    searchBox.addEventListener('input', aiMode);
-  });
-</script>

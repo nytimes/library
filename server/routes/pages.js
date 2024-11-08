@@ -31,7 +31,6 @@ async function handlePage(req, res) {
   const {q, autocomplete} = req.query
   if (page === 'search' && q) {
     return search.run(q, driveType).then((results) => {
-      console.log(results.length)
       // AI Search
       if (results.length > 1) {
         console.log("LLM response recieved.")
@@ -65,9 +64,7 @@ async function handlePage(req, res) {
       }
       res.format({
         html: () => {
-          // res.render(template, {q, results, template: stringTemplate, formatUrl, pathPrefix})
-          let llmResponse = "Rawls believed that two principles of justice emerge from the original position in a serial order of importance. The first principle, which takes priority over the second, is that “each person is to have an equal right to the most extensive scheme of equal basic liberties compatible with a similar scheme of liberties for others” (Rawls 1999, 53). The second is that “social and economic inequalities are to be arranged so that they are both (a) to the greatest expected benefit of the least advantaged and (b) attached to offices and positions open to all under conditions of fair equality of opportunity” (Rawls 1999, 72)."
-          res.render("pages/llmquery", {q, results, llmResponse, template: stringTemplate, formatUrl, pathPrefix})
+          res.render(template, {q, results, template: stringTemplate, formatUrl, pathPrefix})
         },
 
         json: () => {

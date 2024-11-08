@@ -79,7 +79,7 @@ exports.run = async (query, driveType = 'team') => {
     }
   }
 
-  const nullAnswer = "No answer could be found.";
+  const nullAnswer = "No answer could be found with AI. Please try again or use non-AI search.";
   const systemInstructions = `Based on the provided documents, you will answer
   a question in a specific, instructive, and factual manner, along with the document IDs that you found
   relevant for your answer. It's extremly important that you use the format "<<doc-id>>". Only provide document IDs
@@ -100,7 +100,7 @@ exports.run = async (query, driveType = 'team') => {
   var foundDocs = new Set();
 
   // Promise chaining so requests happen in parallel.
-  const res = await Promise.all(docsIds.map(docHTML))
+  const searchResult = await Promise.all(docsIds.map(docHTML))
   .then((content) => {
     let chunks = divideContent(content, tokenLimit);
     chunks = chunks.flatMap(chunk => Array(LLMCalls).fill(chunk));
@@ -115,11 +115,15 @@ exports.run = async (query, driveType = 'team') => {
     filtered.forEach(response => {
       let match;
       while ((match = docRegex.exec(response)) !== null) {
-        foundDocs.add(match[1]);
+        if (match[1].length == 44) {
+          foundDocs.add(match[1]);
+        }
       }
       // This is in case the LLM response doesn't properly format doc IDs.
       while ((match = lastResortRegex.exec(response)) !== null) {
-        foundDocs.add(match[0]);
+        if (match[0].length == 44) {
+          foundDocs.add(match[0]);
+        }
       }
     })
     if (filtered.length > 1) {
@@ -135,6 +139,7 @@ exports.run = async (query, driveType = 'team') => {
   .then(async (result) => {
     result = result
       .replace(/<<[^<>]+>>/g, " ")
+      .replace(/>>[^<>]+<</g, " ") // Sometimes caused by hallucination
       .replace(lastResortRegex, "")
       .replace(/ , /g, "")
       .replace(/ \. /g, "")
@@ -147,15 +152,19 @@ exports.run = async (query, driveType = 'team') => {
     const matchedDocs = await docIDsToMetaData(foundDocs, drive);
     return [result, filterMetas(matchedDocs)];
   })
-  .catch(error => console.error("Error processing responses:", error));
-  return res;
+  .catch(error => {
+    console.error("Error with LLM API Call:", error);
+    // Double list so that AI mode can be triggered
+    return ["There was a problem accessing the AI model. Please try again or use non-AI search.", []];
+  });
+  return searchResult;
 }
 
 
 async function LLMCall(docs, query) {
-  console.log("SENDING LLM QUERY")
-  let prompt = query[0] + docs.join("\n") + query[1]
-  console.log(prompt.length)
+  console.log("SENDING LLM QUERY");
+  let prompt = query[0] + docs.join("\n") + query[1];
+  console.log(prompt.length);
   const result = await model.generateContent(prompt);
   return result.response.text();
 }

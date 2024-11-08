@@ -1,17 +1,29 @@
 <!DOCTYPE html>
 <html>
-  <script src="assets/scripts/animations.js"></script>
-  <link rel="stylesheet" href="assets/css/customstyles.css">
-  <%- include('partials/head', {title: template('search.results.title', locals.q), formatUrl, pathPrefix}) %>
+  <head>
+    <script src="assets/scripts/animations.js"></script>
+    <link rel="stylesheet" href="assets/css/customstyles.css">
+    <%- include('partials/head', {title: template('search.results.title', locals.q), formatUrl, pathPrefix}) %>
+  </head>
   <body>
     <%- include('partials/header', {parentLinks: [], title: template('search.results.title', locals.q)}) %>
-
     <%- include('partials/nav', {formatUrl}) %>
-
     <div class="g-body">
       <div class="g-main-content" id="g-search-page">
+        <h3 class="search-kicker">
+          Showing <%- '<span class="animated-gradient-text">AI</span>' %> search results for '<%= locals.q %>':
+        </h3>
+        <div id="llm-response-box">
+          <div id="llm-response">
+            <%= locals.llmResponse %>
+          </div>
+          <% if (locals.results && results.length) { %>
+            <div id="disclaimer">
+              AI can be incorrect. Always check this response against the documents and the non-AI search.
+            </div>
+          <% } %>
+        </div>
         <% if (locals.results && results.length) { %>
-          <h3 class="search-kicker"><%- template('search.results.kicker', locals.q) %></h3>
           <% results.forEach((res) => { %>
           <div class="search-result">
             <h3><a href="<%= formatUrl(res.path) %>"><%= res.prettyName %></a></h3>
@@ -26,9 +38,6 @@
             </p>
           </div>
           <% }) %>
-        <% }  else { %>
-          <h3 class="search-kicker"><%- template('search.results.none.kicker', locals.q) %></h3>
-          <p><%- template('search.results.none.suggestion') %></p>
         <% } %>
       </div>
 
