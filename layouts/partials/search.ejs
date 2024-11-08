@@ -1,6 +1,6 @@
 <div class="search-topper">
   <form method="GET" action="<%= formatUrl('/search') %>" class="search-container">
-    <% const placeholder = template('search.placeholder')%>
+    <% const placeholder = 'Search... (or ask a question with AI)'%>
     <% const focus = locals.focus || '' %>
     <% const msgOnFocus = placeholder || '' %>
     <input <%= focus %> id="search-box" class="twitter-typeahead" type="text" name="q" value="<%= locals.q %>" placeholder="<%- placeholder %>" />
@@ -17,12 +17,9 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    const searchContainers = document.getElementsByClassName('twitter-typeahead');
     const searchIcon = document.querySelector(".icon i");
     const searchBox = document.getElementById('search-box');
-
-    searchBox.addEventListener('input', function() {
-      // Check if the input value includes a question mark
+    function aiMode() {
       if (searchBox.value.includes('?')) {
         searchIcon.classList.remove("fa-search")
         searchIcon.classList.add("fa-search-plus")
@@ -36,6 +33,15 @@
           searchIcon.classList.add("fa-search")
         }
       }
-    });
+    }
+    const loadingInterval = setInterval(() => {
+    const searchContainers = document.getElementsByClassName('twitter-typeahead');
+    if (searchContainers.length > 0) {
+      clearInterval(loadingInterval);
+      aiMode();
+    }
+  }, 100);
+    const searchContainers = document.getElementsByClassName('twitter-typeahead');
+    searchBox.addEventListener('input', aiMode);
   });
 </script>
