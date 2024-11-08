@@ -43,7 +43,7 @@ async function setAuthClient() {
       authClient = auth.fromJSON(keys)
       authClient.scopes = scopes
     } else if (credentialPath === 'parse_json_string') {
-      Buffer.from(process.env.GOOGLE_APPLICATION_JSON, "base64").toString("utf-8");
+      const decodedString = Buffer.from(process.env.GOOGLE_APPLICATION_JSON, "base64").toString("utf-8");
       const keys = JSON.parse(decodedString);
       authClient = auth.fromJSON(keys)
       authClient.scopes = scopes
