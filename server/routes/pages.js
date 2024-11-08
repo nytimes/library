@@ -106,7 +106,6 @@ async function handlePage(req, res) {
     })
     return
   }
-
   res.render(template, {template: stringTemplate, formatUrl, pathPrefix})
 }
 

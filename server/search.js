@@ -13,6 +13,7 @@ const driveId = process.env.DRIVE_ID
 
 const genAI = new GoogleGenerativeAI(process.env.LLM_API_KEY);
 const LLMCalls = Number(process.env.LLM_API_CALLS);
+const tokenLimit = Number(process.env.LLM_TOKEN_LIMIT);;
 const model = genAI.getGenerativeModel({
   model: "gemini-1.5-flash-latest",
   systemInstructions: `You are a helpful librarian who uses documents to answer
@@ -95,8 +96,8 @@ exports.run = async (query, driveType = 'team') => {
   in this library. Respond with plain text and no markdown. ${oldQuery}`;
 
   const docRegex = /<<([^<>]+)>>/g;
+  // A rather disgusting regex that grabs docIDs in case the LLM doesn't properly format them
   const lastResortRegex = /(?<=\s|[^a-zA-Z0-9\-_])(?:[a-zA-Z0-9\-_]{44})(?=\s|[^a-zA-Z0-9\-_]|$)/g;
-  const tokenLimit = 1000000;
   var foundDocs = new Set();
 
   // Promise chaining so requests happen in parallel.
@@ -109,8 +110,6 @@ exports.run = async (query, driveType = 'team') => {
     ));
   })
   .then((responses) => {
-    console.log("RAW RESPONSES")
-    console.log(responses)
     var filtered = responses.filter(response => !response.includes(nullAnswer))
     filtered.forEach(response => {
       let match;
@@ -145,26 +144,23 @@ exports.run = async (query, driveType = 'team') => {
       .replace(/ \. /g, "")
       .replace(/\*/g, "")
       .trim();
-
-    console.log(foundDocs)
-    console.log("------------------")
-    console.log(result)
     const matchedDocs = await docIDsToMetaData(foundDocs, drive);
     return [result, filterMetas(matchedDocs)];
   })
   .catch(error => {
     console.error("Error with LLM API Call:", error);
     // Double list so that AI mode can be triggered
-    return ["There was a problem accessing the AI model. Please try again or use non-AI search.", []];
+    return [`There was a problem accessing the AI model. 
+      Please try again or use non-AI search. If the issue persists, make sure 
+      your AI API key is properly set up as an environment variable and is functioning.`, []];
   });
   return searchResult;
 }
 
 
 async function LLMCall(docs, query) {
-  console.log("SENDING LLM QUERY");
   let prompt = query[0] + docs.join("\n") + query[1];
-  console.log(prompt.length);
+  console.log(`Sending LLM query of character length ${prompt.length}`);
   const result = await model.generateContent(prompt);
   return result.response.text();
 }
@@ -174,10 +170,10 @@ async function docIDsToMetaData(docIds, drive) {
   const files = docIdArray.map(async (docID) => {
     try {
       const response = await drive.files.get({
-        fileId: docID, // Correct property name for file ID
+        fileId: docID,
         includeItemsFromAllDrives: true,
         supportsAllDrives: true,
-        fields: '*'  // `pageSize` is not needed here since we're getting a single file
+        fields: '*'
       });
       return response.data;
     } catch (error) {
@@ -193,9 +189,6 @@ async function docIDsToMetaData(docIds, drive) {
 
 async function fullSearch({drive, query, folderIds, results = [], nextPageToken: pageToken, driveType}) {
   const options = getOptions(query, folderIds, driveType)
-
-  console.log("HELLO TESTING")
-  
   if (pageToken) {
     options.pageToken = pageToken
   }
