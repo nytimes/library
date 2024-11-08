@@ -9,5 +9,9 @@
     "routes": [
       { "src": "/(.*)", "dest": "server/index.js" },
       { "src": "/public/(.*)", "dest": "/public/$1" }
+    ],
+    "files": [
+      "server/cache/store.js"
     ]
+
 }  
