@@ -7,7 +7,7 @@ const log = require('./logger')
 const {requireWithFallback} = require('./utils')
 const {parseUrl} = require('./urlParser')
 
-const cache = requireWithFallback('cache/store')
+const cache = requireWithFallback('./cache/store')
 
 // delay caching for 1 hour by default after editing, with env var override
 const noCacheDelay = parseInt(process.env.EDIT_CACHE_DELAY, 10) || 60 * 60
