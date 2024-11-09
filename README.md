@@ -6,7 +6,24 @@
 - [x] AI search also returns documents
 - [x] Prompt engineering for better results
 - [x] LLM working on frontend
-- [ ] Testing and documentation
+- [x] Testing and documentation
+- [x] Deployment
+
+
+## Introducing AI powered search for Library!
+
+Users can now search the library with AI by simply asking a question in the search box!
+
+**Features:**
+- Returns a concise summary along with relevant documents, creating a more powerful search than keywords.
+- Fetches entire document base for AI query using existing infrastructure that supports caching.
+- Supports chunking of AI requests for models with smaller token limits.
+- Can query multiple times and combine responses for greater accuracy using the `LLM_API_CALLS` enviornment variable.
+- Makes API and fetch requests in parallel.
+- Defaults to a null answer to avoid hallucinations.
+- Uses both desktop and mobile friendly front-end animations.
+
+![AI search feature demo](https://github.com/nshaff3r/llm-docs-library/blob/main/AISearchDemo.gif)
 
 Library ![Supported node versions](https://img.shields.io/badge/dynamic/json?color=informational&label=node&query=%24.engines.node&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnytimes%2Flibrary%2Fmain%2Fpackage.json) [![Tests](https://github.com/nytimes/library/actions/workflows/test.yaml/badge.svg)](https://github.com/nytimes/library/actions/workflows/test.yaml)
 ========
