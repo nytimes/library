@@ -26,23 +26,29 @@ var searchContainers = document.getElementsByClassName('twitter-typeahead');
 const loadingInterval = setInterval(() => {
     searchContainers = document.getElementsByClassName('twitter-typeahead');
     if (searchContainers.length > 0) {
-    clearInterval(loadingInterval);
+        clearInterval(loadingInterval);
+        searchBox.addEventListener('input', function(event){
+            if (event.inputType === "insertText" && event.data === "\n") {
+                aiMode(true);
+            }
+            aiMode(false);
+        });
 
-    searchBox.addEventListener('input', function(){
+        searchButton.addEventListener("click", function() {
+            aiMode(true);
+        });
+
+        searchButton.addEventListener("touchstart", function() {
+            aiMode(true);
+        });
+
+        searchBox.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                aiMode(true);
+            }
+        });
+
         aiMode(false);
-    });
-
-    searchButton.addEventListener("click", function(){
-        aiMode(true);
-    });
-    
-    searchBox.addEventListener("keypress", function(event) {
-        if (event.key === "Enter") {
-        aiMode(true);
-        }
-    });
-
-    aiMode(false);
     }
 }, 100);
 });

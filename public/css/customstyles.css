@@ -83,3 +83,12 @@
     background-color: rgb(172, 176, 255);
   }
 }
+
+@media (max-width: 768px) {
+  .animated-gradient-text {
+      background-size: 200%;
+  }
+  #llm-response-box {
+      animation: none; /* Remove spin on mobile */
+  }
+}
