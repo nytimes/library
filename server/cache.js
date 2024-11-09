@@ -9,8 +9,9 @@ const {parseUrl} = require('./urlParser')
 
 const path = require('path');
 console.log('Attempting to load store from:', path.join(__dirname, 'cache', 'store'));
+let cache;
 try {
-  const cache = require(path.join(__dirname, 'cache', 'store'));
+  cache = require(path.join(__dirname, 'cache', 'store'));
   console.log('Store loaded successfully');
 } catch (error) {
   console.log('Store load error:', error);
