@@ -18,7 +18,6 @@ async function handleCategory(req, res) {
   log.info(`GET ${req.path}`)
   // FIXME: consider putting this in middleware and save on req
   const {meta, parent, data, root} = await parseUrl(req.path)
-
   if (!meta || !data) return 'next'
 
   const {resourceType, tags, id} = meta
@@ -78,7 +77,6 @@ async function handleCategory(req, res) {
     formatUrl,
     pathPrefix
   })
-
   res.format({
     html: () => {
       res.render(template, renderData, (err, html) => {
@@ -86,7 +84,6 @@ async function handleCategory(req, res) {
         res.end(html)
       })
     },
-
     json: () => {
       const {template, duplicates, ...jsonResponse} = Object.assign({}, renderData, {resourceType})
       res.json(jsonResponse)

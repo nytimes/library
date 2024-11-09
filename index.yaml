@@ -1,0 +1,13 @@
+indexes:
+  - kind: LibraryViewTeam
+    properties:
+      - name: userId
+        direction: asc
+      - name: viewCount
+        direction: desc
+  - kind: LibraryViewTeam
+    properties:
+      - name: userId
+        direction: asc
+      - name: lastViewedAt
+        direction: desc

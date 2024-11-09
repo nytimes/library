@@ -1,10 +1,10 @@
 <div class="search-topper">
   <form method="GET" action="<%= formatUrl('/search') %>" class="search-container">
-    <% const placeholder = template('search.placeholder')%>
+    <% const placeholder = 'Search... (or ask a question with AI)'%>
     <% const focus = locals.focus || '' %>
     <% const msgOnFocus = placeholder || '' %>
     <input <%= focus %> id="search-box" class="twitter-typeahead" type="text" name="q" value="<%= locals.q %>" placeholder="<%- placeholder %>" />
-    <button class="icon"><i class="fa fa-search"></i></button>
+    <button class="icon" id="searching-button"><i id="searching-icon" class="fa fa-search"></i></button>
   </form>
 
   <% const style = locals.style || 'plaintext' %>

@@ -104,7 +104,6 @@ async function updateTree() {
 
 function getOptions(id) {
   const fields = 'nextPageToken,files(id,name,mimeType,parents,webViewLink,createdTime,modifiedTime,lastModifyingUser)'
-
   if (driveType === 'folder') {
     return {
       ...exports.commonListOptions.folder,

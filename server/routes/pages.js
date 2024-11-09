@@ -31,13 +31,36 @@ async function handlePage(req, res) {
   const {q, autocomplete} = req.query
   if (page === 'search' && q) {
     return search.run(q, driveType).then((results) => {
+      // AI Search
+      if (results.hasOwnProperty('llmresponse')) {
+        console.log('LLM response recieved.')
+        const llmResponse = results.llmresponse
+        res.format({
+          html: () => {
+            res.render('pages/llmquery', {q, results, llmResponse, template: stringTemplate, formatUrl, pathPrefix})
+          },
+
+          json: () => {
+            res.json(results.map((result) => ({
+              url: result.path,
+              title: result.prettyName,
+              lastUpdatedBy: (result.lastModifyingUser || {}).displayName,
+              modifiedAt: result.modifiedTime,
+              createdAt: result.createdTime,
+              id: result.id,
+              resourceType: result.resourceType
+            })))
+          }
+        })
+        return
+      }
+      results = results[0]
       // special rule for the autocomplete case, go directly to the item if we find it.
       if (autocomplete) {
         // filter here first to make sure only _one_ document exists with this exact name
         const exactMatches = results.filter((i) => i.prettyName === q)
         if (exactMatches.length === 1) return res.redirect(formatUrl(exactMatches[0].path))
       }
-
       res.format({
         html: () => {
           res.render(template, {q, results, template: stringTemplate, formatUrl, pathPrefix})
@@ -82,7 +105,6 @@ async function handlePage(req, res) {
     })
     return
   }
-
   res.render(template, {template: stringTemplate, formatUrl, pathPrefix})
 }
 

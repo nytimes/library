@@ -42,6 +42,11 @@ async function setAuthClient() {
       const keys = JSON.parse(process.env.GOOGLE_APPLICATION_JSON)
       authClient = auth.fromJSON(keys)
       authClient.scopes = scopes
+    } else if (credentialPath === 'parse_json_string') {
+      const decodedString = Buffer.from(process.env.GOOGLE_APPLICATION_JSON, 'base64').toString('utf-8')
+      const keys = JSON.parse(decodedString)
+      authClient = auth.fromJSON(keys)
+      authClient.scopes = scopes
     } else {
       // if .auth.json file exists, google will find it automatically https://github.com/googleapis/google-auth-library-nodejs#choosing-the-correct-credential-type-automatically
       const googleAuth = new GoogleAuth({scopes})

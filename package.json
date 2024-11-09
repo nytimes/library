@@ -5,6 +5,7 @@
   "main": "server/index.js",
   "dependencies": {
     "@google-cloud/datastore": "^5.1.0",
+    "@google/generative-ai": "^0.21.0",
     "cache-manager": "^3.3.0",
     "chai": "^4.2.0",
     "cheerio": "^1.0.0-rc.3",
@@ -21,7 +22,9 @@
     "lodash": "^4.17.21",
     "mime-types": "^2.1.27",
     "moment": "^2.29.4",
+    "nano-markdown": "^1.2.2",
     "node-sass": "^7.0.3",
+    "parse5-parser-stream": "^7.1.2",
     "passport": "^0.4.1",
     "passport-google-oauth20": "^2.0.0",
     "passport-slack-oauth2": "^1.0.2",
@@ -71,8 +74,8 @@
     "url": "https://github.com/nytimes/library/issues"
   },
   "engines": {
-    "node": ">=14.x",
-    "npm": ">=6.14.x"
+    "node": "18.20.x",
+    "npm": "10.7.x"
   },
   "homepage": "https://github.com/nytimes/library#readme"
 }
