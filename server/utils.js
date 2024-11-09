@@ -67,8 +67,8 @@ exports.slugify = (text = '') => {
 // file of the same name in the server dir
 exports.requireWithFallback = (attemptPath) => {
   const baseDir = path.join(__dirname, '..')
-  const customPath = path.join(baseDir, 'custom', attemptPath)
-  const serverPath = path.join(baseDir, 'server', attemptPath)
+  const customPath = path.join(baseDir, 'custom', `${attemptPath}.js`);
+  const serverPath = path.join(__dirname, `${attemptPath}.js`);
   try {
     return require(customPath)
   } catch (err) {
@@ -78,7 +78,14 @@ exports.requireWithFallback = (attemptPath) => {
     } else {
       log.debug(`No custom file "${attemptPath}" found in ${customPath}. Did you mean to include one?`)
     }
-    return require(serverPath)
+     
+    try {
+      return require(serverPath);
+    } catch (serverErr) {
+      console.log('Failed to load from server path:', serverErr);
+      // If both fail, try direct require as last resort
+      return require(`./${attemptPath}`);
+    }
   }
 }
 

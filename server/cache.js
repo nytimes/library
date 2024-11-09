@@ -7,17 +7,7 @@ const log = require('./logger')
 const {requireWithFallback} = require('./utils')
 const {parseUrl} = require('./urlParser')
 
-const path = require('path');
-console.log('Attempting to load store from:', path.join(__dirname, 'cache', 'store'));
-let cache;
-try {
-  cache = require(path.join(__dirname, 'cache', 'store'));
-  console.log('Store loaded successfully');
-} catch (error) {
-  console.log('Store load error:', error);
-  console.log('Error stack:', error.stack);
-}
-
+const cache = requireWithFallback('cache/store');
 
 // delay caching for 1 hour by default after editing, with env var override
 const noCacheDelay = parseInt(process.env.EDIT_CACHE_DELAY, 10) || 60 * 60
