@@ -9,7 +9,7 @@ router.use(async (req, res) => {
     // prevents incorrect GA tracking
     analyticsUserId: false
   }
-  
+
   return 'next'
 })
 

@@ -158,7 +158,7 @@ exports.assetDataURI = async (filePath) => {
 exports.pathPrefix = process.env.PATH_PREFIX || '/'
 
 exports.formatUrl = (url) => {
-  let res;
+  let res
   if (url.match(/^https?:\/\//)) {
     res = url
   } else if (url.startsWith('/')) {

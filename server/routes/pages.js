@@ -33,14 +33,14 @@ async function handlePage(req, res) {
     return search.run(q, driveType).then((results) => {
       // AI Search
       if (results.length > 1) {
-        console.log("LLM response recieved.")
-        var llmResponse = results[0]
+        console.log('LLM response recieved.')
+        const llmResponse = results[0]
         results = results[1]
         res.format({
           html: () => {
-            res.render("pages/llmquery", {q, results, llmResponse, template: stringTemplate, formatUrl, pathPrefix})
+            res.render('pages/llmquery', {q, results, llmResponse, template: stringTemplate, formatUrl, pathPrefix})
           },
-  
+
           json: () => {
             res.json(results.map((result) => ({
               url: result.path,
@@ -54,7 +54,7 @@ async function handlePage(req, res) {
           }
         })
         return
-      } 
+      }
       results = results[0]
       // special rule for the autocomplete case, go directly to the item if we find it.
       if (autocomplete) {
@@ -65,8 +65,8 @@ async function handlePage(req, res) {
       res.format({
         html: () => {
           // res.render(template, {q, results, template: stringTemplate, formatUrl, pathPrefix})
-          let llmResponse = "Sample AI response about the user query."
-          res.render("pages/llmquery", {q, results, llmResponse, template: stringTemplate, formatUrl, pathPrefix})
+          const llmResponse = 'Sample AI response about the user query.'
+          res.render('pages/llmquery', {q, results, llmResponse, template: stringTemplate, formatUrl, pathPrefix})
         },
 
         json: () => {

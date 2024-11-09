@@ -5,21 +5,21 @@ const {getAuth} = require('./auth')
 const list = require('./list')
 const log = require('./logger')
 
-const { fetchDoc } = require('./docs');
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-const cheerio = require('cheerio');
+const {fetchDoc} = require('./docs')
+const {GoogleGenerativeAI} = require('@google/generative-ai')
+const cheerio = require('cheerio')
 
 const driveId = process.env.DRIVE_ID
 
-const genAI = new GoogleGenerativeAI(process.env.LLM_API_KEY);
-const LLMCalls = Number(process.env.LLM_API_CALLS);
-const tokenLimit = Number(process.env.LLM_TOKEN_LIMIT);;
+const genAI = new GoogleGenerativeAI(process.env.LLM_API_KEY)
+const LLMCalls = Number(process.env.LLM_API_CALLS)
+const tokenLimit = Number(process.env.LLM_TOKEN_LIMIT)
 const model = genAI.getGenerativeModel({
-  model: "gemini-1.5-flash-latest",
+  model: 'gemini-1.5-flash-latest',
   systemInstructions: `You are a helpful librarian who uses documents to answer
   questions.`,
   temperature: 1
-});
+})
 
 exports.run = async (query, driveType = 'team') => {
   const authClient = await getAuth()
@@ -28,11 +28,13 @@ exports.run = async (query, driveType = 'team') => {
 
   const drive = google.drive({version: 'v3', auth: authClient})
 
-  const useLLM = query.includes('?');
+  const useLLM = query.includes('?')
+
+  let oldQuery
 
   if (useLLM) {
-    var oldQuery = query
-    query = ""
+    oldQuery = query
+    query = ''
   }
 
   if (driveType === 'folder') {
@@ -45,42 +47,39 @@ exports.run = async (query, driveType = 'team') => {
       throw err
     })
 
-
   function filterMetas(files) {
     return files
       .map((file) => { return list.getMeta(file.id) || {} })
       .filter(({path, tags}) => (path || '').split('/')[1] !== 'trash' && !(tags || []).includes('hidden'))
-
   }
 
-  const fileMetas = filterMetas(files);
-
+  const fileMetas = filterMetas(files)
 
   if (!useLLM) {
     return [fileMetas]
   }
 
-  let docsIds = []
-  for (const { id, mimeType } of fileMetas) {
+  const docsIds = []
+  for (const {id, mimeType} of fileMetas) {
     if (mimeType === 'application/vnd.google-apps.document') {
-      docsIds.push(id);
+      docsIds.push(id)
     }
   };
 
   // Grabs all docs data, filtering out HTML and blank lines
   async function docHTML(docId) {
     try {
-      const response = await fetchDoc(docId, "document", {})
-      const $ = cheerio.load(response.html);
-      const htmlContent = $.text().split('\n').filter(line => line.trim())
-    return [`DOCUMENT ID: ${docId}\n`, htmlContent.join('\n')];
+      const response = await fetchDoc(docId, 'document', {})
+      const $ = cheerio.load(response.html)
+      const htmlContent = $.text().split('\n').filter((line) => line.trim())
+      return [`DOCUMENT ID: ${docId}\n`, htmlContent.join('\n')]
     } catch (error) {
-      console.error(`Error fetching document`);
-      return null;
+      console.error('Error fetching document')
+      return null
     }
   }
 
-  const nullAnswer = "No answer could be found in the library with AI. Please try again or use non-AI search.";
+  const nullAnswer = 'No answer could be found in the library with AI. Please try again or use non-AI search.'
   const systemInstructions = `Based on the provided documents, you will answer
   a question in a specific, instructive, and factual manner, along with the document IDs that you found
   relevant for your answer. It's extremly important that you use the format "<<doc-id>>". Only provide document IDs
@@ -91,82 +90,81 @@ exports.run = async (query, driveType = 'team') => {
   will contain answers.
   If you are absolutely certain that no answer exists in the documents, respond only with "${nullAnswer}".
   Answers are likely present, so check carefully. List as many relevant document IDs as possible.`
-  
-  const prompt = `\nHere is the question to answer based on the documents
-  in this library. Respond with plain text and no markdown. ${oldQuery}`;
 
-  const docRegex = /<<([^<>]+)>>/g;
+  const prompt = `\nHere is the question to answer based on the documents
+  in this library. Respond with plain text and no markdown. ${oldQuery}`
+
+  const docRegex = /<<([^<>]+)>>/g
   // A rather disgusting regex that grabs docIDs in case the LLM doesn't properly format them
-  const lastResortRegex = /(?<=\s|[^a-zA-Z0-9\-_])(?:[a-zA-Z0-9\-_]{44})(?=\s|[^a-zA-Z0-9\-_]|$)/g;
-  var foundDocs = new Set();
+  const lastResortRegex = /(?<=\s|[^a-zA-Z0-9\-_])(?:[a-zA-Z0-9\-_]{44})(?=\s|[^a-zA-Z0-9\-_]|$)/g
+  const foundDocs = new Set()
 
   // Promise chaining so requests happen in parallel.
   const searchResult = await Promise.all(docsIds.map(docHTML))
-  .then((content) => {
-    let chunks = divideContent(content, tokenLimit);
-    chunks = chunks.flatMap(chunk => Array(LLMCalls).fill(chunk));
-    return Promise.all(chunks.map(chunk => 
-      LLMCall(chunk, [systemInstructions, prompt])
-    ));
-  })
-  .then((responses) => {
-    var filtered = responses.filter(response => !response.includes(nullAnswer))
-    filtered.forEach(response => {
-      let match;
-      while ((match = docRegex.exec(response)) !== null) {
-        if (match[1].length == 44) {
-          foundDocs.add(match[1]);
-        }
-      }
-      // This is in case the LLM response doesn't properly format doc IDs.
-      while ((match = lastResortRegex.exec(response)) !== null) {
-        if (match[0].length == 44) {
-          foundDocs.add(match[0]);
-        }
-      }
+    .then((content) => {
+      let chunks = divideContent(content, tokenLimit)
+      chunks = chunks.flatMap((chunk) => Array(LLMCalls).fill(chunk))
+      return Promise.all(chunks.map((chunk) =>
+        LLMCall(chunk, [systemInstructions, prompt])
+      ))
     })
-    if (filtered.length > 1) {
-      const consolidate = [
-        "Here are some responses you gave:\n",
-        "\nconsolidate them into one consise, helpful response."
-      ]
-      return LLMCall(filtered, consolidate)
-    }
-    const validResp = filtered.length == 1
-    return validResp ? filtered[0] : nullAnswer;
-  })
-  .then(async (result) => {
-    result = result
-      .replace(/<<[^<>]+>>/g, " ")
-      .replace(/>>[^<>]+<</g, " ") // Sometimes caused by hallucination
-      .replace(lastResortRegex, "")
-      .replace(/ , /g, "")
-      .replace(/ \. /g, "")
-      .replace(/\*/g, "")
-      .trim();
-    const matchedDocs = await docIDsToMetaData(foundDocs, drive);
-    return [result, filterMetas(matchedDocs)];
-  })
-  .catch(error => {
-    console.error("Error with LLM API Call:", error);
-    // Double list so that AI mode can be triggered
-    return [`There was a problem accessing the AI model. 
+    .then((responses) => {
+      const filtered = responses.filter((response) => !response.includes(nullAnswer))
+      filtered.forEach((response) => {
+        let match
+        while ((match = docRegex.exec(response)) !== null) {
+          if (match[1].length === 44) {
+            foundDocs.add(match[1])
+          }
+        }
+        // This is in case the LLM response doesn't properly format doc IDs.
+        while ((match = lastResortRegex.exec(response)) !== null) {
+          if (match[0].length === 44) {
+            foundDocs.add(match[0])
+          }
+        }
+      })
+      if (filtered.length > 1) {
+        const consolidate = [
+          'Here are some responses you gave:\n',
+          '\nconsolidate them into one consise, helpful response.'
+        ]
+        return LLMCall(filtered, consolidate)
+      }
+      const validResp = filtered.length === 1
+      return validResp ? filtered[0] : nullAnswer
+    })
+    .then(async (result) => {
+      result = result
+        .replace(/<<[^<>]+>>/g, ' ')
+        .replace(/>>[^<>]+<</g, ' ') // Sometimes caused by hallucination
+        .replace(lastResortRegex, '')
+        .replace(/ , /g, '')
+        .replace(/ \. /g, '')
+        .replace(/\*/g, '')
+        .trim()
+      const matchedDocs = await docIDsToMetaData(foundDocs, drive)
+      return [result, filterMetas(matchedDocs)]
+    })
+    .catch((error) => {
+      console.error('Error with LLM API Call:', error)
+      // Double list so that AI mode can be triggered
+      return [`There was a problem accessing the AI model. 
       Please try again or use non-AI search. If the issue persists, make sure 
-      your AI API key is properly set up as an environment variable and is functioning.`, []];
-  });
-  return searchResult;
+      your AI API key is properly set up as an environment variable and is functioning.`, []]
+    })
+  return searchResult
 }
 
-
 async function LLMCall(docs, query) {
-  let prompt = query[0] + docs.join("\n") + query[1];
-  console.log(`Sending LLM query of character length ${prompt.length}`);
-  const result = await model.generateContent(prompt);
-  return result.response.text();
+  const prompt = query[0] + docs.join('\n') + query[1]
+  console.log(`Sending LLM query of character length ${prompt.length}`)
+  const result = await model.generateContent(prompt)
+  return result.response.text()
 }
 
 async function docIDsToMetaData(docIds, drive) {
-  const docIdArray = [...docIds];  
+  const docIdArray = [...docIds]
   const files = docIdArray.map(async (docID) => {
     try {
       const response = await drive.files.get({
@@ -174,18 +172,17 @@ async function docIDsToMetaData(docIds, drive) {
         includeItemsFromAllDrives: true,
         supportsAllDrives: true,
         fields: '*'
-      });
-      return response.data;
+      })
+      return response.data
     } catch (error) {
-      console.error(`Failed to retrieve file with ID ${docID}:`, error);
-      return null;
+      console.error(`Failed to retrieve file with ID ${docID}:`, error)
+      return null
     }
-  });
+  })
 
-  const fileData = await Promise.all(files);
-  return fileData.filter(file => file !== null);
+  const fileData = await Promise.all(files)
+  return fileData.filter((file) => file !== null)
 }
-
 
 async function fullSearch({drive, query, folderIds, results = [], nextPageToken: pageToken, driveType}) {
   const options = getOptions(query, folderIds, driveType)
@@ -265,24 +262,23 @@ function getOptions(query, folderIds, driveType) {
 
 // Chunks content (preserving docs) to fit within model token limits
 function divideContent(content, threshold) {
-  const blocks = [];
-  let currentBlock = [];
-  content.forEach(item => {
+  const blocks = []
+  let currentBlock = []
+  content.forEach((item) => {
     if (item) {
-      if (currentBlock.join(" ").length + item.length <= threshold) {
+      if (currentBlock.join(' ').length + item.length <= threshold) {
         currentBlock.push(item)
-      }
-      else {
+      } else {
         if (currentBlock.length > 0) {
-          blocks.push(currentBlock);
+          blocks.push(currentBlock)
         }
         currentBlock = [item]
       }
     }
-  });
+  })
 
   if (currentBlock.length > 0) {
-    blocks.push(currentBlock);
+    blocks.push(currentBlock)
   }
 
   return blocks
