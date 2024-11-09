@@ -80,7 +80,7 @@ exports.run = async (query, driveType = 'team') => {
     }
   }
 
-  const nullAnswer = "No answer could be found with AI. Please try again or use non-AI search.";
+  const nullAnswer = "No answer could be found in the library with AI. Please try again or use non-AI search.";
   const systemInstructions = `Based on the provided documents, you will answer
   a question in a specific, instructive, and factual manner, along with the document IDs that you found
   relevant for your answer. It's extremly important that you use the format "<<doc-id>>". Only provide document IDs
