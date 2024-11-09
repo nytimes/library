@@ -2,7 +2,8 @@
 
 Users can now search the library with AI by simply asking a question in the search box!
 
-You can find a working demo [here](https://llm-docs-library.vercel.app/)
+You can find a full demo [here](https://llm-docs-library.vercel.app/).
+<br></br>
 **Features:**
 - Returns a concise summary along with relevant documents, creating a more powerful search than keywords.
 - Fetches entire document base for AI query using existing infrastructure that supports caching.
