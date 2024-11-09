@@ -267,16 +267,17 @@ function getOptions(query, folderIds, driveType) {
 function divideContent(content, threshold) {
   const blocks = [];
   let currentBlock = [];
-
   content.forEach(item => {
-    if (currentBlock.join(" ").length + item.length <= threshold) {
-      currentBlock.push(item)
-    }
-    else {
-      if (currentBlock.length > 0) {
-        blocks.push(currentBlock);
+    if (item) {
+      if (currentBlock.join(" ").length + item.length <= threshold) {
+        currentBlock.push(item)
       }
-      currentBlock = [item]
+      else {
+        if (currentBlock.length > 0) {
+          blocks.push(currentBlock);
+        }
+        currentBlock = [item]
+      }
     }
   });
 
