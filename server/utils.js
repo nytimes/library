@@ -158,12 +158,15 @@ exports.assetDataURI = async (filePath) => {
 exports.pathPrefix = process.env.PATH_PREFIX || '/'
 
 exports.formatUrl = (url) => {
-  if (url.includes('/auth/redirect')) {
-    if (url.startsWith('http://')) return url.replace('http://', 'https://');
-    if (!url.startsWith('https://')) return `https://${exports.pathPrefix}${url.startsWith('/') ? url.slice(1) : url}`;
+  let res;
+  if (url.match(/^https?:\/\//)) {
+    res = url
+  } else if (url.startsWith('/')) {
+    res = exports.pathPrefix + url.slice(1)
+  } else {
+    res = exports.pathPrefix + url
   }
-
-  if (url.match(/^https?:\/\//)) return url
-  if (url.startsWith('/')) return exports.pathPrefix + url.slice(1)
-  return exports.pathPrefix + url
+  console.log("URL TESTING")
+  console.log(res)
+  return res
 }

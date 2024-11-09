@@ -15,7 +15,7 @@ const domains = new Set(process.env.APPROVED_DOMAINS.split(/,\s?/g))
 const authStrategies = ['google', 'Slack']
 let authStrategy = process.env.OAUTH_STRATEGY
 
-const callbackURL = process.env.REDIRECT_URL || formatUrl('/auth/redirect')
+const callbackURL = process.env.REDIRECT_URL || `https://${process.env.HOST.replace(/^http:\/\//, '')}/auth/redirect`;
 if (!authStrategies.includes(authStrategy)) {
   log.warn(`Invalid oauth strategy ${authStrategy} specific, defaulting to google auth`)
   authStrategy = 'google'

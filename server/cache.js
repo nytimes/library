@@ -4,10 +4,10 @@ const moment = require('moment')
 const middlewareRouter = require('express-promise-router')()
 
 const log = require('./logger')
-// const {requireWithFallback} = require('./utils')
+const {requireWithFallback} = require('./utils')
 const {parseUrl} = require('./urlParser')
 
-const cache = ('./cache/store');
+const cache = requireWithFallback('cache/store')
 
 // delay caching for 1 hour by default after editing, with env var override
 const noCacheDelay = parseInt(process.env.EDIT_CACHE_DELAY, 10) || 60 * 60
@@ -39,8 +39,8 @@ middlewareRouter.use(async (req, res) => {
 
 exports.middleware = middlewareRouter
 
-exports.add = async (id, newModified, content, ttl) => {
-  if (!newModified) throw new Error(`Refusing to store ${id} without modified time.`)
+exports.add = async (id, newModified, content) => {
+  if (!newModified) throw new Error('Refusing to store new item without modified time.')
 
   const data = await cache.get(id)
   const {modified, noCache, content: oldContent} = data || {}
@@ -49,7 +49,7 @@ exports.add = async (id, newModified, content, ttl) => {
   // if there was previous data and it is not older than the new data, don't do anything
   if (oldContent && modified && !isNewer(modified, newModified)) return // nothing to do if data is current
   // store new data in the cache
-  return cache.set(id, {content, modified: newModified, id}, {ttl: ttl})
+  return cache.set(id, {content, modified: newModified, id})
 }
 
 // expose the purgeCache method externally so that list can call while building tree
