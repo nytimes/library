@@ -10,4 +10,4 @@
       { "src": "/(.*)", "dest": "server/index.js" },
       { "src": "/public/(.*)", "dest": "/public/$1" }
     ]
-}  
+}
