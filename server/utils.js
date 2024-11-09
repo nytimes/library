@@ -166,7 +166,5 @@ exports.formatUrl = (url) => {
   } else {
     res = exports.pathPrefix + url
   }
-  console.log("URL TESTING")
-  console.log(res)
   return res
 }

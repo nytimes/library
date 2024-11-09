@@ -1,6 +1,5 @@
 'use strict'
 
-const md5 = require('md5')
 const router = require('express-promise-router')()
 
 router.use(async (req, res) => {
