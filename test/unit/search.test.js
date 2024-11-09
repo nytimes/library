@@ -136,6 +136,15 @@ describe('Search', () => {
       expect(results).to.be.empty // eslint-disable-line no-unused-expressions
     })
 
+    it('ai search returns with llm response', async () => {
+      list.getMeta = (fileId) => ({id: fileId, path: '/', tags: []})
+      
+      const results = await search.run('testing?')
+      
+      expect(results).to.have.property('llmresponse')
+      expect(results.llmresponse).to.be.a('string')
+    })
+
     describe('when no results found', () => {
       beforeAll(() => {
         list.getMeta = (fileId) => ({id: fileId, path: '/', tags: []})
