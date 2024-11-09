@@ -32,10 +32,9 @@ async function handlePage(req, res) {
   if (page === 'search' && q) {
     return search.run(q, driveType).then((results) => {
       // AI Search
-      if (results.length > 1) {
+      if (results.hasOwnProperty('llmresponse')) {
         console.log('LLM response recieved.')
-        const llmResponse = results[0]
-        results = results[1]
+        const llmResponse = results.llmresponse
         res.format({
           html: () => {
             res.render('pages/llmquery', {q, results, llmResponse, template: stringTemplate, formatUrl, pathPrefix})

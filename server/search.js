@@ -56,7 +56,7 @@ exports.run = async (query, driveType = 'team') => {
   const fileMetas = filterMetas(files)
 
   if (!useLLM) {
-    return [fileMetas]
+    return fileMetas
   }
 
   const docsIds = []
@@ -144,7 +144,9 @@ exports.run = async (query, driveType = 'team') => {
         .replace(/\*/g, '')
         .trim()
       const matchedDocs = await docIDsToMetaData(foundDocs, drive)
-      return [result, filterMetas(matchedDocs)]
+      let metaResults = filterMetas(matchedDocs)
+      metaResults.llmresponse = result
+      return metaResults
     })
     .catch((error) => {
       console.error('Error with LLM API Call:', error)
