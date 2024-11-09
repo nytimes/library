@@ -10,7 +10,7 @@ function aiMode(searching) {
         for (let i = 0; i < searchContainers.length; i++) {
             searchContainers[i].style.backgroundColor = 'rgb(172, 176, 255)';
             if (searching) {
-            searchContainers[i].style.animation = "search-animation 3s ease infinite";
+                searchContainers[i].style.animation = "search-animation 3s ease infinite";
             }
         }
     } else if (changed) {
@@ -25,13 +25,14 @@ function aiMode(searching) {
 var searchContainers = document.getElementsByClassName('twitter-typeahead');
 const loadingInterval = setInterval(() => {
     searchContainers = document.getElementsByClassName('twitter-typeahead');
+    const mobileAnimation = window.innerWidth <= 768 ? true : false;
     if (searchContainers.length > 0) {
         clearInterval(loadingInterval);
         searchBox.addEventListener('input', function(event){
             if (event.inputType === "insertText" && event.data === "\n") {
                 aiMode(true);
             }
-            aiMode(false);
+            aiMode(mobileAnimation);
         });
 
         searchButton.addEventListener("click", function() {
