@@ -1,27 +1,15 @@
-### Implementing LLM into search function
+# Introducing AI powered search for Library!
 
-- [x] LLM request working on backend
-- [x] Implement chunking for large libraries or small token limits
-- [x] Create proper error pages
-- [x] AI search also returns documents
-- [x] Prompt engineering for better results
-- [x] LLM working on frontend
-- [x] Testing and documentation
-- [x] Deployment
-
-
-## Introducing AI powered search for Library!
-
-Users can now search the library with AI by simply asking a question in the search box!
+### Users can now search the library with AI by simply asking a question in the search box
 
 **Features:**
 - Returns a concise summary along with relevant documents, creating a more powerful search than keywords.
 - Fetches entire document base for AI query using existing infrastructure that supports caching.
 - Supports chunking of AI requests for models with smaller token limits.
-- Can query multiple times and combine responses for greater accuracy using the `LLM_API_CALLS` enviornment variable.
+- Can query multiple times and combine responses for greater accuracy using the `LLM_API_CALLS` environment variable.
 - Makes API and fetch requests in parallel.
 - Defaults to a null answer to avoid hallucinations.
-- Uses both desktop and mobile friendly front-end animations.
+- Uses both desktop and mobile-friendly front-end animations.
 
 <img src="https://github.com/nshaff3r/llm-docs-library/blob/main/AISearchDemo.gif" alt="AI search feature demo gif" width="558.75px" max-height="600px">
 
