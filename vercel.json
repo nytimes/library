@@ -1,6 +1,5 @@
 {
     "version": 2,
-    "debug": true,
     "builds": [
       {
         "src": "server/index.js",
