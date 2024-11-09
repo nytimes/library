@@ -23,7 +23,7 @@ Users can now search the library with AI by simply asking a question in the sear
 - Defaults to a null answer to avoid hallucinations.
 - Uses both desktop and mobile friendly front-end animations.
 
-<img src="https://github.com/nshaff3r/llm-docs-library/blob/main/AISearchDemo.gif" alt="AI search feature demo" height="300">
+<img src="https://github.com/nshaff3r/llm-docs-library/blob/main/AISearchDemo.gif" alt="AI search feature demo gif" height="800">
 
 Library ![Supported node versions](https://img.shields.io/badge/dynamic/json?color=informational&label=node&query=%24.engines.node&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnytimes%2Flibrary%2Fmain%2Fpackage.json) [![Tests](https://github.com/nytimes/library/actions/workflows/test.yaml/badge.svg)](https://github.com/nytimes/library/actions/workflows/test.yaml)
 ========
