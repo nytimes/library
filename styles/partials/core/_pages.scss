@@ -1,11 +1,11 @@
-@use "../theme";
-@use "../vars";
+@use "theme" as *;
+@use "vars" as *;
 @use "mixins";
 
 // Main Homepage
 //------------------------------------------------------------------------------
 #main-search-page {
-  background: theme.$main-homepage-background;
+  background: $main-homepage-background;
   padding: 85px 20px 3px 20px;
   min-height: calc(100vh - 88px);
 
@@ -64,9 +64,9 @@
         margin: 0 0 0 15px;
         height: 21px;
         padding: 10px 0 10px 15px;
-        border-left: 1px solid theme.$main-homepage-icon-border;
-        color: theme.$main-homepage-icon-color;
-        font-family: theme.$font-branding;
+        border-left: 1px solid $main-homepage-icon-border;
+        color: $main-homepage-icon-color;
+        font-family: $font-branding;
         font-size: 28px;
         font-weight: 100;
         line-height: 21px;
@@ -89,10 +89,10 @@
         }
 
         a:link, a:visited {
-          color: vars.$gray-50;
+          color: $gray-50;
         }
         a:hover {
-          color: vars.$accent;
+          color: $accent;
           text-decoration: none;
         }
       }
@@ -100,7 +100,7 @@
 
     .tagline {
       text-align: center;
-      color: theme.$main-page-text-color;
+      color: $main-page-text-color;
       margin: 0 auto;
       margin-bottom: 60px;
       font-size: 14px;
@@ -137,11 +137,11 @@
     	}
 
       .twitter-typeahead {
-        background: theme.$search-container-background;
+        background: $search-container-background;
         &:hover,
         &:focus,
         &:active {
-          background: theme.$search-container-hover;
+          background: $search-container-hover;
         }
       }
 
@@ -160,7 +160,7 @@
 
       &:hover {
         .icon:hover {
-          background: vars.$accent;
+          background: $accent;
         }
       }
     }
@@ -201,7 +201,7 @@
         h3 {
           font-weight: normal;
           font-size: 14px;
-          color: theme.$main-page-text-color;
+          color: $main-page-text-color;
           margin: 15px 0;
 
           @include mixins.tablet{
@@ -241,7 +241,7 @@
           ul {
             padding-left: 7px;
             a {
-              color: theme.$btn-default-text-color;
+              color: $btn-default-text-color;
               -webkit-font-smoothing: antialiased;
             }
             li {
@@ -255,7 +255,7 @@
               }
 
               .fa {
-                color: theme.$main-homepage-icon-color;
+                color: $main-homepage-icon-color;
                 margin-right: 7px;
                 font-size: 14px;
                 line-height: 18px;
@@ -281,20 +281,20 @@
     }
 
     .help-text {
-      color: theme.$main-page-text-color;
+      color: $main-page-text-color;
       font-size: 14px;
       line-height: 21px;
       letter-spacing: 0;
       text-align: left;
 
       a {
-        color: theme.$main-page-text-color;
-        border-bottom: 1px solid theme.$main-page-text-color;
+        color: $main-page-text-color;
+        border-bottom: 1px solid $main-page-text-color;
         padding-bottom: 1px;
 
         &:hover {
-          color: theme.$elem-link-color;
-          border-bottom: 1px solid theme.$elem-link-color;
+          color: $elem-link-color;
+          border-bottom: 1px solid $elem-link-color;
           text-decoration: none;
         }
       }
@@ -343,15 +343,15 @@
       border: 1px solid #404040;
       border-radius: 0;
       color: black;
-      -webkit-box-shadow: 2.5px 2.5px 0px -1px vars.$gray-25;
-      -moz-box-shadow: 2.5px 2.5px 0px -1px vars.$gray-25;
-      box-shadow: 2.5px 2.5px 0px -1px vars.$gray-25;
+      -webkit-box-shadow: 2.5px 2.5px 0px -1px $gray-25;
+      -moz-box-shadow: 2.5px 2.5px 0px -1px $gray-25;
+      box-shadow: 2.5px 2.5px 0px -1px $gray-25;
       padding: 5px 12px;
       cursor: pointer;
     }
 
     .seeMore-button:hover {
-      background-color: vars.$gray-60;
+      background-color: $gray-60;
     }
 
 
@@ -359,7 +359,7 @@
       overflow: visible;
       margin: 0 12px 30px 12px;
       padding: 25px;
-      border: 1px solid vars.$gray-60;
+      border: 1px solid $gray-60;
       width: 100%;
       -webkit-box-shadow: -4px -4px 0px 0px rgba(239,239,239,1);
       -moz-box-shadow: -4px -4px 0px 0px rgba(239,239,239,1);
@@ -398,7 +398,7 @@
           padding-right: 0;
 
           a {
-            color: vars.$black;
+            color: $black;
           }
         }
       }

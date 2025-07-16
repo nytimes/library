@@ -1,5 +1,5 @@
-@use "../theme";
-@use "../vars";
+@use "theme" as *;
+@use "vars" as *;
 @use "mixins";
 @use "sass:color";
 
@@ -7,12 +7,12 @@
 //------------------------------------------------------------------------------
 .masthead {
   position: fixed;
-  background: theme.$masthead-background;
+  background: $masthead-background;
   top: 0;
   left: 0;
   width: 100vw;
   z-index: 1000000090;
-  color: theme.$elem-link-color;
+  color: $elem-link-color;
 
   .container {
     position: relative;
@@ -43,8 +43,8 @@
         padding: 4px 0 0 15px;
         vertical-align: top;
         border-left: 1px solid rgba(255, 255, 255, 0.35);
-        color: theme.$main-homepage-icon-border;
-        font-family: theme.$font-branding;
+        color: $main-homepage-icon-border;
+        font-family: $font-branding;
         font-size: 18px;
         text-transform: none;
         -webkit-font-smoothing: antialiased;
@@ -52,10 +52,10 @@
         line-height: 26px;
 
         a:link, a:visited {
-          color: theme.$elem-link-color;
+          color: $elem-link-color;
         }
         a:hover {
-          color: vars.$accent;
+          color: $accent;
           cursor: pointer;
           text-decoration: none;
         }
@@ -110,12 +110,12 @@
   }
 
   a:visited {
-      color: vars.$accent-light;
+      color: $accent-light;
   }
 
   a:link {
       text-decoration: none;
-      color: vars.$accent-light;
+      color: $accent-light;
   }
 }
 
@@ -135,7 +135,7 @@
 
   .tt-menu {
     background-color: inherit;
-    border-color: vars.$gray-40;
+    border-color: $gray-40;
     border-style: solid;
     border-width: 0 1px 1px 1px;
     // compensate for border
@@ -150,17 +150,17 @@
     cursor: pointer;
 
     &:hover {
-      background-color: vars.$accent-light;
+      background-color: $accent-light;
     }
   }
 
   .tt-cursor {
-    background-color: vars.$accent-light;
+    background-color: $accent-light;
   }
 
   .twitter-typeahead {
     font-style: normal;
-    font-family: theme.$font-sans;
+    font-family: $font-sans;
     font-size: 16px;
     line-height: 30px;
     font-weight: 400;
@@ -169,12 +169,12 @@
     height: 50px;
     transition: background-color 0.3s;
     display: inline-block;
-    border: 1px solid vars.$gray-40;
-    background: vars.$white;
-    -webkit-box-shadow: 5px 5px 0px 0px vars.$gray-25;;
-    -moz-box-shadow: 5px 5px 0px 0px vars.$gray-25;;
-    box-shadow: 5px 5px 0px 0px vars.$gray-25;;
-    color: vars.$black;
+    border: 1px solid $gray-40;
+    background: $white;
+    -webkit-box-shadow: 5px 5px 0px 0px $gray-25;;
+    -moz-box-shadow: 5px 5px 0px 0px $gray-25;;
+    box-shadow: 5px 5px 0px 0px $gray-25;;
+    color: $black;
     float: left;
     width: calc(100% - 20px);
     -webkit-transition: background .55s ease;
@@ -189,12 +189,12 @@
     &:focus,
     &:active {
       outline: none;
-      background:  vars.$accent-lightest;
+      background:  $accent-lightest;
     }
 
 
     .tt-hint {
-      color: vars.$gray-30;
+      color: $gray-30;
       background-color: transparent !important;
       outline: none;
       border: none;
@@ -215,12 +215,12 @@
     position: relative;
     z-index: 10;
     border: none;
-    background: vars.$accent;
+    background: $accent;
     height: 50px;
     width: 50px;
     top: 1px; // compensate for top border
     right: 1px; // compensate for right border
-    color: vars.$white;
+    color: $white;
     opacity: 1;
     font-size: 12pt;
     cursor: pointer;
@@ -234,14 +234,14 @@
 
   &:hover {
     .icon:hover {
-      background: vars.$accent;
+      background: $accent;
     }
   }
 
   input::-webkit-input-placeholder,
   input:-moz-placeholder,
   input:-ms-input-placeholder  {
-    color: vars.$gray-45;
+    color: $gray-45;
   }
   input:focus::-webkit-input-placeholder,
   input:focus:-moz-placeholder,
@@ -263,19 +263,19 @@
 #user-profile {
   a.btn-user-whole {
     &:link, &:visited {
-      color: theme.$elem-link-color;
+      color: $elem-link-color;
       font-size: 15px;
       letter-spacing: 0.25px;
       padding: 17px 15px 16px 15px;
     }
     &:hover, &:active, &:target {
       text-decoration: none;
-      background: color.scale(theme.$elem-active-link-color, $lightness: -30%);
+      background: color.scale($elem-active-link-color, $lightness: -30%);
 
       button.btn-user-initial {
-        background: vars.$black;
-        color: vars.$gray-50;
-        border-color: vars.$gray-30;
+        background: $black;
+        color: $gray-50;
+        border-color: $gray-30;
       }
     }
   }
@@ -300,12 +300,12 @@
     font-size: 14px;
     -webkit-font-smoothing: antialiased;
     text-indent: -1px;
-    background: theme.$btn-user-initial;
-    color: vars.$gray-30;
+    background: $btn-user-initial;
+    color: $gray-30;
     margin-right: 5px;
     line-height: 0px;
     text-align: center;
-    border-color: vars.$gray-80;
+    border-color: $gray-80;
     padding: 0;
   }
 }
@@ -341,7 +341,7 @@
 .popup {
   margin-top: 40px;
 	padding: 0 20px 5px 20px;
-  background-image: linear-gradient(215deg, vars.$white 0%, vars.$offwhite 100%);
+  background-image: linear-gradient(215deg, $white 0%, $offwhite 100%);
 	border: 1px solid #d4d4d4;
 	width: 260px;
   float: right;
@@ -367,7 +367,7 @@
     font-size: 24px;
     font-weight: bold;
     text-decoration: none;
-    color: vars.$gray-30;
+    color: $gray-30;
     &:hover {
       opacity: 1;
     }
@@ -375,8 +375,8 @@
 
   h3 {
     margin: 10px auto 0px auto;
-    color: vars.$gray-20;
-    border-bottom: 2px solid vars.$gray-20;
+    color: $gray-20;
+    border-bottom: 2px solid $gray-20;
     font-size: 16px;
     line-height: 30px;
     -webkit-font-smoothing: antialiased;
@@ -398,13 +398,13 @@
 
     li {
       a {
-        color: vars.$gray-20;
+        color: $gray-20;
 
         &:hover {
           text-decoration: none;
 
           p {
-            color: vars.$black;
+            color: $black;
           }
         }
       }
@@ -419,7 +419,7 @@
       }
 
       .docs-title {
-        color: vars.$accent;
+        color: $accent;
         margin-bottom: 2px;
       }
 
@@ -430,8 +430,8 @@
         display: inline-block;
         margin-right: 4px;
         // background: if($light, $gray-60, $gray-80);
-        background: theme.$elem-link-color; // gray-50 and grey-80
-        color: vars.$gray-30;
+        background: $elem-link-color; // gray-50 and grey-80
+        color: $gray-30;
         padding: 3px 4px;
         font-weight: 400;
         font-size: 12px;
@@ -443,7 +443,7 @@
       }
       .timestamp {
         font-size: 12px;
-        color: vars.$gray-30;
+        color: $gray-30;
       }
     }
   }

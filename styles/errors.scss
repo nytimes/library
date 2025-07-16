@@ -4,15 +4,15 @@
 // the authentication layer.)
 
 // top level templating values that can be overridden
-@use "partials/vars";
-@use "partials/theme";
+@use "vars" as *;
+@use "theme" as *;
 
 // core layout styles rarely overridden
-@use "partials/core/mixins";
-@use "partials/core/base";
-@use "partials/core/furniture";
-@use "partials/core/pages";
-@use "partials/core/categories";
+@use "core/mixins" as *;
+@use "core/base" as *;
+@use "core/furniture" as *;
+@use "core/pages" as *;
+@use "core/categories" as *;
 
 // final stylesheet with any additional styles for custom logic
-@use "partials/custom";
+@use "custom" as *;
