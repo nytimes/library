@@ -8,7 +8,7 @@ const cache = require('./cache')
 const formatter = require('./formatter')
 const log = require('./logger')
 const {getAuth} = require('./auth')
-const {slugify} = require('./utils')
+const {slugify} = require('./text')
 
 const supportedTypes = new Set(['document', 'spreadsheet', 'text/html'])
 

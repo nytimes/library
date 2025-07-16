@@ -8,7 +8,7 @@ const cache = require('./cache')
 const log = require('./logger')
 const {getAuth} = require('./auth')
 const {isSupported} = require('./utils')
-const {slugify, cleanName} = require('./utils')
+const {cleanName, slugify} = require('./text')
 
 const driveType = process.env.DRIVE_TYPE
 const driveId = process.env.DRIVE_ID
