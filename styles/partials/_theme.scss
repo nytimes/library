@@ -1,3 +1,5 @@
+@use "vars";
+
 // Fonts
 //------------------------------------------------------------------------------
 // Font imports
@@ -10,23 +12,23 @@ $font-sans: 'Open Sans', sans-serif;
 // Colors
 //------------------------------------------------------------------------------
 // Default Light Theme
-$masthead-background: $gray-10;
-$main-homepage-background: $white;
-$main-homepage-icon-color: $black;
-$main-homepage-icon-border: $black;
-$main-page-text-color: $gray-35;
-$main-page-btn-color: $gray-45;
+$masthead-background: vars.$gray-10;
+$main-homepage-background: vars.$white;
+$main-homepage-icon-color: vars.$black;
+$main-homepage-icon-border: vars.$black;
+$main-page-text-color: vars.$gray-35;
+$main-page-btn-color: vars.$gray-45;
 $search-container-background: #e6e2e2;
-$search-container-hover: $gray-70;
-$btn-homepage-background: $white;
-$btn-homepage-border: $black;
-$btn-default-background: $white;
-$btn-default-background-hover: $accent;
-$btn-default-border: $black;
-$btn-default-text-color: $black;
-$btn-default-text-hover: $black;
-$btn-user-initial: $gray-50;
-$elem-link-color: $gray-50;
-$elem-active-link-color: $gray-50;
-$elem-link-accent: $accent;
-$nav-text-color: $gray-40;
+$search-container-hover: vars.$gray-70;
+$btn-homepage-background: vars.$white;
+$btn-homepage-border: vars.$black;
+$btn-default-background: vars.$white;
+$btn-default-background-hover: vars.$accent;
+$btn-default-border: vars.$black;
+$btn-default-text-color: vars.$black;
+$btn-default-text-hover: vars.$black;
+$btn-user-initial: vars.$gray-50;
+$elem-link-color: vars.$gray-50;
+$elem-active-link-color: vars.$gray-50;
+$elem-link-accent: vars.$accent;
+$nav-text-color: vars.$gray-40;
