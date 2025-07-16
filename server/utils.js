@@ -2,7 +2,6 @@
 const fs = require('fs')
 const path = require('path')
 const {promisify} = require('util')
-const slugify = require('slugify')
 const yaml = require('js-yaml')
 const {get: deepProp} = require('lodash')
 const merge = require('deepmerge')
@@ -44,23 +43,6 @@ exports.sortDocs = (a, b) => {
   }
 
   return b.resourceType === 'folder' ? 1 : -1
-}
-
-exports.cleanName = (name = '') => {
-  return name
-    .trim()
-    // eslint-disable-next-line no-useless-escape
-    .replace(/^(\d+[-–—_\s]*)([^\d\/\-^\s]+)/, '$2') // remove leading numbers and delimiters
-    .replace(/\s*\|\s*([^|]+)$/i, '') // remove trailing pipe and tags
-    .replace(/\.[^.]+$/, '') // remove file extensions
-}
-
-exports.slugify = (text = '') => {
-  // convert non alpha numeric into whitespace, rather than removing
-  const alphaNumeric = text.replace(/[^\p{L}\p{N}]+/ug, ' ')
-  return slugify(alphaNumeric, {
-    lower: true
-  })
 }
 
 // attempts to require from attemptPath. If file isn't present, looks for a

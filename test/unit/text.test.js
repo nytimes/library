@@ -2,9 +2,9 @@
 
 const {expect} = require('chai')
 
-const {cleanName, slugify} = require('../../server/utils')
+const {cleanName, slugify} = require('../../server/text')
 
-describe('Utils', () => {
+describe('Text Utils', () => {
   describe('Name Cleaner', () => {
     it('should remove leading numbers and delimeters', () => {
       expect(cleanName('0000123abc12345')).equals('abc12345')
