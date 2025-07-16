@@ -1,16 +1,20 @@
+@use "../theme";
+@use "../vars";
+@use "mixins";
+
 // Main Homepage
 //------------------------------------------------------------------------------
 #main-search-page {
-  background: $main-homepage-background;
+  background: theme.$main-homepage-background;
   padding: 85px 20px 3px 20px;
   min-height: calc(100vh - 88px);
 
-  @include tablet{
+  @include mixins.tablet{
     padding: 85px 0px 3px 0px;
     min-height: calc(100vh - 88px);
   }
 
-  @include desktop{
+  @include mixins.desktop{
     padding: 85px 0px 3px 0px;
     min-height: calc(100vh - 88px);
   }
@@ -22,12 +26,12 @@
 
   .main-item {
 
-    @include tablet{
+    @include mixins.tablet{
       max-width: 600px;
       margin: 30px auto 0 auto;
     }
 
-    @include desktop{
+    @include mixins.desktop{
       max-width: 600px;
       margin: 30px auto 0 auto;
     }
@@ -46,11 +50,11 @@
           // filter: invert(100%) brightness(80%);
           padding-top: 9px;
 
-          @include tablet{
+          @include mixins.tablet{
             height: 36px;
           }
 
-          @include desktop{
+          @include mixins.desktop{
             height: 36px;
           }
         }
@@ -60,9 +64,9 @@
         margin: 0 0 0 15px;
         height: 21px;
         padding: 10px 0 10px 15px;
-        border-left: 1px solid $main-homepage-icon-border;
-        color: $main-homepage-icon-color;
-        font-family: $font-branding;
+        border-left: 1px solid theme.$main-homepage-icon-border;
+        color: theme.$main-homepage-icon-color;
+        font-family: theme.$font-branding;
         font-size: 28px;
         font-weight: 100;
         line-height: 21px;
@@ -70,14 +74,14 @@
         vertical-align: top;
         -webkit-font-smoothing: antialiased;
 
-        @include tablet{
+        @include mixins.tablet{
           height: 30px;
           padding: 15px 0 9px 18px;
           font-size: 38px;
           line-height: 26px;
         }
 
-        @include desktop{
+        @include mixins.desktop{
           height: 30px;
           padding: 15px 0 10px 20px;
           font-size: 38px;
@@ -85,10 +89,10 @@
         }
 
         a:link, a:visited {
-          color: $gray-50;
+          color: vars.$gray-50;
         }
         a:hover {
-          color: $accent;
+          color: vars.$accent;
           text-decoration: none;
         }
       }
@@ -96,20 +100,20 @@
 
     .tagline {
       text-align: center;
-      color: $main-page-text-color;
+      color: theme.$main-page-text-color;
       margin: 0 auto;
       margin-bottom: 60px;
       font-size: 14px;
       line-height: 21px;
       // width: 90%;
 
-      @include tablet {
+      @include mixins.tablet {
         font-size: 15px;
     		width: 100%;
         margin-bottom: 10vh;
     	}
 
-      @include desktop {
+      @include mixins.desktop {
         font-size: 15px;
         width: 100%;
         margin-bottom: 10vh;
@@ -125,19 +129,19 @@
       width: calc(100vw - 60px);
       padding: 0px 6px 0 0;
 
-      @include tablet{
+      @include mixins.tablet{
     		// width: calc(100vw - 140px);
     	}
-    	@include desktop{
+    	@include mixins.desktop{
     		width: 586px;
     	}
 
       .twitter-typeahead {
-        background: $search-container-background;
+        background: theme.$search-container-background;
         &:hover,
         &:focus,
         &:active {
-          background: $search-container-hover;
+          background: theme.$search-container-hover;
         }
       }
 
@@ -156,7 +160,7 @@
 
       &:hover {
         .icon:hover {
-          background: $accent;
+          background: vars.$accent;
         }
       }
     }
@@ -165,7 +169,7 @@
       justify-content: center;
       margin-top: 30px;
 
-      @include desktop{
+      @include mixins.desktop{
     		margin-top: 40px;
     	}
 
@@ -180,11 +184,11 @@
     .featured-cat {
       margin-top: 40px;
 
-      @include tablet{
+      @include mixins.tablet{
     		margin-top: 30px;
         display: flex;
     	}
-      @include desktop{
+      @include mixins.desktop{
     		margin-top: 30px;
         display: flex;
     	}
@@ -197,13 +201,13 @@
         h3 {
           font-weight: normal;
           font-size: 14px;
-          color: $main-page-text-color;
+          color: theme.$main-page-text-color;
           margin: 15px 0;
 
-          @include tablet{
+          @include mixins.tablet{
             font-size: 15px;
           }
-          @include desktop{
+          @include mixins.desktop{
             font-size: 15px;
           }
         }
@@ -223,10 +227,10 @@
             li {
               display: inline-block;
 
-              @include tablet{
+              @include mixins.tablet{
                 display: block;
               }
-              @include desktop{
+              @include mixins.desktop{
                 display: block;
               }
             }
@@ -237,7 +241,7 @@
           ul {
             padding-left: 7px;
             a {
-              color: $btn-default-text-color;
+              color: theme.$btn-default-text-color;
               -webkit-font-smoothing: antialiased;
             }
             li {
@@ -251,7 +255,7 @@
               }
 
               .fa {
-                color: $main-homepage-icon-color;
+                color: theme.$main-homepage-icon-color;
                 margin-right: 7px;
                 font-size: 14px;
                 line-height: 18px;
@@ -265,42 +269,42 @@
 
   .main-item--bottom {
 
-    @include tablet{
+    @include mixins.tablet{
       top: 20px;
       max-width: 100%;
       padding-bottom: 20px;
     }
-    @include desktop{
+    @include mixins.desktop{
       top: 20px;
       max-width: 100%;
       padding-bottom: 20px;
     }
 
     .help-text {
-      color: $main-page-text-color;
+      color: theme.$main-page-text-color;
       font-size: 14px;
       line-height: 21px;
       letter-spacing: 0;
       text-align: left;
 
       a {
-        color: $main-page-text-color;
-        border-bottom: 1px solid $main-page-text-color;
+        color: theme.$main-page-text-color;
+        border-bottom: 1px solid theme.$main-page-text-color;
         padding-bottom: 1px;
 
         &:hover {
-          color: $elem-link-color;
-          border-bottom: 1px solid $elem-link-color;
+          color: theme.$elem-link-color;
+          border-bottom: 1px solid theme.$elem-link-color;
           text-decoration: none;
         }
       }
 
-      @include tablet{
+      @include mixins.tablet{
         line-height: 18px;
         letter-spacing: 0.01em;
         text-align: center;
       }
-      @include desktop{
+      @include mixins.desktop{
         line-height: 18px;
         letter-spacing: 0.01em;
         text-align: center;
@@ -339,15 +343,15 @@
       border: 1px solid #404040;
       border-radius: 0;
       color: black;
-      -webkit-box-shadow: 2.5px 2.5px 0px -1px $gray-25;
-      -moz-box-shadow: 2.5px 2.5px 0px -1px $gray-25;
-      box-shadow: 2.5px 2.5px 0px -1px $gray-25;
+      -webkit-box-shadow: 2.5px 2.5px 0px -1px vars.$gray-25;
+      -moz-box-shadow: 2.5px 2.5px 0px -1px vars.$gray-25;
+      box-shadow: 2.5px 2.5px 0px -1px vars.$gray-25;
       padding: 5px 12px;
       cursor: pointer;
     }
 
     .seeMore-button:hover {
-      background-color: $gray-60;
+      background-color: vars.$gray-60;
     }
 
 
@@ -355,22 +359,22 @@
       overflow: visible;
       margin: 0 12px 30px 12px;
       padding: 25px;
-      border: 1px solid $gray-60;
+      border: 1px solid vars.$gray-60;
       width: 100%;
       -webkit-box-shadow: -4px -4px 0px 0px rgba(239,239,239,1);
       -moz-box-shadow: -4px -4px 0px 0px rgba(239,239,239,1);
       box-shadow: -4px -4px 0px 0px rgba(239,239,239,1);
 
-      @include tablet {
+      @include mixins.tablet {
         width: 40.9%;
       }
-      @include smalldesktop {
+      @include mixins.smalldesktop {
         width: 34.9%;
       }
-      @include desktop {
+      @include mixins.desktop {
         width: 25.4%;
       }
-      @include largedesktop {
+      @include mixins.largedesktop {
         width: 18.4%;
       }
 
@@ -394,7 +398,7 @@
           padding-right: 0;
 
           a {
-            color: $black;
+            color: vars.$black;
           }
         }
       }

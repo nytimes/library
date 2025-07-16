@@ -1,3 +1,5 @@
+@use "sass:color";
+
 // Color
 //------------------------------------------------------------------------------
 
@@ -19,6 +21,6 @@ $gray-90      : #f7f7f7;
 
 $offwhite: #ececec;
 $accent: #0095ff;
-$accent-light: lighten($accent, 25%);
+$accent-light: color.scale($accent, $lightness: 25%);
 $accent-lightest: #FCF6F6;
-$accent-dark: darken($accent, 15%);
+$accent-dark: color.scale($accent, $lightness: -15%);

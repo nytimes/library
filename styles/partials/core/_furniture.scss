@@ -1,14 +1,18 @@
+@use "../theme";
+@use "../vars";
+@use "mixins";
+@use "sass:color";
 
 // Top Banner
 //------------------------------------------------------------------------------
 .masthead {
   position: fixed;
-  background: $masthead-background;
+  background: theme.$masthead-background;
   top: 0;
   left: 0;
   width: 100vw;
   z-index: 1000000090;
-  color: $elem-link-color;
+  color: theme.$elem-link-color;
 
   .container {
     position: relative;
@@ -39,8 +43,8 @@
         padding: 4px 0 0 15px;
         vertical-align: top;
         border-left: 1px solid rgba(255, 255, 255, 0.35);
-        color: $main-homepage-icon-border;
-        font-family: $font-branding;
+        color: theme.$main-homepage-icon-border;
+        font-family: theme.$font-branding;
         font-size: 18px;
         text-transform: none;
         -webkit-font-smoothing: antialiased;
@@ -48,10 +52,10 @@
         line-height: 26px;
 
         a:link, a:visited {
-          color: $elem-link-color;
+          color: theme.$elem-link-color;
         }
         a:hover {
-          color: $accent;
+          color: vars.$accent;
           cursor: pointer;
           text-decoration: none;
         }
@@ -65,10 +69,10 @@
       position: fixed;
       top: 9px;
 
-      @include tablet{
+      @include mixins.tablet{
         right: 20px;
       }
-      @include desktop{
+      @include mixins.desktop{
         right: 20px;
       }
     }
@@ -86,10 +90,10 @@
   margin: 15px 0;
   display: none;
 
-  @include tablet{
+  @include mixins.tablet{
     display: block;
   }
-  @include desktop{
+  @include mixins.desktop{
     display: block;
   }
 }
@@ -106,12 +110,12 @@
   }
 
   a:visited {
-      color: $accent-light;
+      color: vars.$accent-light;
   }
 
   a:link {
       text-decoration: none;
-      color: $accent-light;
+      color: vars.$accent-light;
   }
 }
 
@@ -121,17 +125,17 @@
   vertical-align: middle;
   white-space: nowrap;
 
-  @include tablet{
+  @include mixins.tablet{
     width: calc(100% - 20px);
   }
-  @include desktop{
+  @include mixins.desktop{
     width: calc(100% - 20px);
   }
 
 
   .tt-menu {
     background-color: inherit;
-    border-color: $gray-40;
+    border-color: vars.$gray-40;
     border-style: solid;
     border-width: 0 1px 1px 1px;
     // compensate for border
@@ -146,17 +150,17 @@
     cursor: pointer;
 
     &:hover {
-      background-color: $accent-light;
+      background-color: vars.$accent-light;
     }
   }
 
   .tt-cursor {
-    background-color: $accent-light;
+    background-color: vars.$accent-light;
   }
 
   .twitter-typeahead {
     font-style: normal;
-    font-family: $font-sans;
+    font-family: theme.$font-sans;
     font-size: 16px;
     line-height: 30px;
     font-weight: 400;
@@ -165,12 +169,12 @@
     height: 50px;
     transition: background-color 0.3s;
     display: inline-block;
-    border: 1px solid $gray-40;
-    background: $white;
-    -webkit-box-shadow: 5px 5px 0px 0px $gray-25;;
-    -moz-box-shadow: 5px 5px 0px 0px $gray-25;;
-    box-shadow: 5px 5px 0px 0px $gray-25;;
-    color: $black;
+    border: 1px solid vars.$gray-40;
+    background: vars.$white;
+    -webkit-box-shadow: 5px 5px 0px 0px vars.$gray-25;;
+    -moz-box-shadow: 5px 5px 0px 0px vars.$gray-25;;
+    box-shadow: 5px 5px 0px 0px vars.$gray-25;;
+    color: vars.$black;
     float: left;
     width: calc(100% - 20px);
     -webkit-transition: background .55s ease;
@@ -185,12 +189,12 @@
     &:focus,
     &:active {
       outline: none;
-      background:  $accent-lightest;
+      background:  vars.$accent-lightest;
     }
 
 
     .tt-hint {
-      color: $gray-30;
+      color: vars.$gray-30;
       background-color: transparent !important;
       outline: none;
       border: none;
@@ -211,12 +215,12 @@
     position: relative;
     z-index: 10;
     border: none;
-    background: $accent;
+    background: vars.$accent;
     height: 50px;
     width: 50px;
     top: 1px; // compensate for top border
     right: 1px; // compensate for right border
-    color: $white;
+    color: vars.$white;
     opacity: 1;
     font-size: 12pt;
     cursor: pointer;
@@ -230,14 +234,14 @@
 
   &:hover {
     .icon:hover {
-      background: $accent;
+      background: vars.$accent;
     }
   }
 
   input::-webkit-input-placeholder,
   input:-moz-placeholder,
   input:-ms-input-placeholder  {
-    color: $gray-45;
+    color: vars.$gray-45;
   }
   input:focus::-webkit-input-placeholder,
   input:focus:-moz-placeholder,
@@ -259,19 +263,19 @@
 #user-profile {
   a.btn-user-whole {
     &:link, &:visited {
-      color: $elem-link-color;
+      color: theme.$elem-link-color;
       font-size: 15px;
       letter-spacing: 0.25px;
       padding: 17px 15px 16px 15px;
     }
     &:hover, &:active, &:target {
       text-decoration: none;
-      background: darken($elem-active-link-color, 30%);
+      background: color.scale(theme.$elem-active-link-color, $lightness: -30%);
 
       button.btn-user-initial {
-        background: $black;
-        color: $gray-50;
-        border-color: $gray-30;
+        background: vars.$black;
+        color: vars.$gray-50;
+        border-color: vars.$gray-30;
       }
     }
   }
@@ -280,10 +284,10 @@
     margin-right: 5px;
     display: none;
 
-    @include tablet{
+    @include mixins.tablet{
       display: inline-block;
     }
-    @include desktop{
+    @include mixins.desktop{
       display: inline-block;
     }
   }
@@ -296,12 +300,12 @@
     font-size: 14px;
     -webkit-font-smoothing: antialiased;
     text-indent: -1px;
-    background: $btn-user-initial;
-    color: $gray-30;
+    background: theme.$btn-user-initial;
+    color: vars.$gray-30;
     margin-right: 5px;
     line-height: 0px;
     text-align: center;
-    border-color: $gray-80;
+    border-color: vars.$gray-80;
     padding: 0;
   }
 }
@@ -337,17 +341,17 @@
 .popup {
   margin-top: 40px;
 	padding: 0 20px 5px 20px;
-  background-image: linear-gradient(215deg, $white 0%, $offwhite 100%);
+  background-image: linear-gradient(215deg, vars.$white 0%, vars.$offwhite 100%);
 	border: 1px solid #d4d4d4;
 	width: 260px;
   float: right;
 	position: relative;
 
-  @include tablet{
+  @include mixins.tablet{
     width: 300px;
     padding: 20px;
   }
-  @include desktop{
+  @include mixins.desktop{
     width: 300px;
     padding: 20px;
   }
@@ -363,7 +367,7 @@
     font-size: 24px;
     font-weight: bold;
     text-decoration: none;
-    color: $gray-30;
+    color: vars.$gray-30;
     &:hover {
       opacity: 1;
     }
@@ -371,17 +375,17 @@
 
   h3 {
     margin: 10px auto 0px auto;
-    color: $gray-20;
-    border-bottom: 2px solid $gray-20;
+    color: vars.$gray-20;
+    border-bottom: 2px solid vars.$gray-20;
     font-size: 16px;
     line-height: 30px;
     -webkit-font-smoothing: antialiased;
 
-    @include tablet{
+    @include mixins.tablet{
       margin: 10px auto;
       line-height: 32px;
     }
-    @include desktop{
+    @include mixins.desktop{
       margin: 10px auto;
       line-height: 32px;
     }
@@ -394,28 +398,28 @@
 
     li {
       a {
-        color: $gray-20;
+        color: vars.$gray-20;
 
         &:hover {
           text-decoration: none;
 
           p {
-            color: $black;
+            color: vars.$black;
           }
         }
       }
       margin: 0px 0 5px 0;
       font-size: 15px;
 
-      @include tablet{
+      @include mixins.tablet{
         margin: 13px 0;
       }
-      @include desktop{
+      @include mixins.desktop{
         margin: 13px 0;
       }
 
       .docs-title {
-        color: $accent;
+        color: vars.$accent;
         margin-bottom: 2px;
       }
 
@@ -426,8 +430,8 @@
         display: inline-block;
         margin-right: 4px;
         // background: if($light, $gray-60, $gray-80);
-        background: $elem-link-color; // gray-50 and grey-80
-        color: $gray-30;
+        background: theme.$elem-link-color; // gray-50 and grey-80
+        color: vars.$gray-30;
         padding: 3px 4px;
         font-weight: 400;
         font-size: 12px;
@@ -439,7 +443,7 @@
       }
       .timestamp {
         font-size: 12px;
-        color: $gray-30;
+        color: vars.$gray-30;
       }
     }
   }

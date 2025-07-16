@@ -1,3 +1,7 @@
+@use "../theme";
+@use "../vars";
+@use "mixins";
+
 
 // Upper Body
 //------------------------------------------------------------------------------
@@ -14,26 +18,26 @@
 
   .warning {
     margin-top: 10px;
-    background-color: $gray-50;
-    color: $black;
+    background-color: vars.$gray-50;
+    color: vars.$black;
     padding: 15px;
     font-size: 14px;
   }
 
   h1.headline {
-    font-family: $font-headline;
+    font-family: theme.$font-headline;
     font-size: 36px;
     line-height: 40px;
     font-weight: 200;
-    color: $black;
+    color: vars.$black;
     margin: 20px 0 5px;
 
-    @include tablet {
+    @include mixins.tablet {
       font-size: 42px;
       line-height: 48px;
       margin: 40px 0 5px;
     }
-    @include desktop {
+    @include mixins.desktop {
       font-size: 44px;
       line-height: 48px;
       margin: 40px 0 5px;
@@ -49,9 +53,9 @@
 
   .attribution {
     p {
-      font-family: $font-sans;
+      font-family: theme.$font-sans;
       font-size: 13px;
-      color: $nav-text-color;
+      color: theme.$nav-text-color;
       margin: 0;
       line-height: 18px;
       font-weight: 400;
@@ -68,18 +72,18 @@
     font-weight: 400;
 
     a {
-      color: $gray-40;
+      color: vars.$gray-40;
       text-decoration: underline;
       .fa {
         margin-left: 5px;
-        color: $gray-40;
+        color: vars.$gray-40;
       }
     }
 
     a:hover {
-      color: $accent;
+      color: vars.$accent;
       .fa {
-        color: $accent;
+        color: vars.$accent;
       }
     }
 
@@ -106,10 +110,10 @@
     height: 90.9%;
     overflow: auto;
 
-    @include tablet{
+    @include mixins.tablet{
   		display: none;
   	}
-  	@include desktop{
+  	@include mixins.desktop{
   		display: block;
       padding: 10px 0;
       width: 180px;
@@ -126,10 +130,10 @@
     }
 
     .section-kicker, .sibling-kicker {
-      font-family: $font-sans;
+      font-family: theme.$font-sans;
       font-weight: 600;
       text-transform: capitalize;
-      color: $black;
+      color: vars.$black;
       font-size: 14px;
       line-height: 24px;
       margin-bottom: 10px;
@@ -153,7 +157,7 @@
         line-height: 20px;
         text-indent: -4px;
         padding: 4px 0px;
-        border-bottom: 0.5px solid $gray-60;
+        border-bottom: 0.5px solid vars.$gray-60;
         font-weight: 400;
 
         &:last-child {
@@ -163,11 +167,11 @@
         a,
         strong {
           padding: 3px 5px;
-          color: $gray-20;
+          color: vars.$gray-20;
         }
 
         a:hover {
-          color: $accent;
+          color: vars.$accent;
         }
 
       }
@@ -177,7 +181,7 @@
       list-style-type: none;
       margin: 40px 0 40px 0;
       padding: 20px;
-      border: 1px solid $gray-60;
+      border: 1px solid vars.$gray-60;
       -webkit-box-shadow: -8px -8px 0px 0px rgba(236,236,236,1);
       -moz-box-shadow: -8px -8px 0px 0px rgba(236,236,236,1);
       box-shadow: -8px -8px 0px 0px rgba(236,236,236,1);
@@ -199,7 +203,7 @@
 
         &:before {
           content: "";
-          border-bottom: 1px solid $gray-50;
+          border-bottom: 1px solid vars.$gray-50;
           width: 10px;
           display: inline-block;
           vertical-align: middle;
@@ -210,7 +214,7 @@
   }
 
   .g-main-content {
-    border-top: 5px solid $gray-60;
+    border-top: 5px solid vars.$gray-60;
   }
 
   .playlist-navigation,
@@ -225,16 +229,16 @@
     }
 
     p, ul, li, dt, dd {
-      font-family: $font-sans;
+      font-family: theme.$font-sans;
       font-weight: 300;
       font-size: 1rem;
       line-height: 1.4;
 
-      @include tablet{
+      @include mixins.tablet{
         font-size: 1.125rem;
         line-height: 1.5;
       }
-      @include desktop{
+      @include mixins.desktop{
         font-size: 1.125rem;
         line-height: 1.5;
       }
@@ -267,16 +271,16 @@
 
     img {
       max-width: calc(100vw - 80px);
-      border: 1px solid $gray-60;
+      border: 1px solid vars.$gray-60;
       padding: 10px;
       display: block;
       margin: 20px auto;
       cursor: pointer; // images can be opened in a modal
 
-      @include tablet{
+      @include mixins.tablet{
         max-width: 580px;
       }
-      @include desktop{
+      @include mixins.desktop{
         max-width: 580px;
       }
     }
@@ -299,7 +303,7 @@
     .children-container {
       margin: 40px 0 40px 0;
       padding: 20px 0px 20px 40px;
-      border: 1px solid $gray-60;
+      border: 1px solid vars.$gray-60;
       -webkit-box-shadow: -4px -4px 0px 0px #efefef;
       -moz-box-shadow: -4px -4px 0px 0px #efefef;
       box-shadow: -4px -4px 0px 0px #efefef;
@@ -360,7 +364,7 @@
         box-sizing: border-box;
 
         a {
-          color: $black;
+          color: vars.$black;
         }
       }
     }
@@ -379,13 +383,13 @@
     }
 
     code {
-      background: $accent-lightest;
-      color: $accent-dark;
+      background: vars.$accent-lightest;
+      color: vars.$accent-dark;
       padding: 1px 0px;
       margin: 0 4px;
-      -webkit-box-shadow: 4px 0px 0px $accent-lightest, -4px 0px 0px $accent-lightest;
-      -moz-box-shadow: 4px 0px 0px $accent-lightest, -4px 0px 0px $accent-lightest;
-      box-shadow: 4px 0px 0px $accent-lightest, -4px 0px 0px $accent-lightest;
+      -webkit-box-shadow: 4px 0px 0px vars.$accent-lightest, -4px 0px 0px vars.$accent-lightest;
+      -moz-box-shadow: 4px 0px 0px vars.$accent-lightest, -4px 0px 0px vars.$accent-lightest;
+      box-shadow: 4px 0px 0px vars.$accent-lightest, -4px 0px 0px vars.$accent-lightest;
       -webkit-box-decoration-break: clone;
       -moz-box-decoration-break: clone;
       box-decoration-break: clone;
@@ -393,7 +397,7 @@
 
     pre{
       counter-reset:line-numbering;
-      background: $accent-lightest;
+      background: vars.$accent-lightest;
       padding: 0px 0px 20px 0;
       width: 600px;
       text-indent: 0;
@@ -418,7 +422,7 @@
         width: 1.5em;
         text-align: right;
         opacity: 0.5;
-        color:$gray-45;
+        color:vars.$gray-45;
       }
 
       &:before {
@@ -427,7 +431,7 @@
         height: 20px;
         content: 'Code';
         background: #EEE9E9;
-        color:$gray-45;
+        color:vars.$gray-45;
         padding-left: 10px;
         margin-bottom: 10px;
         margin-top: 20px;
@@ -437,7 +441,7 @@
       code {
         margin: 0;
         padding: 0;
-        color: $black;
+        color: vars.$black;
       }
     }
   }
@@ -459,7 +463,7 @@
           // color: #483d8b;
           // padding: 3px 7px;
           // font-weight: 400;
-          background: $gray-80;
+          background: vars.$gray-80;
           color: #666;
           padding: 3px 6px;
           font-weight: 400;
@@ -470,8 +474,8 @@
           text-decoration: none;
 
           span {
-            background: $accent-lightest;
-            color: $black;
+            background: vars.$accent-lightest;
+            color: vars.$black;
           }
         }
       }
@@ -482,10 +486,10 @@
         font-size: 15px;
         margin: 0;
         line-height: 24px;
-        @include tablet{
+        @include mixins.tablet{
 
         }
-        @include desktop{
+        @include mixins.desktop{
           line-height: 32px;
         }
       }
@@ -499,7 +503,7 @@
   .g-footer {
     max-width: 600px;
     margin: 80px auto 60px auto;
-    border-top: 1px solid $gray-50;
+    border-top: 1px solid vars.$gray-50;
     padding: 20px 0px;
 
     .button.btn-plaintext {
@@ -507,7 +511,7 @@
     }
 
     p {
-      font-family: $font-sans;
+      font-family: theme.$font-sans;
       font-weight: 300;
       font-size: 14px;
       line-height: 18px;

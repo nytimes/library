@@ -1,7 +1,11 @@
+@use "../theme";
+@use "../vars";
+@use "mixins";
+
 // Basic Styling
 //------------------------------------------------------------------------------
 body {
-  font-family: $font-sans;
+  font-family: theme.$font-sans;
   font-weight: 100;
   margin: 0;
   padding: 0;
@@ -12,13 +16,13 @@ pre {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: $font-sans;
+  font-family: theme.$font-sans;
   margin-top: 45px;
   margin-bottom: 20px;
 }
 
 a {
-  color: $accent;
+  color: vars.$accent;
   text-decoration: none;
 
   &:hover {
@@ -40,7 +44,7 @@ table {
 th, td {
   padding: 0.25rem 0.5rem;
   text-align: left;
-  border: 1px solid $gray-50;
+  border: 1px solid vars.$gray-50;
   p {
     margin: 0;
   }
@@ -65,22 +69,22 @@ button:focus {
   line-height: 18px;
   font-weight: 300;
   font-style: normal;
-  font-family: $font-sans;
+  font-family: theme.$font-sans;
   background-color: transparent;
   border-radius: 3px;
   transition: background-color 0.3s;
   display: inline-block;
   padding: 4px 8px 6px 8px;
-  border: 1px solid $btn-default-border;
-  color: $btn-default-text-color;
+  border: 1px solid theme.$btn-default-border;
+  color: theme.$btn-default-text-color;
   cursor: pointer;
 
-  @include tablet{
+  @include mixins.tablet{
     font-size: 15px;
     line-height: 20px;
     padding: 5px 10px;
   }
-  @include desktop{
+  @include mixins.desktop{
     font-size: 15px;
     line-height: 20px;
     padding: 5px 10px;
@@ -88,22 +92,22 @@ button:focus {
 }
 
 .button.btn-cat {
-  background: $btn-default-background;
+  background: theme.$btn-default-background;
   border-radius: 0;
   margin: 4px 0 0 0;
   -webkit-font-smoothing: antialiased;
 
-  @include tablet{
+  @include mixins.tablet{
     margin: 3px 0 0 0;
   }
-  @include desktop{
+  @include mixins.desktop{
     margin: 3px 0 0 0;
   }
 
   &:hover {
     cursor: pointer;
-    background: $btn-default-background-hover;
-    color: $btn-default-text-hover;
+    background: theme.$btn-default-background-hover;
+    color: theme.$btn-default-text-hover;
     text-decoration: none;
   }
 }
@@ -112,21 +116,21 @@ button:focus {
   margin: 10px 0 0 0;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
-  background-color: $btn-homepage-background;
-  border: 1px solid $btn-homepage-border;
+  background-color: theme.$btn-homepage-background;
+  border: 1px solid theme.$btn-homepage-border;
   border-radius: 0;
-  color: $main-page-btn-color;
-  -webkit-box-shadow: 2.5px 2.5px 0px -1px $accent-dark;
-  -moz-box-shadow: 2.5px 2.5px 0px -1px $accent-dark;
-  box-shadow: 2.5px 2.5px 0px -1px $accent-dark;
+  color: theme.$main-page-btn-color;
+  -webkit-box-shadow: 2.5px 2.5px 0px -1px vars.$accent-dark;
+  -moz-box-shadow: 2.5px 2.5px 0px -1px vars.$accent-dark;
+  box-shadow: 2.5px 2.5px 0px -1px vars.$accent-dark;
   padding: 5px 12px;
 
   &:hover {
-    background: $elem-link-accent;
-    color: $white;
-    -webkit-box-shadow: 3px 3px 0px 0px $gray-25;
-    -moz-box-shadow: 3px 3px 0px 0px $gray-25;
-    box-shadow: 3px 3px 0px 0px $gray-25;
+    background: theme.$elem-link-accent;
+    color: vars.$white;
+    -webkit-box-shadow: 3px 3px 0px 0px vars.$gray-25;
+    -moz-box-shadow: 3px 3px 0px 0px vars.$gray-25;
+    box-shadow: 3px 3px 0px 0px vars.$gray-25;
     text-decoration: none;
   }
 }
@@ -136,24 +140,24 @@ button:focus {
   line-height: 20px;
   font-weight: 400;
   font-style: normal;
-  font-family: $font-sans;
+  font-family: theme.$font-sans;
   background-color: transparent;
   transition: background-color 0.3s;
   display: inline-block;
   padding: 7px 10px;
-  border: 1px solid $gray-40;
+  border: 1px solid vars.$gray-40;
   cursor: pointer;
   -webkit-font-smoothing: antialiased;
-  -webkit-box-shadow: 5px 5px 0px 0px $offwhite;
-  -moz-box-shadow: 5px 5px 0px 0px $offwhite;
-  box-shadow: 5px 5px 0px 0px $offwhite;
+  -webkit-box-shadow: 5px 5px 0px 0px vars.$offwhite;
+  -moz-box-shadow: 5px 5px 0px 0px vars.$offwhite;
+  box-shadow: 5px 5px 0px 0px vars.$offwhite;
   margin-right: 10px;
-  color: $gray-20;
+  color: vars.$gray-20;
   margin-top: 10px;
 
   &:hover {
-    background: $gray-20;
-    color: $white;
+    background: vars.$gray-20;
+    color: vars.$white;
   }
 }
 
@@ -161,12 +165,12 @@ button:focus {
   border: none;
   text-decoration: underline;
   background: transparent;
-  color: $nav-text-color;
+  color: theme.$nav-text-color;
   font-size: 13px;
   line-height: 29px;
 
   &:hover {
     cursor: pointer;
-    color: $accent;
+    color: vars.$accent;
   }
 }
