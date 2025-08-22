@@ -1,6 +1,8 @@
 'use strict'
 
 const {expect} = require('chai')
+const {google} = require('googleapis')
+const sinon = require('sinon')
 
 const list = require('../../server/list')
 const {allFilenames} = require('../utils')
@@ -56,5 +58,50 @@ describe('Filename Listing', () => {
   it('should contain all filenames in drive', async () => {
     const filenames = await list.getFilenames()
     expect(filenames).to.include(...allFilenames)
+  })
+})
+
+describe('File Filtering', () => {
+  it('should filter out trashed documents in team drive type', () => {
+    const options = list.commonListOptions.team
+    expect(options.q).to.include('trashed = false')
+  })
+
+  describe('when fetching files from shared folder', () => {
+    let listFilesSpy
+    let originalDriveType
+    
+    beforeAll(() => {
+      originalDriveType = process.env.DRIVE_TYPE
+      process.env.DRIVE_TYPE = 'folder'
+      
+      listFilesSpy = sinon.spy(() => ({
+        data: {
+          files: [],
+          nextPageToken: null
+        }
+      }))
+      
+      google.drive = () => {
+        return {
+          files: {
+            list: listFilesSpy
+          }
+        }
+      }
+    })
+    
+    afterAll(() => {
+      process.env.DRIVE_TYPE = originalDriveType
+    })
+    
+    it('should include trashed = false in query for folder type', async () => {
+      await list.getTree()
+      
+      const callArgs = listFilesSpy.args[0]
+      if (callArgs && callArgs[0] && callArgs[0].q) {
+        expect(callArgs[0].q).to.include('trashed = false')
+      }
+    })
   })
 })

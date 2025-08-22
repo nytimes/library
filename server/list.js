@@ -108,7 +108,7 @@ function getOptions(id) {
   if (driveType === 'folder') {
     return {
       ...exports.commonListOptions.folder,
-      q: id.map((id) => `'${id}' in parents`).join(' or '),
+      q: `(${id.map((id) => `'${id}' in parents`).join(' or ')}) AND trashed = false`,
       fields
     }
   }
