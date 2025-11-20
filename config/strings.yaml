@@ -22,7 +22,6 @@ landing:
       label: Useful Docs
       style: docs
 
-
 # partials/footer
 footer:
   helpText: Questions? Contact your organization's administrators.
@@ -65,7 +64,7 @@ playlist:
     heading: !!js/function (title) => `${title} Playlist`
   nav:
     previous: <
-    next: '>'
+    next: ">"
 
 # errors
 error:
@@ -81,8 +80,10 @@ error:
     title: Server Error
     heading: Uh oh, that's a 500.
     message: Perhaps try to search for something else instead?
+    sizeLimitNote:
+      message: "The document is too large to display in Library. We are working on a fix, but in the meantime, you can view the document directly in Google Drive."
+      viewButton: "View the document directly in Google Drive"
 
 # warning messages
 warning:
   duplicate: !!js/function (names, folderId) => `Multiple resources in <a href="https://drive.google.com/drive/u/0/folders/${folderId}" target="_blank">this folder</a> share the same name&#58; ${names.join(', ')}. Only one will be accesible through Library.`
-

@@ -1,19 +1,32 @@
 <!DOCTYPE html>
 <html>
-  <%- include('partials/head', {title: template('error.500.title'), formatUrl, pathPrefix}) %>
+  <%- include('partials/head', {title: template('error.500.title'), formatUrl,
+  pathPrefix}) %>
   <body>
-    <%- include('partials/header', {title: template('error.500.title'), parentLinks: [], formatUrl}) %>
+    <%- include( 'partials/header', {title: template('error.500.title'),
+    parentLinks: [], formatUrl} ) %>
     <div id="main-search-page">
       <div class="main-item">
         <div class="tagline">
           <h1><%- template('error.500.heading') %></h1>
           <p><%- template('error.500.message') %></p>
+
+          <% if (err.errors && err.errors.find(error => error.reason ===
+          'exportSizeLimitExceeded')) { %>
+          <h3><%- template('error.500.sizeLimitNote.message') %></h3>
+          <a
+            href="https://docs.google.com/document/d/<%= locals.docId %>"
+            class="button btn-footer"
+            target="_blank"
+            rel="noopener noreferrer"
+            ><%- template('error.500.sizeLimitNote.viewButton') %></a
+          >
+          <% } %>
         </div>
         <%- include('partials/search', {style: 'homepage', formatUrl}) %>
       </div>
 
       <%- include('partials/footer', {style: 'homepage', formatUrl}) %>
     </div>
-
   </body>
 </html>
