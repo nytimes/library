@@ -1,6 +1,6 @@
 {
   "name": "library",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "description": "A collaborative newsroom documentation site, powered by Google Docs.",
   "main": "server/index.js",
   "dependencies": {
