@@ -1,6 +1,7 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+**Table of Contents** _generated with [DocToc](https://github.com/thlorenz/doctoc)_
 
 - [Contributing to Library](#contributing-to-library)
   - [Repo Layout](#repo-layout)
@@ -15,6 +16,7 @@
 # Contributing to Library
 
 ## Repo Layout
+
 **`server`** contains all server-side code, including authentication, document
 parsing, caching, and routing.
 
@@ -36,6 +38,7 @@ checked in version of this folder should be empty besides the readme.
 and the module they are testing.
 
 ## Feature Requests
+
 Before submitting a feature request, ensure that you can't already implement the
 feature using any of Library's customization patterns. Custom middleware, cache,
 styling, and strings are supported.
@@ -49,6 +52,7 @@ developer will review the changes and may approve the request or request changes
 be made.
 
 ## Testing
+
 Functional and/or unit test coverage is expected for any contributed code. Run
 `npm run test` to run all tests, or `npm run test:cover` to generate a coverage
 report. Ensure the majority, if not all branches are covered when writing tests.
@@ -56,20 +60,24 @@ report. Ensure the majority, if not all branches are covered when writing tests.
 Tests for specific modules should be named `moduleName.test.js`.
 
 ## Code Conventions
+
 Before proposing changes, run `npm run lint` to ensure you are following all basic
 code conventions. Additionally, the repo maintains a number of additional conventions:
 
 **Naming**
+
 - Use descriptive, logical names for variables
 - Unless you are exporting a single object, prefer `exports.____` over `module.exports`.
 - Environment variables should be capitalized and in snake_case.
 
 **Comments**
+
 - Use single-line comments where possible. Write descriptive, inline comments
   to explain your code.
 - Do not use `jsdoc` style block comments.
 
 **Asynchronous Functions & Promises**
+
 - Prefer `async/await` over callbacks or `Promise...then()`.
 - Avoid callbacks where possible.
 - Favor `Promise.resolve().then(() => {})` over `new Promise((resolve, reject) => {})`
@@ -77,6 +85,7 @@ code conventions. Additionally, the repo maintains a number of additional conven
 
 **Style**
 This is enforced by `eslint`. You can check your code by running `npm run lint`
+
 - Begin all files with `use strict`.
 - Use `const` when variables do not need reassignment.
 - Avoid the use of `var`.
@@ -87,6 +96,7 @@ This is enforced by `eslint`. You can check your code by running `npm run lint`
 - Favor arrow functions for lambdas unless access to the `this` context is required.
 
 # Contributing Documentation
-To add to or change any documentation in the [Library Demo](https://nyt-library-demo.herokuapp.com), please [propose a file change](https://help.github.com/en/articles/editing-files-in-another-users-repository) to this document. Change the file by adding your name to the list of contributors below. Then, in the pull request body, add your documentation changes/additions as well as a link to the page in the demo you wish to change *or* the title of the page you'd like to add.
+
+To add to or change any documentation in the [Library Demo](https://library-demo.newsdev.nytimes.com/), please [propose a file change](https://help.github.com/en/articles/editing-files-in-another-users-repository) to this document. Change the file by adding your name to the list of contributors below. Then, in the pull request body, add your documentation changes/additions as well as a link to the page in the demo you wish to change _or_ the title of the page you'd like to add.
 
 ## Document Contributors
