@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html>
-  <%- include('partials/head', {title: template('search.results.title', locals.q), formatUrl, pathPrefix}) %>
+  <% const escapedQuery = escapeFn(locals.q || '') %>
+  <%- include('partials/head', {title: template('search.results.title', escapedQuery), formatUrl, pathPrefix}) %>
   <body>
-    <%- include('partials/header', {parentLinks: [], title: template('search.results.title', locals.q)}) %>
+    <%- include('partials/header', {parentLinks: [], title: template('search.results.title', escapedQuery)}) %>
 
     <%- include('partials/nav', {formatUrl}) %>
 
     <div class="g-body">
       <div class="g-main-content" id="g-search-page">
         <% if (locals.results && results.length) { %>
-          <h3 class="search-kicker"><%- template('search.results.kicker', locals.q) %></h3>
+          <h3 class="search-kicker"><%- template('search.results.kicker', escapedQuery) %></h3>
           <% results.forEach((res) => { %>
           <div class="search-result">
             <h3><a href="<%= formatUrl(res.path) %>"><%= res.prettyName %></a></h3>
@@ -25,7 +26,7 @@
           </div>
           <% }) %>
         <% }  else { %>
-          <h3 class="search-kicker"><%- template('search.results.none.kicker', locals.q) %></h3>
+          <h3 class="search-kicker"><%- template('search.results.none.kicker', escapedQuery) %></h3>
           <p><%- template('search.results.none.suggestion') %></p>
         <% } %>
       </div>
