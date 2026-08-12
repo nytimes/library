@@ -13,7 +13,8 @@ permissions:
 jobs:
   analyze:
     runs-on:
-      group: code-scanning
+      group: nyt-runners
+      labels: nyt-2-core
     strategy:
       matrix:
         language: [javascript-typescript, actions]
