@@ -30,6 +30,17 @@ describe("Server responses", () => {
         );
     });
 
+    it("should escape the search query", () => {
+      return request(app)
+        .get("/search")
+        .query({ q: "<img src=x onerror=alert(document.cookie)>" })
+        .expect(200)
+        .then((res) => {
+          expect(res.text).to.include("&lt;img");
+          expect(res.text).to.not.include("<img src=x onerror=");
+        });
+    });
+
     it("should return 200 OK for healthcheck", () => {
       return request(app)
         .get("/healthcheck")
