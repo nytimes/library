@@ -13,8 +13,7 @@ permissions:
 jobs:
   analyze:
     runs-on:
-      group: nyt-runners
-      labels: nyt-2-core
+      labels: self-hosted
     strategy:
       matrix:
         language: [javascript-typescript, actions]
