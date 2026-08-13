@@ -112,12 +112,20 @@ async function getDatastoreClient() {
   // because auth credentials may be passed in multiple ways, recycle pathway used by main auth logic
   const {email, key} = await getAuth()
 
-  return new Datastore({
-    projectId,
-    credentials: {
+  // When using workload identity, email and key will be missing. Passing
+  // blank credentials will block authentication, so leave these out so we can
+  // default to using the workload identity.
+  let credentials = {}
+  if (email && key) {
+    credentials = {
       client_email: email,
       private_key: key
     }
+  }
+
+  return new Datastore({
+    projectId,
+    ...credentials
   })
 }
 
