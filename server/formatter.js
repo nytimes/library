@@ -106,20 +106,21 @@ function normalizeHtml(html) {
 function formatCode(html) {
   // Expand code blocks
   html = html.replace(/```(.*?)```/ig, (match, content) => {
-    // strip interior <p> tags added by google
-    content = content.replace(/(?:<\/p><p>|<br\/?>)/g, '\n').replace(/<\/?p>/g, '').trim()
-    // try to find language hint within text block
-    const [, lang] = content.match(/^(.+?)\n/) || []
+    return formatCodeBlock(content)
+  })
 
-    if (lang && hljs.getLanguage(lang)) {
-      // if the language hint exists and contains a valid language, remove it from the code block
-      content = content.replace(`${lang}\n`, '')
+  // Preformat native code blocks
+  // Unnest native code block start and end markers
+  html = html.replace(/<span[^>]*>(&#xEC0[23];)<\/span>/ig, (match, marker) => {
+    return marker
+  })
 
-      const textOnlyContent = cheerio.load(content).text()
-      const highlighted = hljs.highlight(lang, textOnlyContent, true)
-      return `<pre><code data-lang="${highlighted.language}">${formatCodeContent(highlighted.value)}</code></pre>`
-    }
-    return `<pre><code>${formatCodeContent(content)}</code></pre>`
+  // Expand native code blocks
+  // Google docs interleaves the end-of-code marker with the following tag. eg:
+  // <p>&#xEC03;my code block</p><h2>&#xEC02;my heading</h2>
+  // Make sure we match and retain the following tag
+  html = html.replace(/<p[^>]*>&#xEC03;(.*?)<\/p>(<[^>]*>)&#xEC02;/ig, (match, content, followingTag) => {
+    return `${formatCodeBlock(content)}${followingTag}`
   })
 
   // Replace double backticks with <code>, for supporting backticks in inline code blocks
@@ -150,6 +151,23 @@ function formatCode(html) {
   }
 
   return html
+}
+
+function formatCodeBlock(content) {
+  // strip interior <p> tags added by google
+  content = content.replace(/(?:<\/p><p[^>]*>|<br\/?>)/g, '\n').replace(/<\/?p>/g, '').trim()
+  // try to find language hint within text block
+  const [, lang] = content.match(/^(.+?)\n/) || []
+
+  if (lang && hljs.getLanguage(lang)) {
+    // if the language hint exists and contains a valid language, remove it from the code block
+    content = content.replace(`${lang}\n`, '')
+
+    const textOnlyContent = cheerio.load(content).text()
+    const highlighted = hljs.highlight(lang, textOnlyContent, true)
+    return `<pre><code data-lang="${highlighted.language}">${formatCodeContent(highlighted.value)}</code></pre>`
+  }
+  return `<pre><code>${formatCodeContent(content)}</code></pre>`
 }
 
 function formatCodeContent(content) {
