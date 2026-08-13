@@ -12,6 +12,6 @@ const transports = process.env.NODE_ENV === 'test'
   ]
 
 module.exports = new (winston.Logger)({
-  level: process.env.LOG_LEVEL || process.env.NODE_ENV === 'development' ? 'debug' : 'info',
+  level: process.env.LOG_LEVEL || (process.env.NODE_ENV === 'development' ? 'debug' : 'info'),
   transports
 })
